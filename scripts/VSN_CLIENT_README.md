@@ -2,7 +2,9 @@
 
 ## Overview
 
-`vsn_client.py` is a self-contained Python script for testing ABB/FIMER VSN300 and VSN700 dataloggers without needing to install the full Home Assistant integration.
+`vsn_client.py` is a self-contained Python script for testing ABB/FIMER VSN300
+and VSN700 dataloggers without needing to install the full Home Assistant
+integration.
 
 ## Features
 
@@ -20,6 +22,7 @@
 - **Internet connection** (required for data normalization feature)
 
 Install aiohttp:
+
 ```bash
 pip install aiohttp
 ```
@@ -35,11 +38,13 @@ python vsn_client.py <host>
 ### Examples
 
 With IP address:
+
 ```bash
 python vsn_client.py 192.168.1.100
 ```
 
 With hostname:
+
 ```bash
 python vsn_client.py abb-vsn300.axel.dom
 ```
@@ -67,7 +72,7 @@ The script creates up to 4 JSON files in the current directory:
 
 ## Example Output
 
-```
+```text
 ================================================================================
 VSN REST Client - Device Test
 Host: abb-vsn300.axel.dom
@@ -136,10 +141,12 @@ The script automatically normalizes raw VSN data to Home Assistant entity format
 - Handles differences between VSN300 and VSN700 naming
 
 **Requirements:**
+
 - Internet connection to download the mapping file from GitHub
 - If the mapping file is not yet available in the repository, normalization will be skipped with a warning
 
 **Example normalized output:**
+
 ```json
 {
   "devices": {
@@ -165,38 +172,47 @@ The script automatically normalizes raw VSN data to Home Assistant entity format
 The script uses **guest** account with **empty password** by default, which should work for most VSN devices.
 
 ### VSN300
+
 - Uses HTTP Digest authentication with custom X-Digest header
 - Challenge-response flow for each request
 
 ### VSN700
+
 - Uses HTTP Basic authentication
 - Credentials sent with each request
 
 ## Troubleshooting
 
 ### "ERROR: aiohttp is required"
+
 Install aiohttp:
+
 ```bash
 pip install aiohttp
 ```
 
 ### Connection Timeout
+
 - Check network connectivity to the device
 - Verify the IP address or hostname is correct
 - Ensure device is powered on and accessible
 
 ### Authentication Failed
+
 - Default guest account should work for most devices
 - Check if device requires different credentials
 - Some devices may have authentication disabled
 
 ### 401 Unauthorized
+
 - Device may require admin credentials
 - Check firewall settings
 - Verify device firmware version supports REST API
 
 ### Normalization Skipped
+
 If you see "Normalization will be skipped":
+
 - Check internet connectivity
 - The mapping file may not be available yet in the GitHub repository
 - This doesn't affect the main tests - raw data is still saved
@@ -214,15 +230,18 @@ To share with users for testing:
 ## Technical Details
 
 ### Supported Models
+
 - **VSN300** - WiFi Logger Card (older model)
 - **VSN700** - VSN700 datalogger (newer model)
 
 ### API Endpoints
+
 - `/v1/status` - Device and system status
 - `/v1/livedata` - Real-time measurements from inverters
 - `/v1/feeds` - Feed configuration and metadata
 
 ### Protocol Differences
+
 | Feature | VSN300 | VSN700 |
 |---------|--------|--------|
 | Auth Method | Digest | Basic |

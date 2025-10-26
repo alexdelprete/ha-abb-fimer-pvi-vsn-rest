@@ -2,7 +2,9 @@
 
 ## Project Overview
 
-This is the **ha-abb-fimer-pvi-vsn-rest** integration for Home Assistant. It provides monitoring of ABB/FIMER/Power-One PVI inverters through VSN300 or VSN700 dataloggers via their REST API.
+This is the **ha-abb-fimer-pvi-vsn-rest** integration for Home Assistant.
+It provides monitoring of ABB/FIMER/Power-One PVI inverters through VSN300
+or VSN700 dataloggers via their REST API.
 
 **Current Status**: v1.0.0-beta.2 - Active development
 
@@ -10,7 +12,7 @@ This is the **ha-abb-fimer-pvi-vsn-rest** integration for Home Assistant. It pro
 
 ### Data Flow
 
-```
+```text
 VSN300/VSN700 Datalogger (REST API)
     ↓
 Discovery Module (detect model, find devices)
@@ -31,6 +33,7 @@ Sensor Platform (HA entities)
 Centralized device discovery that runs during setup and configuration.
 
 **Responsibilities:**
+
 - Detect VSN model (VSN300 or VSN700)
 - Fetch status and livedata endpoints
 - Extract logger metadata (S/N, model, firmware, hostname)
@@ -46,6 +49,7 @@ Centralized device discovery that runs during setup and configuration.
   - Manufacturer from `C_Mn` point
 
 **Data Structures:**
+
 ```python
 @dataclass
 class DiscoveredDevice:
@@ -74,6 +78,7 @@ class DiscoveryResult:
 Handles communication with VSN datalogger REST API.
 
 **Responsibilities:**
+
 - Authenticate with VSN300 (X-Digest) or VSN700 (Basic Auth)
 - Fetch `/v1/status`, `/v1/livedata`, `/v1/feeds` endpoints
 - Merge livedata + feeds data
@@ -81,6 +86,7 @@ Handles communication with VSN datalogger REST API.
 - Return normalized data
 
 **Key Methods:**
+
 - `connect()`: Detect VSN model and authenticate
 - `get_normalized_data()`: Fetch and normalize data
 - `close()`: Clean up resources
@@ -90,6 +96,7 @@ Handles communication with VSN datalogger REST API.
 VSN-specific authentication schemes.
 
 **VSN300:**
+
 - Custom HTTP Digest with `X-Digest` header
 - Process:
   1. Fetch challenge from `/v1/dgst`
@@ -98,6 +105,7 @@ VSN-specific authentication schemes.
   4. Add header: `Authorization: X-Digest {final_digest}`
 
 **VSN700:**
+
 - Standard HTTP Basic Authentication
 - Base64-encoded `username:password`
 - Header: `Authorization: Basic {base64}`
@@ -107,6 +115,7 @@ VSN-specific authentication schemes.
 Transforms VSN proprietary format to SunSpec-compatible schema.
 
 **Responsibilities:**
+
 - Load mapping definitions from `mapping/` directory
 - Transform device types (e.g., `inverter_3phases` → `abb_m103`)
 - Map point names (e.g., `m103_1_W` → `abb_m103_w`)
@@ -114,6 +123,7 @@ Transforms VSN proprietary format to SunSpec-compatible schema.
 - Handle device ID normalization (MAC → S/N for datalogger)
 
 **Mapping Structure:**
+
 ```json
 {
   "inverter_3phases": {
@@ -137,12 +147,14 @@ Transforms VSN proprietary format to SunSpec-compatible schema.
 Home Assistant DataUpdateCoordinator for managing polling.
 
 **Responsibilities:**
+
 - Periodic data fetching (default: 60s)
 - Error handling and retries
 - Store discovery result
 - Distribute data to sensors
 
 **Key Attributes:**
+
 - `client`: VSN REST client instance
 - `vsn_model`: VSN300 or VSN700
 - `discovery_result`: Full discovery data
@@ -153,6 +165,7 @@ Home Assistant DataUpdateCoordinator for managing polling.
 UI for integration setup and configuration.
 
 **Features:**
+
 - User flow: Initial setup with host/credentials
 - Reconfigure flow: Change host or credentials
 - Options flow: Adjust scan interval
@@ -160,6 +173,7 @@ UI for integration setup and configuration.
 - Socket check on port 80 before REST API calls
 
 **Validation Process:**
+
 1. Check socket connectivity (port 80)
 2. Run discovery (detect model, find devices)
 3. Set unique_id to logger serial number
@@ -170,13 +184,16 @@ UI for integration setup and configuration.
 Creates Home Assistant sensor entities.
 
 **Entity Creation:**
+
 - One sensor per data point per device
 - Unique ID: `{DOMAIN}_{device_id}_{point_name}`
 - Entity name: From point label
 - Device class, state class, units from mapping
 
 **Device Info:**
+
 All HA device info fields populated from discovery:
+
 - `identifiers`: `(DOMAIN, device_id)`
 - `name`: Model + Serial (e.g., `"PVI-10.0-OUTD (077909-3G82-3112)"`)
 - `manufacturer`: From `C_Mn` point
@@ -192,6 +209,7 @@ All HA device info fields populated from discovery:
 ### Error Handling
 
 Use VSN client exceptions:
+
 ```python
 from .abb_fimer_vsn_rest_client.exceptions import (
     VSNAuthenticationError,
@@ -203,6 +221,7 @@ from .abb_fimer_vsn_rest_client.exceptions import (
 ### Logging
 
 Never use f-strings in logging calls:
+
 ```python
 # Good
 _LOGGER.debug("Device %s has %d points", device_id, len(points))
@@ -216,6 +235,7 @@ Always include context in log messages.
 ### Async/Await
 
 All I/O must be async:
+
 ```python
 # Discovery is async
 discovery = await discover_vsn_device(session, base_url, username, password)
@@ -228,6 +248,7 @@ await client.close()
 ### Runtime Data
 
 Use `config_entry.runtime_data` (typed):
+
 ```python
 @dataclass
 class RuntimeData:
@@ -243,6 +264,7 @@ Never use `hass.data[DOMAIN]`.
 ### Ruff Configuration
 
 Follow `.ruff.toml` strictly. Key rules:
+
 - No f-strings in logging (G004)
 - Proper exception handling (TRY300, TRY301)
 - No shadowing built-ins (A001)
@@ -251,6 +273,7 @@ Follow `.ruff.toml` strictly. Key rules:
 ### Type Hints
 
 Add type hints to all functions and class attributes:
+
 ```python
 def discover_vsn_device(
     session: aiohttp.ClientSession,
@@ -267,12 +290,14 @@ def discover_vsn_device(
 ### Manual Testing
 
 Use test scripts in `scripts/`:
+
 - `test_vsn_client.py`: Test REST client with real VSN device
 - `vsn_client.py`: Standalone client for user testing
 
 ### Test Data
 
 Sample data in `docs/vsn-data/`:
+
 - `vsn300-data/`: VSN300 status, livedata, feeds
 - `vsn700-data/`: VSN700 status, livedata, feeds
 
@@ -283,30 +308,36 @@ Use this data to verify mapping and normalization.
 ### VSN300
 
 **Authentication:**
+
 - X-Digest custom scheme
 - Challenge-response flow
 
 **Data Structure:**
+
 - Inverter model in `status["keys"]["device.modelDesc"]["value"]`
 - Datalogger has `sn` point in livedata
 - Firmware in `C_Vr` point for inverter
 - Firmware in `fw_ver` point for datalogger
 
 **Example Device IDs:**
+
 - Inverter: `"077909-3G82-3112"`
 - Datalogger MAC: `"a4:06:e9:7f:42:49"` → S/N: `"111033-3N16-1421"`
 
 ### VSN700
 
 **Authentication:**
+
 - HTTP Basic Authentication
 
 **Data Structure:**
+
 - Inverter model in `livedata["device_model"]`
 - Datalogger has no `sn` point (empty points array)
 - Firmware often not available
 
 **Example Device IDs:**
+
 - Inverter: `"123668-3P81-3821"`
 - Datalogger MAC: `"ac:1f:0f:b0:50:b5"` → Clean: `"ac1f0fb050b5"`
 
@@ -339,7 +370,9 @@ Use this data to verify mapping and normalization.
 ### Git Workflow
 
 **Commit Messages:**
+
 Use conventional commits:
+
 - `feat:` New features
 - `fix:` Bug fixes
 - `docs:` Documentation
@@ -348,7 +381,8 @@ Use conventional commits:
 - `chore:` Maintenance
 
 Always include Claude attribution:
-```
+
+```text
 feat(discovery): implement device discovery
 
 [Description]
@@ -360,12 +394,14 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
 **Branches:**
+
 - `master`: Main development branch
 - Feature branches for major work
 
 ## Configuration Parameters
 
 From config_entry:
+
 - `host`: IP/hostname (e.g., `"192.168.1.100"`, `"abb-vsn300.local"`)
 - `username`: Auth username (default: `"guest"`)
 - `password`: Auth password (default: `""`)
@@ -375,20 +411,24 @@ From config_entry:
 ## Entity Unique IDs
 
 **Config Entry:**
+
 - Based on logger serial number: `logger_sn.lower()`
 - Example: `"111033-3n16-1421"`
 
 **Devices:**
+
 - Based on device serial number or clean MAC
 - Example: `"077909-3G82-3112"` or `"ac1f0fb050b5"`
 
 **Sensors:**
+
 - Format: `{DOMAIN}_{device_id}_{point_name}`
 - Example: `"abb_fimer_pvi_vsn_rest_077909-3g82-3112_abb_m103_w"`
 
 ## Dependencies
 
 From `manifest.json`:
+
 - Home Assistant core
 - `aiohttp`: Async HTTP client
 
@@ -397,6 +437,7 @@ No external libraries for Modbus or SunSpec - we implement what we need.
 ## Key Files
 
 **Integration:**
+
 - `__init__.py`: Entry point, setup/unload
 - `config_flow.py`: UI configuration
 - `coordinator.py`: Data polling
@@ -404,6 +445,7 @@ No external libraries for Modbus or SunSpec - we implement what we need.
 - `const.py`: Constants
 
 **Client Library:**
+
 - `client.py`: REST client
 - `auth.py`: Authentication
 - `discovery.py`: Device discovery
@@ -412,6 +454,7 @@ No external libraries for Modbus or SunSpec - we implement what we need.
 - `mapping/`: VSN→SunSpec mappings
 
 **Documentation:**
+
 - `README.md`: User documentation
 - `CLAUDE.md`: This file (dev guidelines)
 - `CHANGELOG.md`: Version history
@@ -419,28 +462,119 @@ No external libraries for Modbus or SunSpec - we implement what we need.
 
 ## Don't Do
 
-❌ Use `hass.data[DOMAIN]` - Use `config_entry.runtime_data`
-❌ Use f-strings in logging - Use `%s` formatting
-❌ Shadow built-ins - Check with ruff
-❌ Mix sync/async - All I/O must be async
-❌ Forget to await async methods
-❌ Use blocking calls in async context
-❌ Create documentation files without explicit request
-❌ Use emojis unless user requests
+- ❌ Use `hass.data[DOMAIN]` - Use `config_entry.runtime_data`
+- ❌ Use f-strings in logging - Use `%s` formatting
+- ❌ Shadow built-ins - Check with ruff
+- ❌ Mix sync/async - All I/O must be async
+- ❌ Forget to await async methods
+- ❌ Use blocking calls in async context
+- ❌ Create documentation files without explicit request
+- ❌ Use emojis unless user requests
 
 ## Do
 
-✅ Use discovery module for device information
-✅ Include firmware version in device_info (not VSN model!)
-✅ Link devices with `via_device` to create hierarchy
-✅ Use logger serial number for stable unique IDs
-✅ Strip colons from MAC addresses (no underscores)
-✅ Extract model from correct location (VSN300: status, VSN700: livedata)
-✅ Handle missing data gracefully
-✅ Log extensively with proper context
-✅ Test with both VSN300 and VSN700 data
-✅ Follow Home Assistant best practices
-✅ Update documentation when changing architecture
+- ✅ Use discovery module for device information
+- ✅ Include firmware version in device_info (not VSN model!)
+- ✅ Link devices with `via_device` to create hierarchy
+- ✅ Use logger serial number for stable unique IDs
+- ✅ Strip colons from MAC addresses (no underscores)
+- ✅ Extract model from correct location (VSN300: status, VSN700: livedata)
+- ✅ Handle missing data gracefully
+- ✅ Log extensively with proper context
+- ✅ Test with both VSN300 and VSN700 data
+- ✅ Follow Home Assistant best practices
+- ✅ Update documentation when changing architecture
+
+## Markdown Documentation Standards
+
+All `.md` files must adhere to markdownlint rules for consistency and readability.
+
+### Key Markdownlint Rules
+
+**MD032 - Lists surrounded by blank lines:**
+
+- Always add a blank line before and after lists
+- Applies to both unordered (`-`) and ordered (`1.`) lists
+
+**MD031 - Fenced code blocks surrounded by blank lines:**
+
+- Add blank line before and after code blocks
+
+**MD040 - Fenced code blocks should have a language:**
+
+- Always specify language: ` ```python`, ` ```json`, ` ```yaml`, ` ```bash`, ` ```text`
+- Use `text` for diagrams, plain output, or non-code content
+
+**MD022/MD024 - Heading formatting:**
+
+- MD022: Headings should be surrounded by blank lines
+- MD024: Avoid multiple headings with same content (make them unique)
+
+**Bold text formatting:**
+
+- Add blank line after bold section headers (e.g., `**Responsibilities:**`)
+
+### Example - Correct Formatting
+
+```markdown
+### Feature Description
+
+This feature provides data normalization.
+
+**Key Benefits:**
+
+- Benefit 1
+- Benefit 2
+
+**Implementation:**
+
+The implementation includes:
+
+    ```python
+    def example():
+        pass
+    ```
+
+More details here.
+```text
+# End of markdown example
+```
+
+### Example - Incorrect Formatting
+
+```markdown
+### Feature Description
+This feature provides data normalization.
+**Key Benefits:**
+- Benefit 1
+- Benefit 2
+**Implementation:**
+The implementation includes:
+(missing code block language)
+def example():
+    pass
+More details here.
+```
+
+### When Creating/Updating Markdown Files
+
+1. Always add blank lines around lists
+2. Always add blank lines around code blocks
+3. Always specify language for code blocks (use `text` if no language)
+4. Always add blank line after bold headers
+5. Make heading names unique within the file
+6. Run markdownlint before committing (if available)
+
+### Markdownlint Configuration
+
+The project includes `.markdownlint.json` configuration:
+
+- Line length: 120 characters (relaxed from default 80)
+- Duplicate headings: Only siblings checked (allows same heading in different sections)
+- HTML allowed (MD033 disabled)
+- First line heading not required (MD041 disabled)
+
+Run linting: `npx markdownlint-cli2 *.md docs/*.md`
 
 ## Related Projects
 

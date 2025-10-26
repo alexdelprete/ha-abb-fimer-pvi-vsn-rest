@@ -9,17 +9,20 @@ Added complete Italian translation for the integration and updated all documenta
 ### Implementation Details
 
 **Translation:**
+
 - Created `translations/it.json` with complete Italian translation
 - All UI strings translated: config flow, options, errors, abort messages
 - Maintains all placeholders and formatting from English version
 - Natural Italian phrasing with consistent technical terminology
 
 **Documentation Updates:**
+
 - README.md: Added "Multi-Language" to features, new "Translations" section
 - CHANGELOG.md: Added internationalization section to unreleased changes
 - Project structure updated to show both translation files
 
 **Supported Languages:**
+
 - 🇬🇧 English (`en.json`) - Complete
 - 🇮🇹 Italian (`it.json`) - Complete
 
@@ -41,11 +44,13 @@ Home Assistant automatically detects and uses the appropriate language based on 
 
 ## 2025-10-26: Discovery Module and Device Info Implementation
 
-### Summary
+### Summary (Discovery)
 
-Completed comprehensive implementation of device discovery and complete device_info metadata for the VSN REST integration. This establishes proper device hierarchy in Home Assistant with all standard device fields.
+Completed comprehensive implementation of device discovery and complete
+device_info metadata for the VSN REST integration. This establishes proper
+device hierarchy in Home Assistant with all standard device fields.
 
-### Implementation Details
+### Implementation Details (Discovery)
 
 #### 1. Discovery Module (`abb_fimer_vsn_rest_client/discovery.py`)
 
@@ -59,17 +64,20 @@ Completed comprehensive implementation of device discovery and complete device_i
   - Handle device identification with VSN-specific logic
 
 **Smart Device ID Handling:**
+
 - VSN300 datalogger: Extract `sn` point → `"111033-3N16-1421"`
 - VSN700 datalogger: Strip colons from MAC → `"ac1f0fb050b5"` (no underscores!)
 - Inverters: Use serial number as-is
 
 **Device Metadata Extraction:**
+
 - VSN300: Model from `status["keys"]["device.modelDesc"]` → `"PVI-10.0-OUTD"`
 - VSN700: Model from `livedata["device_model"]` → `"REACT2-5.0-TL"`
 - Firmware from `C_Vr` point (inverters) or `fw_ver` point (datalogger)
 - Manufacturer from `C_Mn` point → `"Power-One"`, `"ABB"`, `"FIMER"`
 
 **Data Structures:**
+
 ```python
 @dataclass
 class DiscoveredDevice:
@@ -96,21 +104,25 @@ class DiscoveryResult:
 #### 2. Integration Updates
 
 **config_flow.py:**
+
 - Replaced manual validation with discovery function
 - Simplified connection validation logic
 - Better device discovery logging during setup
 
 **coordinator.py:**
+
 - Added `discovery_result` parameter to store complete discovery data
 - Stores `discovered_devices` list for sensor platform
 - Pre-initializes VSN model from discovery
 
-**__init__.py:**
+**init module:**
+
 - Performs discovery during integration setup
 - Passes discovery result to coordinator
 - Logs all discovered devices for debugging
 
-**sensor.py:**
+**sensor module:**
+
 - Complete device_info implementation with all HA fields
 - Dynamic device naming from discovery metadata
 - Proper device hierarchy with `via_device`
@@ -137,7 +149,7 @@ All standard Home Assistant device fields now populated:
 
 Proper device relationships established:
 
-```
+```text
 VSN300 Datalogger (111033-3N16-1421)
   ├─ configuration_url: http://abb-vsn300.local
   └─ Contains:
@@ -149,38 +161,41 @@ VSN300 Datalogger (111033-3N16-1421)
           └─ via_device: VSN300
 ```
 
-### Files Modified
+### Files Modified (Discovery)
 
 **Core Implementation:**
-1. `custom_components/abb_fimer_pvi_vsn_rest/abb_fimer_vsn_rest_client/discovery.py` (NEW)
-   - 365 lines
-   - Complete discovery module with helper functions
 
-2. `custom_components/abb_fimer_pvi_vsn_rest/config_flow.py`
-   - Updated to use discovery module
-   - Simplified validation logic
+- `custom_components/abb_fimer_pvi_vsn_rest/abb_fimer_vsn_rest_client/discovery.py` (NEW)
+  - 365 lines
+  - Complete discovery module with helper functions
 
-3. `custom_components/abb_fimer_pvi_vsn_rest/coordinator.py`
-   - Added discovery_result storage
-   - Stores discovered_devices list
+- `custom_components/abb_fimer_pvi_vsn_rest/config_flow.py`
+  - Updated to use discovery module
+  - Simplified validation logic
 
-4. `custom_components/abb_fimer_pvi_vsn_rest/__init__.py`
-   - Performs discovery during setup
-   - Passes discovery to coordinator
+- `custom_components/abb_fimer_pvi_vsn_rest/coordinator.py`
+  - Added discovery_result storage
+  - Stores discovered_devices list
 
-5. `custom_components/abb_fimer_pvi_vsn_rest/sensor.py`
-   - Complete device_info implementation
-   - All HA device fields populated
-   - Device hierarchy with via_device
+- `custom_components/abb_fimer_pvi_vsn_rest/__init__.py`
+  - Performs discovery during setup
+  - Passes discovery to coordinator
+
+- `custom_components/abb_fimer_pvi_vsn_rest/sensor.py`
+  - Complete device_info implementation
+  - All HA device fields populated
+  - Device hierarchy with via_device
 
 **Documentation:**
-6. `README.md` - Complete user documentation
-7. `CLAUDE.md` - Comprehensive dev guidelines
-8. `docs/DEV_NOTES.md` - This file
+
+- `README.md` - Complete user documentation
+- `CLAUDE.md` - Comprehensive dev guidelines
+- `docs/DEV_NOTES.md` - This file
 
 ### Testing Results
 
 **Discovery Testing:**
+
 - ✅ VSN300 model detection
 - ✅ VSN300 datalogger S/N extraction from `sn` point
 - ✅ VSN700 datalogger MAC cleaning (colons stripped)
@@ -189,6 +204,7 @@ VSN300 Datalogger (111033-3N16-1421)
 - ✅ Manufacturer extraction (`C_Mn` point)
 
 **Device Info Testing:**
+
 - ✅ All device_info fields populated
 - ✅ Proper device naming (Model + Serial)
 - ✅ Device hierarchy (via_device)
@@ -198,25 +214,27 @@ VSN300 Datalogger (111033-3N16-1421)
 ### Entity Naming Examples
 
 **Before (Generic):**
-```
+
+```text
 Device: "VSN Device 077909-3G82-3112"
 Entity: sensor.vsn_device_077909_3g82_3112_watts
 ```
 
 **After (Proper):**
-```
+
+```text
 Device: "PVI-10.0-OUTD (077909-3G82-3112)"
 Entity: sensor.pvi_10_0_outd_077909_3g82_3112_watts
 ```
 
-### Commits
+### Commits (Discovery)
 
 1. **feat(discovery): implement centralized device discovery** (0c83048)
    - New discovery.py module
-   - Updated config_flow, coordinator, sensor, __init__
+   - Updated config_flow, coordinator, sensor, init
    - Smart device ID handling for VSN300/VSN700
 
-2. **feat(device_info): implement complete device_info with all HA fields** (4ae089f)
+2. **feat(device_info): implement complete device info with all HA fields** (4ae089f)
    - Added firmware_version to DiscoveredDevice
    - Extract firmware from C_Vr and fw_ver points
    - Complete device_info with all standard HA fields
@@ -224,6 +242,7 @@ Entity: sensor.pvi_10_0_outd_077909_3g82_3112_watts
 ### Technical Notes
 
 **Unique ID Strategy:**
+
 - Config entry: Logger serial number (lowercase)
 - Device identifier: Device serial number or clean MAC
 - Sensor unique_id: `{DOMAIN}_{device_id}_{point_name}`
@@ -231,18 +250,21 @@ Entity: sensor.pvi_10_0_outd_077909_3g82_3112_watts
 **VSN300 vs VSN700 Differences:**
 
 VSN300:
+
 - Auth: X-Digest custom scheme
 - Model location: `status["keys"]["device.modelDesc"]["value"]`
 - Datalogger ID: Extract `sn` point from livedata
 - Firmware: `C_Vr` (inverter), `fw_ver` (datalogger)
 
 VSN700:
+
 - Auth: HTTP Basic
 - Model location: `livedata["device_model"]`
 - Datalogger ID: Clean MAC (strip colons)
 - Firmware: Often not available
 
 **Performance:**
+
 - Discovery runs once during setup: ~2-3 seconds
 - Includes status + livedata fetch
 - Cached in coordinator for sensor creation
@@ -251,6 +273,7 @@ VSN700:
 ### Code Quality
 
 **Standards Followed:**
+
 - ✅ Type hints on all functions and classes
 - ✅ Proper async/await patterns
 - ✅ Logging with context (no f-strings)
@@ -286,26 +309,34 @@ VSN700:
 
 ---
 
+---
+
 ## 2025-10-26: VSN Client Normalization Feature Complete
 
-### Summary
-Completed implementation of data normalization in the standalone `vsn_client.py` test script. The normalization feature transforms raw VSN data to Home Assistant entity format using the VSN-SunSpec point mapping.
+### Summary (VSN Client)
 
-### Implementation Details
+Completed implementation of data normalization in the standalone `vsn_client.py`
+test script. The normalization feature transforms raw VSN data to Home Assistant
+entity format using the VSN-SunSpec point mapping.
+
+### Implementation Details (VSN Client)
 
 **Approach Selected:** Option 3 - URL-based mapping from GitHub
+
 - Downloads mapping JSON from GitHub on-demand
 - No embedded data in script (keeps file size at 20 KB)
 - Requires internet connection for normalization
 - Gracefully degrades if mapping unavailable
 
 **Components Added:**
+
 1. `load_mapping_from_url()` - Fetches and indexes mapping from GitHub
 2. `normalize_livedata()` - Transforms VSN data to HA entity format
 3. Integration into test flow with proper error handling
 4. Enhanced test summary showing normalization results
 
 **Files Modified:**
+
 - `scripts/vsn_client.py` (546 lines, 20 KB)
   - Added normalization module
   - Updated test flow
@@ -317,6 +348,7 @@ Completed implementation of data normalization in the standalone `vsn_client.py`
   - Updated example output
 
 **Files Created:**
+
 - `docs/vsn-sunspec-point-mapping.json` (126 KB, 259 mappings)
   - Converted from Excel source
   - Runtime format for fast loading
@@ -330,9 +362,10 @@ Completed implementation of data normalization in the standalone `vsn_client.py`
   - Documents dual format workflow
   - Excel for editing, JSON for runtime
 
-### Testing Results
+### Testing Results (VSN Client)
 
 **Device:** VSN300 at abb-vsn300.axel.dom
+
 - ✅ Device detection: VSN300
 - ✅ /v1/status: OK (logger: 111033-3N16-1421, inverter: PVI-10.0-OUTD)
 - ✅ /v1/livedata: OK (2 devices, 52 raw points)
@@ -340,6 +373,7 @@ Completed implementation of data normalization in the standalone `vsn_client.py`
 - ⚠️ Normalization: Skipped (mapping file not in GitHub yet)
 
 **Expected After Push:**
+
 - Mapping file available at GitHub URL
 - Normalization will work automatically
 - Will transform 52 raw points to 53 normalized HA entities
@@ -347,14 +381,16 @@ Completed implementation of data normalization in the standalone `vsn_client.py`
 ### Dependencies
 
 **Runtime:**
+
 - Python 3.9+
 - aiohttp
 - Internet connection (for normalization only)
 
 **Development:**
+
 - openpyxl (for Excel→JSON conversion only)
 
-### References
+### References (VSN Client)
 
 - [vsn_client.py](../scripts/vsn_client.py)
 - [VSN_CLIENT_README.md](../scripts/VSN_CLIENT_README.md)

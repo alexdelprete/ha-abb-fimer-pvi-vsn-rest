@@ -2,11 +2,13 @@
 
 ## Overview
 
-The VSN-SunSpec point mapping defines how data from VSN300/VSN700 dataloggers is normalized to Home Assistant entities with proper metadata.
+The VSN-SunSpec point mapping defines how data from VSN300/VSN700 dataloggers
+is normalized to Home Assistant entities with proper metadata.
 
 ## Files
 
 ### Source (Excel)
+
 - **Location**: `docs/vsn-sunspec-point-mapping.xlsx`
 - **Purpose**: Human-readable/editable mapping maintained in Excel
 - **Sheets**:
@@ -14,6 +16,7 @@ The VSN-SunSpec point mapping defines how data from VSN300/VSN700 dataloggers is
   - `Summary`: Statistics and overview
 
 ### Runtime (JSON)
+
 - **Location**: `docs/vsn-sunspec-point-mapping.json`
 - **Purpose**: Machine-readable format used by the integration
 - **Size**: ~124 KB
@@ -70,6 +73,7 @@ python scripts/generate_mapping_json.py
 ```
 
 This will:
+
 1. Read `docs/vsn-sunspec-point-mapping.xlsx`
 2. Convert to JSON format
 3. Write to `docs/vsn-sunspec-point-mapping.json`
@@ -95,12 +99,14 @@ This will:
 ## Why Both Excel and JSON?
 
 ### Excel (.xlsx)
+
 - ✅ Easy to edit in Excel/LibreOffice
 - ✅ Good for bulk updates and reviews
 - ✅ Human-readable columns and formatting
 - ✅ Version control in git (though diffs are difficult)
 
 ### JSON (.json)
+
 - ✅ No external library dependency (openpyxl)
 - ✅ Faster loading (native Python JSON parser)
 - ✅ Can be embedded in self-contained scripts
@@ -137,7 +143,8 @@ print(mapping.units)  # W
 
 ## Self-Contained Scripts
 
-For `vsn_client.py` (self-contained testing script), the JSON can be embedded directly or loaded from a URL, eliminating the need for the docs folder.
+For `vsn_client.py` (self-contained testing script), the JSON can be embedded
+directly or loaded from a URL, eliminating the need for the docs folder.
 
 ## Maintenance
 

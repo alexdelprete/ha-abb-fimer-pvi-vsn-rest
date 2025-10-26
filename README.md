@@ -10,7 +10,10 @@ Home Assistant custom integration for ABB/FIMER/Power-One PVI inverters via **VS
 
 ## Overview
 
-This integration connects to VSN300 or VSN700 dataloggers to monitor ABB/FIMER/Power-One PV inverters. It communicates via the datalogger's REST API and normalizes data to SunSpec-compatible format for consistent Home Assistant entity creation.
+This integration connects to VSN300 or VSN700 dataloggers to monitor
+ABB/FIMER/Power-One PV inverters. It communicates via the datalogger's REST API
+and normalizes data to SunSpec-compatible format for consistent Home Assistant
+entity creation.
 
 ### Features
 
@@ -27,14 +30,17 @@ This integration connects to VSN300 or VSN700 dataloggers to monitor ABB/FIMER/P
 ### Supported Devices
 
 **VSN Dataloggers:**
+
 - VSN300 (WIFI LOGGER CARD)
 - VSN700 (Ethernet/WiFi datalogger)
 
 **Inverters:** (via datalogger)
+
 - Single-phase: REACT2-3.6-TL, REACT2-5.0-TL, etc.
 - Three-phase: PVI-10.0-OUTD, PVI-12.5-OUTD, etc.
 
 **Other Devices:** (via datalogger)
+
 - Energy meters
 - Battery storage systems
 
@@ -78,6 +84,7 @@ This integration connects to VSN300 or VSN700 dataloggers to monitor ABB/FIMER/P
 5. Click **"Submit"**
 
 The integration will:
+
 - Detect VSN model (VSN300 or VSN700)
 - Discover all connected devices (inverters, meters, batteries)
 - Create Home Assistant entities for all data points
@@ -124,6 +131,7 @@ Each device includes complete metadata:
 ### Typical Entities (Inverter)
 
 **Production:**
+
 - AC Power (W)
 - AC Current (A)
 - AC Voltage (V)
@@ -132,11 +140,13 @@ Each device includes complete metadata:
 - Daily Energy (Wh)
 
 **DC Inputs (per MPPT):**
+
 - DC Voltage (V)
 - DC Current (A)
 - DC Power (W)
 
 **Status:**
+
 - Operating State
 - Cabinet Temperature
 - Isolation Resistance
@@ -145,7 +155,7 @@ Each device includes complete metadata:
 
 ### Data Flow
 
-```
+```text
 VSN Datalogger
     ↓ (REST API)
 VSN REST Client
@@ -190,6 +200,7 @@ Home Assistant Entities
 ## VSN Authentication
 
 ### VSN300
+
 - **Scheme**: Custom HTTP Digest (X-Digest header)
 - **Process**:
   1. Request challenge from `/v1/dgst`
@@ -197,6 +208,7 @@ Home Assistant Entities
   3. Add `Authorization: X-Digest {digest}` header
 
 ### VSN700
+
 - **Scheme**: HTTP Basic Authentication
 - **Process**: Standard Basic Auth with base64-encoded credentials
 
@@ -209,6 +221,7 @@ Both schemes are handled automatically by the integration.
 **Symptom**: "Cannot connect" error during setup
 
 **Solutions**:
+
 1. Verify datalogger IP/hostname is correct
 2. Ensure datalogger is powered on and network-accessible
 3. Check firewall rules allow HTTP (port 80)
@@ -219,6 +232,7 @@ Both schemes are handled automatically by the integration.
 **Symptom**: "Authentication failed" error
 
 **Solutions**:
+
 1. Try default credentials (username: `guest`, password: empty)
 2. Check credentials in datalogger web interface
 3. Reset datalogger credentials if necessary
@@ -228,6 +242,7 @@ Both schemes are handled automatically by the integration.
 **Symptom**: Integration loads but no sensors appear
 
 **Solutions**:
+
 1. Check Home Assistant logs for errors
 2. Verify inverter is connected to datalogger
 3. Check datalogger web interface shows inverter data
@@ -248,7 +263,9 @@ Restart Home Assistant and check logs for detailed information.
 
 ## Data Mapping
 
-VSN data points are mapped to SunSpec-compatible schema using definitions in the `mapping/` directory. The mapping includes:
+VSN data points are mapped to SunSpec-compatible schema using definitions in the `mapping/` directory.
+
+The mapping includes:
 
 - Device classification (inverter type, meter, battery, etc.)
 - Point name translation (VSN → SunSpec)
@@ -265,7 +282,9 @@ The integration is available in multiple languages:
 - 🇬🇧 **English** (`en.json`) - Complete
 - 🇮🇹 **Italian** (`it.json`) - Complete
 
-The integration automatically uses the language configured in your Home Assistant instance. All UI strings, error messages, and configuration flows are fully translated.
+The integration automatically uses the language configured in your Home Assistant
+instance. All UI strings, error messages, and configuration flows are fully
+translated.
 
 ### Contributing Translations
 
@@ -284,7 +303,7 @@ See [CLAUDE.md](CLAUDE.md) for development guidelines and architecture details.
 
 ### Project Structure
 
-```
+```text
 custom_components/abb_fimer_pvi_vsn_rest/
 ├── __init__.py              # Integration entry point
 ├── config_flow.py           # UI configuration
@@ -307,8 +326,10 @@ custom_components/abb_fimer_pvi_vsn_rest/
 
 ## Related Projects
 
-- **[ha-abb-fimer-pvi-sunspec](https://github.com/alexdelprete/ha-abb-fimer-pvi-sunspec)** - Direct Modbus/TCP integration (no datalogger required)
-- **[ha-abb-powerone-pvi-sunspec](https://github.com/alexdelprete/ha-abb-powerone-pvi-sunspec)** - Legacy v4.x integration (Modbus only)
+- **[ha-abb-fimer-pvi-sunspec](https://github.com/alexdelprete/ha-abb-fimer-pvi-sunspec)**
+  Direct Modbus/TCP integration (no datalogger required)
+- **[ha-abb-powerone-pvi-sunspec](https://github.com/alexdelprete/ha-abb-powerone-pvi-sunspec)**
+  Legacy v4.x integration (Modbus only)
 
 ## Support
 

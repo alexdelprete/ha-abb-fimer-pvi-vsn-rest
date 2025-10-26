@@ -1,12 +1,13 @@
 # SunSpec Models
 
-This directory contains SunSpec model JSON definitions from https://github.com/sunspec/models
+This directory contains SunSpec model JSON definitions from <https://github.com/sunspec/models>
 
 These models are used to normalize VSN REST API data to SunSpec schema.
 
 ## Contents
 
 ### JSON Models (`json/` directory)
+
 - model_1.json - Common Model
 - model_101.json - Inverter (Single Phase)
 - model_103.json - Inverter (Three Phase)
@@ -21,6 +22,7 @@ These models are used to normalize VSN REST API data to SunSpec schema.
 - model_804.json - Lithium-Ion Battery Module Model
 
 ### Metadata Files
+
 - **NOTICE** - Apache 2.0 license attribution
 - **NAMESPACE** - Upstream source, git ref, and download timestamp
 

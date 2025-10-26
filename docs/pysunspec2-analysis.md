@@ -1,23 +1,27 @@
 # pysunspec2 Library Analysis for ABB/Power-One/FIMER Integration
 
-**Date:** October 18, 2025  
-**Analyst:** Claude Code  
-**Version:** 1.0  
-**Repository Analyzed:** https://github.com/sunspec/pysunspec2 (commit: 57c2f76, Sep 24, 2025)
+**Date:** October 18, 2025
+**Analyst:** Claude Code
+**Version:** 1.0
+**Repository Analyzed:** <https://github.com/sunspec/pysunspec2> (commit: 57c2f76, Sep 24, 2025)
 
 ---
 
 ## Executive Summary
 
-**Recommendation: ❌ DO NOT USE pysunspec2**
+### Recommendation: ❌ DO NOT USE pysunspec2
 
-pysunspec2 is **not suitable** for replacing our custom SunSpec parsing in the Home Assistant integration due to:
+pysunspec2 is **not suitable** for replacing our custom SunSpec parsing in the
+Home Assistant integration due to:
+
 1. **Complete lack of async/await support** (blocking I/O operations)
 2. **Hardcoded transport layer** (cannot use ModbusLink or other libraries)
 3. **Still depends on pymodbus** (in requirements.txt for testing, but defeats the purpose)
 4. **Synchronous-only API** (incompatible with Home Assistant's async architecture)
 
-**Alternative Recommendation:** Continue with current custom implementation OR explore **ModbusLink** (modern async Modbus library) combined with pysunspec2's excellent model definitions.
+**Alternative Recommendation:** Continue with current custom implementation OR
+explore **ModbusLink** (modern async Modbus library) combined with pysunspec2's
+excellent model definitions.
 
 ---
 
@@ -25,9 +29,11 @@ pysunspec2 is **not suitable** for replacing our custom SunSpec parsing in the H
 
 ### Critical Dependency Issue
 
-**pymodbus dependency: ✅ YES, version 2.5.3 is required**
+### pymodbus Dependency
 
-```
+Status: ✅ YES, version 2.5.3 is required
+
+```text
 # From requirements.txt:
 pytest>=8.3.3
 pyserial>=3.5
@@ -117,6 +123,7 @@ def scan(self):
 ```
 
 **Workaround Required:** Would need to wrap all pysunspec2 calls in `asyncio.to_thread()` or `run_in_executor()`, which:
+
 - Adds complexity and overhead
 - Defeats the purpose of using a library
 - Still blocks worker threads
@@ -139,7 +146,7 @@ def scan(self):
 
 ### Recent Activity (2024-2025)
 
-```
+```text
 57c2f76 - Sep 24, 2025 - Merge pull request #115 (fix intermediate CAs)
 f38bb76 - Sep 24, 2025 - fix intermediate CAs
 9ac9094 - Sep 24, 2025 - expanded TLS certs
@@ -303,7 +310,7 @@ Models are defined in JSON format with excellent structure:
 
 ### Architecture Overview
 
-```
+```text
 ┌─────────────────────────────────────┐
 │  SunSpecModbusClientDeviceTCP       │  High-level device interface
 └─────────────┬───────────────────────┘
@@ -350,6 +357,7 @@ The library architecture prevents using alternative Modbus implementations:
 ✅ **Modbus TCP is fully supported** but only via built-in implementation
 
 Features:
+
 - Standard Modbus TCP protocol
 - TLS/SSL support (Modbus/TCP Security)
 - Connection pooling and retries
@@ -375,6 +383,7 @@ d.inverter[0].SomeGroup.read()  # ⚠️ Synchronous blocking call
 ### Batch Reading
 
 ✅ **Supported** - Can read entire models in one operation
+
 - Optimized for large register reads
 - Max read count: 125 registers (configurable)
 - Automatically splits larger reads
@@ -382,6 +391,7 @@ d.inverter[0].SomeGroup.read()  # ⚠️ Synchronous blocking call
 ### Caching
 
 🟡 **Limited caching**
+
 - Values are cached in Point objects after read
 - No automatic refresh or TTL
 - Must manually call `read()` to update
@@ -436,11 +446,13 @@ $ find /tmp/pysunspec2 -name "*.py" | wc -l
 ### Performance Characteristics
 
 #### Strengths
+
 - ✅ Direct socket operations (no middleware overhead)
 - ✅ Optimized register reads (batching)
 - ✅ Minimal dependencies
 
 #### Weaknesses
+
 - ❌ Synchronous blocking I/O
 - ❌ No connection pooling across devices
 - ❌ No async concurrency
@@ -477,7 +489,8 @@ $ find /tmp/pysunspec2 -name "*.py" | wc -l
 ### Architecture Comparison
 
 #### pysunspec2 Architecture
-```
+
+```text
 ┌──────────────────────────┐
 │   SunSpec Device API     │  High-level, but synchronous
 ├──────────────────────────┤
@@ -488,7 +501,8 @@ $ find /tmp/pysunspec2 -name "*.py" | wc -l
 ```
 
 #### ModbusLink Architecture
-```
+
+```text
 ┌──────────────────────────┐
 │   Application Layer      │  Your async code
 ├──────────────────────────┤
@@ -501,7 +515,8 @@ $ find /tmp/pysunspec2 -name "*.py" | wc -l
 ```
 
 #### Current Implementation
-```
+
+```text
 ┌──────────────────────────┐
 │   ABBPowerOneFimerAPI    │  Async wrapper
 ├──────────────────────────┤
@@ -594,6 +609,7 @@ class PySunSpec2API:
 ### What is ModbusLink?
 
 **ModbusLink** is a modern Python Modbus library with:
+
 - Native async/await support
 - Clean layered architecture
 - No pymodbus dependency
@@ -694,30 +710,35 @@ class HybridSunSpecAPI:
 ## 12. Specific Issues Identified
 
 ### Issue 1: No Async Support
+
 - **Severity:** 🔴 Critical
 - **Impact:** Cannot be used in Home Assistant without executor wrappers
 - **Workaround:** Run all operations in thread pool
 - **Effort:** High complexity, poor performance
 
 ### Issue 2: pymodbus Dependency
+
 - **Severity:** 🔴 Critical
 - **Impact:** Still depends on pymodbus (though only for tests)
 - **Workaround:** Fork and remove dependency
 - **Effort:** Low, but defeats purpose of evaluation
 
 ### Issue 3: Transport Not Abstracted
+
 - **Severity:** 🟠 High
 - **Impact:** Cannot use ModbusLink or other Modbus libraries
 - **Workaround:** Major refactoring required
 - **Effort:** Very high, essentially rewriting the library
 
 ### Issue 4: No Type Hints
+
 - **Severity:** 🟡 Medium
 - **Impact:** Reduced IDE support, harder to maintain
 - **Workaround:** Add type hints in wrapper
 - **Effort:** Medium
 
 ### Issue 5: Connection Management
+
 - **Severity:** 🟡 Medium
 - **Impact:** Connection lifecycle is synchronous
 - **Workaround:** Manage in executor with careful state tracking
@@ -730,6 +751,7 @@ class HybridSunSpecAPI:
 ### If We Were to Use pysunspec2 (Not Recommended)
 
 #### Step 1: Create Async Wrapper
+
 ```python
 # Estimated: 200-300 lines of wrapper code
 class AsyncPySunSpec2Wrapper:
@@ -737,17 +759,21 @@ class AsyncPySunSpec2Wrapper:
     # Handle connection state across threads
     # Manage error propagation
 ```
+
 **Effort:** 2-3 days
 
 #### Step 2: Adapt Data Extraction
+
 ```python
 # Map pysunspec2 Point objects to our sensor entities
 # Handle scale factors
 # Deal with None/undefined values
 ```
+
 **Effort:** 1-2 days
 
 #### Step 3: Testing
+
 - Test with single-phase inverters
 - Test with three-phase inverters
 - Test MPPT detection
@@ -755,6 +781,7 @@ class AsyncPySunSpec2Wrapper:
 **Effort:** 2-3 days
 
 #### Step 4: Performance Tuning
+
 - Optimize executor usage
 - Minimize thread pool pressure
 - Handle timeouts properly
@@ -768,13 +795,16 @@ class AsyncPySunSpec2Wrapper:
 ## 14. Alternative Solutions
 
 ### Option A: Continue with Current Implementation ✅ RECOMMENDED
+
 **Pros:**
+
 - Already works well
 - Fully async
 - Well-tested
 - Understood codebase
 
 **Cons:**
+
 - Depends on pymodbus>=3.11.2
 - Custom SunSpec parsing (maintenance burden)
 - Pymodbus version compatibility issues
@@ -784,18 +814,22 @@ class AsyncPySunSpec2Wrapper:
 ---
 
 ### Option B: ModbusLink + Custom SunSpec Parsing 🟡 VIABLE
+
 **Pros:**
+
 - True async support
 - No pymodbus dependency
 - Modern, actively maintained
 - Type-safe
 
 **Cons:**
+
 - Need to implement SunSpec parsing
 - More code to write and maintain
 - ModbusLink is newer (less proven)
 
 **Migration Path:**
+
 1. Install ModbusLink: `pip install modbuslink`
 2. Copy pysunspec2 model definitions (JSON files)
 3. Implement SunSpec discovery logic
@@ -809,11 +843,14 @@ class AsyncPySunSpec2Wrapper:
 ---
 
 ### Option C: Fork pysunspec2 and Add Async ❌ NOT RECOMMENDED
+
 **Pros:**
+
 - Could add async support to pysunspec2
 - Keep high-level API
 
 **Cons:**
+
 - Major refactoring required
 - Need to maintain fork
 - Breaking changes to library architecture
@@ -826,11 +863,14 @@ class AsyncPySunSpec2Wrapper:
 ---
 
 ### Option D: Use pysunspec2 with Executor Wrappers ❌ NOT RECOMMENDED
+
 **Pros:**
+
 - Minimal code changes
 - Use pysunspec2 as-is
 
 **Cons:**
+
 - Poor performance (multiple executor calls)
 - Complexity in error handling
 - Thread pool pressure
@@ -847,13 +887,15 @@ class AsyncPySunSpec2Wrapper:
 ### Primary Recommendation: Continue Current Implementation
 
 **Keep the current custom implementation** until pymodbus issues become blocking. The current code:
+
 - ✅ Works reliably
 - ✅ Is fully async
 - ✅ Is well-tested
 - ✅ Handles all required SunSpec models
 - ⚠️ Has pymodbus dependency (manageable for now)
 
-**When to reconsider:** If pymodbus version conflicts become critical or if Home Assistant drops support for our pymodbus version.
+**When to reconsider:** If pymodbus version conflicts become critical or if
+Home Assistant drops support for our pymodbus version.
 
 ---
 
@@ -989,17 +1031,20 @@ async def read_sunspec_common(host: str, port: int, device_id: int) -> dict:
 ## 18. References
 
 ### Repositories
-- **pysunspec2:** https://github.com/sunspec/pysunspec2
-- **ModbusLink:** https://pypi.org/project/modbuslink/
-- **pymodbus:** https://github.com/pymodbus-dev/pymodbus
-- **SunSpec Models:** https://github.com/sunspec/models
+
+- **pysunspec2:** <https://github.com/sunspec/pysunspec2>
+- **ModbusLink:** <https://pypi.org/project/modbuslink/>
+- **pymodbus:** <https://github.com/pymodbus-dev/pymodbus>
+- **SunSpec Models:** <https://github.com/sunspec/models>
 
 ### Documentation
-- **SunSpec Specification:** https://sunspec.org/specifications/
-- **Home Assistant Async:** https://developers.home-assistant.io/docs/asyncio_working_with_async/
+
+- **SunSpec Specification:** <https://sunspec.org/specifications/>
+- **Home Assistant Async:** <https://developers.home-assistant.io/docs/asyncio_working_with_async/>
 - **ModbusLink Docs:** (See PyPI package)
 
 ### Relevant Issues
+
 - pysunspec2 #51: "How to use numbered models?" (October 2021)
 - pysunspec2 #115: TLS certificate fixes (September 2025)
 
