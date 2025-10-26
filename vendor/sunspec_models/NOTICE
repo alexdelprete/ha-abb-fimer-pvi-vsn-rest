@@ -1,0 +1,31 @@
+SunSpec Model Definitions
+=========================
+
+This directory contains SunSpec model definitions in JSON format,
+sourced from the SunSpec Alliance official models repository.
+
+Source: https://github.com/sunspec/models
+License: Apache License 2.0
+
+These model definitions are copyright SunSpec Alliance and are used
+under the terms of the Apache License 2.0.
+
+See LICENSE file in the sunspec/models repository for full license text:
+https://github.com/sunspec/models/blob/master/LICENSE
+
+Models included:
+- model_1.json    - Common Model
+- model_101.json  - Inverter (Single Phase)
+- model_103.json  - Inverter (Three Phase)
+- model_120.json  - Nameplate Ratings
+- model_124.json  - Basic Storage Controls
+- model_160.json  - Multiple MPPT Inverter Extension
+- model_201.json  - Meter (Single Phase)
+- model_203.json  - Meter (Three Phase)
+- model_204.json  - Meter (Three Phase WYE)
+- model_802.json  - Lithium-Ion Battery Bank Model
+- model_803.json  - Lithium-Ion Battery String Model
+- model_804.json  - Lithium-Ion Battery Module Model
+
+These JSON definitions are used to normalize VSN REST API data to
+SunSpec schema for ABB/FIMER PVI inverters.
