@@ -142,7 +142,7 @@ async def validate_connection(
         raise VSNClientError(f"Unexpected error: {err}") from err
 
 
-class ABBFimerPVIVSNRestConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+class ABBFimerPVIVSNRestConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # type: ignore  # noqa: PGH003
     """Handle a config flow for ABB FIMER PVI VSN REST."""
 
     VERSION = 1

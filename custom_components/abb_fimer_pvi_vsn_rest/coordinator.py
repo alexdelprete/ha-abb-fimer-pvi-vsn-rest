@@ -79,7 +79,7 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 len(data.get("devices", {})),
             )
 
-            return data
+            return data  # noqa: TRY300
 
         except VSNAuthenticationError as err:
             # Authentication errors are likely configuration issues
