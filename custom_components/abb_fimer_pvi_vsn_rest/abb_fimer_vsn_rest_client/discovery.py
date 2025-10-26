@@ -90,6 +90,7 @@ async def discover_vsn_device(
     Raises:
         VSNConnectionError: If connection fails
         VSNAuthenticationError: If authentication fails
+
     """
     _LOGGER.debug("Starting VSN device discovery at %s", base_url)
 
@@ -153,6 +154,7 @@ async def _fetch_status(
 
     Raises:
         VSNConnectionError: If fetch fails
+
     """
     status_url = f"{base_url}/v1/status"
     uri = "/v1/status"
@@ -175,10 +177,7 @@ async def _fetch_status(
                 data = await response.json()
                 _LOGGER.debug("Status data fetched successfully")
                 return data
-            else:
-                raise VSNConnectionError(
-                    f"Failed to fetch status: HTTP {response.status}"
-                )
+            raise VSNConnectionError(f"Failed to fetch status: HTTP {response.status}")
     except aiohttp.ClientError as err:
         raise VSNConnectionError(f"Failed to fetch status: {err}") from err
 
@@ -206,6 +205,7 @@ async def _fetch_livedata(
 
     Raises:
         VSNConnectionError: If fetch fails
+
     """
     livedata_url = f"{base_url}/v1/livedata"
     uri = "/v1/livedata"
@@ -228,10 +228,9 @@ async def _fetch_livedata(
                 data = await response.json()
                 _LOGGER.debug("Livedata fetched successfully: %d devices", len(data))
                 return data
-            else:
-                raise VSNConnectionError(
-                    f"Failed to fetch livedata: HTTP {response.status}"
-                )
+            raise VSNConnectionError(
+                f"Failed to fetch livedata: HTTP {response.status}"
+            )
     except aiohttp.ClientError as err:
         raise VSNConnectionError(f"Failed to fetch livedata: {err}") from err
 
@@ -245,6 +244,7 @@ def _extract_logger_info(status_data: dict[str, Any], vsn_model: str) -> dict[st
 
     Returns:
         Dictionary with logger information
+
     """
     keys = status_data.get("keys", {})
 
@@ -276,6 +276,7 @@ def _extract_devices(
 
     Returns:
         List of discovered devices
+
     """
     devices = []
 

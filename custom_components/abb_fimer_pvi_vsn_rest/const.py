@@ -24,7 +24,7 @@ ENDPOINT_STATUS = "/v1/status"
 ENDPOINT_LIVEDATA = "/v1/livedata"
 ENDPOINT_FEEDS = "/v1/feeds"
 
-STARTUP_MESSAGE = f"""
+STARTUP_MESSAGE = """
 -------------------------------------------------------------------
 ABB/FIMER PVI VSN REST
 Version: 1.0.0-beta.1

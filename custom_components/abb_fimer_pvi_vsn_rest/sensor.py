@@ -27,9 +27,7 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up VSN REST sensor platform."""
-    coordinator: ABBFimerPVIVSNRestCoordinator = (
-        config_entry.runtime_data.coordinator
-    )
+    coordinator: ABBFimerPVIVSNRestCoordinator = config_entry.runtime_data.coordinator
 
     # Wait for first successful data fetch
     if not coordinator.data:
@@ -46,9 +44,7 @@ async def async_setup_entry(
         device_type = device_data.get("device_type", "unknown")
         points = device_data.get("points", {})
 
-        _LOGGER.debug(
-            "Device %s (%s): %d points", device_id, device_type, len(points)
-        )
+        _LOGGER.debug("Device %s (%s): %d points", device_id, device_type, len(points))
 
         for point_name, point_data in points.items():
             sensors.append(
@@ -84,6 +80,7 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
             device_type: Device type (e.g., "inverter_3phases")
             point_name: HA entity name (e.g., "abb_m103_w")
             point_data: Point metadata and initial value
+
         """
         super().__init__(coordinator)
 
@@ -259,7 +256,10 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
             # Find the datalogger device ID
             for discovered_device in self.coordinator.discovered_devices:
                 if discovered_device.is_datalogger:
-                    device_info_dict["via_device"] = (DOMAIN, discovered_device.device_id)
+                    device_info_dict["via_device"] = (
+                        DOMAIN,
+                        discovered_device.device_id,
+                    )
                     break
 
         return device_info_dict

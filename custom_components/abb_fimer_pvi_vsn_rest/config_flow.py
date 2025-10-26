@@ -7,9 +7,7 @@ import logging
 import socket
 from typing import Any
 
-import aiohttp
 import voluptuous as vol
-
 from homeassistant import config_entries
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant, callback
@@ -65,6 +63,7 @@ async def validate_connection(
         VSNConnectionError: If connection fails
         VSNAuthenticationError: If authentication fails
         VSNClientError: For other client errors
+
     """
     # Build base URL
     if not host.startswith(("http://", "https://")):
@@ -88,10 +87,10 @@ async def validate_connection(
             timeout=5,
         )
         _LOGGER.debug("Socket connection to %s:%d successful", hostname, port)
-    except (socket.timeout, asyncio.TimeoutError) as err:
+    except TimeoutError as err:
         _LOGGER.error("Socket timeout connecting to %s:%d: %s", hostname, port, err)
         raise VSNConnectionError(f"Timeout connecting to {hostname}:{port}") from err
-    except (socket.error, OSError) as err:
+    except OSError as err:
         _LOGGER.error("Socket error connecting to %s:%d: %s", hostname, port, err)
         raise VSNConnectionError(
             f"Cannot connect to {hostname}:{port} - {err}"

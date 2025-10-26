@@ -38,6 +38,7 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             client: VSN REST API client
             update_interval: How often to fetch data
             discovery_result: Optional discovery result from initial setup
+
         """
         super().__init__(
             hass,
@@ -46,7 +47,9 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             update_interval=update_interval,
         )
         self.client = client
-        self.vsn_model: str | None = discovery_result.vsn_model if discovery_result else None
+        self.vsn_model: str | None = (
+            discovery_result.vsn_model if discovery_result else None
+        )
         self.discovery_result: DiscoveryResult | None = discovery_result
         self.discovered_devices: list[DiscoveredDevice] = (
             discovery_result.devices if discovery_result else []
@@ -60,6 +63,7 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
         Raises:
             UpdateFailed: If data fetch fails
+
         """
         try:
             # Ensure client is connected and model is detected

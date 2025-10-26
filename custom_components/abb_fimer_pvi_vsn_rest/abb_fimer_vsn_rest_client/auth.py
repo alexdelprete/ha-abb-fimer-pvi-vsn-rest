@@ -11,15 +11,21 @@ Both models use /v1/* endpoints:
 
 from __future__ import annotations
 
+import base64
 import hashlib
 import logging
+import os
 import re
-from typing import Any
+import time
 
 import aiohttp
 
 try:
-    from .exceptions import VSNAuthenticationError, VSNConnectionError, VSNDetectionError
+    from .exceptions import (
+        VSNAuthenticationError,
+        VSNConnectionError,
+        VSNDetectionError,
+    )
 except ImportError:
     from exceptions import VSNAuthenticationError, VSNConnectionError, VSNDetectionError
 
@@ -52,6 +58,7 @@ def calculate_digest_response(
 
     Returns:
         Calculated digest response value
+
     """
     # Calculate HA1 = MD5(username:realm:password)
     ha1 = hashlib.md5(f"{username}:{realm}:{password}".encode()).hexdigest()
@@ -79,9 +86,12 @@ def parse_digest_challenge(www_authenticate: str) -> dict[str, str]:
 
     Returns:
         Dictionary of challenge parameters
+
     """
     # Remove 'Digest ' or 'X-Digest ' prefix
-    challenge = re.sub(r"^(Digest|X-Digest)\s+", "", www_authenticate, flags=re.IGNORECASE)
+    challenge = re.sub(
+        r"^(Digest|X-Digest)\s+", "", www_authenticate, flags=re.IGNORECASE
+    )
 
     # Parse key="value" pairs
     params = {}
@@ -111,6 +121,7 @@ def build_digest_header(
 
     Returns:
         Complete X-Digest header value
+
     """
     realm = challenge_params.get("realm", "")
     nonce = challenge_params.get("nonce", "")
@@ -121,8 +132,7 @@ def build_digest_header(
     if qop:
         nc = "00000001"
         # Generate cnonce like stdlib: H(nonce:time:random)
-        import time
-        import os
+
         cnonce_input = f"{nonce}:{time.time()}:{os.urandom(8).hex()}"
         cnonce = hashlib.md5(cnonce_input.encode()).hexdigest()[:16]
         response = calculate_digest_response(
@@ -137,12 +147,14 @@ def build_digest_header(
             f'uri="{uri}"',
             f'response="{response}"',
             'algorithm="MD5"',
-            f'qop={qop}',  # No quotes around qop value
-            f'nc={nc}',
+            f"qop={qop}",  # No quotes around qop value
+            f"nc={nc}",
             f'cnonce="{cnonce}"',
         ]
     else:
-        response = calculate_digest_response(username, password, realm, nonce, method, uri)
+        response = calculate_digest_response(
+            username, password, realm, nonce, method, uri
+        )
 
         auth_parts = [
             f'username="{username}"',
@@ -183,6 +195,7 @@ async def get_vsn300_digest_header(
 
     Raises:
         VSNAuthenticationError: If challenge fails
+
     """
     url = f"{base_url.rstrip('/')}{uri}"
 
@@ -212,10 +225,9 @@ async def get_vsn300_digest_header(
 
                 _LOGGER.debug("VSN300 X-Digest header generated: %s", digest_value)
                 return digest_value
-            else:
-                raise VSNAuthenticationError(
-                    f"Expected 401 challenge, got {response.status}"
-                )
+            raise VSNAuthenticationError(
+                f"Expected 401 challenge, got {response.status}"
+            )
     except aiohttp.ClientError as err:
         raise VSNConnectionError(f"VSN300 challenge request failed: {err}") from err
 
@@ -247,6 +259,7 @@ async def detect_vsn_model(
     Raises:
         VSNDetectionError: If detection fails
         VSNConnectionError: If connection fails
+
     """
     base_url = base_url.rstrip("/")
 
@@ -277,10 +290,9 @@ async def detect_vsn_model(
                 raise VSNDetectionError(
                     f"Unknown authentication scheme in WWW-Authenticate: {www_authenticate}"
                 )
-            else:
-                raise VSNDetectionError(
-                    f"Expected 401 response for detection, got {response.status}"
-                )
+            raise VSNDetectionError(
+                f"Expected 401 response for detection, got {response.status}"
+            )
     except aiohttp.ClientError as err:
         raise VSNConnectionError(f"Device detection connection error: {err}") from err
 
@@ -297,9 +309,8 @@ def get_vsn700_basic_auth(username: str, password: str) -> str:
 
     Returns:
         Basic auth header value (base64-encoded credentials)
-    """
-    import base64
 
+    """
     # Encode credentials as "username:password"
     credentials = f"{username}:{password}"
     encoded = base64.b64encode(credentials.encode("utf-8")).decode("utf-8")

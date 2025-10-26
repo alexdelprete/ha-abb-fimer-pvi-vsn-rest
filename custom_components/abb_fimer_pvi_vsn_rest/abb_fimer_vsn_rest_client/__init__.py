@@ -1,15 +1,15 @@
 """ABB FIMER VSN REST Client Library."""
 
 from .exceptions import (
-    VSNClientError,
     VSNAuthenticationError,
+    VSNClientError,
     VSNConnectionError,
     VSNDetectionError,
 )
 
 __all__ = [
-    "VSNClientError",
     "VSNAuthenticationError",
+    "VSNClientError",
     "VSNConnectionError",
     "VSNDetectionError",
 ]

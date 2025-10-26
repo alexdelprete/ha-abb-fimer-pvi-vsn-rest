@@ -40,6 +40,7 @@ class ABBFimerVSNRestClient:
             password: Password for authentication (default: "")
             vsn_model: Optional VSN model ("VSN300" or "VSN700"). If None, will auto-detect.
             timeout: Request timeout in seconds
+
         """
         self.session = session
         self.base_url = base_url.rstrip("/")
@@ -58,6 +59,7 @@ class ABBFimerVSNRestClient:
         Raises:
             VSNDetectionError: If detection fails
             VSNConnectionError: If connection fails
+
         """
         if not self.vsn_model:
             self.vsn_model = await detect_vsn_model(
@@ -84,6 +86,7 @@ class ABBFimerVSNRestClient:
 
         Raises:
             VSNConnectionError: If request fails
+
         """
         if not self.vsn_model:
             await self.connect()
@@ -121,15 +124,14 @@ class ABBFimerVSNRestClient:
                     data = await response.json()
                     _LOGGER.debug("Fetched livedata: %d devices", len(data))
                     return data
-                elif response.status == 401:
+                if response.status == 401:
                     raise VSNAuthenticationError(
                         f"Authentication failed: HTTP {response.status}. "
                         "Check username and password."
                     )
-                else:
-                    raise VSNConnectionError(
-                        f"Livedata request failed: HTTP {response.status}"
-                    )
+                raise VSNConnectionError(
+                    f"Livedata request failed: HTTP {response.status}"
+                )
         except aiohttp.ClientError as err:
             raise VSNConnectionError(f"Livedata request error: {err}") from err
 
@@ -141,9 +143,14 @@ class ABBFimerVSNRestClient:
 
         Raises:
             VSNConnectionError: If request fails
+
         """
         if not self._normalizer:
             await self.connect()
+
+        # Type narrowing: _normalizer is guaranteed to be set after connect()
+        if not self._normalizer:
+            raise VSNConnectionError("Normalizer not initialized after connect()")
 
         raw_data = await self.get_livedata()
         normalized = self._normalizer.normalize(raw_data)
