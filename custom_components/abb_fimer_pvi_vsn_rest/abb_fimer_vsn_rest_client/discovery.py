@@ -32,6 +32,8 @@ class DiscoveredDevice:
     device_type: str  # inverter_3phases, meter, battery, etc.
     device_model: str | None  # PVI-10.0-OUTD, REACT2-5.0-TL, etc.
     manufacturer: str | None  # Power-One, ABB, FIMER
+    firmware_version: str | None  # C008, B185, etc. (inverter firmware)
+    hardware_version: str | None  # Hardware version if available
     is_datalogger: bool  # True if this is the datalogger device
 
 
@@ -320,12 +322,21 @@ def _extract_devices(
                 status_data.get("keys", {}).get("device.modelDesc", {}).get("value")
             )
 
-        # Get manufacturer from points
+        # Extract useful points: manufacturer, firmware version, hardware version
         manufacturer = None
+        firmware_version = None
+        hardware_version = None
+
         for point in device_data.get("points", []):
-            if point.get("name") == "C_Mn":
+            point_name = point.get("name")
+            if point_name == "C_Mn":
                 manufacturer = point.get("value")
-                break
+            elif point_name == "C_Vr":
+                # SunSpec firmware version (e.g., "C008")
+                firmware_version = point.get("value")
+            elif point_name == "fw_ver":
+                # Datalogger firmware version (e.g., "1.9.2")
+                firmware_version = point.get("value")
 
         devices.append(
             DiscoveredDevice(
@@ -334,16 +345,19 @@ def _extract_devices(
                 device_type=device_type,
                 device_model=device_model,
                 manufacturer=manufacturer,
+                firmware_version=firmware_version,
+                hardware_version=hardware_version,
                 is_datalogger=is_datalogger,
             )
         )
 
         _LOGGER.debug(
-            "Discovered device: %s (%s) - Model: %s, Manufacturer: %s",
+            "Discovered device: %s (%s) - Model: %s, Manufacturer: %s, FW: %s",
             device_id,
             device_type,
             device_model or "Unknown",
             manufacturer or "Unknown",
+            firmware_version or "Unknown",
         )
 
     return devices

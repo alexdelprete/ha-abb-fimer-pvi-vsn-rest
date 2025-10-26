@@ -202,19 +202,30 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         device_name = None
         device_model = None
         manufacturer = "ABB/FIMER"  # Default
+        firmware_version = None
+        hardware_version = None
         is_datalogger = False
+        configuration_url = None
 
         for discovered_device in self.coordinator.discovered_devices:
             if discovered_device.device_id == self._device_id:
                 is_datalogger = discovered_device.is_datalogger
                 device_model = discovered_device.device_model
                 manufacturer = discovered_device.manufacturer or "ABB/FIMER"
+                firmware_version = discovered_device.firmware_version
+                hardware_version = discovered_device.hardware_version
 
                 # Build device name according to user requirements:
                 # 1. For inverters: "Model (Serial)" e.g., "PVI-10.0-OUTD (077909-3G82-3112)"
                 # 2. For datalogger: "VSN300/VSN700 (Serial/CleanMAC)"
                 if is_datalogger:
                     device_name = f"{self.coordinator.vsn_model} ({self._device_id})"
+                    # Datalogger gets the configuration URL (VSN web interface)
+                    if self.coordinator.discovery_result:
+                        # Extract host from stored base_url or use hostname
+                        hostname = self.coordinator.discovery_result.hostname
+                        if hostname:
+                            configuration_url = f"http://{hostname}"
                 elif device_model:
                     device_name = f"{device_model} ({self._device_id})"
                 else:
@@ -226,13 +237,32 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         if device_name is None:
             device_name = f"VSN Device {self._device_id}"
 
-        return {
+        # Build device info dictionary with all available fields
+        device_info_dict = {
             "identifiers": {(DOMAIN, self._device_id)},
             "name": device_name,
             "manufacturer": manufacturer,
             "model": device_model or self._device_type,
-            "sw_version": self.coordinator.vsn_model,
+            "serial_number": self._device_id,  # Use device_id (serial number)
         }
+
+        # Add optional fields if available
+        if firmware_version:
+            device_info_dict["sw_version"] = firmware_version
+        if hardware_version:
+            device_info_dict["hw_version"] = hardware_version
+        if configuration_url:
+            device_info_dict["configuration_url"] = configuration_url
+
+        # For non-datalogger devices, set via_device to the datalogger
+        if not is_datalogger and self.coordinator.discovery_result:
+            # Find the datalogger device ID
+            for discovered_device in self.coordinator.discovered_devices:
+                if discovered_device.is_datalogger:
+                    device_info_dict["via_device"] = (DOMAIN, discovered_device.device_id)
+                    break
+
+        return device_info_dict
 
     @property
     def available(self) -> bool:
