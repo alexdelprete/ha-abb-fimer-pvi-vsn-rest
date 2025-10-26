@@ -18,3 +18,12 @@ settings.local.json
 # Home Assistant configuration
 config/*
 !config/configuration.yaml
+
+# Test output files
+scripts/vsn300_*.json
+scripts/vsn700_*.json
+scripts/*_output.json
+scripts/*_test_*.json
+
+# VSN data samples
+docs/vsn-data/
