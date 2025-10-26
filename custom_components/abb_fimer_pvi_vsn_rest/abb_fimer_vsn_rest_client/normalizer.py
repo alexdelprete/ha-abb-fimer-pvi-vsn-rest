@@ -27,6 +27,7 @@ class VSNDataNormalizer:
             vsn_model: VSN model type ('VSN300' or 'VSN700')
             mapping_loader: Optional pre-loaded mapping loader.
                            If None, will create a new one.
+
         """
         if vsn_model not in ("VSN300", "VSN700"):
             raise ValueError(f"Invalid VSN model: {vsn_model}")
@@ -66,6 +67,7 @@ class VSNDataNormalizer:
                     }
                 }
             }
+
         """
         normalized = {"devices": {}}
 
@@ -153,26 +155,25 @@ class VSNDataNormalizer:
 
         Returns:
             PointMapping if found, None otherwise
+
         """
         if self.vsn_model == "VSN300":
             return self._mapping_loader.get_by_vsn300(point_name)
-        else:
-            return self._mapping_loader.get_by_vsn700(point_name)
+        return self._mapping_loader.get_by_vsn700(point_name)
 
     def get_all_expected_points(self) -> list[PointMapping]:
         """Get all expected points for this VSN model.
 
         Returns:
             List of PointMapping objects that are available for this VSN model
+
         """
         all_mappings = self._mapping_loader.get_all_mappings()
         result = []
 
         for mapping in all_mappings.values():
             # Include point if it's available for this VSN model
-            if self.vsn_model == "VSN300" and mapping.vsn300_name:
-                result.append(mapping)
-            elif self.vsn_model == "VSN700" and mapping.vsn700_name:
+            if (self.vsn_model == "VSN300" and mapping.vsn300_name) or (self.vsn_model == "VSN700" and mapping.vsn700_name):
                 result.append(mapping)
 
         return result
@@ -185,6 +186,7 @@ class VSNDataNormalizer:
 
         Returns:
             Equivalent point name in the other VSN model, or None if not found
+
         """
         mapping = self.get_point_metadata(point_name)
         if not mapping:
@@ -192,5 +194,4 @@ class VSNDataNormalizer:
 
         if self.vsn_model == "VSN300":
             return mapping.vsn700_name
-        else:
-            return mapping.vsn300_name
+        return mapping.vsn300_name

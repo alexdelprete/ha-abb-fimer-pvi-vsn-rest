@@ -13,7 +13,6 @@ import json
 import logging
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -47,6 +46,7 @@ class VSNMappingLoader:
         Args:
             mapping_file_path: Path to vsn-sunspec-point-mapping.json.
                               If None, will look in expected location relative to this module.
+
         """
         self._mappings: dict[str, PointMapping] = {}
         self._vsn300_index: dict[str, str] = {}  # vsn300_name → key
@@ -67,7 +67,7 @@ class VSNMappingLoader:
 
         _LOGGER.debug("Loading VSN-SunSpec mappings from %s", file_path)
 
-        with open(file_path, "r", encoding="utf-8") as f:
+        with file_path.open(encoding="utf-8") as f:
             mappings_data = json.load(f)
 
         # Expected fields (from generate_mapping_json.py):

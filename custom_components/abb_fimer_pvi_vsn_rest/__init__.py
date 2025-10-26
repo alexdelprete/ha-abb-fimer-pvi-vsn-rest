@@ -17,7 +17,6 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .abb_fimer_vsn_rest_client.client import ABBFimerVSNRestClient
 from .abb_fimer_vsn_rest_client.discovery import discover_vsn_device
-from .abb_fimer_vsn_rest_client.exceptions import VSNClientError
 from .const import (
     CONF_SCAN_INTERVAL,
     CONF_VSN_MODEL,

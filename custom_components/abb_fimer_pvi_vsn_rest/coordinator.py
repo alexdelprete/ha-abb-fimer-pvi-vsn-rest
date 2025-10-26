@@ -98,7 +98,7 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
         except Exception as err:
             # Catch-all for unexpected errors
-            _LOGGER.exception("Unexpected error during data update: %s", err)
+            _LOGGER.exception("Unexpected error during data update")
             raise UpdateFailed(f"Unexpected error: {err}") from err
 
     async def async_shutdown(self) -> None:

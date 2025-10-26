@@ -138,7 +138,7 @@ async def validate_connection(
         _LOGGER.error("Client error: %s", err)
         raise
     except Exception as err:
-        _LOGGER.exception("Unexpected error during validation: %s", err)
+        _LOGGER.exception("Unexpected error during validation")
         raise VSNClientError(f"Unexpected error: {err}") from err
 
 
