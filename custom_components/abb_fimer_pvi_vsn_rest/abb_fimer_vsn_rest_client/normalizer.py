@@ -169,14 +169,14 @@ class VSNDataNormalizer:
 
         """
         all_mappings = self._mapping_loader.get_all_mappings()
-        result = []
 
-        for mapping in all_mappings.values():
-            # Include point if it's available for this VSN model
-            if (self.vsn_model == "VSN300" and mapping.vsn300_name) or (self.vsn_model == "VSN700" and mapping.vsn700_name):
-                result.append(mapping)
-
-        return result
+        # Include points that are available for this VSN model
+        return [
+            mapping
+            for mapping in all_mappings.values()
+            if (self.vsn_model == "VSN300" and mapping.vsn300_name)
+            or (self.vsn_model == "VSN700" and mapping.vsn700_name)
+        ]
 
     def get_vsn_cross_reference(self, point_name: str) -> str | None:
         """Get the equivalent point name in the other VSN model.
