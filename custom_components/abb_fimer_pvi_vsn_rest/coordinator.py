@@ -10,6 +10,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .abb_fimer_vsn_rest_client.client import ABBFimerVSNRestClient
+from .abb_fimer_vsn_rest_client.discovery import DiscoveredDevice, DiscoveryResult
 from .abb_fimer_vsn_rest_client.exceptions import (
     VSNAuthenticationError,
     VSNClientError,
@@ -28,6 +29,7 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         hass: HomeAssistant,
         client: ABBFimerVSNRestClient,
         update_interval: timedelta,
+        discovery_result: DiscoveryResult | None = None,
     ) -> None:
         """Initialize the coordinator.
 
@@ -35,6 +37,7 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             hass: Home Assistant instance
             client: VSN REST API client
             update_interval: How often to fetch data
+            discovery_result: Optional discovery result from initial setup
         """
         super().__init__(
             hass,
@@ -43,8 +46,11 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             update_interval=update_interval,
         )
         self.client = client
-        self.vsn_model: str | None = None
-        self.device_info: dict[str, Any] = {}
+        self.vsn_model: str | None = discovery_result.vsn_model if discovery_result else None
+        self.discovery_result: DiscoveryResult | None = discovery_result
+        self.discovered_devices: list[DiscoveredDevice] = (
+            discovery_result.devices if discovery_result else []
+        )
 
     async def _async_update_data(self) -> dict[str, Any]:
         """Fetch data from VSN device.

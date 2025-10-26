@@ -16,6 +16,7 @@ from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .abb_fimer_vsn_rest_client.client import ABBFimerVSNRestClient
+from .abb_fimer_vsn_rest_client.discovery import discover_vsn_device
 from .abb_fimer_vsn_rest_client.exceptions import VSNClientError
 from .const import (
     CONF_SCAN_INTERVAL,
@@ -73,29 +74,58 @@ async def async_setup_entry(
     # Get aiohttp session
     session = async_get_clientsession(hass)
 
-    # Initialize REST client
+    # Perform discovery to get complete device information
+    try:
+        _LOGGER.debug("Performing device discovery during setup")
+        discovery_result = await discover_vsn_device(
+            session=session,
+            base_url=base_url,
+            username=username,
+            password=password,
+            timeout=10,
+        )
+        _LOGGER.info(
+            "Discovery complete: %s with %d devices",
+            discovery_result.vsn_model,
+            len(discovery_result.devices),
+        )
+
+        # Log discovered devices
+        for device in discovery_result.devices:
+            _LOGGER.debug(
+                "Discovered: %s (%s) - Model: %s",
+                device.device_id,
+                device.device_type,
+                device.device_model or "Unknown",
+            )
+    except Exception as err:
+        _LOGGER.error("Discovery failed during setup: %s", err)
+        raise ConfigEntryNotReady(f"Discovery failed: {err}") from err
+
+    # Initialize REST client with discovered VSN model
     client = ABBFimerVSNRestClient(
         session=session,
         base_url=base_url,
         username=username,
         password=password,
-        vsn_model=vsn_model,
+        vsn_model=discovery_result.vsn_model,
         timeout=10,
     )
 
-    # Initialize coordinator
+    # Initialize coordinator with discovery result
     coordinator = ABBFimerPVIVSNRestCoordinator(
         hass=hass,
         client=client,
         update_interval=timedelta(seconds=scan_interval),
+        discovery_result=discovery_result,
     )
 
     # Perform initial data fetch
     try:
         await coordinator.async_config_entry_first_refresh()
     except Exception as err:
-        _LOGGER.error("Failed to connect to VSN device: %s", err)
-        raise ConfigEntryNotReady(f"Failed to connect: {err}") from err
+        _LOGGER.error("Failed to fetch initial data: %s", err)
+        raise ConfigEntryNotReady(f"Failed to fetch data: {err}") from err
 
     # Store runtime data
     config_entry.runtime_data = RuntimeData(coordinator=coordinator)

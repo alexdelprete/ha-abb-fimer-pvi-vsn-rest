@@ -16,7 +16,7 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-from .abb_fimer_vsn_rest_client.client import ABBFimerVSNRestClient
+from .abb_fimer_vsn_rest_client.discovery import discover_vsn_device
 from .abb_fimer_vsn_rest_client.exceptions import (
     VSNAuthenticationError,
     VSNClientError,
@@ -44,7 +44,7 @@ ERROR_TIMEOUT = "timeout"
 async def validate_connection(
     hass: HomeAssistant, host: str, username: str, password: str
 ) -> dict[str, Any]:
-    """Validate the connection to VSN device.
+    """Validate the connection to VSN device using discovery.
 
     Args:
         hass: Home Assistant instance
@@ -57,7 +57,8 @@ async def validate_connection(
         {
             "vsn_model": "VSN300" or "VSN700",
             "title": "Device title for config entry",
-            "device_info": {...}  # Info from /v1/status
+            "logger_sn": "Logger serial number",
+            "devices": list[DiscoveredDevice]  # All discovered devices
         }
 
     Raises:
@@ -96,65 +97,37 @@ async def validate_connection(
             f"Cannot connect to {hostname}:{port} - {err}"
         ) from err
 
-    # Second check: REST API connection with client
+    # Second check: Perform device discovery
     session = async_get_clientsession(hass)
-    client = ABBFimerVSNRestClient(
-        session=session,
-        base_url=base_url,
-        username=username or DEFAULT_USERNAME,
-        password=password or "",
-        timeout=10,
-    )
 
     try:
-        # Connect and detect model
-        vsn_model = await client.connect()
-        _LOGGER.info("Successfully detected VSN model: %s", vsn_model)
+        # Perform discovery (this validates connection, auth, and gathers device info)
+        discovery = await discover_vsn_device(
+            session=session,
+            base_url=base_url,
+            username=username or DEFAULT_USERNAME,
+            password=password or "",
+            timeout=10,
+        )
 
-        # Fetch status to get device info
-        # We'll make a direct status call here since it's validation
-        status_url = f"{base_url}/v1/status"
-        uri = "/v1/status"
+        _LOGGER.info("Successfully detected VSN model: %s", discovery.vsn_model)
 
-        # Build auth headers based on detected model
-        if vsn_model == "VSN300":
-            from .abb_fimer_vsn_rest_client.auth import get_vsn300_digest_header
-
-            digest_value = await get_vsn300_digest_header(
-                session, base_url, uri, username or DEFAULT_USERNAME, password or ""
+        # Log discovered devices for debugging
+        for device in discovery.devices:
+            _LOGGER.debug(
+                "Found device: %s (%s) - Model: %s, Manufacturer: %s",
+                device.device_id,
+                device.device_type,
+                device.device_model or "Unknown",
+                device.manufacturer or "Unknown",
             )
-            headers = {"Authorization": f"X-Digest {digest_value}"}
-        else:  # VSN700
-            from .abb_fimer_vsn_rest_client.auth import get_vsn700_basic_auth
 
-            basic_auth = get_vsn700_basic_auth(
-                username or DEFAULT_USERNAME, password or ""
-            )
-            headers = {"Authorization": f"Basic {basic_auth}"}
-
-        async with session.get(
-            status_url, headers=headers, timeout=aiohttp.ClientTimeout(total=10)
-        ) as response:
-            if response.status == 200:
-                status_data = await response.json()
-                _LOGGER.debug("Status data retrieved: %s", status_data)
-
-                # Extract useful info for title and unique_id
-                logger_sn = status_data.get("logger", {}).get("sn", "Unknown")
-                device_model = (
-                    status_data.get("device", {}).get("modelDesc", "Unknown")
-                )
-
-                return {
-                    "vsn_model": vsn_model,
-                    "title": f"{vsn_model} - {logger_sn}",
-                    "logger_sn": logger_sn,  # For unique_id
-                    "device_info": status_data,
-                }
-            else:
-                raise VSNConnectionError(
-                    f"Failed to fetch status: HTTP {response.status}"
-                )
+        return {
+            "vsn_model": discovery.vsn_model,
+            "title": discovery.get_title(),
+            "logger_sn": discovery.logger_sn,
+            "devices": discovery.devices,  # Include discovered devices
+        }
 
     except VSNAuthenticationError as err:
         _LOGGER.error("Authentication failed: %s", err)
@@ -168,8 +141,6 @@ async def validate_connection(
     except Exception as err:
         _LOGGER.exception("Unexpected error during validation: %s", err)
         raise VSNClientError(f"Unexpected error: {err}") from err
-    finally:
-        await client.close()
 
 
 class ABBFimerPVIVSNRestConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):

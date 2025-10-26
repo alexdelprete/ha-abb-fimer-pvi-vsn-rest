@@ -198,11 +198,39 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
     @property
     def device_info(self) -> dict[str, Any]:
         """Return device information."""
+        # Find the discovered device info for this device_id
+        device_name = None
+        device_model = None
+        manufacturer = "ABB/FIMER"  # Default
+        is_datalogger = False
+
+        for discovered_device in self.coordinator.discovered_devices:
+            if discovered_device.device_id == self._device_id:
+                is_datalogger = discovered_device.is_datalogger
+                device_model = discovered_device.device_model
+                manufacturer = discovered_device.manufacturer or "ABB/FIMER"
+
+                # Build device name according to user requirements:
+                # 1. For inverters: "Model (Serial)" e.g., "PVI-10.0-OUTD (077909-3G82-3112)"
+                # 2. For datalogger: "VSN300/VSN700 (Serial/CleanMAC)"
+                if is_datalogger:
+                    device_name = f"{self.coordinator.vsn_model} ({self._device_id})"
+                elif device_model:
+                    device_name = f"{device_model} ({self._device_id})"
+                else:
+                    # Fallback: Use device type with serial
+                    device_name = f"{self._device_type} ({self._device_id})"
+                break
+
+        # Fallback if not found in discovery
+        if device_name is None:
+            device_name = f"VSN Device {self._device_id}"
+
         return {
             "identifiers": {(DOMAIN, self._device_id)},
-            "name": f"VSN Device {self._device_id}",
-            "manufacturer": "ABB/FIMER",
-            "model": self._device_type,
+            "name": device_name,
+            "manufacturer": manufacturer,
+            "model": device_model or self._device_type,
             "sw_version": self.coordinator.vsn_model,
         }
 
