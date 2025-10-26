@@ -321,6 +321,6 @@ This project is licensed under the MIT License - see [LICENSE](LICENSE) file for
 
 ## Credits
 
-Developed by [Alex Del Prete](https://github.com/alexdelprete)
+Developed by [Alessandro Del Prete](https://github.com/alexdelprete)
 
-SunSpec model definitions from [pysunspec2](https://github.com/sunspec/pysunspec2) (Apache-2.0 license)
+SunSpec model definitions from [SunSpec Models Repository](https://github.com/sunspec/models) (Apache-2.0 license)
