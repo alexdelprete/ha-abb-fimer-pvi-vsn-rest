@@ -153,9 +153,7 @@ class ABBFimerVSNRestClient:
             raise VSNConnectionError("Normalizer not initialized after connect()")
 
         raw_data = await self.get_livedata()
-        normalized = self._normalizer.normalize(raw_data)
-
-        return normalized
+        return self._normalizer.normalize(raw_data)
 
     async def close(self) -> None:
         """Close the client (session management is external)."""
