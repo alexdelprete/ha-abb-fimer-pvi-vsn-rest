@@ -42,6 +42,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Architecture documentation with data flow diagrams
 - VSN300 vs VSN700 differences documented
 
+**Internationalization:**
+- Italian translation (it.json) - Complete translation of all UI strings
+- Multi-language support infrastructure
+- Automatic language detection based on Home Assistant settings
+
 ### Changed
 
 **Integration Architecture:**

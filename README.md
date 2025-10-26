@@ -22,6 +22,7 @@ This integration connects to VSN300 or VSN700 dataloggers to monitor ABB/FIMER/P
 - ✅ **Device Hierarchy**: Proper device relationships (inverters via datalogger)
 - ✅ **Complete Metadata**: Model, manufacturer, firmware version, serial numbers
 - ✅ **Configuration UI**: Easy setup through Home Assistant UI
+- ✅ **Multi-Language**: English and Italian translations included
 
 ### Supported Devices
 
@@ -257,6 +258,26 @@ VSN data points are mapped to SunSpec-compatible schema using definitions in the
 
 For details, see [MAPPING_NOTES.md](docs/MAPPING_NOTES.md).
 
+## Translations
+
+The integration is available in multiple languages:
+
+- 🇬🇧 **English** (`en.json`) - Complete
+- 🇮🇹 **Italian** (`it.json`) - Complete
+
+The integration automatically uses the language configured in your Home Assistant instance. All UI strings, error messages, and configuration flows are fully translated.
+
+### Contributing Translations
+
+To add a new language:
+
+1. Copy `translations/en.json` to `translations/[language_code].json`
+2. Translate all strings to the target language
+3. Maintain the JSON structure and placeholders (e.g., `{current_host}`)
+4. Submit a pull request
+
+See [translations/](custom_components/abb_fimer_pvi_vsn_rest/translations/) for existing translations.
+
 ## Development
 
 See [CLAUDE.md](CLAUDE.md) for development guidelines and architecture details.
@@ -273,7 +294,8 @@ custom_components/abb_fimer_pvi_vsn_rest/
 ├── manifest.json            # Integration manifest
 ├── strings.json             # UI strings
 ├── translations/
-│   └── en.json             # English translations
+│   ├── en.json             # English translations
+│   └── it.json             # Italian translations
 └── abb_fimer_vsn_rest_client/
     ├── client.py           # REST API client
     ├── auth.py             # Authentication handling

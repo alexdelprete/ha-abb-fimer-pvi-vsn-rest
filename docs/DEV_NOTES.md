@@ -1,5 +1,44 @@
 # Development Notes - ha-abb-fimer-pvi-vsn-rest
 
+## 2025-10-26: Italian Translation and Documentation Updates
+
+### Summary
+
+Added complete Italian translation for the integration and updated all documentation to reflect i18n support and recent improvements.
+
+### Implementation Details
+
+**Translation:**
+- Created `translations/it.json` with complete Italian translation
+- All UI strings translated: config flow, options, errors, abort messages
+- Maintains all placeholders and formatting from English version
+- Natural Italian phrasing with consistent technical terminology
+
+**Documentation Updates:**
+- README.md: Added "Multi-Language" to features, new "Translations" section
+- CHANGELOG.md: Added internationalization section to unreleased changes
+- Project structure updated to show both translation files
+
+**Supported Languages:**
+- 🇬🇧 English (`en.json`) - Complete
+- 🇮🇹 Italian (`it.json`) - Complete
+
+Home Assistant automatically detects and uses the appropriate language based on system settings.
+
+### Files Modified
+
+1. `translations/it.json` (NEW) - Complete Italian translation
+2. `README.md` - Added translations section and feature
+3. `CHANGELOG.md` - Added internationalization to unreleased
+4. `docs/DEV_NOTES.md` - This entry
+
+### Commits
+
+- **feat(i18n): add Italian translation** (de1d37d)
+- **docs: update documentation for i18n support** (pending)
+
+---
+
 ## 2025-10-26: Discovery Module and Device Info Implementation
 
 ### Summary
