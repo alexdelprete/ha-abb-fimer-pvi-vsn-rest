@@ -3,15 +3,29 @@
 https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest
 """
 
+from __future__ import annotations
+
 import logging
 from dataclasses import dataclass
+from datetime import timedelta
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import Platform
+from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-from .const import DOMAIN, STARTUP_MESSAGE
+from .abb_fimer_vsn_rest_client.client import ABBFimerVSNRestClient
+from .abb_fimer_vsn_rest_client.exceptions import VSNClientError
+from .const import (
+    CONF_SCAN_INTERVAL,
+    CONF_VSN_MODEL,
+    DEFAULT_SCAN_INTERVAL,
+    DEFAULT_USERNAME,
+    DOMAIN,
+    STARTUP_MESSAGE,
+)
+from .coordinator import ABBFimerPVIVSNRestCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -24,7 +38,7 @@ type ABBFimerPVIVSNRestConfigEntry = ConfigEntry[RuntimeData]
 class RuntimeData:
     """Runtime data for the integration."""
 
-    coordinator: object  # TODO: Add actual type when coordinator is implemented
+    coordinator: ABBFimerPVIVSNRestCoordinator
 
 
 async def async_setup_entry(
@@ -33,20 +47,86 @@ async def async_setup_entry(
     """Set up ABB FIMER PVI VSN REST from a config entry."""
     _LOGGER.info(STARTUP_MESSAGE)
 
-    # TODO: Initialize abb-fimer-vsn-rest-client and coordinator
-    # client = ABBFimerVSNRestClient(...)
-    # await client.connect()
-    # coordinator = ABBFimerPVIVSNRestCoordinator(hass, config_entry, client)
-    # await coordinator.async_config_entry_first_refresh()
+    # Get configuration
+    host: str = config_entry.data[CONF_HOST]
+    username: str = config_entry.data.get(CONF_USERNAME, DEFAULT_USERNAME)
+    password: str = config_entry.data.get(CONF_PASSWORD, "")
+    scan_interval: int = config_entry.options.get(
+        CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL
+    )
+    vsn_model: str | None = config_entry.data.get(CONF_VSN_MODEL)
 
-    # config_entry.runtime_data = RuntimeData(coordinator=coordinator)
-    # await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
+    # Build base URL
+    if not host.startswith(("http://", "https://")):
+        base_url = f"http://{host}"
+    else:
+        base_url = host
 
-    raise ConfigEntryNotReady("TODO: Implement async_setup_entry")
+    _LOGGER.debug(
+        "Setting up integration: host=%s, username=%s, scan_interval=%d, vsn_model=%s",
+        host,
+        username,
+        scan_interval,
+        vsn_model or "auto-detect",
+    )
+
+    # Get aiohttp session
+    session = async_get_clientsession(hass)
+
+    # Initialize REST client
+    client = ABBFimerVSNRestClient(
+        session=session,
+        base_url=base_url,
+        username=username,
+        password=password,
+        vsn_model=vsn_model,
+        timeout=10,
+    )
+
+    # Initialize coordinator
+    coordinator = ABBFimerPVIVSNRestCoordinator(
+        hass=hass,
+        client=client,
+        update_interval=timedelta(seconds=scan_interval),
+    )
+
+    # Perform initial data fetch
+    try:
+        await coordinator.async_config_entry_first_refresh()
+    except Exception as err:
+        _LOGGER.error("Failed to connect to VSN device: %s", err)
+        raise ConfigEntryNotReady(f"Failed to connect: {err}") from err
+
+    # Store runtime data
+    config_entry.runtime_data = RuntimeData(coordinator=coordinator)
+
+    # Forward setup to platforms
+    await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
+
+    _LOGGER.info(
+        "Successfully set up %s integration for %s",
+        DOMAIN,
+        coordinator.vsn_model or "VSN device",
+    )
+
+    return True
 
 
 async def async_unload_entry(
     hass: HomeAssistant, config_entry: ABBFimerPVIVSNRestConfigEntry
 ) -> bool:
     """Unload a config entry."""
-    return await hass.config_entries.async_unload_platforms(config_entry, PLATFORMS)
+    _LOGGER.debug("Unloading config entry")
+
+    # Unload platforms
+    unload_ok = await hass.config_entries.async_unload_platforms(
+        config_entry, PLATFORMS
+    )
+
+    # Shutdown coordinator and cleanup
+    if unload_ok:
+        coordinator = config_entry.runtime_data.coordinator
+        await coordinator.async_shutdown()
+        _LOGGER.info("Successfully unloaded %s integration", DOMAIN)
+
+    return unload_ok

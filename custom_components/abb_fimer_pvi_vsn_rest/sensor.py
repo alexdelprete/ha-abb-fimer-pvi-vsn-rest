@@ -1,7 +1,216 @@
-"""Sensor platform."""
-from homeassistant.components.sensor import SensorEntity
+"""Sensor platform for ABB FIMER PVI VSN REST integration."""
 
-async def async_setup_entry(hass, config_entry, async_add_entities):
-    """Set up sensors."""
-    # TODO: Implement sensor setup
-    pass
+from __future__ import annotations
+
+import logging
+from typing import Any
+
+from homeassistant.components.sensor import (
+    SensorDeviceClass,
+    SensorEntity,
+    SensorStateClass,
+)
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
+
+from .const import DOMAIN
+from .coordinator import ABBFimerPVIVSNRestCoordinator
+
+_LOGGER = logging.getLogger(__name__)
+
+
+async def async_setup_entry(
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
+) -> None:
+    """Set up VSN REST sensor platform."""
+    coordinator: ABBFimerPVIVSNRestCoordinator = (
+        config_entry.runtime_data.coordinator
+    )
+
+    # Wait for first successful data fetch
+    if not coordinator.data:
+        _LOGGER.warning("No data available from coordinator, skipping sensor setup")
+        return
+
+    # Create sensors from normalized data
+    sensors: list[VSNSensor] = []
+
+    devices = coordinator.data.get("devices", {})
+    _LOGGER.debug("Creating sensors for %d devices", len(devices))
+
+    for device_id, device_data in devices.items():
+        device_type = device_data.get("device_type", "unknown")
+        points = device_data.get("points", {})
+
+        _LOGGER.debug(
+            "Device %s (%s): %d points", device_id, device_type, len(points)
+        )
+
+        for point_name, point_data in points.items():
+            sensors.append(
+                VSNSensor(
+                    coordinator=coordinator,
+                    device_id=device_id,
+                    device_type=device_type,
+                    point_name=point_name,
+                    point_data=point_data,
+                )
+            )
+
+    _LOGGER.info("Adding %d sensors", len(sensors))
+    async_add_entities(sensors)
+
+
+class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
+    """Representation of a VSN sensor."""
+
+    def __init__(
+        self,
+        coordinator: ABBFimerPVIVSNRestCoordinator,
+        device_id: str,
+        device_type: str,
+        point_name: str,
+        point_data: dict[str, Any],
+    ) -> None:
+        """Initialize the sensor.
+
+        Args:
+            coordinator: The data coordinator
+            device_id: Device serial number
+            device_type: Device type (e.g., "inverter_3phases")
+            point_name: HA entity name (e.g., "abb_m103_w")
+            point_data: Point metadata and initial value
+        """
+        super().__init__(coordinator)
+
+        self._device_id = device_id
+        self._device_type = device_type
+        self._point_name = point_name
+        self._attr_has_entity_name = True
+
+        # Set unique ID: domain_deviceid_pointname
+        self._attr_unique_id = f"{DOMAIN}_{device_id}_{point_name}"
+
+        # Set entity name from label
+        self._attr_name = point_data.get("label", point_name)
+
+        # Set device class if available
+        device_class_str = point_data.get("device_class")
+        if device_class_str:
+            try:
+                self._attr_device_class = SensorDeviceClass(device_class_str)
+            except ValueError:
+                _LOGGER.debug(
+                    "Unknown device_class '%s' for %s", device_class_str, point_name
+                )
+
+        # Set state class if available
+        state_class_str = point_data.get("state_class")
+        if state_class_str:
+            try:
+                self._attr_state_class = SensorStateClass(state_class_str)
+            except ValueError:
+                _LOGGER.debug(
+                    "Unknown state_class '%s' for %s", state_class_str, point_name
+                )
+
+        # Set unit of measurement
+        self._attr_native_unit_of_measurement = point_data.get("units")
+
+        # Set suggested display precision based on units
+        if self._attr_native_unit_of_measurement in ("W", "Wh", "kW", "kWh"):
+            self._attr_suggested_display_precision = 0
+        elif self._attr_native_unit_of_measurement in ("V", "A"):
+            self._attr_suggested_display_precision = 1
+        elif self._attr_native_unit_of_measurement in ("Hz", "°C", "°F"):
+            self._attr_suggested_display_precision = 2
+
+        _LOGGER.debug(
+            "Created sensor: %s (device_class=%s, state_class=%s, unit=%s)",
+            self._attr_name,
+            self._attr_device_class,
+            self._attr_state_class,
+            self._attr_native_unit_of_measurement,
+        )
+
+    @property
+    def native_value(self) -> float | int | str | None:
+        """Return the state of the sensor."""
+        if not self.coordinator.data:
+            return None
+
+        devices = self.coordinator.data.get("devices", {})
+        device_data = devices.get(self._device_id)
+
+        if not device_data:
+            _LOGGER.debug("Device %s not found in coordinator data", self._device_id)
+            return None
+
+        points = device_data.get("points", {})
+        point_data = points.get(self._point_name)
+
+        if not point_data:
+            _LOGGER.debug(
+                "Point %s not found for device %s", self._point_name, self._device_id
+            )
+            return None
+
+        return point_data.get("value")
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return additional state attributes."""
+        if not self.coordinator.data:
+            return {}
+
+        devices = self.coordinator.data.get("devices", {})
+        device_data = devices.get(self._device_id)
+
+        if not device_data:
+            return {}
+
+        points = device_data.get("points", {})
+        point_data = points.get(self._point_name)
+
+        if not point_data:
+            return {}
+
+        attributes = {
+            "device_id": self._device_id,
+            "device_type": self._device_type,
+            "description": point_data.get("description"),
+        }
+
+        # Add timestamp if available
+        if timestamp := device_data.get("timestamp"):
+            attributes["last_updated"] = timestamp
+
+        # Add mapping info for debugging
+        if sunspec_name := point_data.get("sunspec_name"):
+            attributes["sunspec_name"] = sunspec_name
+
+        return attributes
+
+    @property
+    def device_info(self) -> dict[str, Any]:
+        """Return device information."""
+        return {
+            "identifiers": {(DOMAIN, self._device_id)},
+            "name": f"VSN Device {self._device_id}",
+            "manufacturer": "ABB/FIMER",
+            "model": self._device_type,
+            "sw_version": self.coordinator.vsn_model,
+        }
+
+    @property
+    def available(self) -> bool:
+        """Return True if entity is available."""
+        return (
+            self.coordinator.last_update_success
+            and self.coordinator.data is not None
+            and self._device_id in self.coordinator.data.get("devices", {})
+        )
