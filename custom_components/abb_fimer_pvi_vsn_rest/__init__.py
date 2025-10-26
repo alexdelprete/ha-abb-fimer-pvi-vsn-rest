@@ -11,7 +11,7 @@ from datetime import timedelta
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME, Platform
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
@@ -129,6 +129,10 @@ async def async_setup_entry(
     # Store runtime data
     config_entry.runtime_data = RuntimeData(coordinator=coordinator)
 
+    # Register an update listener for config flow options changes
+    # Listener is attached when entry loads and automatically detached at unload
+    config_entry.async_on_unload(config_entry.add_update_listener(async_reload_entry))
+
     # Forward setup to platforms
     await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
 
@@ -159,3 +163,12 @@ async def async_unload_entry(
         _LOGGER.info("Successfully unloaded %s integration", DOMAIN)
 
     return unload_ok
+
+
+@callback
+def async_reload_entry(
+    hass: HomeAssistant, config_entry: ABBFimerPVIVSNRestConfigEntry
+) -> None:
+    """Reload the config entry when options change."""
+    _LOGGER.debug("Scheduling reload of config entry")
+    hass.config_entries.async_schedule_reload(config_entry.entry_id)
