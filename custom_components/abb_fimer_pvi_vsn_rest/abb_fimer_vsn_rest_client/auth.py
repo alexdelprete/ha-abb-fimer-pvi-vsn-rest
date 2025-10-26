@@ -74,8 +74,7 @@ def calculate_digest_response(
         # Without qop (simple digest)
         response_str = f"{ha1}:{nonce}:{ha2}"
 
-    response = hashlib.md5(response_str.encode()).hexdigest()
-    return response
+    return hashlib.md5(response_str.encode()).hexdigest()
 
 
 def parse_digest_challenge(www_authenticate: str) -> dict[str, str]:
