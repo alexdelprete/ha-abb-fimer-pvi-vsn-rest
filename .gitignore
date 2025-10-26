@@ -1,0 +1,19 @@
+# artifacts
+__pycache__
+.pytest*
+*.egg-info
+*/build/*
+*/dist/*
+
+
+# misc
+.coverage
+.vscode
+.zed
+coverage.xml
+enforce_branch_protection.sh
+settings.local.json
+
+# Home Assistant configuration
+config/*
+!config/configuration.yaml
