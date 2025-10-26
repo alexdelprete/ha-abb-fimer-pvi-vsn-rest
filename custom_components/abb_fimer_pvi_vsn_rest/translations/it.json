@@ -1,0 +1,54 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "ABB/FIMER PVI VSN REST",
+        "description": "Connettiti al tuo datalogger ABB/FIMER VSN300 o VSN700.\n\nCredenziali predefinite: username='guest', password=(vuota)",
+        "data": {
+          "host": "Host (IP o hostname)",
+          "username": "Nome utente (opzionale, predefinito: guest)",
+          "password": "Password (opzionale, predefinita: vuota)"
+        },
+        "data_description": {
+          "host": "Indirizzo IP o hostname del dispositivo VSN (es., 192.168.1.100 o abb-vsn300.local)",
+          "username": "Nome utente per l'autenticazione. Lasciare vuoto per usare l'account predefinito 'guest'.",
+          "password": "Password per l'autenticazione. Lasciare vuota per l'account guest (nessuna password)."
+        }
+      },
+      "reconfigure": {
+        "title": "Riconfigura ABB/FIMER PVI VSN REST",
+        "description": "Aggiorna le impostazioni di connessione per il dispositivo VSN.\n\nHost corrente: {current_host}",
+        "data": {
+          "host": "Host (IP o hostname)",
+          "username": "Nome utente",
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Impossibile connettersi al dispositivo. Verificare:\n• Il dispositivo è acceso\n• L'indirizzo IP o hostname è corretto\n• Il dispositivo è accessibile sulla rete\n• La porta 80 non è bloccata dal firewall",
+      "invalid_auth": "Autenticazione fallita. Verificare nome utente e password.\n\nPer la maggior parte dei dispositivi VSN, usare:\n• Nome utente: guest\n• Password: (vuota)",
+      "timeout": "Timeout della connessione. Il dispositivo non risponde.\n\nVerificare:\n• Il dispositivo è acceso e avviato\n• La connessione di rete è stabile\n• Nessun firewall blocca l'accesso",
+      "unknown": "Si è verificato un errore imprevisto. Controllare i log per maggiori dettagli."
+    },
+    "abort": {
+      "already_configured": "Questo dispositivo è già configurato",
+      "reconfigure_successful": "Riconfigurazione riuscita! L'integrazione verrà ora ricaricata.",
+      "reconfigure_failed": "Riconfigurazione fallita. Riprovare o rimuovere e aggiungere nuovamente l'integrazione."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opzioni ABB/FIMER PVI VSN REST",
+        "description": "Configura l'intervallo di aggiornamento per il polling dei dati.",
+        "data": {
+          "scan_interval": "Intervallo di scansione (secondi)"
+        },
+        "data_description": {
+          "scan_interval": "Frequenza di recupero dati dal dispositivo VSN. Intervallo: 30-600 secondi. Predefinito: 60 secondi."
+        }
+      }
+    }
+  }
+}
