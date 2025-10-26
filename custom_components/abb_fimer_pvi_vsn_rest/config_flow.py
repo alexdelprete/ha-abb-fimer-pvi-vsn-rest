@@ -139,7 +139,7 @@ async def validate_connection(
                 status_data = await response.json()
                 _LOGGER.debug("Status data retrieved: %s", status_data)
 
-                # Extract useful info for title
+                # Extract useful info for title and unique_id
                 logger_sn = status_data.get("logger", {}).get("sn", "Unknown")
                 device_model = (
                     status_data.get("device", {}).get("modelDesc", "Unknown")
@@ -148,6 +148,7 @@ async def validate_connection(
                 return {
                     "vsn_model": vsn_model,
                     "title": f"{vsn_model} - {logger_sn}",
+                    "logger_sn": logger_sn,  # For unique_id
                     "device_info": status_data,
                 }
             else:
@@ -198,8 +199,8 @@ class ABBFimerPVIVSNRestConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 # Validate connection
                 info = await validate_connection(self.hass, host, username, password)
 
-                # Check if already configured (by host)
-                await self.async_set_unique_id(host.lower())
+                # Check if already configured (by logger serial number)
+                await self.async_set_unique_id(info["logger_sn"].lower())
                 self._abort_if_unique_id_configured()
 
                 # Create config entry
