@@ -281,7 +281,9 @@ async def load_mapping_from_url(session: aiohttp.ClientSession) -> dict[str, Any
     try:
         async with session.get(MAPPING_URL, timeout=aiohttp.ClientTimeout(total=30)) as response:
             if response.status == 200:
-                mappings_data = await response.json()
+                # GitHub serves raw files as text/plain, so we need to use content_type=None
+                # to allow aiohttp to parse JSON regardless of Content-Type header
+                mappings_data = await response.json(content_type=None)
 
                 # Build indexes for fast lookup
                 vsn300_index = {}
