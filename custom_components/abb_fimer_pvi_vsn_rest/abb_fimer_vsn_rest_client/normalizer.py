@@ -74,6 +74,24 @@ class VSNDataNormalizer:
                 _LOGGER.warning("Device %s has no points, skipping", device_id)
                 continue
 
+            # Determine the actual device identifier to use
+            # For datalogger devices (identified by MAC address pattern),
+            # use the logger serial number instead
+            actual_device_id = device_id
+
+            # Check if this is a datalogger (MAC address pattern: xx:xx:xx:xx:xx:xx)
+            if ":" in device_id:
+                # Look for "sn" point in the data to get logger serial number
+                for point in device_data["points"]:
+                    if point.get("name") == "sn":
+                        actual_device_id = point.get("value", device_id)
+                        _LOGGER.debug(
+                            "Using logger S/N '%s' instead of MAC '%s' for device ID",
+                            actual_device_id,
+                            device_id,
+                        )
+                        break
+
             normalized_points = {}
 
             for point in device_data["points"]:
@@ -116,7 +134,8 @@ class VSNDataNormalizer:
                 normalized_points[mapping.ha_entity_name] = normalized_point
 
             if normalized_points:
-                normalized["devices"][device_id] = {"points": normalized_points}
+                # Use actual_device_id (logger S/N for datalogger, inverter S/N for inverter)
+                normalized["devices"][actual_device_id] = {"points": normalized_points}
 
         _LOGGER.debug(
             "Normalized %d devices with %d total points",
