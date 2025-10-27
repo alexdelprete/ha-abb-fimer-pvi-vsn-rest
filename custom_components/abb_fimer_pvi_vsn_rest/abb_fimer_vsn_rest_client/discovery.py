@@ -314,10 +314,13 @@ def _extract_devices(
 
         # Get device model
         device_model = None
-        if vsn_model == "VSN700":
+        if is_datalogger:
+            # Datalogger: Use VSN model as device model
+            device_model = vsn_model  # "VSN300" or "VSN700"
+        elif vsn_model == "VSN700":
             # VSN700: Model in livedata at device level
             device_model = device_data.get("device_model")
-        elif vsn_model == "VSN300" and not is_datalogger:
+        elif vsn_model == "VSN300":
             # VSN300: Model in status for inverter
             device_model = (
                 status_data.get("keys", {}).get("device.modelDesc", {}).get("value")

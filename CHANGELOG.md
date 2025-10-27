@@ -70,6 +70,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **VSN Datalogger Device Model**: Fixed datalogger device showing "Model: unknown" in Home Assistant Device Info ([discovery.py:317-319](custom_components/abb_fimer_pvi_vsn_rest/abb_fimer_vsn_rest_client/discovery.py#L317))
+  - Root cause: `device_model` was never set for datalogger devices during discovery
+  - VSN700: Only checked `device_data.get("device_model")` which returned None
+  - VSN300: Explicitly skipped dataloggers with `and not is_datalogger` condition
+  - Fix: Set `device_model = vsn_model` for dataloggers ("VSN300" or "VSN700")
+  - Device Info now shows proper model: "VSN300" or "VSN700" instead of "unknown"
+
 - **"No mapping found" Warnings Eliminated**: Fixed 12 unmapped point warnings in logs
   - M1 Common Model points no longer generate warnings
   - VSN system monitoring points no longer generate warnings
