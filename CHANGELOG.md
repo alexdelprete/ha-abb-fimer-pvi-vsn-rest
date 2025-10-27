@@ -48,6 +48,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Previously skipped in `generate_mapping_excel.py` (lines 1311-1323)
   - Now included with `entity_category="diagnostic"`
 
+- **Improved Sensor Labels**: Enhanced label generation for 21 VSN300-specific SunSpec points ([generate_mapping_excel.py:766-884](scripts/generate_mapping_excel.py#L766))
+  - **BREAKING CHANGE**: Entity IDs updated for better readability
+  - M103 phase voltages: "PhVphAB" → "Phase Voltage AB"
+  - M103 frequencies: "HzA" → "Frequency Phase A"
+  - M103 peak power: "PowerPeakAbs" → "Peak Power (Absolute)", "PowerPeakToday" → "Peak Power Today"
+  - M64061 state codes: "AlarmSt" → "Alarm State", "GlobalSt" → "Global State", "InverterSt" → "Inverter State", "DcSt1" → "DC Input 1 State", "DcSt2" → "DC Input 2 State"
+  - M64061 leakage: "ILeakDcAc" → "Leakage Current DC-AC", "ILeakDcDc" → "Leakage Current DC-DC"
+  - M64061 isolation: "Isolation_Ohm1" → "Isolation Resistance"
+  - M64061 temperature: "Booster_Tmp" → "Boost Converter Temperature"
+  - M64061 energy: "DayWH" → "Daily Energy", "WeekWH" → "Weekly Energy", "MonthWH" → "Monthly Energy", "YearWH" → "Yearly Energy"
+  - Replaced poorly formatted "(M103) PhVphBC" labels with human-readable names
+  - Enhanced `generate_label_from_name()` function with VSN300-specific patterns
+
 ### Fixed
 
 - **"No mapping found" Warnings Eliminated**: Fixed 12 unmapped point warnings in logs

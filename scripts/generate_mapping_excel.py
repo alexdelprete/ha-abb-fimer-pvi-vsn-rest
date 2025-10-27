@@ -766,6 +766,56 @@ def load_sunspec_models_metadata(workbook_path):
 def generate_label_from_name(point_name):
     """Generate human-readable label from point name using intelligent parsing."""
 
+    # VSN300-specific SunSpec point patterns (handle BEFORE abbrev_map)
+    # Phase voltages (line-to-line)
+    if point_name in ["PhVphAB", "PhVphBC", "PhVphCA"]:
+        return f"Phase Voltage {point_name[-2:]}"
+
+    # Per-phase frequencies
+    if point_name in ["HzA", "HzB", "HzC"]:
+        return f"Frequency Phase {point_name[-1]}"
+
+    # Peak power
+    if point_name == "PowerPeakAbs":
+        return "Peak Power (Absolute)"
+    if point_name == "PowerPeakToday":
+        return "Peak Power Today"
+
+    # M64061 state codes
+    state_map = {
+        "AlarmSt": "Alarm State",
+        "GlobalSt": "Global State",
+        "InverterSt": "Inverter State",
+        "DcSt1": "DC Input 1 State",
+        "DcSt2": "DC Input 2 State",
+    }
+    if point_name in state_map:
+        return state_map[point_name]
+
+    # Leakage currents
+    if point_name == "ILeakDcAc":
+        return "Leakage Current DC-AC"
+    if point_name == "ILeakDcDc":
+        return "Leakage Current DC-DC"
+
+    # Isolation
+    if point_name == "Isolation_Ohm1":
+        return "Isolation Resistance"
+
+    # Temperature
+    if point_name == "Booster_Tmp":
+        return "Boost Converter Temperature"
+
+    # Periodic energy counters (M64061 style)
+    energy_map = {
+        "DayWH": "Daily Energy",
+        "WeekWH": "Weekly Energy",
+        "MonthWH": "Monthly Energy",
+        "YearWH": "Yearly Energy",
+    }
+    if point_name in energy_map:
+        return energy_map[point_name]
+
     # Known abbreviations
     abbrev_map = {
         "Soc": "State of Charge",
@@ -796,7 +846,7 @@ def generate_label_from_name(point_name):
     if point_name in abbrev_map:
         return abbrev_map[point_name]
 
-    # Handle periodic energy counters
+    # Handle periodic energy counters (runtime/7D/30D/1Y style)
     if (
         "_runtime" in point_name
         or "_7D" in point_name
@@ -1342,9 +1392,9 @@ for vsn300_point in sorted(missing_vsn300):
         sunspec_metadata, model, sunspec_point
     )
     if not label:
-        # Generate label using format: (Model) (Point)
+        # Generate human-readable label using enhanced function
         if model and sunspec_point:
-            label = f"({model}) {sunspec_point}"
+            label = generate_label_from_name(sunspec_point)
         else:
             label = generate_label_from_name(vsn300_point)
 
@@ -1352,10 +1402,6 @@ for vsn300_point in sorted(missing_vsn300):
     description = get_description_with_priority(
         vsn300_point, feeds_titles, label, workbook_description
     )
-
-    # If description is same as the poorly formatted label, use better format
-    if description == label and model and sunspec_point:
-        description = f"({model}) {sunspec_point}"
 
     # Determine category
     category = "Unknown"
