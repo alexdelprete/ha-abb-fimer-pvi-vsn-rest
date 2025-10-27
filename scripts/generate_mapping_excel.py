@@ -667,7 +667,7 @@ def is_title_a_description(title):
 
 
 def load_feeds_titles(vsn300_feeds_path, vsn700_feeds_path):
-    """Load title data from VSN feeds files and categorize them."""
+    """Load title and unit data from VSN feeds files and categorize them."""
     print("Loading feeds title data...")
 
     with open(vsn300_feeds_path) as f:
@@ -682,9 +682,11 @@ def load_feeds_titles(vsn300_feeds_path, vsn700_feeds_path):
         if "datastreams" in feed_data:
             for point_name, point_data in feed_data["datastreams"].items():
                 title = point_data.get("title", "").strip()
+                units = point_data.get("units", "").strip()
                 if title:
                     titles[point_name] = {
                         "title": title,
+                        "units": units,
                         "is_description": is_title_a_description(title),
                         "source": "VSN300",
                     }
@@ -694,14 +696,19 @@ def load_feeds_titles(vsn300_feeds_path, vsn700_feeds_path):
         if "datastreams" in feed_data:
             for point_name, point_data in feed_data["datastreams"].items():
                 title = point_data.get("title", "").strip()
+                units = point_data.get("units", "").strip()
                 if title and point_name not in titles:
                     titles[point_name] = {
                         "title": title,
+                        "units": units,
                         "is_description": is_title_a_description(title),
                         "source": "VSN700",
                     }
                 elif title and point_name in titles:
                     titles[point_name]["source"] = "Both"
+                    # Update units if not already set
+                    if units and not titles[point_name].get("units"):
+                        titles[point_name]["units"] = units
 
     desc_count = sum(1 for t in titles.values() if t["is_description"])
     name_count = sum(1 for t in titles.values() if not t["is_description"])
@@ -1294,6 +1301,26 @@ for p in sorted(M64061_POINTS):
             p, feeds_titles, label, workbook_desc
         )
 
+        # Determine units for M64061 points
+        units = ""
+        device_class = ""
+        state_class = "measurement"
+
+        if "V" in p:
+            units = "V"
+            device_class = "voltage"
+        elif "leak" in p:
+            units = "A"
+            device_class = "current"
+        elif p == "Riso":
+            units = "Ω"
+        elif p == "TempBst" or "Temp" in p:
+            units = "°C"
+            device_class = "temperature"
+        elif p == "Ppeak":
+            units = "W"
+            device_class = "power"
+
         rows.append(
             [
                 p,
@@ -1308,9 +1335,9 @@ for p in sorted(M64061_POINTS):
                 description,
                 "M64061",
                 category,
-                "V" if "V" in p else ("A" if "leak" in p else ""),
-                "measurement",
-                "voltage" if "V" in p else "",
+                units,
+                state_class,
+                device_class,
                 "",  # entity_category - empty for normal sensor points
                 "MAYBE",
             ]
@@ -1359,6 +1386,24 @@ for p in sorted(ABB_PROPRIETARY):
                 model_num = p.split("Mod_Ena")[0][1:]
                 description = f"SunSpec Model {model_num} Enable Flag"
 
+        # Determine units for ABB Proprietary points
+        units = ""
+        device_class = ""
+        state_class = "measurement"
+
+        if p in ["Chc", "Dhc"]:
+            units = "Ah"
+        elif p.startswith("E") and p not in ["EnergyPolicy"]:
+            units = "Wh"
+            device_class = "energy"
+            state_class = "total_increasing"
+        elif "P" in p and "grid" in p.lower():
+            units = "W"
+            device_class = "power"
+        elif "Igrid" in p:
+            units = "A"
+            device_class = "current"
+
         rows.append(
             [
                 p,
@@ -1371,11 +1416,9 @@ for p in sorted(ABB_PROPRIETARY):
                 description,
                 "ABB Proprietary",
                 category,
-                "W" if "P" in p and "grid" in p else ("A" if "Igrid" in p else ""),
-                "measurement" if not p.startswith("E") else "total_increasing",
-                "power"
-                if "P" in p and "grid" in p
-                else ("current" if "Igrid" in p else ""),
+                units,
+                state_class,
+                device_class,
                 "",  # entity_category - empty for normal sensor points
                 "NO",
             ]
@@ -1452,12 +1495,101 @@ for vsn300_point in sorted(missing_vsn300):
     elif model in ["M201", "M203", "M204"]:
         category = "Meter"
 
-    # Units and device class (best effort based on point name)
+    # Units and device class
+    # Priority 1: Get from feeds JSON (most reliable source)
     units = ""
     device_class = ""
     state_class = "measurement"
 
-    if sunspec_point:
+    if vsn300_point in feeds_titles and feeds_titles[vsn300_point].get("units"):
+        feeds_units = feeds_titles[vsn300_point]["units"]
+        # Convert VSN feeds units to HA units
+        if feeds_units == "kW":
+            units = "W"
+            device_class = "power"
+            state_class = "measurement"
+        elif feeds_units == "kWh":
+            units = "Wh"
+            device_class = "energy"
+            state_class = "total_increasing"
+        elif feeds_units == "kvar":
+            units = "var"
+            device_class = "reactive_power"
+            state_class = "measurement"
+        elif feeds_units in ["A", "uA"]:
+            units = feeds_units
+            device_class = "current"
+        elif feeds_units == "V":
+            units = "V"
+            device_class = "voltage"
+        elif feeds_units == "Hz":
+            units = "Hz"
+            device_class = "frequency"
+        elif feeds_units in ["degC", "°C"]:
+            units = "°C"
+            device_class = "temperature"
+        elif feeds_units == "%":
+            units = "%"
+            # Device class depends on context - leave empty for now
+        elif feeds_units == "s":
+            units = "s"
+            device_class = "duration"
+        elif feeds_units == "bytes":
+            units = "B"
+            # No standard device class for bytes
+        elif feeds_units in ["MOhm", "Ohm"]:
+            units = feeds_units
+            # No standard device class for resistance
+        elif feeds_units == "Ah":
+            units = "Ah"
+            # No standard device class for Ah
+        elif feeds_units == "W":
+            units = "W"
+            device_class = "power"
+        elif feeds_units == "Wh":
+            units = "Wh"
+            device_class = "energy"
+            state_class = "total_increasing"
+        elif feeds_units == "var":
+            units = "var"
+            device_class = "reactive_power"
+        elif feeds_units in {"none", ""}:
+            # Feeds says no units
+            units = ""
+        else:
+            # Unknown unit from feeds, keep it as-is
+            units = feeds_units
+
+    # Priority 2: Common abbreviations and known patterns
+    if not units:
+        point_check = sunspec_point if sunspec_point else vsn300_point
+        point_lower = point_check.lower() if point_check else ""
+
+        # Temperature (must check before Tmp to avoid false positives)
+        if ("temp" in point_lower or "tmp" in point_lower) and "bst" in point_lower:
+            units = "°C"
+            device_class = "temperature"
+        # Isolation resistance
+        elif "riso" in point_lower or "isolation" in point_lower:
+            units = "Ω"  # Ohm symbol
+            # No standard device class for resistance
+        # Capacities (Ah)
+        elif point_check in ["Chc", "Dhc"]:  # Charge/Discharge capacity
+            units = "Ah"
+            # No standard device class for Ah
+        # Peak power
+        elif "ppeak" in point_lower or "powerpeak" in point_lower:
+            units = "W"
+            device_class = "power"
+        # Energy points (E prefix typically means energy)
+        elif point_check and point_check.startswith("E") and len(point_check) <= 10 and "_" not in point_check:
+            # EBackup, ECharge, EDischarge, etc.
+            units = "Wh"
+            device_class = "energy"
+            state_class = "total_increasing"
+
+    # Priority 3: Pattern matching on SunSpec point name (original logic)
+    if not units and sunspec_point:
         if sunspec_point.startswith("Aph"):
             # Phase current points (AphA, AphB, AphC)
             units = "A"
