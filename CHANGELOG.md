@@ -68,6 +68,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Fixed M1 Common Model points missing `m1` prefix (early detection at line 1418-1422)
   - Fixed M64061 points using technical names instead of labels (line 1233, 1289)
 
+- **Integration Title Format**: Changed hub/integration title to use parentheses for consistency with device names ([discovery.py:54](custom_components/abb_fimer_pvi_vsn_rest/abb_fimer_vsn_rest_client/discovery.py#L54))
+  - Changed from: `VSN300 - 111033-3N16-1421` (hyphen separator)
+  - Changed to: `VSN300 (111033-3N16-1421)` (parentheses)
+  - Now matches device naming format: `VSN300 (111033-3N16-1421)`, `PVI-10.0-OUTD (077909-3G82-3112)`
+  - Provides consistent naming across integration title, datalogger device, and inverter devices
+
 ### Fixed
 
 - **VSN Datalogger Device Model**: Fixed datalogger device showing "Model: unknown" in Home Assistant Device Info ([discovery.py:317-319](custom_components/abb_fimer_pvi_vsn_rest/abb_fimer_vsn_rest_client/discovery.py#L317))

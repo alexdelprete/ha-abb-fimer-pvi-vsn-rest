@@ -51,7 +51,7 @@ class DiscoveryResult:
 
     def get_title(self) -> str:
         """Generate a suitable title for config entry."""
-        return f"{self.vsn_model} - {self.logger_sn}"
+        return f"{self.vsn_model} ({self.logger_sn})"
 
     def get_main_inverter(self) -> DiscoveredDevice | None:
         """Get the main inverter device (first inverter found)."""
