@@ -79,9 +79,13 @@ def convert_mapping_to_json():
     vsn300_count = sum(1 for m in mappings if m.get("REST Name (VSN300)"))
     vsn700_count = sum(1 for m in mappings if m.get("REST Name (VSN700)"))
     both_count = sum(
-        1 for m in mappings if m.get("REST Name (VSN300)") and m.get("REST Name (VSN700)")
+        1
+        for m in mappings
+        if m.get("REST Name (VSN300)") and m.get("REST Name (VSN700)")
     )
-    diagnostic_count = sum(1 for m in mappings if m.get("Entity Category") == "diagnostic")
+    diagnostic_count = sum(
+        1 for m in mappings if m.get("Entity Category") == "diagnostic"
+    )
 
     print("\nStatistics:")
     print(f"  - VSN300 points: {vsn300_count}")
