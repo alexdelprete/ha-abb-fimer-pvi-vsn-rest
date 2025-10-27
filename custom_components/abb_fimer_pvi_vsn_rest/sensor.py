@@ -124,18 +124,17 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         initial_value = point_data.get("value")
         is_numeric = isinstance(initial_value, (int, float))
 
-        # Set device class if available
-        device_class_str = point_data.get("device_class")
-        if device_class_str:
-            try:
-                self._attr_device_class = SensorDeviceClass(device_class_str)
-            except ValueError:
-                _LOGGER.debug(
-                    "Unknown device_class '%s' for %s", device_class_str, point_name
-                )
-
-        # Set state class ONLY if the value is numeric
         if is_numeric:
+            # Numeric sensor: set device_class, state_class, units, precision as available
+            device_class_str = point_data.get("device_class")
+            if device_class_str:
+                try:
+                    self._attr_device_class = SensorDeviceClass(device_class_str)
+                except ValueError:
+                    _LOGGER.debug(
+                        "Unknown device_class '%s' for %s", device_class_str, point_name
+                    )
+
             state_class_str = point_data.get("state_class")
             if state_class_str:
                 try:
@@ -144,17 +143,7 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
                     _LOGGER.debug(
                         "Unknown state_class '%s' for %s", state_class_str, point_name
                     )
-        else:
-            _LOGGER.debug(
-                "Skipping numeric attributes for %s: value is not numeric (%s: %s)",
-                point_name,
-                type(initial_value).__name__,
-                initial_value,
-            )
 
-        # Set unit of measurement and precision ONLY for numeric sensors
-        # String sensors must have None to avoid HA treating them as numeric
-        if is_numeric:
             units = point_data.get("units")
             if units:
                 self._attr_native_unit_of_measurement = units
@@ -167,8 +156,16 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
                 elif units in ("Hz", "°C", "°F"):
                     self._attr_suggested_display_precision = 2
         else:
-            # String sensor: explicitly set to None
+            # String sensor: explicitly set ALL numeric attributes to None
+            # This prevents HA from inferring numeric type from any attribute
+            self._attr_device_class = None
+            self._attr_state_class = None
             self._attr_native_unit_of_measurement = None
+            _LOGGER.debug(
+                "String sensor %s: device_class=None, state_class=None, unit=None (value: %s)",
+                point_name,
+                initial_value,
+            )
 
         _LOGGER.debug(
             "Created sensor: %s (device_class=%s, state_class=%s, unit=%s)",

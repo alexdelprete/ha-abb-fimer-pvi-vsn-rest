@@ -9,11 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- **String Sensor Units**: Fixed string sensors still being treated as numeric by HA ([sensor.py:122-171](custom_components/abb_fimer_pvi_vsn_rest/sensor.py#L122))
+- **String Sensor Attributes**: Fixed string sensors being treated as numeric by explicitly setting all attributes to None ([sensor.py:122-168](custom_components/abb_fimer_pvi_vsn_rest/sensor.py#L122))
+  - Explicitly set `_attr_device_class = None` for string sensors
+  - Explicitly set `_attr_state_class = None` for string sensors
   - Explicitly set `_attr_native_unit_of_measurement = None` for string sensors
-  - Only set units and suggested_display_precision for numeric sensors
-  - Refactored to check `is_numeric` once and use throughout initialization
-  - Prevents HA from inferring numeric type based on empty/None attributes
+  - Refactored to check `is_numeric` once at initialization
+  - Numeric sensors: set device_class, state_class, units, precision as available
+  - String sensors: ALL numeric attributes explicitly None
+  - Prevents HA from inferring numeric type from any attribute
   - Fixes: "Sensor has device class 'None', state class 'None' unit '' ... thus indicating numeric value; however, it has non-numeric value"
 
 ## [1.0.0-beta.4] - 2025-10-27
