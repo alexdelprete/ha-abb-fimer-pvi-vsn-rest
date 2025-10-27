@@ -1049,6 +1049,7 @@ headers = [
     "Units",
     "State Class",
     "Device Class",
+    "Entity Category",
     "Available in Modbus",
 ]
 
@@ -1127,6 +1128,7 @@ for vsn_name, mapping in VSN_TO_SUNSPEC_MAP.items():
                 mapping["units"],
                 mapping["state_class"] if mapping["state_class"] else "",
                 mapping["device_class"] if mapping["device_class"] else "",
+                "",  # entity_category - empty for normal sensor points
                 mapping["in_modbus"],
             ]
         )
@@ -1170,6 +1172,7 @@ for p in sorted(periodic_points):
                 "Wh",
                 "total",
                 "energy",
+                "",  # entity_category - empty for normal sensor points
                 "MAYBE",
             ]
         )
@@ -1225,6 +1228,7 @@ for p in sorted(M64061_POINTS):
                 "V" if "V" in p else ("A" if "leak" in p else ""),
                 "measurement",
                 "voltage" if "V" in p else "",
+                "",  # entity_category - empty for normal sensor points
                 "MAYBE",
             ]
         )
@@ -1289,6 +1293,7 @@ for p in sorted(ABB_PROPRIETARY):
                 "power"
                 if "P" in p and "grid" in p
                 else ("current" if "Igrid" in p else ""),
+                "",  # entity_category - empty for normal sensor points
                 "NO",
             ]
         )
@@ -1307,21 +1312,6 @@ for row in rows:
 missing_vsn300 = all_vsn300 - mapped_vsn300
 
 for vsn300_point in sorted(missing_vsn300):
-    # Skip system monitoring points (handle separately)
-    if vsn300_point in [
-        "flash_free",
-        "free_ram",
-        "fw_ver",
-        "store_size",
-        "sys_load",
-        "uptime",
-    ]:
-        continue
-
-    # Skip common model points (C_Mn, C_Md, etc.) - metadata, not sensor data
-    if vsn300_point.startswith("C_"):
-        continue
-
     # Parse SunSpec model and point from VSN300 name
     model = None
     sunspec_point = None
@@ -1406,6 +1396,25 @@ for vsn300_point in sorted(missing_vsn300):
             units = "°C"
             device_class = "temperature"
 
+    # Determine entity_category
+    # M1 Common Model points and VSN system monitoring -> diagnostic
+    entity_category = ""
+    if vsn300_point.startswith("C_") or vsn300_point in [
+        "flash_free",
+        "free_ram",
+        "fw_ver",
+        "store_size",
+        "sys_load",
+        "uptime",
+    ]:
+        entity_category = "diagnostic"
+        # Override category for these diagnostic points
+        if vsn300_point.startswith("C_"):
+            category = "Device Info"
+            model = "M1"
+        else:
+            category = "System Monitoring"
+
     rows.append(
         [
             vsn700_equivalent if vsn700_equivalent else "N/A",  # VSN700 name
@@ -1421,8 +1430,10 @@ for vsn300_point in sorted(missing_vsn300):
             units,
             state_class,
             device_class,
+            entity_category,  # diagnostic for M1/system points, empty otherwise
             "YES"
             if model in ["M103", "M101", "M160", "M120", "M124", "M802", "M203"]
+            or model == "M1"
             else "NO",
         ]
     )
@@ -1449,17 +1460,6 @@ for row in rows:
 missing_vsn700 = vsn700_feeds_only - mapped_vsn700
 
 for vsn700_point in sorted(missing_vsn700):
-    # Skip system monitoring
-    if vsn700_point in [
-        "flash_free",
-        "free_ram",
-        "fw_ver",
-        "store_size",
-        "sys_load",
-        "uptime",
-    ]:
-        continue
-
     # These are VSN700-specific points, mostly totals
     # Generate HA entity name
     ha_name = f"abb_vsn_{vsn700_point.lower()}"
@@ -1470,8 +1470,21 @@ for vsn700_point in sorted(missing_vsn700):
     # Get description (feeds title has priority)
     description = get_description_with_priority(vsn700_point, feeds_titles, label, None)
 
-    # Determine category
+    # Determine category and entity_category
     category = "Energy Counter" if vsn700_point.startswith("E") else "Other"
+    entity_category = ""
+
+    # VSN700 system monitoring points -> diagnostic
+    if vsn700_point in [
+        "flash_free",
+        "free_ram",
+        "fw_ver",
+        "store_size",
+        "sys_load",
+        "uptime",
+    ]:
+        entity_category = "diagnostic"
+        category = "System Monitoring"
 
     rows.append(
         [
@@ -1488,6 +1501,7 @@ for vsn700_point in sorted(missing_vsn700):
             "Wh" if vsn700_point.startswith("E") else "",
             "total_increasing" if vsn700_point.startswith("E") else "measurement",
             "energy" if vsn700_point.startswith("E") else "",
+            entity_category,  # diagnostic for system monitoring, empty otherwise
             "NO",
         ]
     )
@@ -1531,14 +1545,17 @@ summary_ws = wb.create_sheet("Summary")
 summary_ws.append(["Category", "Count"])
 summary_ws.append(["Total Points", len(rows)])
 summary_ws.append(
-    ["Standard SunSpec (Both protocols)", len([r for r in rows if r[13] == "YES"])]
-)  # Column 13 = Available in Modbus
+    ["Standard SunSpec (Both protocols)", len([r for r in rows if r[14] == "YES"])]
+)  # Column 14 = Available in Modbus
 summary_ws.append(
     ["M64061 (Maybe in Modbus)", len([r for r in rows if r[8] == "M64061"])]
 )  # Column 8 = SunSpec Model
 summary_ws.append(
     ["ABB Proprietary (REST only)", len([r for r in rows if r[8] == "ABB Proprietary"])]
 )  # Column 8 = SunSpec Model
+summary_ws.append(
+    ["Diagnostic entities", len([r for r in rows if r[13] == "diagnostic"])]
+)  # Column 13 = Entity Category
 summary_ws.append(
     ["In /livedata", len([r for r in rows if r[4] == "✓"])]
 )  # Column 4 = In /livedata
@@ -1568,12 +1585,15 @@ wb.save(output_path)
 print(f"\n✓ Excel file created: {output_path}")
 print(f"  Total rows: {len(rows)}")
 print(
-    f"  Standard SunSpec: {len([r for r in rows if r[13] == 'YES'])}"
-)  # Column 13 = Available in Modbus
+    f"  Standard SunSpec: {len([r for r in rows if r[14] == 'YES'])}"
+)  # Column 14 = Available in Modbus
 print(
     f"  M64061: {len([r for r in rows if r[8] == 'M64061'])}"
 )  # Column 8 = SunSpec Model
 print(f"  ABB Proprietary: {len([r for r in rows if r[8] == 'ABB Proprietary'])}")
+print(
+    f"  Diagnostic entities: {len([r for r in rows if r[13] == 'diagnostic'])}"
+)  # Column 13 = Entity Category
 print(
     f"  Points with SunSpec labels: {len([r for r in rows if r[6] and r[6] != 'N/A'])}"
 )  # Column 6 = Label

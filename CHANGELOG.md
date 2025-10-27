@@ -7,7 +7,53 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **M1 Common Model Points as Diagnostic Entities**: Added SunSpec Common Model (M1) device identification points as diagnostic entities
+  - `C_Mn` (Manufacturer) - Device manufacturer name
+  - `C_Md` (Model) - Device model identifier
+  - `C_Opt` (Options) - Device options/features
+  - `C_SN` (Serial Number) - Device serial number
+  - `C_Vr` (Version) - Firmware version
+  - `C_DA` (Device Address) - Modbus device address
+  - These are static metadata fields, excluded from HA Recorder history by default
+  - Visible in advanced entity view for troubleshooting
+
+- **VSN System Monitoring Points as Diagnostic Entities**: Added VSN datalogger system diagnostics as diagnostic entities
+  - `fw_ver` - VSN firmware version
+  - `uptime` - VSN datalogger uptime (seconds)
+  - `sys_load` - System load percentage
+  - `free_ram` - Available RAM (KB)
+  - `flash_free` - Available flash storage (KB)
+  - `store_size` - Data store size (KB)
+  - Useful for monitoring VSN datalogger health
+  - Excluded from HA Recorder history by default
+
+- **Entity Category Support**: Added `entity_category` field to mapping system
+  - New "Entity Category" column in Excel mapping file
+  - Supports `diagnostic` category for M1 and system monitoring points
+  - Integrated throughout mapping pipeline: Excel → JSON → normalizer → sensor platform
+  - Diagnostic entities automatically hidden from standard entity lists
+
+### Changed
+
+- **Mapping File Updates**: Updated VSN-SunSpec mapping files with diagnostic points
+  - Excel file: 260 → 277 rows (17 new diagnostic points)
+  - JSON file: Added `entity_category` field
+  - Updated `PointMapping` dataclass with `entity_category: str | None`
+  - Updated normalizer to include `entity_category` in normalized points
+  - Updated sensor platform to set `EntityCategory.DIAGNOSTIC` when specified
+
+- **Removed Point Filters**: Removed filters that excluded M1 and system monitoring points
+  - Previously skipped in `generate_mapping_excel.py` (lines 1311-1323)
+  - Now included with `entity_category="diagnostic"`
+
 ### Fixed
+
+- **"No mapping found" Warnings Eliminated**: Fixed 12 unmapped point warnings in logs
+  - M1 Common Model points no longer generate warnings
+  - VSN system monitoring points no longer generate warnings
+  - All previously unmapped diagnostic points now properly mapped
 
 - **String Sensor Attributes**: Fixed string sensors being treated as numeric by explicitly setting all attributes to None ([sensor.py:122-168](custom_components/abb_fimer_pvi_vsn_rest/sensor.py#L122))
   - Explicitly set `_attr_device_class = None` for string sensors

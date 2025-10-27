@@ -37,6 +37,7 @@ class PointMapping:
     units: str
     state_class: str
     device_class: str
+    entity_category: str | None
     available_in_modbus: str
 
 
@@ -162,6 +163,7 @@ class VSNMappingLoader:
         # - Units
         # - State Class
         # - Device Class
+        # - Entity Category
         # - Available in Modbus
 
         for row in mappings_data:
@@ -178,6 +180,7 @@ class VSNMappingLoader:
             units = row.get("Units") or ""
             state_class = row.get("State Class") or ""
             device_class = row.get("Device Class") or ""
+            entity_category = row.get("Entity Category") or None
             available_in_modbus = row.get("Available in Modbus") or ""
 
             # Normalize N/A values
@@ -187,6 +190,10 @@ class VSNMappingLoader:
                 vsn300 = None
             if sunspec == "N/A":
                 sunspec = None
+
+            # Normalize empty entity_category to None
+            if entity_category == "":
+                entity_category = None
 
             if not ha_entity:
                 _LOGGER.warning("Row missing HA entity name, skipping")
@@ -206,6 +213,7 @@ class VSNMappingLoader:
                 units=units,
                 state_class=state_class,
                 device_class=device_class,
+                entity_category=entity_category,
                 available_in_modbus=available_in_modbus,
             )
 

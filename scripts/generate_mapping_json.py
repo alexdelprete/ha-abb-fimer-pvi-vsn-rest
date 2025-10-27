@@ -76,11 +76,12 @@ def convert_mapping_to_json():
     print(f"  - File size: {json_file.stat().st_size / 1024:.1f} KB")
 
     # Show statistics
-    vsn300_count = sum(1 for m in mappings if m.get("VSN300 Name"))
-    vsn700_count = sum(1 for m in mappings if m.get("VSN700 Name"))
+    vsn300_count = sum(1 for m in mappings if m.get("REST Name (VSN300)"))
+    vsn700_count = sum(1 for m in mappings if m.get("REST Name (VSN700)"))
     both_count = sum(
-        1 for m in mappings if m.get("VSN300 Name") and m.get("VSN700 Name")
+        1 for m in mappings if m.get("REST Name (VSN300)") and m.get("REST Name (VSN700)")
     )
+    diagnostic_count = sum(1 for m in mappings if m.get("Entity Category") == "diagnostic")
 
     print("\nStatistics:")
     print(f"  - VSN300 points: {vsn300_count}")
@@ -88,6 +89,7 @@ def convert_mapping_to_json():
     print(f"  - Shared points: {both_count}")
     print(f"  - VSN300-only: {vsn300_count - both_count}")
     print(f"  - VSN700-only: {vsn700_count - both_count}")
+    print(f"  - Diagnostic entities: {diagnostic_count}")
 
 
 if __name__ == "__main__":

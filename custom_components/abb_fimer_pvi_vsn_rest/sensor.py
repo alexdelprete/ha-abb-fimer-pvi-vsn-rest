@@ -12,6 +12,7 @@ from homeassistant.components.sensor import (
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
@@ -167,12 +168,19 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
                 initial_value,
             )
 
+        # Set entity_category if specified (e.g., "diagnostic" for M1/system monitoring)
+        entity_category_str = point_data.get("entity_category")
+        if entity_category_str == "diagnostic":
+            self._attr_entity_category = EntityCategory.DIAGNOSTIC
+            _LOGGER.debug("Sensor %s set as diagnostic entity", point_name)
+
         _LOGGER.debug(
-            "Created sensor: %s (device_class=%s, state_class=%s, unit=%s)",
+            "Created sensor: %s (device_class=%s, state_class=%s, unit=%s, entity_category=%s)",
             self._attr_name,
             getattr(self, "_attr_device_class", None),
             getattr(self, "_attr_state_class", None),
             self._attr_native_unit_of_measurement,
+            getattr(self, "_attr_entity_category", None),
         )
 
     @property
