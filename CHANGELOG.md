@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Device Registration Order**: Fixed device hierarchy registration to ensure datalogger device is created before inverter devices ([sensor.py:38-85](custom_components/abb_fimer_pvi_vsn_rest/sensor.py#L38))
+  - Separates datalogger sensors from inverter sensors during creation
+  - Adds datalogger sensors first, then inverter sensors
+  - Prevents "via_device referencing non-existing device" warning (HA 2025.12)
+  - Ensures proper device hierarchy: inverters → datalogger
+
 ## [1.0.0-beta.3] - 2025-10-27
 
 ### Fixed

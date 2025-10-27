@@ -35,30 +35,54 @@ async def async_setup_entry(
         return
 
     # Create sensors from normalized data
-    sensors: list[VSNSensor] = []
+    # IMPORTANT: Create datalogger sensors first, then inverter sensors
+    # This ensures datalogger device exists before inverter devices reference it via via_device
+    datalogger_sensors: list[VSNSensor] = []
+    other_sensors: list[VSNSensor] = []
 
     devices = coordinator.data.get("devices", {})
     _LOGGER.debug("Creating sensors for %d devices", len(devices))
 
+    # First pass: identify datalogger device ID
+    datalogger_device_id = None
+    for discovered_device in coordinator.discovered_devices:
+        if discovered_device.is_datalogger:
+            datalogger_device_id = discovered_device.device_id
+            break
+
+    # Second pass: create sensors, separating datalogger from others
     for device_id, device_data in devices.items():
         device_type = device_data.get("device_type", "unknown")
         points = device_data.get("points", {})
 
         _LOGGER.debug("Device %s (%s): %d points", device_id, device_type, len(points))
 
+        is_datalogger = device_id == datalogger_device_id
+
         for point_name, point_data in points.items():
-            sensors.append(
-                VSNSensor(
-                    coordinator=coordinator,
-                    device_id=device_id,
-                    device_type=device_type,
-                    point_name=point_name,
-                    point_data=point_data,
-                )
+            sensor = VSNSensor(
+                coordinator=coordinator,
+                device_id=device_id,
+                device_type=device_type,
+                point_name=point_name,
+                point_data=point_data,
             )
 
-    _LOGGER.info("Adding %d sensors", len(sensors))
-    async_add_entities(sensors)
+            if is_datalogger:
+                datalogger_sensors.append(sensor)
+            else:
+                other_sensors.append(sensor)
+
+    # Add datalogger sensors first, then other sensors
+    # This ensures proper device hierarchy registration
+    total_sensors = len(datalogger_sensors) + len(other_sensors)
+    _LOGGER.info(
+        "Adding %d sensors (%d datalogger, %d inverters)",
+        total_sensors,
+        len(datalogger_sensors),
+        len(other_sensors),
+    )
+    async_add_entities(datalogger_sensors + other_sensors)
 
 
 class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
