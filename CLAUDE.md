@@ -367,6 +367,21 @@ Use this data to verify mapping and normalization.
 6. Push: `git push && git push --tags`
 7. Create GitHub release
 
+**⚠️ IMPORTANT - Release Policy:**
+
+**NEVER create git tags or GitHub releases automatically without explicit user instruction.**
+
+- Tags and releases are permanent and public
+- Only create them when explicitly asked by the user
+- Always confirm before creating tags or releases
+- Present the plan first, wait for approval
+- This includes:
+  - `git tag` commands
+  - `gh release create` commands
+  - Any automation that creates tags/releases
+
+**Exception:** You may prepare all release materials (bump versions, update CHANGELOG, create release notes), commit changes, and push commits - but STOP before creating tags or releases unless explicitly instructed.
+
 ### Git Workflow
 
 **Commit Messages:**
