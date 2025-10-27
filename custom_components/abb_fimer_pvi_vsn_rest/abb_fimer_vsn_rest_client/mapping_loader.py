@@ -9,10 +9,13 @@ Loads the vsn-sunspec-point-mapping.json file to provide lookups for:
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 from dataclasses import dataclass
 from pathlib import Path
+
+import aiohttp
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -60,10 +63,53 @@ class VSNMappingLoader:
 
         self._load_mappings(Path(mapping_file_path))
 
+    async def _fetch_from_github(self, file_path: Path) -> None:
+        """Fetch mapping file from GitHub as fallback.
+
+        Args:
+            file_path: Local path where the file should be saved
+
+        Raises:
+            FileNotFoundError: If GitHub fetch fails
+
+        """
+        url = "https://raw.githubusercontent.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/master/docs/vsn-sunspec-point-mapping.json"
+
+        _LOGGER.warning("Local mapping file not found at %s", file_path)
+        _LOGGER.info("Attempting to fetch from GitHub: %s", url)
+
+        try:
+            async with aiohttp.ClientSession() as session, session.get(
+                url, timeout=aiohttp.ClientTimeout(total=30)
+            ) as response:
+                if response.status == 200:
+                    content = await response.text()
+                    # Save to local cache
+                    file_path.parent.mkdir(parents=True, exist_ok=True)
+                    file_path.write_text(content, encoding="utf-8")
+                    _LOGGER.info("Downloaded mapping file from GitHub and cached locally")
+                else:
+                    raise FileNotFoundError(
+                        f"Failed to fetch from GitHub: HTTP {response.status}"
+                    )
+        except aiohttp.ClientError as err:
+            raise FileNotFoundError(
+                f"Failed to fetch mapping from GitHub: {err}"
+            ) from err
+
     def _load_mappings(self, file_path: Path) -> None:
-        """Load mappings from JSON file."""
+        """Load mappings from JSON file with GitHub fallback."""
         if not file_path.exists():
-            raise FileNotFoundError(f"Mapping file not found: {file_path}")
+            _LOGGER.warning("Bundled mapping file not found: %s", file_path)
+            _LOGGER.info("Attempting to fetch from GitHub as fallback...")
+
+            # Run async fetch in sync context
+            try:
+                asyncio.run(self._fetch_from_github(file_path))
+            except Exception as err:
+                raise FileNotFoundError(
+                    f"Mapping file not found locally and GitHub fetch failed: {err}"
+                ) from err
 
         _LOGGER.debug("Loading VSN-SunSpec mappings from %s", file_path)
 
