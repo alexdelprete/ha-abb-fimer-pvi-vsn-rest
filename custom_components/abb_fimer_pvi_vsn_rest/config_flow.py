@@ -292,7 +292,7 @@ class ABBFimerPVIVSNRestConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  #
         config_entry: config_entries.ConfigEntry,
     ) -> ABBFimerPVIVSNRestOptionsFlowHandler:
         """Get the options flow for this handler."""
-        return ABBFimerPVIVSNRestOptionsFlowHandler(config_entry)
+        return ABBFimerPVIVSNRestOptionsFlowHandler()
 
 
 class ABBFimerPVIVSNRestOptionsFlowHandler(config_entries.OptionsFlow):
