@@ -48,18 +48,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Previously skipped in `generate_mapping_excel.py` (lines 1311-1323)
   - Now included with `entity_category="diagnostic"`
 
-- **Improved Sensor Labels**: Enhanced label generation for 21 VSN300-specific SunSpec points ([generate_mapping_excel.py:766-884](scripts/generate_mapping_excel.py#L766))
-  - **BREAKING CHANGE**: Entity IDs updated for better readability
-  - M103 phase voltages: "PhVphAB" → "Phase Voltage AB"
-  - M103 frequencies: "HzA" → "Frequency Phase A"
-  - M103 peak power: "PowerPeakAbs" → "Peak Power (Absolute)", "PowerPeakToday" → "Peak Power Today"
-  - M64061 state codes: "AlarmSt" → "Alarm State", "GlobalSt" → "Global State", "InverterSt" → "Inverter State", "DcSt1" → "DC Input 1 State", "DcSt2" → "DC Input 2 State"
-  - M64061 leakage: "ILeakDcAc" → "Leakage Current DC-AC", "ILeakDcDc" → "Leakage Current DC-DC"
-  - M64061 isolation: "Isolation_Ohm1" → "Isolation Resistance"
-  - M64061 temperature: "Booster_Tmp" → "Boost Converter Temperature"
-  - M64061 energy: "DayWH" → "Daily Energy", "WeekWH" → "Weekly Energy", "MonthWH" → "Monthly Energy", "YearWH" → "Yearly Energy"
-  - Replaced poorly formatted "(M103) PhVphBC" labels with human-readable names
+- **Improved Sensor Labels and Entity IDs**: Enhanced label and entity ID generation for 21 VSN300-specific SunSpec points ([generate_mapping_excel.py:766-884](scripts/generate_mapping_excel.py#L766), [generate_mapping_excel.py:887-917](scripts/generate_mapping_excel.py#L887))
+  - **BREAKING CHANGE**: Entity IDs and labels updated for better readability
+  - Labels: Replaced poorly formatted "(M103) PhVphBC" format with human-readable names
+  - Entity IDs: Generated from human-readable labels (e.g., `abb_m103_phvphbc` → `abb_m103_phase_voltage_bc`)
+  - M103 phase voltages: "PhVphAB" → "Phase Voltage AB" / `abb_m103_phase_voltage_ab`
+  - M103 frequencies: "HzA" → "Frequency Phase A" / `abb_m103_frequency_phase_a`
+  - M103 peak power: "PowerPeakAbs" → "Peak Power (Absolute)" / `abb_m103_peak_power_absolute`
+  - M64061 state codes: "AlarmSt" → "Alarm State" / `abb_m64061_alarm_state`
+  - M64061 leakage: "ILeakDcAc" → "Leakage Current DC-AC" / `abb_m64061_leakage_current_dc_ac`
+  - M64061 isolation: "Isolation_Ohm1" → "Isolation Resistance" / `abb_m64061_isolation_resistance`
+  - M64061 temperature: "Booster_Tmp" → "Boost Converter Temperature" / `abb_m64061_boost_converter_temperature`
+  - M64061 energy: "DayWH" → "Daily Energy" / `abb_m64061_daily_energy`
   - Enhanced `generate_label_from_name()` function with VSN300-specific patterns
+  - Added `generate_entity_id_from_label()` function to convert labels to entity IDs
 
 ### Fixed
 

@@ -884,6 +884,39 @@ def generate_label_from_name(point_name):
     return label.replace("Ac", "AC")
 
 
+def generate_entity_id_from_label(label, model=None):
+    """Generate Home Assistant entity ID from human-readable label.
+
+    Converts labels like "Phase Voltage BC" to "abb_m103_phase_voltage_bc"
+    """
+    # Convert to lowercase and replace spaces/special chars with underscores
+    entity_id = label.lower()
+
+    # Replace common separators and special characters
+    entity_id = entity_id.replace(" - ", "_")
+    entity_id = entity_id.replace("-", "_")
+    entity_id = entity_id.replace(" ", "_")
+    entity_id = entity_id.replace("(", "")
+    entity_id = entity_id.replace(")", "")
+    entity_id = entity_id.replace("/", "_")
+    entity_id = entity_id.replace(".", "")
+    entity_id = entity_id.replace(",", "")
+    entity_id = entity_id.replace(":", "")
+
+    # Remove duplicate underscores
+    while "__" in entity_id:
+        entity_id = entity_id.replace("__", "_")
+
+    # Strip leading/trailing underscores
+    entity_id = entity_id.strip("_")
+
+    # Add prefix with model if available
+    if model:
+        return f"abb_{model.lower()}_{entity_id}"
+    else:
+        return f"abb_{entity_id}"
+
+
 def generate_description_from_name(point_name, category=None):
     """Generate description from point name and category."""
 
@@ -1381,12 +1414,6 @@ for vsn300_point in sorted(missing_vsn300):
                 # Title is a VSN700 point name reference
                 vsn700_equivalent = title_data["title"]
 
-    # Generate HA entity name
-    if model and sunspec_point:
-        ha_name = f"abb_{model.lower()}_{sunspec_point.lower()}"
-    else:
-        ha_name = f"abb_vsn_{vsn300_point.lower()}"
-
     # Get label from workbook or generate
     label, workbook_description = lookup_label_description(
         sunspec_metadata, model, sunspec_point
@@ -1397,6 +1424,9 @@ for vsn300_point in sorted(missing_vsn300):
             label = generate_label_from_name(sunspec_point)
         else:
             label = generate_label_from_name(vsn300_point)
+
+    # Generate HA entity name from human-readable label
+    ha_name = generate_entity_id_from_label(label, model)
 
     # Get description with priority
     description = get_description_with_priority(
@@ -1507,11 +1537,11 @@ missing_vsn700 = vsn700_feeds_only - mapped_vsn700
 
 for vsn700_point in sorted(missing_vsn700):
     # These are VSN700-specific points, mostly totals
-    # Generate HA entity name
-    ha_name = f"abb_vsn_{vsn700_point.lower()}"
-
     # Get label
     label = generate_label_from_name(vsn700_point)
+
+    # Generate HA entity name from human-readable label
+    ha_name = generate_entity_id_from_label(label, None)
 
     # Get description (feeds title has priority)
     description = get_description_with_priority(vsn700_point, feeds_titles, label, None)
