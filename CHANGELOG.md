@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta.6] - 2025-01-27
+
+### Fixed
+
+- **AttributeError in Sensor Initialization**: Fixed AttributeError when accessing `_attr_native_unit_of_measurement` in debug log ([sensor.py:182](custom_components/abb_fimer_pvi_vsn_rest/sensor.py#L182))
+  - Error: `'VSNSensor' object has no attribute '__attr_native_unit_of_measurement'`
+  - Root cause: Direct attribute access instead of using `getattr()` with default value
+  - Fixed by using `getattr(self, "_attr_native_unit_of_measurement", None)` for consistent handling
+  - Integration now loads properly without AttributeError
+  - Commit: [51f9286](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/51f9286)
+
+- **Ruff Linting (RET505)**: Removed unnecessary `else` after `return` statement ([generate_mapping_excel.py:917](scripts/generate_mapping_excel.py#L917))
+  - Simplified code by removing redundant `else` clause
+  - GitHub Actions Ruff check now passes
+  - Commit: [20a24fd](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/20a24fd)
+
+**Full Release Notes:** [docs/releases/v1.0.0-beta.6.md](docs/releases/v1.0.0-beta.6.md)
+
 ## [1.0.0-beta.5] - 2025-01-27
 
 ### Added
