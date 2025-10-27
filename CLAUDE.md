@@ -357,15 +357,37 @@ Use this data to verify mapping and normalization.
    - `units`: Unit of measurement
    - `description`: Detailed description
 
-### Version Updates
+### Release Management
 
-1. Update `manifest.json` version
-2. Update `const.py` VERSION
-3. Update CHANGELOG.md
-4. Commit: `"chore(release): bump version to vX.Y.Z"`
-5. Tag: `git tag -a vX.Y.Z -m "Release vX.Y.Z"`
-6. Push: `git push && git push --tags`
-7. Create GitHub release
+**⚠️ CRITICAL PRINCIPLES:**
+
+1. **Published releases are FROZEN** - Once a release is published (tagged and on GitHub), its documentation is immutable:
+   - Never modify `docs/releases/vX.Y.Z.md` for a published version
+   - Never change CHANGELOG.md entries for published versions
+
+2. **Master branch = Next Release** - The master branch always represents the NEXT release:
+   - All new commits go toward the next version
+   - All documentation changes go to the next version's release notes
+   - Version in `manifest.json` and `const.py` reflects the version being developed
+
+3. **Version Progression** - After publishing vX.Y.Z:
+   - Immediately bump to vX.Y.(Z+1) or v(X+1).0.0 or vX.(Y+1).0
+   - Create new `docs/releases/vX.Y.(Z+1).md` for ongoing work
+   - All changes from that point forward go to the new version's documentation
+
+**Complete Release Workflow:**
+
+See [docs/releases/README.md](docs/releases/README.md) for the detailed 8-step process. Summary:
+
+1. **Prepare Release Notes**: Create `docs/releases/vX.Y.Z.md` with comprehensive release notes following the template
+2. **Update CHANGELOG.md**: Add new version section with summary and links
+3. **Bump Version Numbers**: Update `manifest.json` version field
+4. **Bump Version Constants**: Update `const.py` VERSION and STARTUP_MESSAGE
+5. **Commit Changes**: `git add . && git commit -m "chore(release): bump version to vX.Y.Z"`
+6. **Push Commits**: `git push`
+7. **⚠️ STOP HERE** - Get explicit user approval before creating tags/releases
+8. **Create Tag** (only when instructed): `git tag -a vX.Y.Z -m "Release vX.Y.Z" && git push --tags`
+9. **Create GitHub Release** (only when instructed): `gh release create vX.Y.Z --prerelease` (beta) or `--latest` (stable)
 
 **⚠️ IMPORTANT - Release Policy:**
 
@@ -381,6 +403,14 @@ Use this data to verify mapping and normalization.
   - Any automation that creates tags/releases
 
 **Exception:** You may prepare all release materials (bump versions, update CHANGELOG, create release notes), commit changes, and push commits - but STOP before creating tags or releases unless explicitly instructed.
+
+**After Publishing a Release:**
+
+1. The released version's documentation is now FROZEN
+2. Immediately bump version to next version (e.g., v1.0.0-beta.2 → v1.0.0-beta.3)
+3. Create `docs/releases/v(next-version).md` as a stub for ongoing work
+4. All subsequent changes go to CHANGELOG.md under [Unreleased] or [next-version] heading
+5. All bug fixes, features, improvements documented in next version's release notes only
 
 ### Git Workflow
 
