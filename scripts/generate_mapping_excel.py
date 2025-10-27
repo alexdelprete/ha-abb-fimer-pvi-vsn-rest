@@ -1503,17 +1503,17 @@ for vsn300_point in sorted(missing_vsn300):
 
     if vsn300_point in feeds_titles and feeds_titles[vsn300_point].get("units"):
         feeds_units = feeds_titles[vsn300_point]["units"]
-        # Convert VSN feeds units to HA units
+        # Map VSN feeds units to HA units (keep original scale - HA supports kW, kWh, etc.)
         if feeds_units == "kW":
-            units = "W"
+            units = "kW"
             device_class = "power"
             state_class = "measurement"
         elif feeds_units == "kWh":
-            units = "Wh"
+            units = "kWh"
             device_class = "energy"
             state_class = "total_increasing"
         elif feeds_units == "kvar":
-            units = "var"
+            units = "kvar"
             device_class = "reactive_power"
             state_class = "measurement"
         elif feeds_units in ["A", "uA"]:
