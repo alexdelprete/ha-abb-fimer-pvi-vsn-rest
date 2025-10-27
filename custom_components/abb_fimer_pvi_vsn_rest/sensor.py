@@ -179,7 +179,7 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
             self._attr_name,
             getattr(self, "_attr_device_class", None),
             getattr(self, "_attr_state_class", None),
-            self._attr_native_unit_of_measurement,
+            getattr(self, "_attr_native_unit_of_measurement", None),
             getattr(self, "_attr_entity_category", None),
         )
 
