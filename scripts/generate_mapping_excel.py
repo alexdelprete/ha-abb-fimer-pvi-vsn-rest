@@ -1458,12 +1458,20 @@ for vsn300_point in sorted(missing_vsn300):
     state_class = "measurement"
 
     if sunspec_point:
-        if "A" in sunspec_point and "phA" not in sunspec_point:
+        if sunspec_point.startswith("Aph"):
+            # Phase current points (AphA, AphB, AphC)
+            units = "A"
+            device_class = "current"
+        elif "A" in sunspec_point and "phA" not in sunspec_point:
             units = "A"
             device_class = "current"
         elif "V" in sunspec_point:
             units = "V"
             device_class = "voltage"
+        elif "PowerPeak" in sunspec_point:
+            # Peak power points (PowerPeakToday, PowerPeakAbs)
+            units = "W"
+            device_class = "power"
         elif "W" in sunspec_point and "WH" not in sunspec_point:
             units = "W"
             device_class = "power"

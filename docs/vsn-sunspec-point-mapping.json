@@ -3937,9 +3937,9 @@
     "Description": "Phase A Current",
     "SunSpec Model": "M103",
     "Category": "Inverter",
-    "Units": null,
+    "Units": "A",
     "State Class": "measurement",
-    "Device Class": null,
+    "Device Class": "current",
     "Entity Category": null,
     "Available in Modbus": "YES"
   },
@@ -4141,9 +4141,9 @@
     "Description": "Pout Peak of the day",
     "SunSpec Model": "M103",
     "Category": "Inverter",
-    "Units": null,
+    "Units": "W",
     "State Class": "measurement",
-    "Device Class": null,
+    "Device Class": "power",
     "Entity Category": null,
     "Available in Modbus": "YES"
   },

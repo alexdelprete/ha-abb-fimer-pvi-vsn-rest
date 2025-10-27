@@ -112,7 +112,7 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         self._device_id = device_id
         self._device_type = device_type
         self._point_name = point_name
-        self._attr_has_entity_name = True
+        self._attr_has_entity_name = False
 
         # Set unique ID: domain_deviceid_pointname
         self._attr_unique_id = f"{DOMAIN}_{device_id}_{point_name}"
