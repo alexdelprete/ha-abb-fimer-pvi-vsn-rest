@@ -55,13 +55,30 @@ class VSNMappingLoader:
         self._vsn300_index: dict[str, str] = {}  # vsn300_name → key
         self._vsn700_index: dict[str, str] = {}  # vsn700_name → key
         self._ha_entity_index: dict[str, str] = {}  # ha_entity_name → key
+        self._loaded = False
 
         if mapping_file_path is None:
             # Default location: data/vsn-sunspec-point-mapping.json (bundled with component)
             module_dir = Path(__file__).parent.parent
             mapping_file_path = module_dir / "data" / "vsn-sunspec-point-mapping.json"
 
-        self._load_mappings(Path(mapping_file_path))
+        self._mapping_file_path = Path(mapping_file_path)
+
+    async def async_load(self) -> None:
+        """Load mappings asynchronously.
+
+        This must be called before using any lookup methods.
+        Safe to call multiple times - will only load once.
+
+        Raises:
+            FileNotFoundError: If mapping file not found and GitHub fetch fails
+
+        """
+        if self._loaded:
+            return
+
+        await self._async_load_mappings(self._mapping_file_path)
+        self._loaded = True
 
     async def _fetch_from_github(self, file_path: Path) -> None:
         """Fetch mapping file from GitHub as fallback.
@@ -84,9 +101,8 @@ class VSNMappingLoader:
             ) as response:
                 if response.status == 200:
                     content = await response.text()
-                    # Save to local cache
-                    file_path.parent.mkdir(parents=True, exist_ok=True)
-                    file_path.write_text(content, encoding="utf-8")
+                    # Save to local cache using thread pool to avoid blocking
+                    await asyncio.to_thread(self._write_file, file_path, content)
                     _LOGGER.info("Downloaded mapping file from GitHub and cached locally")
                 else:
                     raise FileNotFoundError(
@@ -97,15 +113,31 @@ class VSNMappingLoader:
                 f"Failed to fetch mapping from GitHub: {err}"
             ) from err
 
-    def _load_mappings(self, file_path: Path) -> None:
+    def _write_file(self, file_path: Path, content: str) -> None:
+        """Write content to file (runs in thread pool)."""
+        file_path.parent.mkdir(parents=True, exist_ok=True)
+        file_path.write_text(content, encoding="utf-8")
+
+    def _read_and_parse_json(self, file_path: Path) -> list[dict]:
+        """Read and parse JSON file (runs in thread pool).
+
+        Uses Path.read_text() as recommended by HA best practices.
+        See: https://developers.home-assistant.io/docs/asyncio_blocking_operations/#open
+        """
+        content = file_path.read_text(encoding="utf-8")
+        return json.loads(content)
+
+    async def _async_load_mappings(self, file_path: Path) -> None:
         """Load mappings from JSON file with GitHub fallback."""
-        if not file_path.exists():
+        # Check if file exists using thread pool to avoid blocking
+        file_exists = await asyncio.to_thread(file_path.exists)
+
+        if not file_exists:
             _LOGGER.warning("Bundled mapping file not found: %s", file_path)
             _LOGGER.info("Attempting to fetch from GitHub as fallback...")
 
-            # Run async fetch in sync context
             try:
-                asyncio.run(self._fetch_from_github(file_path))
+                await self._fetch_from_github(file_path)
             except Exception as err:
                 raise FileNotFoundError(
                     f"Mapping file not found locally and GitHub fetch failed: {err}"
@@ -113,8 +145,8 @@ class VSNMappingLoader:
 
         _LOGGER.debug("Loading VSN-SunSpec mappings from %s", file_path)
 
-        with file_path.open(encoding="utf-8") as f:
-            mappings_data = json.load(f)
+        # Load and parse JSON file in thread pool to avoid blocking
+        mappings_data = await asyncio.to_thread(self._read_and_parse_json, file_path)
 
         # Expected fields (from generate_mapping_json.py):
         # - REST Name (VSN700)

@@ -72,6 +72,7 @@ class ABBFimerVSNRestClient:
 
         # Initialize normalizer
         self._normalizer = VSNDataNormalizer(self.vsn_model)
+        await self._normalizer.async_load()
 
         _LOGGER.info("Connected to %s at %s", self.vsn_model, self.base_url)
         return self.vsn_model

@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Blocking I/O Operations**: Converted synchronous file I/O to async using `asyncio.to_thread()` to prevent blocking event loop ([mapping_loader.py:127](custom_components/abb_fimer_pvi_vsn_rest/abb_fimer_vsn_rest_client/mapping_loader.py#L127))
+  - Added `async_load()` method to `VSNMappingLoader` for deferred async loading
+  - Added `async_load()` method to `VSNDataNormalizer` for deferred async loading
+  - File operations now run in thread pool using `Path.read_text()` (HA recommended approach)
+  - Follows HA best practices: https://developers.home-assistant.io/docs/asyncio_blocking_operations/#open
 - **OptionsFlow Deprecation**: Removed manual `self.config_entry` assignment in `config_flow.py` to fix HA 2025.12 deprecation warning ([#issue](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/issues))
 - **Sensor AttributeError**: Fixed `AttributeError` in sensor debug logging when `device_class` or `state_class` not set ([sensor.py:132](custom_components/abb_fimer_pvi_vsn_rest/sensor.py#L132))
 

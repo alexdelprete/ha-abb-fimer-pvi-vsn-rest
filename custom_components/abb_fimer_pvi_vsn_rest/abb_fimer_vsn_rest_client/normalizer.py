@@ -34,8 +34,25 @@ class VSNDataNormalizer:
 
         self.vsn_model = vsn_model
         self._mapping_loader = mapping_loader or VSNMappingLoader()
+        self._loaded = False
 
         _LOGGER.debug("Initialized normalizer for %s", vsn_model)
+
+    async def async_load(self) -> None:
+        """Load mappings asynchronously.
+
+        This must be called after __init__ before using normalize().
+        Safe to call multiple times - will only load once.
+
+        Raises:
+            FileNotFoundError: If mapping file not found and GitHub fetch fails
+
+        """
+        if self._loaded:
+            return
+
+        await self._mapping_loader.async_load()
+        self._loaded = True
 
     def normalize(self, raw_data: dict[str, Any]) -> dict[str, Any]:
         """Normalize VSN livedata to SunSpec schema.
