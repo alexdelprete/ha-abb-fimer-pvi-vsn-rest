@@ -129,8 +129,8 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         _LOGGER.debug(
             "Created sensor: %s (device_class=%s, state_class=%s, unit=%s)",
             self._attr_name,
-            self._attr_device_class,
-            self._attr_state_class,
+            getattr(self, "_attr_device_class", None),
+            getattr(self, "_attr_state_class", None),
             self._attr_native_unit_of_measurement,
         )
 

@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **OptionsFlow Deprecation**: Removed manual `self.config_entry` assignment in `config_flow.py` to fix HA 2025.12 deprecation warning ([#issue](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/issues))
+- **Sensor AttributeError**: Fixed `AttributeError` in sensor debug logging when `device_class` or `state_class` not set ([sensor.py:132](custom_components/abb_fimer_pvi_vsn_rest/sensor.py#L132))
+
 ### Added
 
 **Discovery Module:**
