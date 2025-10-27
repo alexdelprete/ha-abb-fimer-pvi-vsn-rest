@@ -54,9 +54,9 @@ class VSNMappingLoader:
         self._ha_entity_index: dict[str, str] = {}  # ha_entity_name → key
 
         if mapping_file_path is None:
-            # Default location: docs/vsn-sunspec-point-mapping.json
-            module_dir = Path(__file__).parent.parent.parent.parent
-            mapping_file_path = module_dir / "docs" / "vsn-sunspec-point-mapping.json"
+            # Default location: data/vsn-sunspec-point-mapping.json (bundled with component)
+            module_dir = Path(__file__).parent.parent
+            mapping_file_path = module_dir / "data" / "vsn-sunspec-point-mapping.json"
 
         self._load_mappings(Path(mapping_file_path))
 
