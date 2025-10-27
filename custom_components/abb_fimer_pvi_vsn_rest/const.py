@@ -1,7 +1,7 @@
 """Constants for ABB FIMER PVI VSN REST integration."""
 
 DOMAIN = "abb_fimer_pvi_vsn_rest"
-VERSION = "1.0.0-beta.3"
+VERSION = "1.0.0-beta.4"
 
 # Configuration
 CONF_HOST = "host"
@@ -27,7 +27,7 @@ ENDPOINT_FEEDS = "/v1/feeds"
 STARTUP_MESSAGE = """
 -------------------------------------------------------------------
 ABB/FIMER PVI VSN REST
-Version: 1.0.0-beta.3
+Version: 1.0.0-beta.4
 This is a custom integration for Home Assistant
 If you have any issues, please report them at:
 https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/issues
