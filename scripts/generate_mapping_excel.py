@@ -914,8 +914,7 @@ def generate_entity_id_from_label(label, model=None):
     # Add prefix with model if available, otherwise use vsn prefix
     if model:
         return f"abb_{model.lower()}_{entity_id}"
-    else:
-        return f"abb_vsn_{entity_id}"
+    return f"abb_vsn_{entity_id}"
 
 
 def generate_description_from_name(point_name, category=None):
