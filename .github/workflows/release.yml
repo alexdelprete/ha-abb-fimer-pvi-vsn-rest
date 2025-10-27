@@ -19,19 +19,27 @@ jobs:
         with:
           token: ${{ secrets.WORKFLOW_PAT || github.token }}
 
+      - name: "Discover integration directory"
+        shell: "bash"
+        run: |
+          # Find the integration directory name dynamically
+          INTEGRATION_DIR=$(ls -1 "${{ github.workspace }}/custom_components" | head -n 1)
+          echo "INTEGRATION_DIR=${INTEGRATION_DIR}" >> $GITHUB_ENV
+          echo "Found integration directory: ${INTEGRATION_DIR}"
+
       - name: "Adjust version number"
         shell: "bash"
         run: |
           yq -i -o json '.version="${{ github.event.release.tag_name }}"' \
-            "${{ github.workspace }}/custom_components/abb_powerone_pvi_sunspec/manifest.json"
+            "${{ github.workspace }}/custom_components/${{ env.INTEGRATION_DIR }}/manifest.json"
 
       - name: "ZIP the integration directory"
         shell: "bash"
         run: |
-          cd "${{ github.workspace }}/custom_components/abb_powerone_pvi_sunspec"
-          zip abb_powerone_pvi_sunspec.zip -r ./
+          cd "${{ github.workspace }}/custom_components/${{ env.INTEGRATION_DIR }}"
+          zip ${{ env.INTEGRATION_DIR }}.zip -r ./
 
       - name: "Upload the ZIP file to the release"
         uses: softprops/action-gh-release@v2.4.1
         with:
-          files: ${{ github.workspace }}/custom_components/abb_powerone_pvi_sunspec/abb_powerone_pvi_sunspec.zip
+          files: ${{ github.workspace }}/custom_components/${{ env.INTEGRATION_DIR }}/${{ env.INTEGRATION_DIR }}.zip
