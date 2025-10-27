@@ -14,6 +14,7 @@ Usage:
 Example:
     python test_vsn_client.py 192.168.1.100
     python test_vsn_client.py abb-vsn300.axel.dom
+
 """
 
 import asyncio
@@ -25,9 +26,15 @@ from pathlib import Path
 import aiohttp
 
 # Add parent directory to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent / "custom_components" / "abb_fimer_pvi_vsn_rest"))
+sys.path.insert(
+    0,
+    str(Path(__file__).parent.parent / "custom_components" / "abb_fimer_pvi_vsn_rest"),
+)
 
-from abb_fimer_vsn_rest_client.auth import get_vsn300_digest_header, get_vsn700_basic_auth
+from abb_fimer_vsn_rest_client.auth import (
+    get_vsn300_digest_header,
+    get_vsn700_basic_auth,
+)
 from abb_fimer_vsn_rest_client.client import ABBFimerVSNRestClient
 from abb_fimer_vsn_rest_client.exceptions import VSNClientError
 
@@ -61,6 +68,7 @@ async def test_endpoint(
 
     Returns:
         Response data
+
     """
     url = f"{base_url.rstrip('/')}{endpoint}"
 
@@ -81,10 +89,8 @@ async def test_endpoint(
         timeout=aiohttp.ClientTimeout(total=timeout),
     ) as response:
         if response.status == 200:
-            data = await response.json()
-            return data
-        else:
-            raise VSNClientError(f"Request failed: HTTP {response.status}")
+            return await response.json()
+        raise VSNClientError(f"Request failed: HTTP {response.status}")
 
 
 async def test_client(base_url: str) -> None:
@@ -92,6 +98,7 @@ async def test_client(base_url: str) -> None:
 
     Args:
         base_url: Base URL of the VSN device (e.g., http://192.168.1.100)
+
     """
     _LOGGER.info("=" * 80)
     _LOGGER.info("VSN REST Client - Comprehensive Test")
@@ -126,13 +133,22 @@ async def test_client(base_url: str) -> None:
                     keys_data = status_data["keys"]
                     _LOGGER.info("  - System info keys: %d", len(keys_data))
                     # Show important system info
-                    important_keys = ["logger.sn", "device.invID", "device.modelDesc", "fw.release_number"]
+                    important_keys = [
+                        "logger.sn",
+                        "device.invID",
+                        "device.modelDesc",
+                        "fw.release_number",
+                    ]
                     for key in important_keys:
                         if key in keys_data:
-                            _LOGGER.info("    - %s: %s", key, keys_data[key].get("value", "N/A"))
+                            _LOGGER.info(
+                                "    - %s: %s", key, keys_data[key].get("value", "N/A")
+                            )
 
             # Save to file
-            output_file = Path(__file__).parent / f"test_output_{model.lower()}_status.json"
+            output_file = (
+                Path(__file__).parent / f"test_output_{model.lower()}_status.json"
+            )
             with open(output_file, "w", encoding="utf-8") as f:
                 json.dump(status_data, f, indent=2)
             _LOGGER.info("  - Saved to: %s", output_file)
@@ -146,7 +162,9 @@ async def test_client(base_url: str) -> None:
             _LOGGER.info("  - Device IDs: %s", list(raw_data.keys()))
 
             # Save raw data to file
-            output_file = Path(__file__).parent / f"test_output_{model.lower()}_livedata.json"
+            output_file = (
+                Path(__file__).parent / f"test_output_{model.lower()}_livedata.json"
+            )
             with open(output_file, "w", encoding="utf-8") as f:
                 json.dump(raw_data, f, indent=2)
             _LOGGER.info("  - Saved to: %s", output_file)
@@ -165,7 +183,9 @@ async def test_client(base_url: str) -> None:
                 _LOGGER.info("  - Number of feeds: %d", len(feeds_data))
 
             # Save to file
-            output_file = Path(__file__).parent / f"test_output_{model.lower()}_feeds.json"
+            output_file = (
+                Path(__file__).parent / f"test_output_{model.lower()}_feeds.json"
+            )
             with open(output_file, "w", encoding="utf-8") as f:
                 json.dump(feeds_data, f, indent=2)
             _LOGGER.info("  - Saved to: %s", output_file)
@@ -175,10 +195,14 @@ async def test_client(base_url: str) -> None:
             _LOGGER.info("-" * 80)
             normalized_data = await client.get_normalized_data()
             _LOGGER.info("✓ Normalized data received")
-            _LOGGER.info("  - Number of devices: %d", len(normalized_data.get("devices", {})))
+            _LOGGER.info(
+                "  - Number of devices: %d", len(normalized_data.get("devices", {}))
+            )
 
             # Save normalized data to file
-            output_file = Path(__file__).parent / f"test_output_{model.lower()}_normalized.json"
+            output_file = (
+                Path(__file__).parent / f"test_output_{model.lower()}_normalized.json"
+            )
             with open(output_file, "w", encoding="utf-8") as f:
                 json.dump(normalized_data, f, indent=2)
             _LOGGER.info("  - Saved to: %s", output_file)
@@ -190,7 +214,7 @@ async def test_client(base_url: str) -> None:
                 points = device_data.get("points", {})
                 _LOGGER.info("    - Number of points: %d", len(points))
                 # Show first 5 points
-                for i, (point_name, point_data) in enumerate(list(points.items())[:5]):
+                for _i, (point_name, point_data) in enumerate(list(points.items())[:5]):
                     value = point_data.get("value")
                     units = point_data.get("units", "")
                     _LOGGER.info("    - %s: %s %s", point_name, value, units)
@@ -209,8 +233,13 @@ async def test_client(base_url: str) -> None:
             _LOGGER.info("✓ /v1/status endpoint: OK")
             _LOGGER.info("✓ /v1/livedata endpoint: OK (%d devices)", len(raw_data))
             _LOGGER.info("✓ /v1/feeds endpoint: OK")
-            _LOGGER.info("✓ Data normalization: OK (%d points total)",
-                        sum(len(d.get("points", {})) for d in normalized_data.get("devices", {}).values()))
+            _LOGGER.info(
+                "✓ Data normalization: OK (%d points total)",
+                sum(
+                    len(d.get("points", {}))
+                    for d in normalized_data.get("devices", {}).values()
+                ),
+            )
             _LOGGER.info("=" * 80)
             _LOGGER.info("All tests passed successfully!")
             _LOGGER.info("=" * 80)

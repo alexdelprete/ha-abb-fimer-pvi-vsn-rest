@@ -167,5 +167,11 @@ ignore = [
 fixture-parentheses = false
 mark-parentheses = false
 
+[lint.per-file-ignores]
+# Allow print statements and other utility patterns in scripts
+"scripts/*.py" = ["T201", "T20", "PTH123", "D103", "D401", "ASYNC230", "BLE001", "PLC0415", "G003", "G201", "TRY002", "TRY301", "PT028", "PERF401"]
+# Allow missing __init__.py in tests
+"tests/*.py" = ["INP001"]
+
 [lint.mccabe]
 max-complexity = 25

@@ -78,9 +78,11 @@ def convert_mapping_to_json():
     # Show statistics
     vsn300_count = sum(1 for m in mappings if m.get("VSN300 Name"))
     vsn700_count = sum(1 for m in mappings if m.get("VSN700 Name"))
-    both_count = sum(1 for m in mappings if m.get("VSN300 Name") and m.get("VSN700 Name"))
+    both_count = sum(
+        1 for m in mappings if m.get("VSN300 Name") and m.get("VSN700 Name")
+    )
 
-    print(f"\nStatistics:")
+    print("\nStatistics:")
     print(f"  - VSN300 points: {vsn300_count}")
     print(f"  - VSN700 points: {vsn700_count}")
     print(f"  - Shared points: {both_count}")

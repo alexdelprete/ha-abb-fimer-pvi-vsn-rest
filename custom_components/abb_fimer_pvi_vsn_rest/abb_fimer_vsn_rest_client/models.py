@@ -1,4 +1,5 @@
 """Data models."""
+
 from dataclasses import dataclass
 from typing import Any
 

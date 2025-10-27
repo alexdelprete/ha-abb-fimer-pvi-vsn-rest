@@ -21,6 +21,7 @@ Example:
 Requirements:
     - Python 3.9+
     - aiohttp (install with: pip install aiohttp)
+
 """
 
 import asyncio
@@ -56,6 +57,7 @@ MAPPING_URL = "https://raw.githubusercontent.com/alexdelprete/ha-abb-fimer-pvi-v
 # VSN Authentication Module
 # ============================================================================
 
+
 def calculate_digest_response(
     username: str,
     password: str,
@@ -80,13 +82,14 @@ def calculate_digest_response(
     else:
         response_str = f"{ha1}:{nonce}:{ha2}"
 
-    response = hashlib.md5(response_str.encode()).hexdigest()
-    return response
+    return hashlib.md5(response_str.encode()).hexdigest()
 
 
 def parse_digest_challenge(www_authenticate: str) -> dict[str, str]:
     """Parse WWW-Authenticate digest challenge header."""
-    challenge = re.sub(r"^(Digest|X-Digest)\s+", "", www_authenticate, flags=re.IGNORECASE)
+    challenge = re.sub(
+        r"^(Digest|X-Digest)\s+", "", www_authenticate, flags=re.IGNORECASE
+    )
 
     params = {}
     for match in re.finditer(r'(\w+)=(?:"([^"]+)"|([^,\s]+))', challenge):
@@ -127,12 +130,14 @@ def build_digest_header(
             f'uri="{uri}"',
             f'response="{response}"',
             'algorithm="MD5"',
-            f'qop={qop}',
-            f'nc={nc}',
+            f"qop={qop}",
+            f"nc={nc}",
             f'cnonce="{cnonce}"',
         ]
     else:
-        response = calculate_digest_response(username, password, realm, nonce, method, uri)
+        response = calculate_digest_response(
+            username, password, realm, nonce, method, uri
+        )
 
         auth_parts = [
             f'username="{username}"',
@@ -173,13 +178,11 @@ async def get_vsn300_digest_header(
                     raise Exception("VSN300 challenge missing or not digest-based")
 
                 challenge_params = parse_digest_challenge(www_authenticate)
-                digest_value = build_digest_header(
+                return build_digest_header(
                     username, password, challenge_params, method, uri
                 )
 
-                return digest_value
-            else:
-                raise Exception(f"Expected 401 challenge, got {response.status}")
+            raise Exception(f"Expected 401 challenge, got {response.status}")
     except aiohttp.ClientError as err:
         raise Exception(f"VSN300 challenge request failed: {err}") from err
 
@@ -187,8 +190,7 @@ async def get_vsn300_digest_header(
 def get_vsn700_basic_auth(username: str, password: str) -> str:
     """Get VSN700 HTTP Basic authentication header value."""
     credentials = f"{username}:{password}"
-    encoded = base64.b64encode(credentials.encode("utf-8")).decode("utf-8")
-    return encoded
+    return base64.b64encode(credentials.encode("utf-8")).decode("utf-8")
 
 
 async def detect_vsn_model(
@@ -210,7 +212,9 @@ async def detect_vsn_model(
                 www_authenticate = response.headers.get("WWW-Authenticate", "").lower()
 
                 if not www_authenticate:
-                    raise Exception("Device returned 401 but no WWW-Authenticate header found")
+                    raise Exception(
+                        "Device returned 401 but no WWW-Authenticate header found"
+                    )
 
                 if "x-digest" in www_authenticate or "digest" in www_authenticate:
                     _LOGGER.info("Detected VSN300 (digest auth)")
@@ -221,8 +225,9 @@ async def detect_vsn_model(
                     return "VSN700"
 
                 raise Exception(f"Unknown authentication scheme: {www_authenticate}")
-            else:
-                raise Exception(f"Expected 401 response for detection, got {response.status}")
+            raise Exception(
+                f"Expected 401 response for detection, got {response.status}"
+            )
     except aiohttp.ClientError as err:
         raise Exception(f"Device detection connection error: {err}") from err
 
@@ -230,6 +235,7 @@ async def detect_vsn_model(
 # ============================================================================
 # VSN REST Client
 # ============================================================================
+
 
 async def fetch_endpoint(
     session: aiohttp.ClientSession,
@@ -260,26 +266,28 @@ async def fetch_endpoint(
         timeout=aiohttp.ClientTimeout(total=timeout),
     ) as response:
         if response.status == 200:
-            data = await response.json()
-            return data
-        else:
-            raise Exception(f"Request failed: HTTP {response.status}")
+            return await response.json()
+        raise Exception(f"Request failed: HTTP {response.status}")
 
 
 # ============================================================================
 # Mapping and Normalization Module
 # ============================================================================
 
+
 async def load_mapping_from_url(session: aiohttp.ClientSession) -> dict[str, Any]:
     """Load VSN-SunSpec mapping from GitHub URL.
 
     Returns:
         Dictionary with vsn300_index, vsn700_index, and mappings
+
     """
     _LOGGER.info("Loading VSN-SunSpec mapping from GitHub...")
 
     try:
-        async with session.get(MAPPING_URL, timeout=aiohttp.ClientTimeout(total=30)) as response:
+        async with session.get(
+            MAPPING_URL, timeout=aiohttp.ClientTimeout(total=30)
+        ) as response:
             if response.status == 200:
                 # GitHub serves raw files as text/plain, so we need to use content_type=None
                 # to allow aiohttp to parse JSON regardless of Content-Type header
@@ -292,32 +300,41 @@ async def load_mapping_from_url(session: aiohttp.ClientSession) -> dict[str, Any
                 for mapping in mappings_data:
                     vsn300_name = mapping.get("REST Name (VSN300)")
                     vsn700_name = mapping.get("REST Name (VSN700)")
-                    ha_entity = mapping.get("HA Entity Name")
+                    mapping.get("HA Entity Name")
 
                     if vsn300_name and vsn300_name != "N/A":
                         vsn300_index[vsn300_name] = mapping
                     if vsn700_name and vsn700_name != "N/A":
                         vsn700_index[vsn700_name] = mapping
 
-                _LOGGER.info("✓ Loaded %d mappings (%d VSN300, %d VSN700)",
-                           len(mappings_data), len(vsn300_index), len(vsn700_index))
+                _LOGGER.info(
+                    "✓ Loaded %d mappings (%d VSN300, %d VSN700)",
+                    len(mappings_data),
+                    len(vsn300_index),
+                    len(vsn700_index),
+                )
 
                 return {
                     "vsn300_index": vsn300_index,
                     "vsn700_index": vsn700_index,
-                    "mappings": mappings_data
+                    "mappings": mappings_data,
                 }
-            else:
-                raise Exception(f"Failed to load mapping: HTTP {response.status}")
+            raise Exception(f"Failed to load mapping: HTTP {response.status}")
     except Exception as err:
         _LOGGER.warning("Could not load mapping from URL: %s", err)
         _LOGGER.warning("Normalization will be skipped")
-        _LOGGER.info("  Note: Mapping file may not be available yet in the GitHub repository")
-        _LOGGER.info("  The normalization feature will be available once the file is committed")
+        _LOGGER.info(
+            "  Note: Mapping file may not be available yet in the GitHub repository"
+        )
+        _LOGGER.info(
+            "  The normalization feature will be available once the file is committed"
+        )
         return None
 
 
-def normalize_livedata(raw_data: dict[str, Any], vsn_model: str, mapping_data: dict) -> dict[str, Any]:
+def normalize_livedata(
+    raw_data: dict[str, Any], vsn_model: str, mapping_data: dict
+) -> dict[str, Any]:
     """Normalize VSN livedata to Home Assistant format.
 
     Args:
@@ -327,11 +344,16 @@ def normalize_livedata(raw_data: dict[str, Any], vsn_model: str, mapping_data: d
 
     Returns:
         Normalized data structure
+
     """
     if not mapping_data:
         return None
 
-    index = mapping_data["vsn300_index"] if vsn_model == "VSN300" else mapping_data["vsn700_index"]
+    index = (
+        mapping_data["vsn300_index"]
+        if vsn_model == "VSN300"
+        else mapping_data["vsn700_index"]
+    )
 
     normalized = {"devices": {}}
 
@@ -367,7 +389,7 @@ def normalize_livedata(raw_data: dict[str, Any], vsn_model: str, mapping_data: d
             normalized["devices"][device_id] = {
                 "device_type": device_data.get("device_type", "unknown"),
                 "timestamp": device_data.get("timestamp", ""),
-                "points": device_points
+                "points": device_points,
             }
 
     return normalized
@@ -405,10 +427,17 @@ async def test_vsn_device(host: str) -> None:
 
             if isinstance(status_data, dict) and "keys" in status_data:
                 keys_data = status_data["keys"]
-                important_keys = ["logger.sn", "device.invID", "device.modelDesc", "fw.release_number"]
+                important_keys = [
+                    "logger.sn",
+                    "device.invID",
+                    "device.modelDesc",
+                    "fw.release_number",
+                ]
                 for key in important_keys:
                     if key in keys_data:
-                        _LOGGER.info("  - %s: %s", key, keys_data[key].get("value", "N/A"))
+                        _LOGGER.info(
+                            "  - %s: %s", key, keys_data[key].get("value", "N/A")
+                        )
 
             # Save status to file
             output_file = Path.cwd() / f"{model.lower()}_status.json"
@@ -433,7 +462,7 @@ async def test_vsn_device(host: str) -> None:
                     points = first_device["points"]
                     _LOGGER.info("  - Total points: %d", len(points))
                     # Show first 5 points
-                    for i, point in enumerate(points[:5]):
+                    for _i, point in enumerate(points[:5]):
                         name = point.get("name", "N/A")
                         value = point.get("value", "N/A")
                         _LOGGER.info("    - %s: %s", name, value)
@@ -454,7 +483,10 @@ async def test_vsn_device(host: str) -> None:
             if mapping_data:
                 normalized = normalize_livedata(livedata, model, mapping_data)
                 if normalized:
-                    total_points = sum(len(d.get("points", {})) for d in normalized.get("devices", {}).values())
+                    total_points = sum(
+                        len(d.get("points", {}))
+                        for d in normalized.get("devices", {}).values()
+                    )
                     _LOGGER.info("✓ Data normalized successfully")
                     _LOGGER.info("  - Normalized points: %d", total_points)
 
@@ -462,13 +494,19 @@ async def test_vsn_device(host: str) -> None:
                     if normalized.get("devices"):
                         first_device_id = list(normalized["devices"].keys())[0]
                         first_device = normalized["devices"][first_device_id]
-                        _LOGGER.info("\n  Sample normalized data from: %s", first_device_id)
+                        _LOGGER.info(
+                            "\n  Sample normalized data from: %s", first_device_id
+                        )
                         points = first_device.get("points", {})
-                        for i, (ha_entity, point_data) in enumerate(list(points.items())[:5]):
+                        for _i, (ha_entity, point_data) in enumerate(
+                            list(points.items())[:5]
+                        ):
                             value = point_data.get("value")
                             units = point_data.get("units", "")
                             label = point_data.get("label", "")
-                            _LOGGER.info("    - %s (%s): %s %s", ha_entity, label, value, units)
+                            _LOGGER.info(
+                                "    - %s (%s): %s %s", ha_entity, label, value, units
+                            )
                         if len(points) > 5:
                             _LOGGER.info("    - ... (%d more points)", len(points) - 5)
 
@@ -506,7 +544,10 @@ async def test_vsn_device(host: str) -> None:
             _LOGGER.info("✓ /v1/status: OK")
             _LOGGER.info("✓ /v1/livedata: OK (%d devices)", len(livedata))
             if mapping_data and normalized:
-                total_points = sum(len(d.get("points", {})) for d in normalized.get("devices", {}).values())
+                total_points = sum(
+                    len(d.get("points", {}))
+                    for d in normalized.get("devices", {}).values()
+                )
                 _LOGGER.info("✓ /v1/livedata normalized: OK (%d points)", total_points)
             _LOGGER.info("✓ /v1/feeds: OK")
             _LOGGER.info("\nOutput files created:")
@@ -520,6 +561,7 @@ async def test_vsn_device(host: str) -> None:
         except Exception as err:
             _LOGGER.error("\n✗ Error: %s", err)
             import traceback
+
             _LOGGER.debug(traceback.format_exc())
             sys.exit(1)
 
