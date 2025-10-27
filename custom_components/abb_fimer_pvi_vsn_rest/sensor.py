@@ -119,6 +119,11 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         # Set entity name from label
         self._attr_name = point_data.get("label", point_name)
 
+        # Check if initial value is numeric - determines sensor type
+        # HA strictly requires numeric classification (state_class, units, precision) only for numeric sensors
+        initial_value = point_data.get("value")
+        is_numeric = isinstance(initial_value, (int, float))
+
         # Set device class if available
         device_class_str = point_data.get("device_class")
         if device_class_str:
@@ -130,39 +135,40 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
                 )
 
         # Set state class ONLY if the value is numeric
-        # HA requires state_class sensors to have numeric values
-        state_class_str = point_data.get("state_class")
-        if state_class_str:
-            # Check if initial value is numeric
-            initial_value = point_data.get("value")
-            is_numeric = isinstance(initial_value, (int, float))
-
-            if is_numeric:
+        if is_numeric:
+            state_class_str = point_data.get("state_class")
+            if state_class_str:
                 try:
                     self._attr_state_class = SensorStateClass(state_class_str)
                 except ValueError:
                     _LOGGER.debug(
                         "Unknown state_class '%s' for %s", state_class_str, point_name
                     )
-            else:
-                _LOGGER.debug(
-                    "Skipping state_class '%s' for %s: value is not numeric (%s: %s)",
-                    state_class_str,
-                    point_name,
-                    type(initial_value).__name__,
-                    initial_value,
-                )
+        else:
+            _LOGGER.debug(
+                "Skipping numeric attributes for %s: value is not numeric (%s: %s)",
+                point_name,
+                type(initial_value).__name__,
+                initial_value,
+            )
 
-        # Set unit of measurement
-        self._attr_native_unit_of_measurement = point_data.get("units")
+        # Set unit of measurement and precision ONLY for numeric sensors
+        # String sensors must have None to avoid HA treating them as numeric
+        if is_numeric:
+            units = point_data.get("units")
+            if units:
+                self._attr_native_unit_of_measurement = units
 
-        # Set suggested display precision based on units
-        if self._attr_native_unit_of_measurement in ("W", "Wh", "kW", "kWh"):
-            self._attr_suggested_display_precision = 0
-        elif self._attr_native_unit_of_measurement in ("V", "A"):
-            self._attr_suggested_display_precision = 1
-        elif self._attr_native_unit_of_measurement in ("Hz", "°C", "°F"):
-            self._attr_suggested_display_precision = 2
+                # Set suggested display precision based on units
+                if units in ("W", "Wh", "kW", "kWh"):
+                    self._attr_suggested_display_precision = 0
+                elif units in ("V", "A"):
+                    self._attr_suggested_display_precision = 1
+                elif units in ("Hz", "°C", "°F"):
+                    self._attr_suggested_display_precision = 2
+        else:
+            # String sensor: explicitly set to None
+            self._attr_native_unit_of_measurement = None
 
         _LOGGER.debug(
             "Created sensor: %s (device_class=%s, state_class=%s, unit=%s)",
