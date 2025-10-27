@@ -162,7 +162,7 @@ async def _fetch_status(
     # Build authentication headers based on model
     if vsn_model == "VSN300":
         digest_value = await get_vsn300_digest_header(
-            session, base_url, uri, username, password
+            session, base_url, username, password, uri, "GET", timeout
         )
         headers = {"Authorization": f"X-Digest {digest_value}"}
     else:  # VSN700
@@ -213,7 +213,7 @@ async def _fetch_livedata(
     # Build authentication headers based on model
     if vsn_model == "VSN300":
         digest_value = await get_vsn300_digest_header(
-            session, base_url, uri, username, password
+            session, base_url, username, password, uri, "GET", timeout
         )
         headers = {"Authorization": f"X-Digest {digest_value}"}
     else:  # VSN700
