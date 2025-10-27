@@ -888,6 +888,7 @@ def generate_entity_id_from_label(label, model=None):
     """Generate Home Assistant entity ID from human-readable label.
 
     Converts labels like "Phase Voltage BC" to "abb_m103_phase_voltage_bc"
+    For points without model: "abb_vsn_{label_id}"
     """
     # Convert to lowercase and replace spaces/special chars with underscores
     entity_id = label.lower()
@@ -910,11 +911,11 @@ def generate_entity_id_from_label(label, model=None):
     # Strip leading/trailing underscores
     entity_id = entity_id.strip("_")
 
-    # Add prefix with model if available
+    # Add prefix with model if available, otherwise use vsn prefix
     if model:
         return f"abb_{model.lower()}_{entity_id}"
     else:
-        return f"abb_{entity_id}"
+        return f"abb_vsn_{entity_id}"
 
 
 def generate_description_from_name(point_name, category=None):
@@ -1226,11 +1227,11 @@ for p in sorted(periodic_points):
             else "N/A"
         )
 
-        # Generate HA entity name
-        ha_name = f"abb_m64061_{p.lower()}"
-
         # Generate label
         label = generate_label_from_name(p)
+
+        # Generate HA entity name from human-readable label
+        ha_name = generate_entity_id_from_label(label, "M64061")
 
         # Get description using 3-tier priority
         workbook_desc = None  # M64061 periodic counters not in workbook
@@ -1282,11 +1283,11 @@ for p in sorted(M64061_POINTS):
                     vsn300_name = vsn300_point
                     break
 
-        # Generate HA entity name
-        ha_name = f"abb_m64061_{p.lower()}"
-
         # Generate label
         label = generate_label_from_name(p)
+
+        # Generate HA entity name from human-readable label
+        ha_name = generate_entity_id_from_label(label, "M64061")
 
         # Get description using 3-tier priority
         workbook_desc = None  # M64061 points not in standard workbook
@@ -1414,6 +1415,12 @@ for vsn300_point in sorted(missing_vsn300):
                 # Title is a VSN700 point name reference
                 vsn700_equivalent = title_data["title"]
 
+    # Early detection of M1 Common Model points (C_ prefix)
+    # Must happen BEFORE entity ID generation so model is set correctly
+    if vsn300_point.startswith("C_"):
+        model = "M1"
+        sunspec_point = vsn300_point
+
     # Get label from workbook or generate
     label, workbook_description = lookup_label_description(
         sunspec_metadata, model, sunspec_point
@@ -1487,7 +1494,7 @@ for vsn300_point in sorted(missing_vsn300):
         # Override category for these diagnostic points
         if vsn300_point.startswith("C_"):
             category = "Device Info"
-            model = "M1"
+            # Model M1 already set earlier at line 1420-1422
         else:
             category = "System Monitoring"
 
