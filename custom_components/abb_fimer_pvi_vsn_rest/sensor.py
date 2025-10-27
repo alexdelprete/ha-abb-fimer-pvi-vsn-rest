@@ -129,14 +129,28 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
                     "Unknown device_class '%s' for %s", device_class_str, point_name
                 )
 
-        # Set state class if available
+        # Set state class ONLY if the value is numeric
+        # HA requires state_class sensors to have numeric values
         state_class_str = point_data.get("state_class")
         if state_class_str:
-            try:
-                self._attr_state_class = SensorStateClass(state_class_str)
-            except ValueError:
+            # Check if initial value is numeric
+            initial_value = point_data.get("value")
+            is_numeric = isinstance(initial_value, (int, float))
+
+            if is_numeric:
+                try:
+                    self._attr_state_class = SensorStateClass(state_class_str)
+                except ValueError:
+                    _LOGGER.debug(
+                        "Unknown state_class '%s' for %s", state_class_str, point_name
+                    )
+            else:
                 _LOGGER.debug(
-                    "Unknown state_class '%s' for %s", state_class_str, point_name
+                    "Skipping state_class '%s' for %s: value is not numeric (%s: %s)",
+                    state_class_str,
+                    point_name,
+                    type(initial_value).__name__,
+                    initial_value,
                 )
 
         # Set unit of measurement
