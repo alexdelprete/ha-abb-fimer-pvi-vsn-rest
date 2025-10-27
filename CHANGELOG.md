@@ -111,6 +111,64 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - VSN700 datalogger ID: Strips colons from MAC without underscores
 - VSN300 datalogger ID: Uses serial number from `sn` point
 
+## [1.0.0-beta.2] - 2025-10-27
+
+### Fixed (Critical Bug Fixes)
+
+**Authentication Failure (VSN300):**
+
+- Fixed critical parameter order bug in `discovery.py` when calling `get_vsn300_digest_header()`
+- Parameters were passed as `(session, base_url, uri, username, password)` instead of correct order
+- This caused URI to be used as username, making requests to wrong endpoint (root `/` instead of `/v1/status`)
+- Error manifested as "Expected 401 challenge, got 200"
+- Fixed in `_fetch_status()` and `_fetch_livedata()` functions
+- **Impact:** VSN300 authentication was completely broken in v1.0.0-beta.1
+
+**Mapping File Not Found:**
+
+- Fixed "Mapping file not found: /config/docs/vsn-sunspec-point-mapping.json" error
+- Root cause: Mapping file was in repository `docs/` directory, not bundled with integration
+- **Solution:** Bundled mapping file in `custom_components/abb_fimer_pvi_vsn_rest/data/`
+- Updated `mapping_loader.py` to look in bundled location
+- **Impact:** Integration couldn't load at all in v1.0.0-beta.1
+
+### Added
+
+**GitHub Fallback for Mapping File:**
+
+- Added automatic fallback to fetch mapping file from GitHub if local file not found
+- Fetches from: `https://raw.githubusercontent.com/.../master/docs/vsn-sunspec-point-mapping.json`
+- Caches downloaded file locally for future use
+- Provides robustness against missing or corrupted bundled file
+
+**CI/CD Improvements:**
+
+- Fixed release workflow to dynamically discover integration directory name
+- No longer hardcoded to legacy repository name
+- Added `scripts/test_output_*.json` to `.gitignore`
+
+### Changed
+
+**Documentation:**
+
+- Created comprehensive release notes in `docs/releases/v1.0.0-beta.1.md`
+- Updated `docs/releases/README.md` for VSN REST integration
+
+### Migration Notes
+
+**⚠️ CRITICAL UPDATE REQUIRED:**
+
+Users running v1.0.0-beta.1 MUST update to v1.0.0-beta.2. The previous version had critical bugs that prevented:
+
+1. VSN300 authentication from working at all
+2. Integration from loading due to missing mapping file
+
+After updating:
+
+1. Restart Home Assistant to load the new code
+2. Reconfigure the integration if needed
+3. Verify devices are discovered and data is being collected
+
 ## [1.0.0-beta.1] - 2025-10-26
 
 ### Added (v1.0.0-beta.1)
@@ -181,5 +239,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.1...HEAD
+[Unreleased]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.2...HEAD
+[1.0.0-beta.2]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.1...v1.0.0-beta.2
 [1.0.0-beta.1]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/releases/tag/v1.0.0-beta.1
