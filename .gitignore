@@ -28,3 +28,8 @@ scripts/test_output_*.json
 
 # VSN data samples
 docs/vsn-data/
+
+# Backup files
+*.backup
+*.bak
+*~
