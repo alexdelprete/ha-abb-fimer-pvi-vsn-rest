@@ -7,6 +7,66 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta.7] - 2025-01-28
+
+### Added
+
+- **Enhanced Entity Display Names**: Comprehensive mapping system with HA-specific metadata
+  - Added 5 new columns to mapping (15→20 total): HA Display Name, HA Unit of Measurement, HA State Class, HA Device Class, Data Source
+  - Implemented 4-tier description priority system (SunSpec Description → VSN Feeds → Enhanced Generation → SunSpec Label)
+  - Entity names now human-readable instead of cryptic abbreviations
+  - Examples: "Hz" → "Line Frequency", "PF" → "Power Factor", "Mn" → "Manufacturer"
+  - Data source tracking for debugging and traceability
+  - Commit: [77172a1](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/77172a1)
+
+- **Fast Offline Detection**: Socket connectivity check before HTTP requests
+  - Created `abb_fimer_vsn_rest_client/utils.py` with `check_socket_connection()` helper
+  - Added socket check to 5 HTTP connection points (auth, discovery, client)
+  - Fails fast (milliseconds) when device offline instead of waiting for HTTP timeout (10+ seconds)
+  - Reduced network overhead during nighttime operation
+  - Improved entity unavailability detection speed (100x faster!)
+  - Commit: [eb57fd7](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/eb57fd7)
+
+### Fixed
+
+- **M1 Common Model User-Friendly Names**: M1 diagnostic entities now show user-friendly labels instead of generic SunSpec boilerplate
+  - "Mn" → "Manufacturer" (was: "Well known value registered with SunSpec for compliance")
+  - "Md" → "Model" (was: "Manufacturer specific value (32 chars)")
+  - "SN" → "Serial Number" (was: "Manufacturer specific value (32 chars)")
+  - Special handling in `get_description_with_priority()` to detect generic descriptions
+  - Commit: [2babbe7](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/2babbe7)
+
+- **Unit Detection Issues**: Fixed multiple sensors missing units of measurement
+  - Fixed entity IDs and missing units for sensors
+  - Added comprehensive unit detection for all VSN points
+  - Properly preserve kW/kWh units from VSN feeds (no conversion - HA supports natively)
+  - Fixed `HousePInverter` and `PacStandAlone` ABB Proprietary points to show proper units (W)
+  - Commits: [e459ade](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/e459ade), [cb84183](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/cb84183), [1b66995](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/1b66995), [3427585](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/3427585)
+
+### Changed
+
+- **Mapping File Format**: Expanded from 15 to 20 columns
+  - Added HA-specific columns for better entity metadata
+  - Added data source tracking for debugging
+  - Updated mapping files: 277 rows with complete metadata
+  - Excel file: `docs/vsn-sunspec-point-mapping.xlsx`
+  - JSON file: `docs/vsn-sunspec-point-mapping.json` (195.7 KB)
+
+- **Code Refactoring**: Improved code organization and reusability
+  - Refactored `config_flow.py` to use `check_socket_connection()` helper (removed 22 lines of duplicate code)
+  - Added `ha_display_name` field to `PointMapping` dataclass
+  - Updated sensor platform to use `ha_display_name` instead of `label`
+
+### Development
+
+- **Dependency Update**: Updated pip requirement from <25.3,>=21.0 to >=21.0,<25.4
+  - Commit: [7a66c45](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/7a66c45)
+
+- **Code Quality**: Added backup files to .gitignore (*.backup, *.bak, *~)
+  - Commit: [dfd459e](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/dfd459e)
+
+**Full Release Notes:** [docs/releases/v1.0.0-beta.7.md](docs/releases/v1.0.0-beta.7.md)
+
 ## [1.0.0-beta.6] - 2025-01-27
 
 ### Fixed
@@ -399,7 +459,10 @@ After updating:
 
 ---
 
-[Unreleased]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.4...HEAD
+[Unreleased]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.7...HEAD
+[1.0.0-beta.7]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.6...v1.0.0-beta.7
+[1.0.0-beta.6]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.5...v1.0.0-beta.6
+[1.0.0-beta.5]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.4...v1.0.0-beta.5
 [1.0.0-beta.4]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.3...v1.0.0-beta.4
 [1.0.0-beta.3]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.2...v1.0.0-beta.3
 [1.0.0-beta.2]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.1...v1.0.0-beta.2
