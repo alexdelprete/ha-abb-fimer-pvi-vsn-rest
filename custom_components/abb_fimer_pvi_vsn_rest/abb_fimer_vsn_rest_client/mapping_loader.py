@@ -154,24 +154,29 @@ class VSNMappingLoader:
         # - REST Name (VSN700)
         # - REST Name (VSN300)
         # - SunSpec Normalized Name
-        # - HA Entity Name
+        # - HA Name
         # - In /livedata
         # - In /feeds
         # - Label
         # - Description
+        # - HA Display Name
         # - SunSpec Model
         # - Category
         # - Units
+        # - HA Unit of Measurement
         # - State Class
+        # - HA State Class
         # - Device Class
+        # - HA Device Class
         # - Entity Category
         # - Available in Modbus
+        # - Data Source
 
         for row in mappings_data:
             vsn700 = row.get("REST Name (VSN700)")
             vsn300 = row.get("REST Name (VSN300)")
             sunspec = row.get("SunSpec Normalized Name")
-            ha_entity = row.get("HA Entity Name")
+            ha_entity = row.get("HA Name")
             in_livedata = row.get("In /livedata") == "✓"
             in_feeds = row.get("In /feeds") == "✓"
             label = row.get("Label") or ""
