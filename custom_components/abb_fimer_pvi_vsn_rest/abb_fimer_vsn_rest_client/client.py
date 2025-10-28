@@ -11,10 +11,12 @@ try:
     from .auth import detect_vsn_model, get_vsn300_digest_header, get_vsn700_basic_auth
     from .exceptions import VSNAuthenticationError, VSNConnectionError
     from .normalizer import VSNDataNormalizer
+    from .utils import check_socket_connection
 except ImportError:
     from auth import detect_vsn_model, get_vsn300_digest_header, get_vsn700_basic_auth
     from exceptions import VSNAuthenticationError, VSNConnectionError
     from normalizer import VSNDataNormalizer
+    from utils import check_socket_connection
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -91,6 +93,9 @@ class ABBFimerVSNRestClient:
         """
         if not self.vsn_model:
             await self.connect()
+
+        # Check socket connection before HTTP request
+        await check_socket_connection(self.base_url, timeout=5)
 
         # Both models use the same endpoint
         url = f"{self.base_url}/v1/livedata"

@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-import asyncio
 import logging
-import socket
 from typing import Any
 
 import voluptuous as vol
@@ -20,6 +18,7 @@ from .abb_fimer_vsn_rest_client.exceptions import (
     VSNClientError,
     VSNConnectionError,
 )
+from .abb_fimer_vsn_rest_client.utils import check_socket_connection
 from .const import (
     CONF_SCAN_INTERVAL,
     CONF_VSN_MODEL,
@@ -73,28 +72,8 @@ async def validate_connection(
 
     _LOGGER.debug("Validating connection to %s", base_url)
 
-    # First check: Socket connection on port 80
-    try:
-        # Extract hostname from URL
-        hostname = host.replace("http://", "").replace("https://", "").split(":")[0]
-        port = 80
-
-        # Try to connect to socket with 5 second timeout
-        await asyncio.wait_for(
-            asyncio.get_event_loop().run_in_executor(
-                None, lambda: socket.create_connection((hostname, port), timeout=5)
-            ),
-            timeout=5,
-        )
-        _LOGGER.debug("Socket connection to %s:%d successful", hostname, port)
-    except TimeoutError as err:
-        _LOGGER.error("Socket timeout connecting to %s:%d: %s", hostname, port, err)
-        raise VSNConnectionError(f"Timeout connecting to {hostname}:{port}") from err
-    except OSError as err:
-        _LOGGER.error("Socket error connecting to %s:%d: %s", hostname, port, err)
-        raise VSNConnectionError(
-            f"Cannot connect to {hostname}:{port} - {err}"
-        ) from err
+    # First check: Socket connection before HTTP request
+    await check_socket_connection(base_url, timeout=5)
 
     # Second check: Perform device discovery
     session = async_get_clientsession(hass)

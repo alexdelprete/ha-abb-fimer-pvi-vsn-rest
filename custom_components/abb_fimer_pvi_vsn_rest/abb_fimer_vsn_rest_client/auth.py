@@ -26,8 +26,10 @@ try:
         VSNConnectionError,
         VSNDetectionError,
     )
+    from .utils import check_socket_connection
 except ImportError:
     from exceptions import VSNAuthenticationError, VSNConnectionError, VSNDetectionError
+    from utils import check_socket_connection
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -196,6 +198,9 @@ async def get_vsn300_digest_header(
         VSNAuthenticationError: If challenge fails
 
     """
+    # Check socket connection before HTTP request
+    await check_socket_connection(base_url, timeout=5)
+
     url = f"{base_url.rstrip('/')}{uri}"
 
     try:
@@ -261,6 +266,9 @@ async def detect_vsn_model(
 
     """
     base_url = base_url.rstrip("/")
+
+    # Check socket connection before HTTP request
+    await check_socket_connection(base_url, timeout=5)
 
     try:
         # Make unauthenticated request to /v1/status to trigger 401 with WWW-Authenticate

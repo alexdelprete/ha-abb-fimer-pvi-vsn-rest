@@ -16,9 +16,11 @@ import aiohttp
 try:
     from .auth import detect_vsn_model, get_vsn300_digest_header, get_vsn700_basic_auth
     from .exceptions import VSNConnectionError
+    from .utils import check_socket_connection
 except ImportError:
     from auth import detect_vsn_model, get_vsn300_digest_header, get_vsn700_basic_auth
     from exceptions import VSNConnectionError
+    from utils import check_socket_connection
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -156,6 +158,9 @@ async def _fetch_status(
         VSNConnectionError: If fetch fails
 
     """
+    # Check socket connection before HTTP request
+    await check_socket_connection(base_url, timeout=5)
+
     status_url = f"{base_url}/v1/status"
     uri = "/v1/status"
 
@@ -207,6 +212,9 @@ async def _fetch_livedata(
         VSNConnectionError: If fetch fails
 
     """
+    # Check socket connection before HTTP request
+    await check_socket_connection(base_url, timeout=5)
+
     livedata_url = f"{base_url}/v1/livedata"
     uri = "/v1/livedata"
 
