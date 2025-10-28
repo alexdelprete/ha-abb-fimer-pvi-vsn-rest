@@ -2458,9 +2458,9 @@
     "Description": "Home PV Power",
     "SunSpec Model": "ABB Proprietary",
     "Category": "House Meter",
-    "Units": null,
+    "Units": "W",
     "State Class": "measurement",
-    "Device Class": null,
+    "Device Class": "power",
     "Entity Category": null,
     "Available in Modbus": "NO"
   },
@@ -2594,9 +2594,9 @@
     "Description": "Pac Stand Alone",
     "SunSpec Model": "ABB Proprietary",
     "Category": "Hybrid",
-    "Units": null,
+    "Units": "W",
     "State Class": "measurement",
-    "Device Class": null,
+    "Device Class": "power",
     "Entity Category": null,
     "Available in Modbus": "NO"
   },

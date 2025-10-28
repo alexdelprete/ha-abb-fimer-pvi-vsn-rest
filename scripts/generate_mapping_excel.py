@@ -1387,22 +1387,63 @@ for p in sorted(ABB_PROPRIETARY):
                 description = f"SunSpec Model {model_num} Enable Flag"
 
         # Determine units for ABB Proprietary points
+        # Priority 1: Get from feeds if available
         units = ""
         device_class = ""
         state_class = "measurement"
 
-        if p in ["Chc", "Dhc"]:
-            units = "Ah"
-        elif p.startswith("E") and p not in ["EnergyPolicy"]:
-            units = "Wh"
-            device_class = "energy"
-            state_class = "total_increasing"
-        elif "P" in p and "grid" in p.lower():
-            units = "W"
-            device_class = "power"
-        elif "Igrid" in p:
-            units = "A"
-            device_class = "current"
+        if p in feeds_titles and feeds_titles[p].get("units"):
+            feeds_units = feeds_titles[p]["units"]
+            # Use same conversion logic as VSN300-only points
+            if feeds_units == "W":
+                units = "W"
+                device_class = "power"
+            elif feeds_units == "kW":
+                units = "kW"
+                device_class = "power"
+            elif feeds_units == "Wh":
+                units = "Wh"
+                device_class = "energy"
+                state_class = "total_increasing"
+            elif feeds_units == "kWh":
+                units = "kWh"
+                device_class = "energy"
+                state_class = "total_increasing"
+            elif feeds_units in ["A", "uA"]:
+                units = feeds_units
+                device_class = "current"
+            elif feeds_units == "V":
+                units = "V"
+                device_class = "voltage"
+            elif feeds_units in ["var", "kvar"]:
+                units = feeds_units
+                device_class = "reactive_power"
+            elif feeds_units == "VAh":
+                units = "VAh"
+                device_class = "apparent_energy"
+                state_class = "total_increasing"
+            elif feeds_units in ["degC", "°C"]:
+                units = "°C"
+                device_class = "temperature"
+            elif feeds_units in {"none", ""}:
+                units = ""
+            else:
+                units = feeds_units
+
+        # Priority 2: Pattern matching fallback if no feeds data
+        if not units:
+            if p in ["Chc", "Dhc"]:
+                units = "Ah"
+            elif p.startswith("E") and p not in ["EnergyPolicy"]:
+                units = "Wh"
+                device_class = "energy"
+                state_class = "total_increasing"
+            elif "P" in p and ("grid" in p.lower() or "Inverter" in p or "StandAlone" in p):
+                units = "W"
+                device_class = "power"
+            elif "Igrid" in p:
+                units = "A"
+                device_class = "current"
 
         rows.append(
             [
