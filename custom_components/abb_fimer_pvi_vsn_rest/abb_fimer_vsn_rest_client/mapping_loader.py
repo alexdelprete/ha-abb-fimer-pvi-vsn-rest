@@ -32,6 +32,7 @@ class PointMapping:
     in_feeds: bool
     label: str
     description: str
+    ha_display_name: str  # What users see in HA (from enhanced descriptions)
     model: str
     category: str
     units: str
@@ -183,6 +184,9 @@ class VSNMappingLoader:
             entity_category = row.get("Entity Category") or None
             available_in_modbus = row.get("Available in Modbus") or ""
 
+            # Get HA Display Name (fallback to description if not present for backward compat)
+            ha_display_name = row.get("HA Display Name") or description or label
+
             # Normalize N/A values
             if vsn700 == "N/A":
                 vsn700 = None
@@ -208,6 +212,7 @@ class VSNMappingLoader:
                 in_feeds=in_feeds,
                 label=label,
                 description=description,
+                ha_display_name=ha_display_name,
                 model=model,
                 category=category,
                 units=units,

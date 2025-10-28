@@ -117,8 +117,12 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         # Set unique ID: domain_deviceid_pointname
         self._attr_unique_id = f"{DOMAIN}_{device_id}_{point_name}"
 
-        # Set entity name from label
-        self._attr_name = point_data.get("label", point_name)
+        # Set entity name from HA Display Name (what users see in HA)
+        # Fallback to description, then label, then point name
+        self._attr_name = point_data.get(
+            "ha_display_name",
+            point_data.get("description", point_data.get("label", point_name))
+        )
 
         # Check if initial value is numeric - determines sensor type
         # HA strictly requires numeric classification (state_class, units, precision) only for numeric sensors

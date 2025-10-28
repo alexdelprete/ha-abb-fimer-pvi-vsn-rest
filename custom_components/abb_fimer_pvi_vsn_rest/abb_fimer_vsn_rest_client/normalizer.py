@@ -140,6 +140,7 @@ class VSNDataNormalizer:
                     "value": point_value,
                     "label": mapping.label,
                     "description": mapping.description,
+                    "ha_display_name": mapping.ha_display_name,  # What users see in HA
                     "units": mapping.units,
                     "device_class": mapping.device_class,
                     "state_class": mapping.state_class,

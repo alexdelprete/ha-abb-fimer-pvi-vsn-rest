@@ -1020,41 +1020,101 @@ def lookup_label_description(models_data, model, sunspec_point):
 
 
 def get_description_with_priority(
-    point_name, feeds_titles, label, workbook_description
+    point_name, feeds_titles, label, workbook_description, model=None
 ):
-    """Get description using 3-tier priority system.
+    """Get description using 4-tier priority system with data source tracking.
 
     Priority:
-    1. Title from feeds.json (when it's a description, not a point name)
-    2. Description from SunSpec models workbook
-    3. Label from SunSpec models workbook / generated label
+    1. Description from SunSpec models workbook (most authoritative)
+    2. Title from feeds.json (when it's a description, not a point name)
+    3. Enhanced description from generate_description_from_name()
+    4. Label from SunSpec models workbook / generated label
 
     Args:
         point_name: The point name to look up
         feeds_titles: Dict of title data from feeds
         label: The label (from workbook or generated)
         workbook_description: Description from workbook (may be None)
+        model: The SunSpec model (e.g., "M103") for data source tracking
 
     Returns:
-        Final description string
+        Tuple of (description, data_source)
 
     """
-    # Priority 1: Title from feeds (if it's a description, not a point name)
-    if point_name in feeds_titles:
-        title_data = feeds_titles[point_name]
-        if title_data["is_description"]:
-            return title_data["title"]
-
-    # Priority 2: Description from SunSpec workbook (if not None/empty)
+    # Priority 1: Description from SunSpec workbook (most authoritative)
     if (
         workbook_description
         and str(workbook_description).strip()
         and str(workbook_description).lower() != "none"
     ):
-        return workbook_description
+        source = f"SunSpec Description ({model})" if model else "SunSpec Description"
+        return workbook_description, source
 
-    # Priority 3: Use label as fallback
-    return label
+    # Priority 2: Title from feeds (if it's a description, not a point name)
+    if point_name in feeds_titles:
+        title_data = feeds_titles[point_name]
+        if title_data["is_description"]:
+            feed_source = title_data["source"]
+            return title_data["title"], f"{feed_source} Feeds"
+
+    # Priority 3: Try enhanced description generation
+    enhanced_desc = generate_description_from_name(point_name)
+    if enhanced_desc and enhanced_desc != label:
+        return enhanced_desc, "Enhanced from point name"
+
+    # Priority 4: Use label as fallback
+    if label:
+        source = f"SunSpec Label ({model})" if model else "Generated from point name"
+        return label, source
+
+    return point_name, "Point name (no label found)"
+
+
+def create_row_data(
+    vsn700_name,
+    vsn300_name,
+    sunspec_name,
+    ha_name,
+    in_livedata,
+    in_feeds,
+    label,
+    description,
+    ha_display_name,
+    model,
+    category,
+    units,
+    state_class,
+    device_class,
+    entity_category,
+    available_in_modbus,
+    data_source,
+):
+    """Create a complete row with all 20 columns.
+
+    This helper ensures all rows have the same structure with HA-specific columns.
+    """
+    return [
+        vsn700_name,  # 1. REST Name (VSN700)
+        vsn300_name,  # 2. REST Name (VSN300)
+        sunspec_name,  # 3. SunSpec Normalized Name
+        ha_name,  # 4. HA Name
+        in_livedata,  # 5. In /livedata
+        in_feeds,  # 6. In /feeds
+        label,  # 7. Label
+        description,  # 8. Description
+        ha_display_name,  # 9. HA Display Name (what users see)
+        model,  # 10. SunSpec Model
+        category,  # 11. Category
+        units,  # 12. Units
+        units,  # 13. HA Unit of Measurement (same as Units for now)
+        state_class,  # 14. State Class
+        state_class,  # 15. HA State Class (same as State Class)
+        device_class,  # 16. Device Class
+        device_class,  # 17. HA Device Class (same as Device Class)
+        entity_category,  # 18. Entity Category
+        available_in_modbus,  # 19. Available in Modbus
+        data_source,  # 20. Data Source
+    ]
 
 
 print("Loading SunSpec models metadata...")
@@ -1129,18 +1189,23 @@ headers = [
     "REST Name (VSN700)",
     "REST Name (VSN300)",
     "SunSpec Normalized Name",
-    "HA Entity Name",
+    "HA Name",
     "In /livedata",
     "In /feeds",
     "Label",
     "Description",
+    "HA Display Name",
     "SunSpec Model",
     "Category",
     "Units",
+    "HA Unit of Measurement",
     "State Class",
+    "HA State Class",
     "Device Class",
+    "HA Device Class",
     "Entity Category",
     "Available in Modbus",
+    "Data Source",
 ]
 
 # Write headers with formatting
@@ -1185,13 +1250,13 @@ for vsn_name, mapping in VSN_TO_SUNSPEC_MAP.items():
         if not label:
             label = generate_label_from_name(vsn_name)
 
-        # Get description using 3-tier priority system
-        # 1. Title from feeds (if descriptive)
-        # 2. Description from workbook
-        # 3. Label as fallback
-        description = get_description_with_priority(
-            vsn_name, feeds_titles, label, workbook_description
+        # Get description using 4-tier priority system with data source tracking
+        description, data_source = get_description_with_priority(
+            vsn_name, feeds_titles, label, workbook_description, model
         )
+
+        # HA Display Name is the description (what users will see in HA)
+        ha_display_name = description
 
         # Find VSN300 name if it exists
         vsn300_name = "N/A"
@@ -1201,26 +1266,28 @@ for vsn_name, mapping in VSN_TO_SUNSPEC_MAP.items():
                 vsn300_name = mapping["modbus"]
 
         rows.append(
-            [
-                vsn_name,
-                vsn300_name,
-                sunspec_name if sunspec_name else "N/A",
-                ha_name,
-                "✓"
+            create_row_data(
+                vsn700_name=vsn_name,
+                vsn300_name=vsn300_name,
+                sunspec_name=sunspec_name if sunspec_name else "N/A",
+                ha_name=ha_name,
+                in_livedata="✓"
                 if vsn_name in vsn700_livedata_points
                 or vsn_name in vsn300_livedata_points
                 else "",
-                "✓" if vsn_name in vsn700_feeds_points else "",
-                label,
-                description,
-                model,
-                mapping["category"],
-                mapping["units"],
-                mapping["state_class"] if mapping["state_class"] else "",
-                mapping["device_class"] if mapping["device_class"] else "",
-                "",  # entity_category - empty for normal sensor points
-                mapping["in_modbus"],
-            ]
+                in_feeds="✓" if vsn_name in vsn700_feeds_points else "",
+                label=label,
+                description=description,
+                ha_display_name=ha_display_name,
+                model=model,
+                category=mapping["category"],
+                units=mapping["units"],
+                state_class=mapping["state_class"] if mapping["state_class"] else "",
+                device_class=mapping["device_class"] if mapping["device_class"] else "",
+                entity_category="",  # empty for normal sensor points
+                available_in_modbus=mapping["in_modbus"],
+                data_source=data_source,
+            )
         )
 
 # M64061 periodic energy counters
@@ -1239,32 +1306,37 @@ for p in sorted(periodic_points):
         # Generate HA entity name from human-readable label
         ha_name = generate_entity_id_from_label(label, "M64061")
 
-        # Get description using 3-tier priority
+        # Get description using 4-tier priority with data source tracking
         workbook_desc = None  # M64061 periodic counters not in workbook
-        description = get_description_with_priority(
-            p, feeds_titles, label, workbook_desc
+        description, data_source = get_description_with_priority(
+            p, feeds_titles, label, workbook_desc, "M64061"
         )
 
+        # HA Display Name is the description
+        ha_display_name = description
+
         rows.append(
-            [
-                p,
-                vsn300_name,
-                p,  # SunSpec normalized name is same as VSN700 name for M64061
-                ha_name,
-                "✓"
+            create_row_data(
+                vsn700_name=p,
+                vsn300_name=vsn300_name,
+                sunspec_name=p,  # SunSpec normalized name is same as VSN700 name
+                ha_name=ha_name,
+                in_livedata="✓"
                 if p in vsn700_livedata_points or p in vsn300_livedata_points
                 else "",
-                "✓" if p in vsn700_feeds_points else "",
-                label,
-                description,
-                "M64061",
-                "Energy Counter",
-                "Wh",
-                "total",
-                "energy",
-                "",  # entity_category - empty for normal sensor points
-                "MAYBE",
-            ]
+                in_feeds="✓" if p in vsn700_feeds_points else "",
+                label=label,
+                description=description,
+                ha_display_name=ha_display_name,
+                model="M64061",
+                category="Energy Counter",
+                units="Wh",
+                state_class="total",
+                device_class="energy",
+                entity_category="",  # empty for normal sensor points
+                available_in_modbus="MAYBE",
+                data_source=data_source,
+            )
         )
 
 # M64061 non-periodic
@@ -1295,11 +1367,14 @@ for p in sorted(M64061_POINTS):
         # Generate HA entity name from human-readable label
         ha_name = generate_entity_id_from_label(label, "M64061")
 
-        # Get description using 3-tier priority
+        # Get description using 4-tier priority with data source tracking
         workbook_desc = None  # M64061 points not in standard workbook
-        description = get_description_with_priority(
-            p, feeds_titles, label, workbook_desc
+        description, data_source = get_description_with_priority(
+            p, feeds_titles, label, workbook_desc, "M64061"
         )
+
+        # HA Display Name is the description
+        ha_display_name = description
 
         # Determine units for M64061 points
         units = ""
@@ -1322,25 +1397,27 @@ for p in sorted(M64061_POINTS):
             device_class = "power"
 
         rows.append(
-            [
-                p,
-                vsn300_name,
-                p,  # SunSpec normalized name is same as VSN700 name for M64061
-                ha_name,
-                "✓"
+            create_row_data(
+                vsn700_name=p,
+                vsn300_name=vsn300_name,
+                sunspec_name=p,  # SunSpec normalized name is same as VSN700 name
+                ha_name=ha_name,
+                in_livedata="✓"
                 if p in vsn700_livedata_points or p in vsn300_livedata_points
                 else "",
-                "✓" if p in vsn700_feeds_points else "",
-                label,
-                description,
-                "M64061",
-                category,
-                units,
-                state_class,
-                device_class,
-                "",  # entity_category - empty for normal sensor points
-                "MAYBE",
-            ]
+                in_feeds="✓" if p in vsn700_feeds_points else "",
+                label=label,
+                description=description,
+                ha_display_name=ha_display_name,
+                model="M64061",
+                category=category,
+                units=units,
+                state_class=state_class,
+                device_class=device_class,
+                entity_category="",  # empty for normal sensor points
+                available_in_modbus="MAYBE",
+                data_source=data_source,
+            )
         )
 
 # ABB Proprietary
@@ -1374,10 +1451,10 @@ for p in sorted(ABB_PROPRIETARY):
         else:
             label = generate_label_from_name(p)
 
-        # Get description using 3-tier priority
+        # Get description using 4-tier priority with data source tracking
         workbook_desc = None  # Proprietary points not in workbook
-        description = get_description_with_priority(
-            p, feeds_titles, label, workbook_desc
+        description, data_source = get_description_with_priority(
+            p, feeds_titles, label, workbook_desc, "ABB Proprietary"
         )
 
         # If description is poorly formatted, improve it
@@ -1385,6 +1462,10 @@ for p in sorted(ABB_PROPRIETARY):
             if description == label or "M " in description:
                 model_num = p.split("Mod_Ena")[0][1:]
                 description = f"SunSpec Model {model_num} Enable Flag"
+                data_source = "ABB Documentation"
+
+        # HA Display Name is the description
+        ha_display_name = description
 
         # Determine units for ABB Proprietary points
         # Priority 1: Get from feeds if available
@@ -1446,23 +1527,25 @@ for p in sorted(ABB_PROPRIETARY):
                 device_class = "current"
 
         rows.append(
-            [
-                p,
-                vsn300_name,
-                p,  # No SunSpec mapping, use original name
-                ha_name,
-                "✓" if p in vsn700_livedata_points else "",
-                "✓" if p in vsn700_feeds_points else "",
-                label,
-                description,
-                "ABB Proprietary",
-                category,
-                units,
-                state_class,
-                device_class,
-                "",  # entity_category - empty for normal sensor points
-                "NO",
-            ]
+            create_row_data(
+                vsn700_name=p,
+                vsn300_name=vsn300_name,
+                sunspec_name=p,  # No SunSpec mapping, use original name
+                ha_name=ha_name,
+                in_livedata="✓" if p in vsn700_livedata_points else "",
+                in_feeds="✓" if p in vsn700_feeds_points else "",
+                label=label,
+                description=description,
+                ha_display_name=ha_display_name,
+                model="ABB Proprietary",
+                category=category,
+                units=units,
+                state_class=state_class,
+                device_class=device_class,
+                entity_category="",  # empty for normal sensor points
+                available_in_modbus="NO",
+                data_source=data_source,
+            )
         )
 
 # Add VSN300-only points (points that exist in VSN300 but not mapped yet)
@@ -1502,7 +1585,8 @@ for vsn300_point in sorted(missing_vsn300):
     # Must happen BEFORE entity ID generation so model is set correctly
     if vsn300_point.startswith("C_"):
         model = "M1"
-        sunspec_point = vsn300_point
+        # Strip C_ prefix for SunSpec lookup (e.g., C_Mn -> Mn)
+        sunspec_point = vsn300_point[2:]  # Remove "C_" prefix
 
     # Get label from workbook or generate
     label, workbook_description = lookup_label_description(
@@ -1518,10 +1602,13 @@ for vsn300_point in sorted(missing_vsn300):
     # Generate HA entity name from human-readable label
     ha_name = generate_entity_id_from_label(label, model)
 
-    # Get description with priority
-    description = get_description_with_priority(
-        vsn300_point, feeds_titles, label, workbook_description
+    # Get description with priority and data source tracking
+    description, data_source = get_description_with_priority(
+        vsn300_point, feeds_titles, label, workbook_description, model
     )
+
+    # HA Display Name is the description
+    ha_display_name = description
 
     # Determine category
     category = "Unknown"
@@ -1679,26 +1766,28 @@ for vsn300_point in sorted(missing_vsn300):
             category = "System Monitoring"
 
     rows.append(
-        [
-            vsn700_equivalent if vsn700_equivalent else "N/A",  # VSN700 name
-            vsn300_point,  # VSN300 name
-            sunspec_point if sunspec_point else vsn300_point,  # SunSpec normalized
-            ha_name,
-            "✓" if vsn300_point in vsn300_livedata_points else "",  # In livedata
-            "✓" if vsn300_point in feeds_titles else "",  # In feeds
-            label,
-            description,
-            model if model else "VSN300-only",
-            category,
-            units,
-            state_class,
-            device_class,
-            entity_category,  # diagnostic for M1/system points, empty otherwise
-            "YES"
+        create_row_data(
+            vsn700_name=vsn700_equivalent if vsn700_equivalent else "N/A",
+            vsn300_name=vsn300_point,
+            sunspec_name=sunspec_point if sunspec_point else vsn300_point,
+            ha_name=ha_name,
+            in_livedata="✓" if vsn300_point in vsn300_livedata_points else "",
+            in_feeds="✓" if vsn300_point in feeds_titles else "",
+            label=label,
+            description=description,
+            ha_display_name=ha_display_name,
+            model=model if model else "VSN300-only",
+            category=category,
+            units=units,
+            state_class=state_class,
+            device_class=device_class,
+            entity_category=entity_category,  # diagnostic for M1/system points, empty otherwise
+            available_in_modbus="YES"
             if model in ["M103", "M101", "M160", "M120", "M124", "M802", "M203"]
             or model == "M1"
             else "NO",
-        ]
+            data_source=data_source,
+        )
     )
 
 print(f"Added {len(missing_vsn300)} VSN300-only points")
@@ -1730,8 +1819,13 @@ for vsn700_point in sorted(missing_vsn700):
     # Generate HA entity name from human-readable label
     ha_name = generate_entity_id_from_label(label, None)
 
-    # Get description (feeds title has priority)
-    description = get_description_with_priority(vsn700_point, feeds_titles, label, None)
+    # Get description with data source tracking (feeds title has priority)
+    description, data_source = get_description_with_priority(
+        vsn700_point, feeds_titles, label, None, "VSN700-only"
+    )
+
+    # HA Display Name is the description
+    ha_display_name = description
 
     # Determine category and entity_category
     category = "Energy Counter" if vsn700_point.startswith("E") else "Other"
@@ -1750,23 +1844,25 @@ for vsn700_point in sorted(missing_vsn700):
         category = "System Monitoring"
 
     rows.append(
-        [
-            vsn700_point,  # VSN700 name
-            "N/A",  # VSN300 name (doesn't exist)
-            vsn700_point,  # SunSpec normalized
-            ha_name,
-            "",  # Not in livedata
-            "✓",  # In feeds only
-            label,
-            description,
-            "VSN700-only",
-            category,
-            "Wh" if vsn700_point.startswith("E") else "",
-            "total_increasing" if vsn700_point.startswith("E") else "measurement",
-            "energy" if vsn700_point.startswith("E") else "",
-            entity_category,  # diagnostic for system monitoring, empty otherwise
-            "NO",
-        ]
+        create_row_data(
+            vsn700_name=vsn700_point,
+            vsn300_name="N/A",  # doesn't exist
+            sunspec_name=vsn700_point,  # SunSpec normalized
+            ha_name=ha_name,
+            in_livedata="",  # Not in livedata
+            in_feeds="✓",  # In feeds only
+            label=label,
+            description=description,
+            ha_display_name=ha_display_name,
+            model="VSN700-only",
+            category=category,
+            units="Wh" if vsn700_point.startswith("E") else "",
+            state_class="total_increasing" if vsn700_point.startswith("E") else "measurement",
+            device_class="energy" if vsn700_point.startswith("E") else "",
+            entity_category=entity_category,  # diagnostic for system monitoring, empty otherwise
+            available_in_modbus="NO",
+            data_source=data_source,
+        )
     )
 
 print(f"Added {len(missing_vsn700)} VSN700-only points")
@@ -1778,12 +1874,12 @@ for row_num, row_data in enumerate(rows, 2):
         cell.value = value
         cell.border = thin_border
 
-        # Color code by model (column index 8 = SunSpec Model, was 6)
-        if row_data[8] == "M64061":
+        # Color code by model (column index 9 = SunSpec Model, 0-indexed)
+        if row_data[9] == "M64061":
             cell.fill = PatternFill(
                 start_color="FFF2CC", end_color="FFF2CC", fill_type="solid"
             )
-        elif row_data[8] == "ABB Proprietary":
+        elif row_data[9] == "ABB Proprietary":
             cell.fill = PatternFill(
                 start_color="FCE4D6", end_color="FCE4D6", fill_type="solid"
             )
@@ -1808,29 +1904,29 @@ summary_ws = wb.create_sheet("Summary")
 summary_ws.append(["Category", "Count"])
 summary_ws.append(["Total Points", len(rows)])
 summary_ws.append(
-    ["Standard SunSpec (Both protocols)", len([r for r in rows if r[14] == "YES"])]
-)  # Column 14 = Available in Modbus
+    ["Standard SunSpec (Both protocols)", len([r for r in rows if r[18] == "YES"])]
+)  # Column 19 (0-indexed: 18) = Available in Modbus
 summary_ws.append(
-    ["M64061 (Maybe in Modbus)", len([r for r in rows if r[8] == "M64061"])]
-)  # Column 8 = SunSpec Model
+    ["M64061 (Maybe in Modbus)", len([r for r in rows if r[9] == "M64061"])]
+)  # Column 10 (0-indexed: 9) = SunSpec Model
 summary_ws.append(
-    ["ABB Proprietary (REST only)", len([r for r in rows if r[8] == "ABB Proprietary"])]
-)  # Column 8 = SunSpec Model
+    ["ABB Proprietary (REST only)", len([r for r in rows if r[9] == "ABB Proprietary"])]
+)  # Column 10 (0-indexed: 9) = SunSpec Model
 summary_ws.append(
-    ["Diagnostic entities", len([r for r in rows if r[13] == "diagnostic"])]
-)  # Column 13 = Entity Category
+    ["Diagnostic entities", len([r for r in rows if r[17] == "diagnostic"])]
+)  # Column 18 (0-indexed: 17) = Entity Category
 summary_ws.append(
     ["In /livedata", len([r for r in rows if r[4] == "✓"])]
-)  # Column 4 = In /livedata
+)  # Column 5 (0-indexed: 4) = In /livedata
 summary_ws.append(
     ["In /feeds", len([r for r in rows if r[5] == "✓"])]
-)  # Column 5 = In /feeds
+)  # Column 6 (0-indexed: 5) = In /feeds
 summary_ws.append(
     [
         "Points with labels from SunSpec",
         len([r for r in rows if r[6] and r[6] != "N/A"]),
     ]
-)  # Column 6 = Label
+)  # Column 7 (0-indexed: 6) = Label
 summary_ws.append(
     [
         "Points with generated labels",
@@ -1848,18 +1944,18 @@ wb.save(output_path)
 print(f"\n✓ Excel file created: {output_path}")
 print(f"  Total rows: {len(rows)}")
 print(
-    f"  Standard SunSpec: {len([r for r in rows if r[14] == 'YES'])}"
-)  # Column 14 = Available in Modbus
+    f"  Standard SunSpec: {len([r for r in rows if r[18] == 'YES'])}"
+)  # Column 19 (0-indexed: 18) = Available in Modbus
 print(
-    f"  M64061: {len([r for r in rows if r[8] == 'M64061'])}"
-)  # Column 8 = SunSpec Model
-print(f"  ABB Proprietary: {len([r for r in rows if r[8] == 'ABB Proprietary'])}")
+    f"  M64061: {len([r for r in rows if r[9] == 'M64061'])}"
+)  # Column 10 (0-indexed: 9) = SunSpec Model
+print(f"  ABB Proprietary: {len([r for r in rows if r[9] == 'ABB Proprietary'])}")
 print(
-    f"  Diagnostic entities: {len([r for r in rows if r[13] == 'diagnostic'])}"
-)  # Column 13 = Entity Category
+    f"  Diagnostic entities: {len([r for r in rows if r[17] == 'diagnostic'])}"
+)  # Column 18 (0-indexed: 17) = Entity Category
 print(
     f"  Points with SunSpec labels: {len([r for r in rows if r[6] and r[6] != 'N/A'])}"
-)  # Column 6 = Label
+)  # Column 7 (0-indexed: 6) = Label
 print(
     f"  Points with generated labels: {len([r for r in rows if not r[6] or r[6] == 'N/A'])}"
 )
