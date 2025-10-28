@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta.8] - 2025-01-28
+
+### Fixed
+
+- **Mapping Loader Field Name Mismatch**: Fixed critical bug where mapping_loader.py was looking for "HA Entity Name" field but new mapping JSON has "HA Name" field
+  - Caused 554 "Row missing HA entity name, skipping" warnings on startup
+  - No mapping rows were being loaded, breaking the integration
+  - Fixed by updating `mapping_loader.py` to use correct field name "HA Name"
+  - Also updated expected fields comment to match new 20-column format
+  - Commit: [d156ecc](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/d156ecc)
+
+**⚠️ CRITICAL HOTFIX for v1.0.0-beta.7**
+
+v1.0.0-beta.7 had a critical bug that prevented mapping rows from loading. All users on beta.7 should upgrade to beta.8 immediately.
+
+**Full Release Notes:** Same as [v1.0.0-beta.7](docs/releases/v1.0.0-beta.7.md) with this critical fix applied.
+
 ## [1.0.0-beta.7] - 2025-01-28
 
 ### Added
@@ -459,7 +476,8 @@ After updating:
 
 ---
 
-[Unreleased]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.7...HEAD
+[Unreleased]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.8...HEAD
+[1.0.0-beta.8]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.7...v1.0.0-beta.8
 [1.0.0-beta.7]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.6...v1.0.0-beta.7
 [1.0.0-beta.6]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.5...v1.0.0-beta.6
 [1.0.0-beta.5]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.4...v1.0.0-beta.5
