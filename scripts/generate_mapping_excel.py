@@ -1026,6 +1026,7 @@ def get_description_with_priority(
 
     Priority:
     1. Description from SunSpec models workbook (most authoritative)
+       - Exception: M1 Common Model prefers label over generic descriptions
     2. Title from feeds.json (when it's a description, not a point name)
     3. Enhanced description from generate_description_from_name()
     4. Label from SunSpec models workbook / generated label
@@ -1047,6 +1048,20 @@ def get_description_with_priority(
         and str(workbook_description).strip()
         and str(workbook_description).lower() != "none"
     ):
+        # Special case: M1 Common Model has generic boilerplate descriptions
+        # Prefer user-friendly labels instead
+        if model == "M1":
+            desc_lower = str(workbook_description).lower()
+            if (
+                "manufacturer specific value" in desc_lower
+                or "well known value registered with sunspec" in desc_lower
+                or "modbus device address" in desc_lower
+            ):
+                # Use label instead for M1 generic descriptions
+                if label:
+                    return label, f"SunSpec Label ({model}) - generic description"
+
+        # Use description for all other cases
         source = f"SunSpec Description ({model})" if model else "SunSpec Description"
         return workbook_description, source
 

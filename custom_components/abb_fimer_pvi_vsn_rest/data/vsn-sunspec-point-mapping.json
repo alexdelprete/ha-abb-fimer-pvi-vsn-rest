@@ -3571,8 +3571,8 @@
     "In /livedata": "✓",
     "In /feeds": null,
     "Label": "Device Address",
-    "Description": "Modbus device address",
-    "HA Display Name": "Modbus device address",
+    "Description": "Device Address",
+    "HA Display Name": "Device Address",
     "SunSpec Model": "M1",
     "Category": "Device Info",
     "Units": "A",
@@ -3583,7 +3583,7 @@
     "HA Device Class": "current",
     "Entity Category": "diagnostic",
     "Available in Modbus": "YES",
-    "Data Source": "SunSpec Description (M1)"
+    "Data Source": "SunSpec Label (M1) - generic description"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -3593,8 +3593,8 @@
     "In /livedata": "✓",
     "In /feeds": null,
     "Label": "Model",
-    "Description": "Manufacturer specific value (32 chars)",
-    "HA Display Name": "Manufacturer specific value (32 chars)",
+    "Description": "Model",
+    "HA Display Name": "Model",
     "SunSpec Model": "M1",
     "Category": "Device Info",
     "Units": null,
@@ -3605,7 +3605,7 @@
     "HA Device Class": null,
     "Entity Category": "diagnostic",
     "Available in Modbus": "YES",
-    "Data Source": "SunSpec Description (M1)"
+    "Data Source": "SunSpec Label (M1) - generic description"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -3615,8 +3615,8 @@
     "In /livedata": "✓",
     "In /feeds": null,
     "Label": "Manufacturer",
-    "Description": "Well known value registered with SunSpec for compliance",
-    "HA Display Name": "Well known value registered with SunSpec for compliance",
+    "Description": "Manufacturer",
+    "HA Display Name": "Manufacturer",
     "SunSpec Model": "M1",
     "Category": "Device Info",
     "Units": null,
@@ -3627,7 +3627,7 @@
     "HA Device Class": null,
     "Entity Category": "diagnostic",
     "Available in Modbus": "YES",
-    "Data Source": "SunSpec Description (M1)"
+    "Data Source": "SunSpec Label (M1) - generic description"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -3637,8 +3637,8 @@
     "In /livedata": "✓",
     "In /feeds": null,
     "Label": "Options",
-    "Description": "Manufacturer specific value (16 chars)",
-    "HA Display Name": "Manufacturer specific value (16 chars)",
+    "Description": "Options",
+    "HA Display Name": "Options",
     "SunSpec Model": "M1",
     "Category": "Device Info",
     "Units": null,
@@ -3649,7 +3649,7 @@
     "HA Device Class": null,
     "Entity Category": "diagnostic",
     "Available in Modbus": "YES",
-    "Data Source": "SunSpec Description (M1)"
+    "Data Source": "SunSpec Label (M1) - generic description"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -3659,8 +3659,8 @@
     "In /livedata": "✓",
     "In /feeds": null,
     "Label": "Serial Number",
-    "Description": "Manufacturer specific value (32 chars)",
-    "HA Display Name": "Manufacturer specific value (32 chars)",
+    "Description": "Serial Number",
+    "HA Display Name": "Serial Number",
     "SunSpec Model": "M1",
     "Category": "Device Info",
     "Units": null,
@@ -3671,7 +3671,7 @@
     "HA Device Class": null,
     "Entity Category": "diagnostic",
     "Available in Modbus": "YES",
-    "Data Source": "SunSpec Description (M1)"
+    "Data Source": "SunSpec Label (M1) - generic description"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -3681,8 +3681,8 @@
     "In /livedata": "✓",
     "In /feeds": null,
     "Label": "Version",
-    "Description": "Manufacturer specific value (16 chars)",
-    "HA Display Name": "Manufacturer specific value (16 chars)",
+    "Description": "Version",
+    "HA Display Name": "Version",
     "SunSpec Model": "M1",
     "Category": "Device Info",
     "Units": "V",
@@ -3693,7 +3693,7 @@
     "HA Device Class": "voltage",
     "Entity Category": "diagnostic",
     "Available in Modbus": "YES",
-    "Data Source": "SunSpec Description (M1)"
+    "Data Source": "SunSpec Label (M1) - generic description"
   },
   {
     "REST Name (VSN700)": "N/A",
