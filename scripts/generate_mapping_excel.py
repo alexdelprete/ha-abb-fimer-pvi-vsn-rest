@@ -1029,6 +1029,7 @@ def get_description_with_priority(
        - Exception: M1 Common Model prefers label over generic descriptions
     2. Title from feeds.json (when it's a description, not a point name)
     3. Enhanced description from generate_description_from_name()
+       - Exception: Prefer label over enhanced if enhanced contains model prefix (e.g., "M 103 1")
     4. Label from SunSpec models workbook / generated label
 
     Args:
@@ -1074,6 +1075,22 @@ def get_description_with_priority(
 
     # Priority 3: Try enhanced description generation
     enhanced_desc = generate_description_from_name(point_name)
+
+    # Priority 3.5: Prefer label over enhanced description in certain cases
+    # Enhanced descriptions like "M 103 1 Hz A" or "Iin 1" are less user-friendly than labels
+    if enhanced_desc and label and enhanced_desc != label:
+        # Case 1: Enhanced description starts with model prefix pattern (e.g., "M 103", "M 64061")
+        if re.match(r'^M \d+', enhanced_desc):
+            source = f"SunSpec Label ({model})" if model else "Generated from point name"
+            return label, source
+
+        # Case 2: Enhanced description is a cryptic abbreviation (3-5 chars + space + digit)
+        # Examples: "Iin 1", "Pin 1", "Vin 1" -> prefer labels like "DC Current #1", "DC Power #1"
+        if re.match(r'^[A-Z][a-z]{1,4} \d+$', enhanced_desc):
+            # Label is more descriptive, use it instead
+            source = f"SunSpec Label ({model})" if model else "Generated from point name"
+            return label, source
+
     if enhanced_desc and enhanced_desc != label:
         return enhanced_desc, "Enhanced from point name"
 

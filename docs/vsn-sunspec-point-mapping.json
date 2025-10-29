@@ -271,8 +271,8 @@
     "In /livedata": "✓",
     "In /feeds": null,
     "Label": "DC Current #1",
-    "Description": "Iin 1",
-    "HA Display Name": "Iin 1",
+    "Description": "DC Current #1",
+    "HA Display Name": "DC Current #1",
     "SunSpec Model": "M160",
     "Category": "MPPT",
     "Units": "A",
@@ -283,7 +283,7 @@
     "HA Device Class": "current",
     "Entity Category": null,
     "Available in Modbus": "YES",
-    "Data Source": "Enhanced from point name"
+    "Data Source": "SunSpec Label (M160)"
   },
   {
     "REST Name (VSN700)": "Vin1",
@@ -293,8 +293,8 @@
     "In /livedata": "✓",
     "In /feeds": null,
     "Label": "DC Voltage #1",
-    "Description": "Vin 1",
-    "HA Display Name": "Vin 1",
+    "Description": "DC Voltage #1",
+    "HA Display Name": "DC Voltage #1",
     "SunSpec Model": "M160",
     "Category": "MPPT",
     "Units": "V",
@@ -305,7 +305,7 @@
     "HA Device Class": "voltage",
     "Entity Category": null,
     "Available in Modbus": "YES",
-    "Data Source": "Enhanced from point name"
+    "Data Source": "SunSpec Label (M160)"
   },
   {
     "REST Name (VSN700)": "Pin1",
@@ -315,8 +315,8 @@
     "In /livedata": "✓",
     "In /feeds": "✓",
     "Label": "DC Power #1",
-    "Description": "Pin 1",
-    "HA Display Name": "Pin 1",
+    "Description": "DC Power #1",
+    "HA Display Name": "DC Power #1",
     "SunSpec Model": "M160",
     "Category": "MPPT",
     "Units": "W",
@@ -327,7 +327,7 @@
     "HA Device Class": "power",
     "Entity Category": null,
     "Available in Modbus": "YES",
-    "Data Source": "Enhanced from point name"
+    "Data Source": "SunSpec Label (M160)"
   },
   {
     "REST Name (VSN700)": "Iin2",
@@ -337,8 +337,8 @@
     "In /livedata": "✓",
     "In /feeds": null,
     "Label": "DC Current #2",
-    "Description": "Iin 2",
-    "HA Display Name": "Iin 2",
+    "Description": "DC Current #2",
+    "HA Display Name": "DC Current #2",
     "SunSpec Model": "M160",
     "Category": "MPPT",
     "Units": "A",
@@ -349,7 +349,7 @@
     "HA Device Class": "current",
     "Entity Category": null,
     "Available in Modbus": "YES",
-    "Data Source": "Enhanced from point name"
+    "Data Source": "SunSpec Label (M160)"
   },
   {
     "REST Name (VSN700)": "Vin2",
@@ -359,8 +359,8 @@
     "In /livedata": "✓",
     "In /feeds": null,
     "Label": "DC Voltage #2",
-    "Description": "Vin 2",
-    "HA Display Name": "Vin 2",
+    "Description": "DC Voltage #2",
+    "HA Display Name": "DC Voltage #2",
     "SunSpec Model": "M160",
     "Category": "MPPT",
     "Units": "V",
@@ -371,7 +371,7 @@
     "HA Device Class": "voltage",
     "Entity Category": null,
     "Available in Modbus": "YES",
-    "Data Source": "Enhanced from point name"
+    "Data Source": "SunSpec Label (M160)"
   },
   {
     "REST Name (VSN700)": "Pin2",
@@ -381,8 +381,8 @@
     "In /livedata": "✓",
     "In /feeds": "✓",
     "Label": "DC Power #2",
-    "Description": "Pin 2",
-    "HA Display Name": "Pin 2",
+    "Description": "DC Power #2",
+    "HA Display Name": "DC Power #2",
     "SunSpec Model": "M160",
     "Category": "MPPT",
     "Units": "W",
@@ -393,7 +393,7 @@
     "HA Device Class": "power",
     "Entity Category": null,
     "Available in Modbus": "YES",
-    "Data Source": "Enhanced from point name"
+    "Data Source": "SunSpec Label (M160)"
   },
   {
     "REST Name (VSN700)": "TSoc",
@@ -5155,8 +5155,8 @@
     "In /livedata": "✓",
     "In /feeds": null,
     "Label": "Frequency Phase A",
-    "Description": "M 103 1 Hz A",
-    "HA Display Name": "M 103 1 Hz A",
+    "Description": "Frequency Phase A",
+    "HA Display Name": "Frequency Phase A",
     "SunSpec Model": "M103",
     "Category": "Inverter",
     "Units": "A",
@@ -5167,7 +5167,7 @@
     "HA Device Class": "current",
     "Entity Category": null,
     "Available in Modbus": "YES",
-    "Data Source": "Enhanced from point name"
+    "Data Source": "SunSpec Label (M103)"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5177,8 +5177,8 @@
     "In /livedata": "✓",
     "In /feeds": null,
     "Label": "Frequency Phase B",
-    "Description": "M 103 1 Hz B",
-    "HA Display Name": "M 103 1 Hz B",
+    "Description": "Frequency Phase B",
+    "HA Display Name": "Frequency Phase B",
     "SunSpec Model": "M103",
     "Category": "Inverter",
     "Units": "Hz",
@@ -5189,7 +5189,7 @@
     "HA Device Class": "frequency",
     "Entity Category": null,
     "Available in Modbus": "YES",
-    "Data Source": "Enhanced from point name"
+    "Data Source": "SunSpec Label (M103)"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5199,8 +5199,8 @@
     "In /livedata": "✓",
     "In /feeds": null,
     "Label": "Frequency Phase C",
-    "Description": "M 103 1 Hz C",
-    "HA Display Name": "M 103 1 Hz C",
+    "Description": "Frequency Phase C",
+    "HA Display Name": "Frequency Phase C",
     "SunSpec Model": "M103",
     "Category": "Inverter",
     "Units": "Hz",
@@ -5211,7 +5211,7 @@
     "HA Device Class": "frequency",
     "Entity Category": null,
     "Available in Modbus": "YES",
-    "Data Source": "Enhanced from point name"
+    "Data Source": "SunSpec Label (M103)"
   },
   {
     "REST Name (VSN700)": "VoutRS",
@@ -5221,8 +5221,8 @@
     "In /livedata": "✓",
     "In /feeds": "✓",
     "Label": "Phase Voltage AB",
-    "Description": "M 103 1 Ph Vph Ab",
-    "HA Display Name": "M 103 1 Ph Vph Ab",
+    "Description": "Phase Voltage AB",
+    "HA Display Name": "Phase Voltage AB",
     "SunSpec Model": "M103",
     "Category": "Inverter",
     "Units": "V",
@@ -5233,7 +5233,7 @@
     "HA Device Class": "voltage",
     "Entity Category": null,
     "Available in Modbus": "YES",
-    "Data Source": "Enhanced from point name"
+    "Data Source": "SunSpec Label (M103)"
   },
   {
     "REST Name (VSN700)": "VoutS",
@@ -5265,8 +5265,8 @@
     "In /livedata": "✓",
     "In /feeds": "✓",
     "Label": "Phase Voltage BC",
-    "Description": "M 103 1 Ph Vph Bc",
-    "HA Display Name": "M 103 1 Ph Vph Bc",
+    "Description": "Phase Voltage BC",
+    "HA Display Name": "Phase Voltage BC",
     "SunSpec Model": "M103",
     "Category": "Inverter",
     "Units": "V",
@@ -5277,7 +5277,7 @@
     "HA Device Class": "voltage",
     "Entity Category": null,
     "Available in Modbus": "YES",
-    "Data Source": "Enhanced from point name"
+    "Data Source": "SunSpec Label (M103)"
   },
   {
     "REST Name (VSN700)": "VoutT",
@@ -5309,8 +5309,8 @@
     "In /livedata": "✓",
     "In /feeds": "✓",
     "Label": "Phase Voltage CA",
-    "Description": "M 103 1 Ph Vph Ca",
-    "HA Display Name": "M 103 1 Ph Vph Ca",
+    "Description": "Phase Voltage CA",
+    "HA Display Name": "Phase Voltage CA",
     "SunSpec Model": "M103",
     "Category": "Inverter",
     "Units": "V",
@@ -5321,7 +5321,7 @@
     "HA Device Class": "voltage",
     "Entity Category": null,
     "Available in Modbus": "YES",
-    "Data Source": "Enhanced from point name"
+    "Data Source": "SunSpec Label (M103)"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5375,8 +5375,8 @@
     "In /livedata": "✓",
     "In /feeds": null,
     "Label": "Alarm State",
-    "Description": "M 64061 1 Alarm St",
-    "HA Display Name": "M 64061 1 Alarm St",
+    "Description": "Alarm State",
+    "HA Display Name": "Alarm State",
     "SunSpec Model": "M64061",
     "Category": "Diagnostic",
     "Units": "A",
@@ -5387,7 +5387,7 @@
     "HA Device Class": "current",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "Enhanced from point name"
+    "Data Source": "SunSpec Label (M64061)"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5419,8 +5419,8 @@
     "In /livedata": "✓",
     "In /feeds": "✓",
     "Label": "Daily Energy",
-    "Description": "M 64061 1 Day Wh",
-    "HA Display Name": "M 64061 1 Day Wh",
+    "Description": "Daily Energy",
+    "HA Display Name": "Daily Energy",
     "SunSpec Model": "M64061",
     "Category": "Diagnostic",
     "Units": "kWh",
@@ -5431,7 +5431,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "Enhanced from point name"
+    "Data Source": "SunSpec Label (M64061)"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5441,8 +5441,8 @@
     "In /livedata": "✓",
     "In /feeds": null,
     "Label": "DC Input 1 State",
-    "Description": "M 64061 1 DC St 1",
-    "HA Display Name": "M 64061 1 DC St 1",
+    "Description": "DC Input 1 State",
+    "HA Display Name": "DC Input 1 State",
     "SunSpec Model": "M64061",
     "Category": "Diagnostic",
     "Units": null,
@@ -5453,7 +5453,7 @@
     "HA Device Class": null,
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "Enhanced from point name"
+    "Data Source": "SunSpec Label (M64061)"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5463,8 +5463,8 @@
     "In /livedata": "✓",
     "In /feeds": null,
     "Label": "DC Input 2 State",
-    "Description": "M 64061 1 DC St 2",
-    "HA Display Name": "M 64061 1 DC St 2",
+    "Description": "DC Input 2 State",
+    "HA Display Name": "DC Input 2 State",
     "SunSpec Model": "M64061",
     "Category": "Diagnostic",
     "Units": null,
@@ -5475,7 +5475,7 @@
     "HA Device Class": null,
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "Enhanced from point name"
+    "Data Source": "SunSpec Label (M64061)"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5485,8 +5485,8 @@
     "In /livedata": "✓",
     "In /feeds": null,
     "Label": "Global State",
-    "Description": "M 64061 1 Global St",
-    "HA Display Name": "M 64061 1 Global St",
+    "Description": "Global State",
+    "HA Display Name": "Global State",
     "SunSpec Model": "M64061",
     "Category": "Diagnostic",
     "Units": null,
@@ -5497,7 +5497,7 @@
     "HA Device Class": null,
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "Enhanced from point name"
+    "Data Source": "SunSpec Label (M64061)"
   },
   {
     "REST Name (VSN700)": "Ileak 1",
@@ -5507,8 +5507,8 @@
     "In /livedata": "✓",
     "In /feeds": "✓",
     "Label": "Leakage Current DC-AC",
-    "Description": "M 64061 1 I Leak DC AC",
-    "HA Display Name": "M 64061 1 I Leak DC AC",
+    "Description": "Leakage Current DC-AC",
+    "HA Display Name": "Leakage Current DC-AC",
     "SunSpec Model": "M64061",
     "Category": "Diagnostic",
     "Units": "mA",
@@ -5519,7 +5519,7 @@
     "HA Device Class": "current",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "Enhanced from point name"
+    "Data Source": "SunSpec Label (M64061)"
   },
   {
     "REST Name (VSN700)": "Ileak 2",
@@ -5529,8 +5529,8 @@
     "In /livedata": "✓",
     "In /feeds": "✓",
     "Label": "Leakage Current DC-DC",
-    "Description": "M 64061 1 I Leak DC DC",
-    "HA Display Name": "M 64061 1 I Leak DC DC",
+    "Description": "Leakage Current DC-DC",
+    "HA Display Name": "Leakage Current DC-DC",
     "SunSpec Model": "M64061",
     "Category": "Diagnostic",
     "Units": "mA",
@@ -5541,7 +5541,7 @@
     "HA Device Class": "current",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "Enhanced from point name"
+    "Data Source": "SunSpec Label (M64061)"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5551,8 +5551,8 @@
     "In /livedata": "✓",
     "In /feeds": null,
     "Label": "Inverter State",
-    "Description": "M 64061 1 Inverter St",
-    "HA Display Name": "M 64061 1 Inverter St",
+    "Description": "Inverter State",
+    "HA Display Name": "Inverter State",
     "SunSpec Model": "M64061",
     "Category": "Diagnostic",
     "Units": null,
@@ -5563,7 +5563,7 @@
     "HA Device Class": null,
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "Enhanced from point name"
+    "Data Source": "SunSpec Label (M64061)"
   },
   {
     "REST Name (VSN700)": "Riso",
@@ -5573,8 +5573,8 @@
     "In /livedata": "✓",
     "In /feeds": "✓",
     "Label": "Isolation Resistance",
-    "Description": "M 64061 1 Isolation Ohm 1",
-    "HA Display Name": "M 64061 1 Isolation Ohm 1",
+    "Description": "Isolation Resistance",
+    "HA Display Name": "Isolation Resistance",
     "SunSpec Model": "M64061",
     "Category": "Diagnostic",
     "Units": "MOhm",
@@ -5585,7 +5585,7 @@
     "HA Device Class": null,
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "Enhanced from point name"
+    "Data Source": "SunSpec Label (M64061)"
   },
   {
     "REST Name (VSN700)": "N/A",
