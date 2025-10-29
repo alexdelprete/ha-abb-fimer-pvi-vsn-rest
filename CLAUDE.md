@@ -385,9 +385,13 @@ See [docs/releases/README.md](docs/releases/README.md) for the detailed 8-step p
 4. **Bump Version Constants**: Update `const.py` VERSION and STARTUP_MESSAGE
 5. **Commit Changes**: `git add . && git commit -m "chore(release): bump version to vX.Y.Z"`
 6. **Push Commits**: `git push`
-7. **⚠️ STOP HERE** - Get explicit user approval before creating tags/releases
-8. **Create Tag** (only when instructed): `git tag -a vX.Y.Z -m "Release vX.Y.Z" && git push --tags`
-9. **Create GitHub Release** (only when instructed): `gh release create vX.Y.Z --prerelease` (beta) or `--latest` (stable)
+7. **⚠️ VERIFY CLEAN STATE**: Run `git status` to ensure ALL changes are committed and pushed
+   - Check for any uncommitted changes
+   - Check for any unpushed commits
+   - **CRITICAL**: Do NOT proceed to tags/releases with uncommitted changes
+8. **⚠️ STOP HERE** - Get explicit user approval before creating tags/releases
+9. **Create Tag** (only when instructed): `git tag -a vX.Y.Z -m "Release vX.Y.Z" && git push --tags`
+10. **Create GitHub Release** (only when instructed): `gh release create vX.Y.Z --prerelease` (beta) or `--latest` (stable)
 
 **⚠️ IMPORTANT - Release Policy:**
 
