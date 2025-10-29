@@ -30,6 +30,7 @@ from .coordinator import ABBFimerPVIVSNRestCoordinator
 _LOGGER = logging.getLogger(__name__)
 
 PLATFORMS: list[Platform] = [Platform.SENSOR]
+STARTUP_LOGGED_KEY = f"{DOMAIN}_startup_logged"
 
 type ABBFimerPVIVSNRestConfigEntry = ConfigEntry[RuntimeData]
 
@@ -45,7 +46,10 @@ async def async_setup_entry(
     hass: HomeAssistant, config_entry: ABBFimerPVIVSNRestConfigEntry
 ) -> bool:
     """Set up ABB FIMER PVI VSN REST from a config entry."""
-    _LOGGER.info(STARTUP_MESSAGE)
+    # Log startup message only once per HA session
+    if not hass.data.get(STARTUP_LOGGED_KEY):
+        _LOGGER.info(STARTUP_MESSAGE)
+        hass.data[STARTUP_LOGGED_KEY] = True
 
     # Get configuration
     host: str = config_entry.data[CONF_HOST]
