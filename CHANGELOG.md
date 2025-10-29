@@ -7,7 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta.12] - 2025-01-29
+
+### Fixed
+
+- **CRITICAL: Entity ID Generation Fix (Take 2)**: Corrected approach to setting custom entity IDs
+  - **Issue:** Beta.11 fix didn't work - entity IDs still showed only point name (e.g., `sensor.dc_current_2`)
+  - **Root Cause:** Setting `self.entity_id` directly doesn't work reliably in modern Home Assistant
+  - **Correct Fix:** With `has_entity_name=False`, HA slugifies `_attr_name` to create entity_id
+  - **Solution:** Set `_attr_name` to the full template string (e.g., `"abb_vsn_rest_inverter_0779093g823112_m160_dc_current_1"`)
+  - **Result:** Entity ID now correctly displays as `sensor.abb_vsn_rest_inverter_0779093g823112_m160_dc_current_1`
+  - **Friendly Name:** Moved to `extra_state_attributes["friendly_name"]` so users can still see "DC Current #1"
+
+### Changed
+
+- **Entity Display Name**: User-friendly names (e.g., "DC Current #1") now stored in `friendly_name` attribute instead of entity name
+  - Entity name now shows full template format (what was intended all along)
+  - Access friendly name via `extra_state_attributes["friendly_name"]`
+
 ## [1.0.0-beta.11] - 2025-01-29
+
+### ⚠️ WARNING: Known Issue
+
+**This release attempted to fix the entity_id bug but the fix didn't work. Please upgrade to v1.0.0-beta.12.**
 
 ### Fixed
 
