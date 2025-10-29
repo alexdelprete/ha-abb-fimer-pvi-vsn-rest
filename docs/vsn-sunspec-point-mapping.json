@@ -3737,7 +3737,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -3759,7 +3759,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -3781,7 +3781,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -3803,7 +3803,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -3825,7 +3825,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -3847,7 +3847,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -3869,7 +3869,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -3891,7 +3891,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -3913,7 +3913,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -3935,7 +3935,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -3957,7 +3957,7 @@
     "HA Device Class": null,
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -3979,7 +3979,7 @@
     "HA Device Class": null,
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -4001,7 +4001,7 @@
     "HA Device Class": null,
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -4023,7 +4023,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -4045,7 +4045,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -4067,7 +4067,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -4089,7 +4089,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -4111,7 +4111,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -4133,7 +4133,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -4177,7 +4177,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -4199,7 +4199,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -4221,7 +4221,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -4265,7 +4265,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -4287,7 +4287,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -4309,7 +4309,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -4331,7 +4331,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "Both Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - Both Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -4353,7 +4353,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "Both Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - Both Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -4375,7 +4375,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "Both Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - Both Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -4397,7 +4397,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "Both Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - Both Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -4419,7 +4419,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "Both Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - Both Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -4441,18 +4441,18 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "Both Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - Both Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
     "REST Name (VSN300)": "EGridExport",
     "SunSpec Normalized Name": "EGridExport",
-    "HA Name": "abb_vsn_e_grid_export",
+    "HA Name": "abb_vsn_total_watt_hours_exported",
     "In /livedata": null,
     "In /feeds": "✓",
-    "Label": "E Grid Export",
-    "Description": "E3 - Energy to the Grid - Total",
-    "HA Display Name": "E3 - Energy to the Grid - Total",
+    "Label": "Total Watt-hours Exported",
+    "Description": "Total Real Energy Exported",
+    "HA Display Name": "Total Real Energy Exported",
     "SunSpec Model": "VSN300-only",
     "Category": "Unknown",
     "Units": "Wh",
@@ -4463,18 +4463,18 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M203) - SunSpec Description (M203)"
   },
   {
     "REST Name (VSN700)": "N/A",
     "REST Name (VSN300)": "EGridImport",
     "SunSpec Normalized Name": "EGridImport",
-    "HA Name": "abb_vsn_e_grid_import",
+    "HA Name": "abb_vsn_total_watt_hours_imported",
     "In /livedata": null,
     "In /feeds": "✓",
-    "Label": "E Grid Import",
-    "Description": "E8 - Energy from the Grid - Total",
-    "HA Display Name": "E8 - Energy from the Grid - Total",
+    "Label": "Total Watt-hours Imported",
+    "Description": "Total Real Energy Imported",
+    "HA Display Name": "Total Real Energy Imported",
     "SunSpec Model": "VSN300-only",
     "Category": "Unknown",
     "Units": "Wh",
@@ -4485,7 +4485,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M203) - SunSpec Description (M203)"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -4529,7 +4529,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -4551,7 +4551,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -4573,7 +4573,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -4617,7 +4617,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -4639,7 +4639,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -4661,18 +4661,18 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
     "REST Name (VSN300)": "ETotal",
     "SunSpec Normalized Name": "ETotal",
-    "HA Name": "abb_vsn_e_total",
+    "HA Name": "abb_vsn_watthours",
     "In /livedata": null,
     "In /feeds": "✓",
-    "Label": "E Total",
-    "Description": "E0 - Inverter Produced Energy - Total",
-    "HA Display Name": "E0 - Inverter Produced Energy - Total",
+    "Label": "WattHours",
+    "Description": "AC Energy",
+    "HA Display Name": "AC Energy",
     "SunSpec Model": "VSN300-only",
     "Category": "Unknown",
     "Units": "Wh",
@@ -4683,7 +4683,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M103) - SunSpec Description (M103)"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -4705,7 +4705,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (VSN) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -4727,7 +4727,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -4749,7 +4749,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -4771,7 +4771,7 @@
     "HA Device Class": "energy",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M64061) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -4793,7 +4793,7 @@
     "HA Device Class": "power",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (ABB Proprietary) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -4815,18 +4815,18 @@
     "HA Device Class": "power",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (ABB Proprietary) - VSN700 Feeds"
   },
   {
     "REST Name (VSN700)": "N/A",
     "REST Name (VSN300)": "MeterPgrid_Tot",
     "SunSpec Normalized Name": "MeterPgrid_Tot",
-    "HA Name": "abb_vsn_meter_power_grid_tot",
+    "HA Name": "abb_vsn_watts",
     "In /livedata": null,
     "In /feeds": "✓",
-    "Label": "Meter Power Grid Tot",
-    "Description": "Active Power - total",
-    "HA Display Name": "Active Power - total",
+    "Label": "Watts",
+    "Description": "Total Real Power",
+    "HA Display Name": "Total Real Power",
     "SunSpec Model": "VSN300-only",
     "Category": "Unknown",
     "Units": "W",
@@ -4837,18 +4837,18 @@
     "HA Device Class": "power",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M203) - SunSpec Description (M203)"
   },
   {
     "REST Name (VSN700)": "N/A",
     "REST Name (VSN300)": "PbaT",
     "SunSpec Normalized Name": "PbaT",
-    "HA Name": "abb_vsn_pba_t",
+    "HA Name": "abb_vsn_inwrte",
     "In /livedata": null,
     "In /feeds": "✓",
-    "Label": "Pba T",
-    "Description": "Battery Power - total",
-    "HA Display Name": "Battery Power - total",
+    "Label": "InWRte",
+    "Description": "Percent of max charging rate.",
+    "HA Display Name": "Percent of max charging rate.",
     "SunSpec Model": "VSN300-only",
     "Category": "Unknown",
     "Units": "W",
@@ -4859,18 +4859,18 @@
     "HA Device Class": "power",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "VSN700 Feeds"
+    "Data Source": "Cross-ref from VSN700 (M124) - SunSpec Description (M124)"
   },
   {
     "REST Name (VSN700)": "N/A",
     "REST Name (VSN300)": "Pgrid",
     "SunSpec Normalized Name": "Pgrid",
-    "HA Name": "abb_vsn_grid_power",
+    "HA Name": "abb_vsn_watts",
     "In /livedata": null,
     "In /feeds": "✓",
-    "Label": "Grid Power",
-    "Description": "Grid Power",
-    "HA Display Name": "Grid Power",
+    "Label": "Watts",
+    "Description": "AC Power",
+    "HA Display Name": "AC Power",
     "SunSpec Model": "VSN300-only",
     "Category": "Unknown",
     "Units": "W",
@@ -4881,18 +4881,18 @@
     "HA Device Class": "power",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "Generated from point name"
+    "Data Source": "Cross-ref from VSN700 (M103) - SunSpec Description (M103)"
   },
   {
     "REST Name (VSN700)": "N/A",
     "REST Name (VSN300)": "Pin",
     "SunSpec Normalized Name": "Pin",
-    "HA Name": "abb_vsn_input_power",
+    "HA Name": "abb_vsn_dc_watts",
     "In /livedata": null,
     "In /feeds": "✓",
-    "Label": "Input Power",
-    "Description": "Input Power",
-    "HA Display Name": "Input Power",
+    "Label": "DC Watts",
+    "Description": "DC Power",
+    "HA Display Name": "DC Power",
     "SunSpec Model": "VSN300-only",
     "Category": "Unknown",
     "Units": "W",
@@ -4903,18 +4903,18 @@
     "HA Device Class": "power",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "Generated from point name"
+    "Data Source": "Cross-ref from VSN700 (M103) - SunSpec Description (M103)"
   },
   {
     "REST Name (VSN700)": "N/A",
     "REST Name (VSN300)": "Pin1",
     "SunSpec Normalized Name": "Pin1",
-    "HA Name": "abb_vsn_pin_1",
+    "HA Name": "abb_vsn_dc_power_#1",
     "In /livedata": null,
     "In /feeds": "✓",
-    "Label": "Pin 1",
-    "Description": "Pin 1",
-    "HA Display Name": "Pin 1",
+    "Label": "DC Power #1",
+    "Description": "DC Power #1",
+    "HA Display Name": "DC Power #1",
     "SunSpec Model": "VSN300-only",
     "Category": "Unknown",
     "Units": "W",
@@ -4925,18 +4925,18 @@
     "HA Device Class": "power",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "Generated from point name"
+    "Data Source": "Cross-ref from VSN700 (M160) - SunSpec Label (M160)"
   },
   {
     "REST Name (VSN700)": "N/A",
     "REST Name (VSN300)": "Pin2",
     "SunSpec Normalized Name": "Pin2",
-    "HA Name": "abb_vsn_pin_2",
+    "HA Name": "abb_vsn_dc_power_#2",
     "In /livedata": null,
     "In /feeds": "✓",
-    "Label": "Pin 2",
-    "Description": "Pin 2",
-    "HA Display Name": "Pin 2",
+    "Label": "DC Power #2",
+    "Description": "DC Power #2",
+    "HA Display Name": "DC Power #2",
     "SunSpec Model": "VSN300-only",
     "Category": "Unknown",
     "Units": "W",
@@ -4947,7 +4947,7 @@
     "HA Device Class": "power",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "Generated from point name"
+    "Data Source": "Cross-ref from VSN700 (M160) - SunSpec Label (M160)"
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -4969,18 +4969,18 @@
     "HA Device Class": null,
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "Generated from point name"
+    "Data Source": "Cross-ref from VSN700 (M103) - SunSpec Label (M103)"
   },
   {
     "REST Name (VSN700)": "N/A",
     "REST Name (VSN300)": "Temp1",
     "SunSpec Normalized Name": "Temp1",
-    "HA Name": "abb_vsn_temp_1",
+    "HA Name": "abb_vsn_cabinet_temperature",
     "In /livedata": null,
     "In /feeds": "✓",
-    "Label": "Temp 1",
-    "Description": "Temp 1",
-    "HA Display Name": "Temp 1",
+    "Label": "Cabinet Temperature",
+    "Description": "Cabinet Temperature",
+    "HA Display Name": "Cabinet Temperature",
     "SunSpec Model": "VSN300-only",
     "Category": "Unknown",
     "Units": "°C",
@@ -4991,18 +4991,18 @@
     "HA Device Class": "temperature",
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "Generated from point name"
+    "Data Source": "Cross-ref from VSN700 (M103) - SunSpec Description (M103)"
   },
   {
     "REST Name (VSN700)": "N/A",
     "REST Name (VSN300)": "cosPhi",
     "SunSpec Normalized Name": "cosPhi",
-    "HA Name": "abb_vsn_cos_phi",
+    "HA Name": "abb_vsn_pf",
     "In /livedata": null,
     "In /feeds": "✓",
-    "Label": "Cos Phi",
-    "Description": "Cos Phi",
-    "HA Display Name": "Cos Phi",
+    "Label": "PF",
+    "Description": "AC Power Factor",
+    "HA Display Name": "AC Power Factor",
     "SunSpec Model": "VSN300-only",
     "Category": "Unknown",
     "Units": null,
@@ -5013,7 +5013,7 @@
     "HA Device Class": null,
     "Entity Category": null,
     "Available in Modbus": "NO",
-    "Data Source": "Generated from point name"
+    "Data Source": "Cross-ref from VSN700 (M103) - SunSpec Description (M103)"
   },
   {
     "REST Name (VSN700)": "N/A",

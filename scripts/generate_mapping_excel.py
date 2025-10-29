@@ -1019,12 +1019,50 @@ def lookup_label_description(models_data, model, sunspec_point):
     return None, None
 
 
+def build_vsn700_lookup(rows):
+    """Build lookup table of VSN700 points with good labels/descriptions.
+
+    Args:
+        rows: List of existing mapping rows (from standard SunSpec + M64061 + ABB Proprietary)
+
+    Returns:
+        Dictionary mapping VSN700 point names to their label/description/model/data_source
+
+    """
+    vsn700_lookup = {}
+    for row in rows:
+        vsn700_name = row[0]  # Column 1 = REST Name (VSN700)
+        data_source = row[19]  # Column 20 = Data Source
+
+        # Only collect entries with good data sources (not generated)
+        if (
+            vsn700_name
+            and vsn700_name != "N/A"
+            and "Generated" not in data_source
+            and "Enhanced" not in data_source
+        ):
+            vsn700_lookup[vsn700_name] = {
+                "label": row[6],  # Column 7 = Label
+                "description": row[8],  # Column 9 = HA Display Name
+                "model": row[9],  # Column 10 = SunSpec Model
+                "data_source": data_source,
+            }
+
+    return vsn700_lookup
+
+
 def get_description_with_priority(
-    point_name, feeds_titles, label, workbook_description, model=None
+    point_name,
+    feeds_titles,
+    label,
+    workbook_description,
+    model=None,
+    vsn700_lookup=None,
 ):
-    """Get description using 4-tier priority system with data source tracking.
+    """Get description using multi-tier priority system with data source tracking.
 
     Priority:
+    0. Cross-reference: For VSN300-only points, check if VSN700 has better data
     1. Description from SunSpec models workbook (most authoritative)
        - Exception: M1 Common Model prefers label over generic descriptions
     2. Title from feeds.json (when it's a description, not a point name)
@@ -1038,11 +1076,34 @@ def get_description_with_priority(
         label: The label (from workbook or generated)
         workbook_description: Description from workbook (may be None)
         model: The SunSpec model (e.g., "M103") for data source tracking
+        vsn700_lookup: Optional lookup table of VSN700 points with good data
 
     Returns:
-        Tuple of (description, data_source)
+        Tuple of (description, data_source, label_override)
+        - label_override is not None if VSN700 lookup provided better label
 
     """
+    # Priority 0: Cross-reference VSN700 lookup for better data
+    # This helps VSN300-only points borrow descriptions from VSN700 equivalents
+    if vsn700_lookup:
+        # Strip model prefix from VSN300 point names to find VSN700 equivalent
+        # Examples: "m160_1_DCW_1" -> "Pin1", "Pin1" -> "Pin1", "cosPhi" -> "cosPhi"
+        point_clean = point_name
+        match = re.match(r"m\d+_\d+_(.+)", point_name)
+        if match:
+            point_clean = match.group(1)
+
+        # Check if this cleaned name exists in VSN700 with good data
+        if point_clean in vsn700_lookup:
+            vsn700_data = vsn700_lookup[point_clean]
+            source = f"Cross-ref from VSN700 ({vsn700_data['model']}) - {vsn700_data['data_source']}"
+            # Return description, source, and label override
+            return (
+                vsn700_data["description"],
+                source,
+                vsn700_data["label"],
+            )
+
     # Priority 1: Description from SunSpec workbook (most authoritative)
     if (
         workbook_description
@@ -1060,18 +1121,18 @@ def get_description_with_priority(
             ):
                 # Use label instead for M1 generic descriptions
                 if label:
-                    return label, f"SunSpec Label ({model}) - generic description"
+                    return label, f"SunSpec Label ({model}) - generic description", None
 
         # Use description for all other cases
         source = f"SunSpec Description ({model})" if model else "SunSpec Description"
-        return workbook_description, source
+        return workbook_description, source, None
 
     # Priority 2: Title from feeds (if it's a description, not a point name)
     if point_name in feeds_titles:
         title_data = feeds_titles[point_name]
         if title_data["is_description"]:
             feed_source = title_data["source"]
-            return title_data["title"], f"{feed_source} Feeds"
+            return title_data["title"], f"{feed_source} Feeds", None
 
     # Priority 3: Try enhanced description generation
     enhanced_desc = generate_description_from_name(point_name)
@@ -1082,24 +1143,24 @@ def get_description_with_priority(
         # Case 1: Enhanced description starts with model prefix pattern (e.g., "M 103", "M 64061")
         if re.match(r'^M \d+', enhanced_desc):
             source = f"SunSpec Label ({model})" if model else "Generated from point name"
-            return label, source
+            return label, source, None
 
         # Case 2: Enhanced description is a cryptic abbreviation (3-5 chars + space + digit)
         # Examples: "Iin 1", "Pin 1", "Vin 1" -> prefer labels like "DC Current #1", "DC Power #1"
         if re.match(r'^[A-Z][a-z]{1,4} \d+$', enhanced_desc):
             # Label is more descriptive, use it instead
             source = f"SunSpec Label ({model})" if model else "Generated from point name"
-            return label, source
+            return label, source, None
 
     if enhanced_desc and enhanced_desc != label:
-        return enhanced_desc, "Enhanced from point name"
+        return enhanced_desc, "Enhanced from point name", None
 
     # Priority 4: Use label as fallback
     if label:
         source = f"SunSpec Label ({model})" if model else "Generated from point name"
-        return label, source
+        return label, source, None
 
-    return point_name, "Point name (no label found)"
+    return point_name, "Point name (no label found)", None
 
 
 def create_row_data(
@@ -1283,7 +1344,7 @@ for vsn_name, mapping in VSN_TO_SUNSPEC_MAP.items():
             label = generate_label_from_name(vsn_name)
 
         # Get description using 4-tier priority system with data source tracking
-        description, data_source = get_description_with_priority(
+        description, data_source, _ = get_description_with_priority(
             vsn_name, feeds_titles, label, workbook_description, model
         )
 
@@ -1340,7 +1401,7 @@ for p in sorted(periodic_points):
 
         # Get description using 4-tier priority with data source tracking
         workbook_desc = None  # M64061 periodic counters not in workbook
-        description, data_source = get_description_with_priority(
+        description, data_source, _ = get_description_with_priority(
             p, feeds_titles, label, workbook_desc, "M64061"
         )
 
@@ -1401,7 +1462,7 @@ for p in sorted(M64061_POINTS):
 
         # Get description using 4-tier priority with data source tracking
         workbook_desc = None  # M64061 points not in standard workbook
-        description, data_source = get_description_with_priority(
+        description, data_source, _ = get_description_with_priority(
             p, feeds_titles, label, workbook_desc, "M64061"
         )
 
@@ -1485,7 +1546,7 @@ for p in sorted(ABB_PROPRIETARY):
 
         # Get description using 4-tier priority with data source tracking
         workbook_desc = None  # Proprietary points not in workbook
-        description, data_source = get_description_with_priority(
+        description, data_source, _ = get_description_with_priority(
             p, feeds_titles, label, workbook_desc, "ABB Proprietary"
         )
 
@@ -1583,6 +1644,12 @@ for p in sorted(ABB_PROPRIETARY):
 
 # Add VSN300-only points (points that exist in VSN300 but not mapped yet)
 print("Processing VSN300-only points...")
+
+# Build VSN700 lookup table for cross-referencing
+# This allows VSN300-only points to borrow better labels/descriptions from VSN700 equivalents
+vsn700_lookup = build_vsn700_lookup(rows)
+print(f"Built VSN700 lookup table with {len(vsn700_lookup)} points")
+
 all_vsn300 = vsn300_livedata_points | set(feeds_titles.keys())
 
 # Determine which VSN300 points are already mapped
@@ -1636,9 +1703,16 @@ for vsn300_point in sorted(missing_vsn300):
     ha_name = generate_entity_id_from_label(label, model)
 
     # Get description with priority and data source tracking
-    description, data_source = get_description_with_priority(
-        vsn300_point, feeds_titles, label, workbook_description, model
+    # Pass vsn700_lookup to enable cross-referencing for better data
+    description, data_source, label_override = get_description_with_priority(
+        vsn300_point, feeds_titles, label, workbook_description, model, vsn700_lookup
     )
+
+    # If VSN700 lookup provided a better label, use it
+    if label_override:
+        label = label_override
+        # Regenerate HA entity name with the better label
+        ha_name = generate_entity_id_from_label(label, model)
 
     # HA Display Name is the description
     ha_display_name = description
@@ -1854,7 +1928,7 @@ for vsn700_point in sorted(missing_vsn700):
     ha_name = generate_entity_id_from_label(label, None)
 
     # Get description with data source tracking (feeds title has priority)
-    description, data_source = get_description_with_priority(
+    description, data_source, _ = get_description_with_priority(
         vsn700_point, feeds_titles, label, None, "VSN700-only"
     )
 
