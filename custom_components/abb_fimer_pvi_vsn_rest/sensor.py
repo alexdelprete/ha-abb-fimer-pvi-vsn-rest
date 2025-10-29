@@ -238,6 +238,10 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         # Set unique_id to match entity_id for consistency
         self._attr_unique_id = entity_id
 
+        # Explicitly set entity_id to use our template format
+        # This overrides HA's automatic generation from _attr_name
+        self.entity_id = f"sensor.{entity_id}"
+
         # Set entity name from HA Display Name (what users see in HA)
         # Fallback to description, then label, then point name
         self._attr_name = point_data.get(

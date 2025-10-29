@@ -7,7 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta.11] - 2025-01-29
+
+### Fixed
+
+- **CRITICAL: Entity ID Generation Bug**: Fixed entity IDs showing only point name instead of full template format
+  - **Issue:** Entity IDs displayed as `sensor.dc_current_1` instead of `sensor.abb_vsn_rest_inverter_0779093g823112_m160_dc_current_1`
+  - **Root Cause:** Template string was assigned to `_attr_unique_id` (internal registry ID) but not to `entity_id` property
+  - **Fix:** Added explicit `self.entity_id = f"sensor.{entity_id}"` assignment in [sensor.py:243](custom_components/abb_fimer_pvi_vsn_rest/sensor.py#L243)
+  - **Impact:** This hotfix corrects the beta.10 release which had non-functional entity IDs
+  - **Note:** If you installed beta.10, all entities will be recreated with correct IDs after upgrading to beta.11
+
 ## [1.0.0-beta.10] - 2025-01-29
+
+### ⚠️ WARNING: Known Issue
+
+**This release has a critical bug where entity IDs only show the point name (e.g., `sensor.dc_current_1`) instead of the full template format. Please upgrade to v1.0.0-beta.11 immediately.**
 
 ### ⚠️ BREAKING CHANGES
 
