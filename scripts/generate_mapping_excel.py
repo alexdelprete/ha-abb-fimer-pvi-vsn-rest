@@ -773,6 +773,17 @@ def load_sunspec_models_metadata(workbook_path):
 def generate_label_from_name(point_name):
     """Generate human-readable label from point name using intelligent parsing."""
 
+    # VSN system monitoring points (Title Case)
+    system_label_map = {
+        "flash_free": "Flash Free",
+        "free_ram": "RAM Free",
+        "store_size": "Flash Used",
+        "sys_load": "System Load",
+        "uptime": "Uptime",
+    }
+    if point_name in system_label_map:
+        return system_label_map[point_name]
+
     # VSN300-specific SunSpec point patterns (handle BEFORE abbrev_map)
     # Phase voltages (line-to-line)
     if point_name in ["PhVphAB", "PhVphBC", "PhVphCA"]:
@@ -953,6 +964,19 @@ def generate_description_from_name(point_name, category=None):
         "Fan2rpm": "Cooling fan 2 rotation speed",
         "DynamicFeedInCtrl": "Dynamic feed-in control status",
         "EnergyPolicy": "Energy management policy setting",
+        # VSN300-only datalogger points
+        "pn": "Product number",
+        "sn": "Serial number (datalogger)",
+        "type": "Device type",
+        "wlan0_essid": "WiFi network name (SSID)",
+        "wlan0_ipaddr_local": "WiFi local IP address",
+        "wlan0_link_quality": "WiFi signal strength",
+        # VSN system monitoring points
+        "flash_free": "Flash Free",
+        "free_ram": "RAM Free",
+        "store_size": "Flash Used",
+        "sys_load": "System Load",
+        "uptime": "Uptime",
     }
 
     if point_name in desc_map:
@@ -1132,7 +1156,11 @@ def get_description_with_priority(
         title_data = feeds_titles[point_name]
         if title_data["is_description"]:
             feed_source = title_data["source"]
-            return title_data["title"], f"{feed_source} Feeds", None
+            feed_title = title_data["title"]
+            # Apply Title Case to feed descriptions that start with lowercase
+            if feed_title and feed_title[0].islower():
+                feed_title = feed_title.title()
+            return feed_title, f"{feed_source} Feeds", None
 
     # Priority 3: Try enhanced description generation
     enhanced_desc = generate_description_from_name(point_name)
