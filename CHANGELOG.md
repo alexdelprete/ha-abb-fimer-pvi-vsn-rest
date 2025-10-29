@@ -7,6 +7,74 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta.9] - 2025-01-29
+
+### Fixed
+
+- **STARTUP_MESSAGE Version String**: Fixed hardcoded version string in STARTUP_MESSAGE to use VERSION constant
+  - Changed from regular string to f-string with {VERSION} interpolation
+  - Startup message now dynamically shows current version instead of hardcoded "1.0.0-beta.8"
+  - Commit: [c30e929](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/c30e929)
+
+- **STARTUP_MESSAGE Log Pollution**: Fixed startup message logging on every coordinator poll
+  - Added conditional check to log only once per Home Assistant session using hass.data
+  - Prevents log pollution during normal operation
+  - Uses STARTUP_LOGGED_KEY to track if message has been logged
+  - Commit: [c30e929](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/c30e929)
+
+- **Unit Conversion for Leakage Current**: Fixed microampere (uA) unit incompatibility with Home Assistant
+  - Converted uA → mA for 4 leakage current sensors
+  - Added value conversion in normalizer.py (divide by 1000)
+  - Updated mapping files with correct mA units
+  - Points fixed: m64061_1_ILeakDcAc, m64061_1_ILeakDcDc, Ileak 1, Ileak 2
+  - Commit: [85ae392](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/85ae392)
+
+- **Temperature Scale Factor Correction**: Fixed cabinet temperature showing 244°C instead of ~24°C
+  - Added temperature correction for sensors with incorrect scale factor
+  - Applies additional ÷10 correction when temp > 70°C
+  - Points fixed: m103_1_TmpCab, Temp1
+  - Commit: [bac10d1](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/bac10d1)
+
+### Changed
+
+- **Improved Entity Display Names**: Enhanced 19 entity names from cryptic abbreviations to descriptive labels
+  - Removed unnecessary model prefixes (M 103, M 64061)
+  - Examples: "M 103 1 Hz A" → "Frequency Phase A", "M 103 1 PF A" → "Power Factor Phase A"
+  - Prefers user-friendly labels over cryptic abbreviations
+  - Commit: [188ac76](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/188ac76)
+
+- **Smart Cross-Reference System**: Added intelligent cross-referencing for VSN300-only points
+  - VSN300-only points now borrow descriptions from VSN700 equivalents
+  - Improved 7 points including Pin1 → "DC Power #1", Pin2 → "DC Power #2"
+  - Build lookup table of VSN700 points with good descriptions
+  - Priority 0 cross-reference in description system
+  - Commit: [209e2b7](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/209e2b7)
+
+- **Comprehensive Display Precision**: Added appropriate decimal precision for all sensor units
+  - 0 decimals: W, Wh, kWh, var, VAR, VAh, s, B, Ω
+  - 1 decimal: V, A, mA, %, Ah
+  - 2 decimals: Hz, °C, °F, MOhm, MΩ, kΩ
+  - Examples: 5.234567890 MOhm → 5.23 MΩ, 1234.567 var → 1235 var
+  - Commit: [beb41b5](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/beb41b5)
+
+- **Title Case Consistency**: Applied consistent Title Case to all labels and descriptions
+  - Fixed lowercase descriptions starting with lowercase letters
+  - Improved 11 VSN300-only and system monitoring point descriptions
+  - Examples: "flash free space" → "Flash Free Space", "product number" → "Product Number"
+  - Added system monitoring label map with proper casing
+  - Commit: [3269a74](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/3269a74)
+
+### Technical Details
+
+- **New Registries**: UA_TO_MA_POINTS, TEMP_CORRECTION_POINTS in normalizer.py
+- **New Functions**: build_vsn700_lookup() in generate_mapping_excel.py
+- **New Features**: Cross-reference Priority 0, Title Case conversion, STARTUP_LOGGED_KEY
+- **Files Modified**: 8 files (const.py, __init__.py, mapping_loader.py, normalizer.py, sensor.py, generate_mapping_excel.py, mapping files)
+- **Code Metrics**: +210 lines added, -35 lines removed, net +175 lines
+- **Ruff Checks**: All passed ✓
+
+**Full Release Notes:** [docs/releases/v1.0.0-beta.9.md](docs/releases/v1.0.0-beta.9.md)
+
 ## [1.0.0-beta.8] - 2025-01-28
 
 ### Fixed
@@ -476,7 +544,8 @@ After updating:
 
 ---
 
-[Unreleased]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.8...HEAD
+[Unreleased]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.9...HEAD
+[1.0.0-beta.9]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.8...v1.0.0-beta.9
 [1.0.0-beta.8]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.7...v1.0.0-beta.8
 [1.0.0-beta.7]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.6...v1.0.0-beta.7
 [1.0.0-beta.6]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.5...v1.0.0-beta.6
