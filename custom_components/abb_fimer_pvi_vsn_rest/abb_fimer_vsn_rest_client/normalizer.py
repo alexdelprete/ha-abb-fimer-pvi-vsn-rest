@@ -25,6 +25,15 @@ UA_TO_MA_POINTS = {
     "Ileak 2",  # VSN700 - Leakage current 2
 }
 
+# Temperature correction registry: Points with incorrect scale factor
+# Some ABB/FIMER inverters report cabinet temperature with SF=-1 instead of SF=-2
+# Detected when temperature exceeds reasonable threshold (70°C)
+TEMP_CORRECTION_POINTS = {
+    "m103_1_TmpCab",  # VSN300 - Cabinet Temperature
+    "Temp1",  # VSN700 - Cabinet Temperature
+}
+TEMP_THRESHOLD_CELSIUS = 70  # Temperatures above this are abnormal and need correction
+
 
 class VSNDataNormalizer:
     """Normalize VSN300/VSN700 data to SunSpec schema."""
@@ -137,6 +146,17 @@ class VSNDataNormalizer:
                         point_value = point_value / 1000  # uA to mA
                         _LOGGER.debug(
                             "Converted %s from uA to mA: %s",
+                            point_name,
+                            point_value,
+                        )
+
+                # Apply temperature correction for points with incorrect scale factor
+                # Some ABB/FIMER inverters report SF=-1 instead of SF=-2 for cabinet temp
+                if point_name in TEMP_CORRECTION_POINTS and point_value is not None:
+                    if isinstance(point_value, (int, float)) and point_value > TEMP_THRESHOLD_CELSIUS:
+                        point_value = point_value / 10  # Correct SF from -1 to -2
+                        _LOGGER.debug(
+                            "Applied temperature scale factor correction to %s: %s°C",
                             point_name,
                             point_value,
                         )
