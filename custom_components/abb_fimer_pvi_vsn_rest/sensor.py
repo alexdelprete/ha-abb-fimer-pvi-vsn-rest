@@ -22,6 +22,92 @@ from .coordinator import ABBFimerPVIVSNRestCoordinator
 _LOGGER = logging.getLogger(__name__)
 
 
+def _compact_serial_number(serial: str) -> str:
+    """Compact serial number by removing separators and converting to lowercase.
+
+    Args:
+        serial: Serial number with possible separators (e.g., "077909-3G82-3112")
+
+    Returns:
+        Compacted lowercase serial (e.g., "0779093g823112")
+
+    """
+    return serial.replace("-", "").replace(":", "").replace("_", "").lower()
+
+
+def _simplify_device_type(device_type: str) -> str:
+    """Simplify device type to basic category.
+
+    Args:
+        device_type: Device type from API (e.g., "inverter_3phases", "meter")
+
+    Returns:
+        Simplified type (e.g., "inverter", "meter", "battery", "datalogger")
+
+    """
+    if device_type.startswith("inverter"):
+        return "inverter"
+    if device_type == "meter":
+        return "meter"
+    if device_type == "battery":
+        return "battery"
+    # Datalogger types vary, but we'll handle this specially
+    return device_type.lower()
+
+
+def _determine_model_for_entity_id(
+    point_model: str, vsn_model: str, is_datalogger: bool
+) -> str:
+    """Determine which model string to use in entity ID.
+
+    Args:
+        point_model: SunSpec model from mapping (e.g., "M103", "ABB Proprietary")
+        vsn_model: VSN model from coordinator (e.g., "VSN300", "VSN700")
+        is_datalogger: Whether this point belongs to datalogger device
+
+    Returns:
+        Lowercase model for entity ID (e.g., "m103", "vsn300", "vsn700")
+
+    """
+    # SunSpec models: use as-is in lowercase
+    if point_model and point_model.startswith("M") and point_model[1:].replace("M", "").isdigit():
+        return point_model.lower()
+
+    # Datalogger system points or VSN-only points: use VSN model
+    if is_datalogger or point_model in ("VSN300-only", "VSN700-only", "VSN"):
+        return vsn_model.lower()
+
+    # ABB Proprietary points: use vsn700 (they're VSN700-only)
+    if point_model == "ABB Proprietary":
+        return "vsn700"
+
+    # Fallback: use VSN model
+    return vsn_model.lower()
+
+
+def _build_entity_id(
+    device_type_simple: str,
+    device_sn_compact: str,
+    model: str,
+    point_name: str,
+) -> str:
+    """Build full entity ID from components.
+
+    Template: abb_vsn_rest_(device_type)_(device_sn)_(model)_(pointname)
+
+    Args:
+        device_type_simple: Simplified device type ("inverter", "meter", "battery", "datalogger")
+        device_sn_compact: Compacted device serial number
+        model: Model identifier ("m103", "m160", "vsn300", "vsn700", etc.)
+        point_name: Simplified point name from mapping
+
+    Returns:
+        Full entity ID (e.g., "abb_vsn_rest_inverter_0779093g823112_m103_watts")
+
+    """
+    return f"abb_vsn_rest_{device_type_simple}_{device_sn_compact}_{model}_{point_name}"
+
+
 async def async_setup_entry(
     hass: HomeAssistant,
     config_entry: ConfigEntry,
@@ -114,14 +200,58 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         self._point_name = point_name
         self._attr_has_entity_name = False
 
-        # Set unique ID: domain_deviceid_pointname
-        self._attr_unique_id = f"{DOMAIN}_{device_id}_{point_name}"
+        # Determine if this sensor belongs to datalogger device
+        is_datalogger = False
+        for discovered_device in coordinator.discovered_devices:
+            if discovered_device.device_id == device_id and discovered_device.is_datalogger:
+                is_datalogger = True
+                break
+
+        # Simplify device type for entity ID
+        if is_datalogger:
+            device_type_simple = "datalogger"
+        else:
+            device_type_simple = _simplify_device_type(device_type)
+
+        # Compact device serial number (remove dashes/colons/underscores, lowercase)
+        device_sn_compact = _compact_serial_number(device_id)
+
+        # Get model from point_data
+        point_model = point_data.get("model", "")
+
+        # Determine which model to use in entity ID
+        model_for_id = _determine_model_for_entity_id(
+            point_model=point_model,
+            vsn_model=coordinator.vsn_model,
+            is_datalogger=is_datalogger,
+        )
+
+        # Build full entity ID using the new template
+        # point_name is now the simplified name from mapping (e.g., "watts", "dc_current_1", "uptime")
+        entity_id = _build_entity_id(
+            device_type_simple=device_type_simple,
+            device_sn_compact=device_sn_compact,
+            model=model_for_id,
+            point_name=point_name,
+        )
+
+        # Set unique_id to match entity_id for consistency
+        self._attr_unique_id = entity_id
 
         # Set entity name from HA Display Name (what users see in HA)
         # Fallback to description, then label, then point name
         self._attr_name = point_data.get(
             "ha_display_name",
             point_data.get("description", point_data.get("label", point_name))
+        )
+
+        _LOGGER.debug(
+            "Built entity ID: %s (device_type=%s, sn=%s, model=%s, point=%s)",
+            entity_id,
+            device_type_simple,
+            device_sn_compact,
+            model_for_id,
+            point_name,
         )
 
         # Check if initial value is numeric - determines sensor type

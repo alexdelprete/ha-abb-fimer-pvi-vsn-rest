@@ -7,6 +7,63 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta.10] - 2025-01-29
+
+### ⚠️ BREAKING CHANGES
+
+- **Entity ID Template Redesign**: ALL entity IDs have changed to include full device context
+  - **Old format:** `sensor.{serial}_{point}` (e.g., `sensor.0779093g823112_watts`)
+  - **New format:** `sensor.abb_vsn_rest_{device_type}_{serial}_{model}_{point}`
+  - **Examples:**
+    - Inverter M103: `sensor.abb_vsn_rest_inverter_0779093g823112_m103_watts`
+    - Inverter M160: `sensor.abb_vsn_rest_inverter_0779093g823112_m160_dc_current_1`
+    - Datalogger: `sensor.abb_vsn_rest_datalogger_1110333n161421_vsn300_uptime`
+  - **Reason:** Prevents entity ID collisions in multi-device systems, provides clear device identification
+  - **Impact:** All existing entities will be recreated with new IDs
+  - **Action Required:**
+    - Update dashboards, automations, and scripts with new entity IDs
+    - Entity history will not be preserved (fresh start)
+  - **Note:** Entity friendly names (display names) remain unchanged
+
+### Changed
+
+- **Entity ID Generation**: Implemented dynamic entity ID generation with full device context
+  - Added helper functions: `_compact_serial_number()`, `_simplify_device_type()`, `_determine_model_for_entity_id()`, `_build_entity_id()`
+  - Serial numbers compacted (dashes/colons removed) and lowercased
+  - Device types simplified: `inverter_3phases` → `inverter`, etc.
+  - Model determination: SunSpec models (m103, m160) or VSN models (vsn300, vsn700) for VSN-only points
+  - Template: `abb_vsn_rest_(device)_(sn)_(model)_(point)`
+
+- **Mapping File Point Names**: Simplified point names to exclude device-specific prefixes
+  - Old: `abb_m103_watts`, `abb_m160_dca_1`, `abb_vsn_uptime`
+  - New: `watts`, `dc_current_1`, `uptime`
+  - Point names now combined with device context at runtime
+
+- **Unique ID Format**: Changed to match new entity ID template for consistency
+  - Old: `abb_fimer_pvi_vsn_rest_{device_id}_{old_point_name}`
+  - New: `abb_vsn_rest_{device_type}_{device_sn}_{model}_{simplified_point_name}`
+
+### Added
+
+- **Excel to JSON Conversion Script**: Created `scripts/convert_excel_to_json.py`
+  - Automated conversion from Excel mapping to JSON format
+  - Copies JSON to integration data folder automatically
+
+### Technical Details
+
+- **Files Modified:**
+  - `sensor.py` - Added 4 helper functions, updated VSNSensor.__init__() with new entity ID logic
+  - `generate_mapping_excel.py` - Updated to generate simplified point names
+  - `convert_excel_to_json.py` - New conversion utility
+  - All mapping files regenerated with simplified names
+
+- **Code Changes:**
+  - +150 lines in sensor.py (helper functions + entity ID logic)
+  - ~100 lines modified in generate_mapping_excel.py
+  - +70 lines in new convert_excel_to_json.py
+
+- **Ruff Checks:** All passed ✓
+
 ## [1.0.0-beta.9] - 2025-01-29
 
 ### Fixed
@@ -544,7 +601,8 @@ After updating:
 
 ---
 
-[Unreleased]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.9...HEAD
+[Unreleased]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.10...HEAD
+[1.0.0-beta.10]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.9...v1.0.0-beta.10
 [1.0.0-beta.9]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.8...v1.0.0-beta.9
 [1.0.0-beta.8]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.7...v1.0.0-beta.8
 [1.0.0-beta.7]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.6...v1.0.0-beta.7
