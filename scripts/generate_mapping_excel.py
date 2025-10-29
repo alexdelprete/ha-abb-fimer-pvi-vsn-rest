@@ -902,37 +902,53 @@ def generate_label_from_name(point_name):
     return label.replace("Ac", "AC")
 
 
-def generate_entity_id_from_label(label, model=None):
-    """Generate Home Assistant entity ID from human-readable label.
+def generate_simplified_point_name(label, model=None):
+    """Generate simplified point name without device-specific parts.
 
-    Converts labels like "Phase Voltage BC" to "abb_m103_phase_voltage_bc"
-    For points without model: "abb_vsn_{label_id}"
+    This generates just the point name component that will be combined with
+    device context at runtime to create full entity IDs.
+
+    The full entity ID template is:
+    abb_vsn_rest_(device_type)_(device_sn)_(model)_(pointname)
+
+    This function generates only the (pointname) part.
+
+    Args:
+        label: Human-readable label (e.g., "AC Power", "DC Current #1")
+        model: SunSpec model (not used, kept for compatibility)
+
+    Returns:
+        Simplified point name (e.g., "ac_power", "dc_current_1")
+
+    Examples:
+        "AC Power" → "ac_power"
+        "DC Current #1" → "dc_current_1"
+        "Phase Voltage BC" → "phase_voltage_bc"
+        "Uptime" → "uptime"
     """
     # Convert to lowercase and replace spaces/special chars with underscores
-    entity_id = label.lower()
+    point_name = label.lower()
 
     # Replace common separators and special characters
-    entity_id = entity_id.replace(" - ", "_")
-    entity_id = entity_id.replace("-", "_")
-    entity_id = entity_id.replace(" ", "_")
-    entity_id = entity_id.replace("(", "")
-    entity_id = entity_id.replace(")", "")
-    entity_id = entity_id.replace("/", "_")
-    entity_id = entity_id.replace(".", "")
-    entity_id = entity_id.replace(",", "")
-    entity_id = entity_id.replace(":", "")
+    point_name = point_name.replace(" - ", "_")
+    point_name = point_name.replace("-", "_")
+    point_name = point_name.replace(" ", "_")
+    point_name = point_name.replace("(", "")
+    point_name = point_name.replace(")", "")
+    point_name = point_name.replace("/", "_")
+    point_name = point_name.replace(".", "")
+    point_name = point_name.replace(",", "")
+    point_name = point_name.replace(":", "")
+    point_name = point_name.replace("#", "")
 
     # Remove duplicate underscores
-    while "__" in entity_id:
-        entity_id = entity_id.replace("__", "_")
+    while "__" in point_name:
+        point_name = point_name.replace("__", "_")
 
     # Strip leading/trailing underscores
-    entity_id = entity_id.strip("_")
+    point_name = point_name.strip("_")
 
-    # Add prefix with model if available, otherwise use vsn prefix
-    if model:
-        return f"abb_{model.lower()}_{entity_id}"
-    return f"abb_vsn_{entity_id}"
+    return point_name
 
 
 def generate_description_from_name(point_name, category=None):
@@ -1356,12 +1372,6 @@ for vsn_name, mapping in VSN_TO_SUNSPEC_MAP.items():
         sunspec_name = mapping["sunspec"] if mapping["sunspec"] else vsn_name
         model = mapping["model"]
 
-        # Generate HA entity name using new convention: abb_{model}_{point}
-        if sunspec_name:
-            ha_name = f"abb_{model.lower()}_{sunspec_name.lower()}"
-        else:
-            ha_name = f"abb_{model.lower()}_{vsn_name.lower()}"
-
         # Lookup label and description from SunSpec metadata
         label, workbook_description = lookup_label_description(
             sunspec_metadata, model, sunspec_name
@@ -1370,6 +1380,11 @@ for vsn_name, mapping in VSN_TO_SUNSPEC_MAP.items():
         # Fallback to generated label if not found
         if not label:
             label = generate_label_from_name(vsn_name)
+
+        # Generate simplified HA entity name from label
+        # This creates just the point name part (e.g., "watts", "amps")
+        # The full entity ID will be built at runtime with device context
+        ha_name = generate_simplified_point_name(label, model)
 
         # Get description using 4-tier priority system with data source tracking
         description, data_source, _ = get_description_with_priority(
@@ -1425,7 +1440,7 @@ for p in sorted(periodic_points):
         label = generate_label_from_name(p)
 
         # Generate HA entity name from human-readable label
-        ha_name = generate_entity_id_from_label(label, "M64061")
+        ha_name = generate_simplified_point_name(label, "M64061")
 
         # Get description using 4-tier priority with data source tracking
         workbook_desc = None  # M64061 periodic counters not in workbook
@@ -1486,7 +1501,7 @@ for p in sorted(M64061_POINTS):
         label = generate_label_from_name(p)
 
         # Generate HA entity name from human-readable label
-        ha_name = generate_entity_id_from_label(label, "M64061")
+        ha_name = generate_simplified_point_name(label, "M64061")
 
         # Get description using 4-tier priority with data source tracking
         workbook_desc = None  # M64061 points not in standard workbook
@@ -1561,9 +1576,6 @@ for p in sorted(ABB_PROPRIETARY):
         # VSN300 doesn't have proprietary points, they're VSN700-only
         vsn300_name = "N/A"
 
-        # Generate HA entity name using abb_vsn_ prefix for proprietary
-        ha_name = f"abb_vsn_{p.lower()}"
-
         # Generate label
         # Special handling for model enable flags (m126Mod_Ena, m132Mod_Ena)
         if p.startswith("m") and "Mod_Ena" in p:
@@ -1571,6 +1583,9 @@ for p in sorted(ABB_PROPRIETARY):
             label = f"Model {model_num} Enable"
         else:
             label = generate_label_from_name(p)
+
+        # Generate simplified HA entity name from label
+        ha_name = generate_simplified_point_name(label, None)
 
         # Get description using 4-tier priority with data source tracking
         workbook_desc = None  # Proprietary points not in workbook
@@ -1728,7 +1743,7 @@ for vsn300_point in sorted(missing_vsn300):
             label = generate_label_from_name(vsn300_point)
 
     # Generate HA entity name from human-readable label
-    ha_name = generate_entity_id_from_label(label, model)
+    ha_name = generate_simplified_point_name(label, model)
 
     # Get description with priority and data source tracking
     # Pass vsn700_lookup to enable cross-referencing for better data
@@ -1740,7 +1755,7 @@ for vsn300_point in sorted(missing_vsn300):
     if label_override:
         label = label_override
         # Regenerate HA entity name with the better label
-        ha_name = generate_entity_id_from_label(label, model)
+        ha_name = generate_simplified_point_name(label, model)
 
     # HA Display Name is the description
     ha_display_name = description
@@ -1953,7 +1968,7 @@ for vsn700_point in sorted(missing_vsn700):
     label = generate_label_from_name(vsn700_point)
 
     # Generate HA entity name from human-readable label
-    ha_name = generate_entity_id_from_label(label, None)
+    ha_name = generate_simplified_point_name(label, None)
 
     # Get description with data source tracking (feeds title has priority)
     description, data_source, _ = get_description_with_priority(
