@@ -16,6 +16,15 @@ except ImportError:
 
 _LOGGER = logging.getLogger(__name__)
 
+# Unit conversion registry: VSN points that need value conversion
+# These points have uA units in VSN feeds but need mA values for HA compatibility
+UA_TO_MA_POINTS = {
+    "m64061_1_ILeakDcAc",  # VSN300 - Leakage current DC/AC
+    "m64061_1_ILeakDcDc",  # VSN300 - Leakage current DC/DC
+    "Ileak 1",  # VSN700 - Leakage current 1
+    "Ileak 2",  # VSN700 - Leakage current 2
+}
+
 
 class VSNDataNormalizer:
     """Normalize VSN300/VSN700 data to SunSpec schema."""
@@ -120,6 +129,17 @@ class VSNDataNormalizer:
 
                 if not point_name:
                     continue
+
+                # Apply unit conversions for points that need value transformation
+                # Convert uA to mA (divide by 1000) for HA compatibility
+                if point_name in UA_TO_MA_POINTS and point_value is not None:
+                    if isinstance(point_value, (int, float)):
+                        point_value = point_value / 1000  # uA to mA
+                        _LOGGER.debug(
+                            "Converted %s from uA to mA: %s",
+                            point_name,
+                            point_value,
+                        )
 
                 # Look up mapping based on VSN model
                 if self.vsn_model == "VSN300":

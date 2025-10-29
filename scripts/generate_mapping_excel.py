@@ -1506,7 +1506,8 @@ for p in sorted(ABB_PROPRIETARY):
                 device_class = "energy"
                 state_class = "total_increasing"
             elif feeds_units in ["A", "uA"]:
-                units = feeds_units
+                # Convert uA to mA for HA compatibility (HA only accepts A or mA for current device class)
+                units = "mA" if feeds_units == "uA" else "A"
                 device_class = "current"
             elif feeds_units == "V":
                 units = "V"
@@ -1660,7 +1661,8 @@ for vsn300_point in sorted(missing_vsn300):
             device_class = "reactive_power"
             state_class = "measurement"
         elif feeds_units in ["A", "uA"]:
-            units = feeds_units
+            # Convert uA to mA for HA compatibility (HA only accepts A or mA for current device class)
+            units = "mA" if feeds_units == "uA" else "A"
             device_class = "current"
         elif feeds_units == "V":
             units = "V"
