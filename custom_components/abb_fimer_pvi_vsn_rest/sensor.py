@@ -55,6 +55,46 @@ def _simplify_device_type(device_type: str) -> str:
     return device_type.lower()
 
 
+def _format_device_name(
+    manufacturer: str,
+    device_type_simple: str,
+    device_model: str | None,
+    device_sn_compact: str,
+) -> str:
+    """Format user-friendly device name: 'Manufacturer Type Model (Serial)'.
+
+    Args:
+        manufacturer: Device manufacturer (e.g., "Power-One", "ABB", "FIMER")
+        device_type_simple: Simplified device type (e.g., "inverter", "datalogger")
+        device_model: Device model (e.g., "PVI-3.0-TL-OUTD", "VSN300")
+        device_sn_compact: Compacted serial number (e.g., "0779093g823112")
+
+    Returns:
+        Formatted device name (e.g., "Power-One Inverter PVI-3.0-TL-OUTD (077909-3G)")
+
+    Examples:
+        >>> _format_device_name("Power-One", "inverter", "PVI-3.0-TL-OUTD", "0779093g823112")
+        'Power-One Inverter PVI-3.0-TL-OUTD (077909-3G)'
+        >>> _format_device_name("ABB", "datalogger", "VSN300", "1110333n161421")
+        'ABB Datalogger VSN300 (111033-3N)'
+        >>> _format_device_name("FIMER", "inverter", None, "0779093g823112")
+        'FIMER Inverter 077909-3G'
+
+    """
+    # Format short serial with hyphen for readability: XXXXXX-XX
+    sn_short = f"{device_sn_compact[:6].upper()}-{device_sn_compact[6:8].upper()}"
+
+    # Capitalize device type for display
+    device_type_display = device_type_simple.title()
+
+    # Format: "Manufacturer Type Model (Serial)"
+    if device_model:
+        return f"{manufacturer} {device_type_display} {device_model} ({sn_short})"
+
+    # Fallback without model: "Manufacturer Type Serial"
+    return f"{manufacturer} {device_type_display} {sn_short}"
+
+
 async def async_setup_entry(
     hass: HomeAssistant,
     config_entry: ConfigEntry,
@@ -174,17 +214,24 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         unique_id = f"{device_identifier}_{point_name}"
         self._attr_unique_id = unique_id
 
+        # Set suggested_object_id to control entity_id generation
+        # This ensures entity_id follows the technical template even when device_name is friendly
+        # Format: abb_vsn_rest_{device_type}_{serial}_{point_name}
+        self._attr_suggested_object_id = f"{device_type_simple}_{device_sn_compact}_{point_name}"
+
         # Set entity name to friendly display name (what users see in device cards)
         # With has_entity_name=True, HA will auto-construct:
-        #   entity_id = slugify(device_name) + "_" + slugify(entity_name)
-        #   friendly_name = device_name + " " + entity_name
+        #   entity_id = slugify(device_name + " " + suggested_object_id) (controlled by suggested_object_id)
+        #   friendly_name = device_name + " " + entity_name (friendly display)
         self._attr_name = point_data.get(
             "ha_display_name",
             point_data.get("label", point_name)
         )
 
-        # Store device identifier for device_info
+        # Store device identifier and components for device_info
         self._device_identifier = device_identifier
+        self._device_type_simple = device_type_simple
+        self._device_sn_compact = device_sn_compact
 
         _LOGGER.debug(
             "Created sensor: %s (device=%s, unique_id=%s)",
@@ -341,9 +388,7 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
             attributes["last_updated"] = timestamp
 
         # Clean up empty strings to None for cleaner display
-        attributes = {k: (v if v != "" else None) for k, v in attributes.items()}
-
-        return attributes
+        return {k: (v if v != "" else None) for k, v in attributes.items()}
 
     @property
     def device_info(self) -> dict[str, Any]:
@@ -373,10 +418,17 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
                         configuration_url = f"http://{hostname}"
                 break
 
-        # Use device identifier as device name for entity_id generation
-        # This creates consistent entity IDs following the template:
-        #   sensor.abb_vsn_rest_{device_type}_{serial}_{entity_name}
-        device_name = self._device_identifier
+        # Format friendly device name: "Manufacturer Type Model (Serial)"
+        # Examples:
+        #   "Power-One Inverter PVI-3.0-TL-OUTD (077909-3G)"
+        #   "ABB Datalogger VSN300 (111033-3N)"
+        # This is for display only; entity_id is controlled by _attr_suggested_object_id
+        device_name = _format_device_name(
+            manufacturer=manufacturer,
+            device_type_simple=self._device_type_simple,
+            device_model=device_model,
+            device_sn_compact=self._device_sn_compact,
+        )
 
         # Build device info dictionary with all available fields
         device_info_dict = {

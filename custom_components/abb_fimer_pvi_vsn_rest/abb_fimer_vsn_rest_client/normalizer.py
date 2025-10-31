@@ -197,7 +197,11 @@ class VSNDataNormalizer:
 
             if normalized_points:
                 # Use actual_device_id (logger S/N for datalogger, inverter S/N for inverter)
-                normalized["devices"][actual_device_id] = {"points": normalized_points}
+                normalized["devices"][actual_device_id] = {
+                    "device_type": device_data.get("device_type", "unknown"),
+                    "timestamp": device_data.get("timestamp"),
+                    "points": normalized_points,
+                }
 
         _LOGGER.debug(
             "Normalized %d devices with %d total points",
