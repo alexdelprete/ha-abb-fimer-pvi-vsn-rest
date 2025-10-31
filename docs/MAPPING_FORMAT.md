@@ -9,18 +9,18 @@ is normalized to Home Assistant entities with proper metadata.
 
 ### Source (Excel)
 
-- **Location**: `docs/vsn-sunspec-point-mapping.xlsx`
+- **Location**: `docs/vsn-sunspec-point-mapping-v2.xlsx`
 - **Purpose**: Human-readable/editable mapping maintained in Excel
-- **Sheets**:
-  - `All Points`: Complete 259-point mapping
-  - `Summary`: Statistics and overview
+- **Format**: Deduplicated structure with model flag columns
+- **Points**: 210 unique mappings (deduplicated from original 277)
 
 ### Runtime (JSON)
 
 - **Location**: `docs/vsn-sunspec-point-mapping.json`
 - **Purpose**: Machine-readable format used by the integration
-- **Size**: ~124 KB
-- **Points**: 259 mappings
+- **Size**: ~95 KB
+- **Points**: 210 mappings
+- **Format**: Each point includes `models` array for multi-model support
 
 ## JSON Structure
 
@@ -31,17 +31,21 @@ Each mapping entry contains:
   "REST Name (VSN700)": "Pgrid",
   "REST Name (VSN300)": "m103_1_W",
   "SunSpec Normalized Name": "W",
-  "HA Entity Name": "abb_m103_w",
+  "HA Name": "watts",
   "In /livedata": "✓",
   "In /feeds": "✓",
   "Label": "Watts",
   "Description": "AC Power",
-  "SunSpec Model": "M103",
+  "HA Display Name": "AC Power",
   "Category": "Inverter",
-  "Units": "W",
-  "State Class": "measurement",
-  "Device Class": "power",
-  "Available in Modbus": "YES"
+  "HA Unit of Measurement": "W",
+  "HA State Class": "measurement",
+  "HA Device Class": "power",
+  "Entity Category": "",
+  "Available in Modbus": true,
+  "Data Source": "SunSpec Description (M103)",
+  "Model_Notes": "",
+  "models": ["M103", "M802"]
 }
 ```
 
@@ -52,41 +56,51 @@ Each mapping entry contains:
 | REST Name (VSN700) | Point name in VSN700 API | `Pgrid` |
 | REST Name (VSN300) | Point name in VSN300 API | `m103_1_W` |
 | SunSpec Normalized Name | Standard SunSpec point name | `W` |
-| HA Entity Name | Home Assistant entity ID | `abb_m103_w` |
+| HA Name | Home Assistant entity name (internal) | `watts` |
 | In /livedata | Available in livedata endpoint | `✓` or empty |
 | In /feeds | Available in feeds endpoint | `✓` or empty |
 | Label | Short human-readable name | `Watts` |
-| Description | Detailed description | `AC Power` |
-| SunSpec Model | SunSpec model number | `M103` |
+| Description | Detailed technical description | `AC Power` |
+| HA Display Name | User-facing display name | `AC Power` |
 | Category | Point category | `Inverter` |
-| Units | Unit of measurement | `W` |
-| State Class | HA state class | `measurement` |
-| Device Class | HA device class | `power` |
-| Available in Modbus | In Modbus protocol | `YES`/`NO` |
+| HA Unit of Measurement | Home Assistant unit (SensorDeviceClass) | `W` |
+| HA State Class | Home Assistant state class (SensorStateClass) | `measurement` |
+| HA Device Class | Home Assistant device class | `power` |
+| Entity Category | HA entity category (diagnostic, config, etc.) | `` or `diagnostic` |
+| Available in Modbus | In Modbus protocol | `true`/`false` |
+| Data Source | Origin of mapping metadata | `SunSpec Description (M103)` |
+| Model_Notes | Additional notes about model compatibility | `` |
+| models | Array of applicable SunSpec/VSN models | `["M103", "M802"]` |
 
 ## Converting Excel to JSON
 
 When the Excel file is updated, regenerate the JSON:
 
 ```bash
-python scripts/generate_mapping_json.py
+python scripts/convert_excel_to_json_v2.py
 ```
 
 This will:
 
-1. Read `docs/vsn-sunspec-point-mapping.xlsx`
-2. Convert to JSON format
+1. Read `docs/vsn-sunspec-point-mapping-v2.xlsx`
+2. Convert to JSON format with models array structure
 3. Write to `docs/vsn-sunspec-point-mapping.json`
-4. Display statistics
+4. Copy to `custom_components/abb_fimer_pvi_vsn_rest/data/vsn-sunspec-point-mapping.json`
+5. Display model statistics
 
-## Statistics
+## Statistics (v2 - Deduplicated)
 
-- **Total mappings**: 259
-- **VSN300 points**: 112
-- **VSN700 points**: 177
-- **Shared points**: 32 (available on both)
-- **VSN300-only**: 80
-- **VSN700-only**: 145
+- **Total unique mappings**: 210 (deduplicated from original 277)
+- **Model distribution**:
+  - M1 (Common): 6 points
+  - M103 (Inverter Single-Phase): 23 points
+  - M160 (MPPT): 6 points
+  - M203 (Meter Three-Phase): 17 points
+  - M802 (Battery): 14 points
+  - M64061 (ABB Proprietary): 74 points
+  - VSN300-only: 73 points
+  - VSN700-only: 10 points
+  - ABB Proprietary: 47 points
 
 ## Point Categories
 
@@ -115,9 +129,9 @@ This will:
 
 ## Workflow
 
-1. **Edit** mapping in Excel (`vsn-sunspec-point-mapping.xlsx`)
-2. **Convert** to JSON using `generate_mapping_json.py`
-3. **Commit** both files to git
+1. **Edit** mapping in Excel (`vsn-sunspec-point-mapping-v2.xlsx`)
+2. **Convert** to JSON using `convert_excel_to_json_v2.py`
+3. **Commit** both files to git (Excel + both JSON copies)
 4. **Integration** loads JSON at runtime (no openpyxl needed)
 
 ## Usage in Code
@@ -150,26 +164,27 @@ directly or loaded from a URL, eliminating the need for the docs folder.
 
 ### Adding New Points
 
-1. Open Excel file
+1. Open Excel file (`vsn-sunspec-point-mapping-v2.xlsx`)
 2. Add row with all columns filled
-3. Save Excel
-4. Run `generate_mapping_json.py`
-5. Test with `test_vsn_client.py`
-6. Commit both files
+3. Set appropriate model flags (M1, M103, etc.)
+4. Save Excel
+5. Run `convert_excel_to_json_v2.py`
+6. Test with `test_vsn_client.py`
+7. Commit all files (Excel + both JSON copies)
 
 ### Updating Metadata
 
-1. Edit Excel file (labels, descriptions, units, etc.)
-2. Run `generate_mapping_json.py`
+1. Edit Excel file (labels, descriptions, HA units, device classes, etc.)
+2. Run `convert_excel_to_json_v2.py`
 3. Test changes
-4. Commit both files
+4. Commit all files
 
 ### Removing Points
 
 1. Delete row in Excel
-2. Run `generate_mapping_json.py`
+2. Run `convert_excel_to_json_v2.py`
 3. Test to ensure no breakage
-4. Commit both files
+4. Commit all files
 
 ## Notes
 
@@ -182,6 +197,8 @@ directly or loaded from a URL, eliminating the need for the docs folder.
 ## See Also
 
 - `generate_mapping_excel.py` - Original script that created the Excel file
-- `generate_mapping_json.py` - Converts Excel to JSON
+- `convert_excel_to_json_v2.py` - Converts v2 Excel (with model flags) to JSON
+- `analyze_and_deduplicate_mapping.py` - Analyzes and deduplicates mapping entries
+- `apply_mapping_fixes.py` - Applies automated description and category fixes
 - `mapping_loader.py` - Loads JSON and provides lookup methods
 - `normalizer.py` - Uses mappings to normalize VSN data

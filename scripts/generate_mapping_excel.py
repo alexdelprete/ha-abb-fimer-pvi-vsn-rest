@@ -1242,15 +1242,12 @@ def create_row_data(
         ha_display_name,  # 9. HA Display Name (what users see)
         model,  # 10. SunSpec Model
         category,  # 11. Category
-        units,  # 12. Units
-        units,  # 13. HA Unit of Measurement (same as Units for now)
-        state_class,  # 14. State Class
-        state_class,  # 15. HA State Class (same as State Class)
-        device_class,  # 16. Device Class
-        device_class,  # 17. HA Device Class (same as Device Class)
-        entity_category,  # 18. Entity Category
-        available_in_modbus,  # 19. Available in Modbus
-        data_source,  # 20. Data Source
+        units,  # 12. HA Unit of Measurement
+        state_class,  # 13. HA State Class
+        device_class,  # 14. HA Device Class
+        entity_category,  # 15. Entity Category
+        available_in_modbus,  # 16. Available in Modbus
+        data_source,  # 17. Data Source
     ]
 
 
@@ -1334,11 +1331,8 @@ headers = [
     "HA Display Name",
     "SunSpec Model",
     "Category",
-    "Units",
     "HA Unit of Measurement",
-    "State Class",
     "HA State Class",
-    "Device Class",
     "HA Device Class",
     "Entity Category",
     "Available in Modbus",
@@ -1773,7 +1767,7 @@ for vsn300_point in sorted(missing_vsn300):
     elif model in ["M201", "M203", "M204"]:
         category = "Meter"
 
-    # Units and device class
+    # HA units, device class, and state class
     # Priority 1: Get from feeds JSON (most reliable source)
     units = ""
     device_class = ""

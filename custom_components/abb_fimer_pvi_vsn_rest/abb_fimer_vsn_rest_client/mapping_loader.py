@@ -162,11 +162,8 @@ class VSNMappingLoader:
         # - HA Display Name
         # - models (array of model names)
         # - Category
-        # - Units
         # - HA Unit of Measurement
-        # - State Class
         # - HA State Class
-        # - Device Class
         # - HA Device Class
         # - Entity Category
         # - Available in Modbus
@@ -183,9 +180,9 @@ class VSNMappingLoader:
             description = row.get("Description") or ""
             models = row.get("models") or []  # New: array of models
             category = row.get("Category") or ""
-            units = row.get("Units") or ""
-            state_class = row.get("State Class") or ""
-            device_class = row.get("Device Class") or ""
+            units = row.get("HA Unit of Measurement") or ""
+            state_class = row.get("HA State Class") or ""
+            device_class = row.get("HA Device Class") or ""
             entity_category = row.get("Entity Category") or None
             available_in_modbus = row.get("Available in Modbus") or ""
 

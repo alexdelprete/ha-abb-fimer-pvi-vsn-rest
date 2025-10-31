@@ -309,12 +309,10 @@ def create_all_points_sheet(ws, merged_data: list[dict[str, Any]]):
         # Classification
         "Category",
 
-        # Units
-        "Units", "HA Unit of Measurement",
-
         # HA Configuration
-        "State Class", "HA State Class",
-        "Device Class", "HA Device Class",
+        "HA Unit of Measurement",
+        "HA State Class",
+        "HA Device Class",
         "Entity Category",
 
         # Metadata

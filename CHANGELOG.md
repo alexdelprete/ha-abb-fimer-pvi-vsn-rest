@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta.14] - 2025-01-31
+
+### Changed
+
+- **Mapping Column Cleanup**: Removed duplicate non-HA-prefixed columns
+  - Removed: "Units", "State Class", "Device Class" (kept HA-prefixed versions)
+  - Cleaner structure emphasizes these are Home Assistant concepts
+  - Zero functional impact (duplicates were never used by code)
+  - Excel now 26 columns (down from 29)
+
+- **Updated All Code References**: All scripts and integration code now use HA-prefixed columns
+  - `scripts/generate_mapping_excel.py`: Updated headers and data assignments
+  - `scripts/analyze_and_deduplicate_mapping.py`: Removed duplicate column references
+  - `scripts/vsn_client.py`: Changed .get() calls to HA-prefixed names
+  - `mapping_loader.py`: Updated data extraction to use HA-prefixed columns
+  - Consistent naming: "HA Unit of Measurement", "HA State Class", "HA Device Class"
+
+- **Regenerated JSON Files**: Mapping JSON now only contains HA-prefixed fields
+  - Removed duplicate keys from all 210 entries
+  - Smaller file size and cleaner structure
+  - Both copies updated (docs/ and custom_components/.../data/)
+
+### Documentation
+
+- **Updated MAPPING_FORMAT.md**: Comprehensive documentation refresh
+  - Updated field table with HA-prefixed columns
+  - Corrected statistics (210 unique mappings)
+  - Updated script references (convert_excel_to_json_v2.py)
+  - Added model distribution statistics
+  - Updated workflow and maintenance sections
+
+[Full release notes](docs/releases/v1.0.0-beta.14.md)
+
 ## [1.0.0-beta.13] - 2025-01-29
 
 ### ⚠️ BREAKING CHANGES

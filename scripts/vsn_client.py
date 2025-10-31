@@ -378,11 +378,11 @@ def normalize_livedata(
             if ha_entity:
                 device_points[ha_entity] = {
                     "value": point.get("value"),
-                    "units": mapping.get("Units", ""),
+                    "units": mapping.get("HA Unit of Measurement", ""),
                     "label": mapping.get("Label", ""),
                     "description": mapping.get("Description", ""),
-                    "device_class": mapping.get("Device Class", ""),
-                    "state_class": mapping.get("State Class", ""),
+                    "device_class": mapping.get("HA Device Class", ""),
+                    "state_class": mapping.get("HA State Class", ""),
                 }
 
         if device_points:
