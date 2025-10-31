@@ -186,7 +186,7 @@ class VSNDataNormalizer:
                     "state_class": mapping.state_class,
                     "entity_category": mapping.entity_category,
                     "category": mapping.category,
-                    "model": mapping.model,
+                    "model": ", ".join(mapping.models) if mapping.models else "",  # Join models array
                     "sunspec_name": mapping.sunspec_name,
                     "vsn300_name": mapping.vsn300_name,
                     "vsn700_name": mapping.vsn700_name,

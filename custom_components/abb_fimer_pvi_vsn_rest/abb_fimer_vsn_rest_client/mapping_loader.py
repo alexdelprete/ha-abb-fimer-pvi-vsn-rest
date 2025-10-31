@@ -33,7 +33,7 @@ class PointMapping:
     label: str
     description: str
     ha_display_name: str  # What users see in HA (from enhanced descriptions)
-    model: str
+    models: list[str]  # List of models this point belongs to (e.g., ["M103", "M160"])
     category: str
     units: str
     state_class: str
@@ -150,7 +150,7 @@ class VSNMappingLoader:
         # Load and parse JSON file in thread pool to avoid blocking
         mappings_data = await asyncio.to_thread(self._read_and_parse_json, file_path)
 
-        # Expected fields (from generate_mapping_json.py):
+        # Expected fields (from v2 JSON structure):
         # - REST Name (VSN700)
         # - REST Name (VSN300)
         # - SunSpec Normalized Name
@@ -160,7 +160,7 @@ class VSNMappingLoader:
         # - Label
         # - Description
         # - HA Display Name
-        # - SunSpec Model
+        # - models (array of model names)
         # - Category
         # - Units
         # - HA Unit of Measurement
@@ -181,7 +181,7 @@ class VSNMappingLoader:
             in_feeds = row.get("In /feeds") == "✓"
             label = row.get("Label") or ""
             description = row.get("Description") or ""
-            model = row.get("SunSpec Model") or ""
+            models = row.get("models") or []  # New: array of models
             category = row.get("Category") or ""
             units = row.get("Units") or ""
             state_class = row.get("State Class") or ""
@@ -218,7 +218,7 @@ class VSNMappingLoader:
                 label=label,
                 description=description,
                 ha_display_name=ha_display_name,
-                model=model,
+                models=models,
                 category=category,
                 units=units,
                 state_class=state_class,

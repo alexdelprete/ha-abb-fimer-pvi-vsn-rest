@@ -55,59 +55,6 @@ def _simplify_device_type(device_type: str) -> str:
     return device_type.lower()
 
 
-def _determine_model_for_entity_id(
-    point_model: str, vsn_model: str, is_datalogger: bool
-) -> str:
-    """Determine which model string to use in entity ID.
-
-    Args:
-        point_model: SunSpec model from mapping (e.g., "M103", "ABB Proprietary")
-        vsn_model: VSN model from coordinator (e.g., "VSN300", "VSN700")
-        is_datalogger: Whether this point belongs to datalogger device
-
-    Returns:
-        Lowercase model for entity ID (e.g., "m103", "vsn300", "vsn700")
-
-    """
-    # SunSpec models: use as-is in lowercase
-    if point_model and point_model.startswith("M") and point_model[1:].replace("M", "").isdigit():
-        return point_model.lower()
-
-    # Datalogger system points or VSN-only points: use VSN model
-    if is_datalogger or point_model in ("VSN300-only", "VSN700-only", "VSN"):
-        return vsn_model.lower()
-
-    # ABB Proprietary points: use vsn700 (they're VSN700-only)
-    if point_model == "ABB Proprietary":
-        return "vsn700"
-
-    # Fallback: use VSN model
-    return vsn_model.lower()
-
-
-def _build_entity_id(
-    device_type_simple: str,
-    device_sn_compact: str,
-    model: str,
-    point_name: str,
-) -> str:
-    """Build full entity ID from components.
-
-    Template: abb_vsn_rest_(device_type)_(device_sn)_(model)_(pointname)
-
-    Args:
-        device_type_simple: Simplified device type ("inverter", "meter", "battery", "datalogger")
-        device_sn_compact: Compacted device serial number
-        model: Model identifier ("m103", "m160", "vsn300", "vsn700", etc.)
-        point_name: Simplified point name from mapping
-
-    Returns:
-        Full entity ID (e.g., "abb_vsn_rest_inverter_0779093g823112_m103_watts")
-
-    """
-    return f"abb_vsn_rest_{device_type_simple}_{device_sn_compact}_{model}_{point_name}"
-
-
 async def async_setup_entry(
     hass: HomeAssistant,
     config_entry: ConfigEntry,
@@ -198,7 +145,10 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         self._device_id = device_id
         self._device_type = device_type
         self._point_name = point_name
-        self._attr_has_entity_name = False
+        self._point_data = point_data  # Store for attributes
+
+        # Enable modern entity naming pattern
+        self._attr_has_entity_name = True
 
         # Determine if this sensor belongs to datalogger device
         is_datalogger = False
@@ -216,46 +166,31 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         # Compact device serial number (remove dashes/colons/underscores, lowercase)
         device_sn_compact = _compact_serial_number(device_id)
 
-        # Get model from point_data
-        point_model = point_data.get("model", "")
+        # Build device identifier (no model - simplified template)
+        # This will be used as device name in device_info
+        device_identifier = f"abb_vsn_rest_{device_type_simple}_{device_sn_compact}"
 
-        # Determine which model to use in entity ID
-        model_for_id = _determine_model_for_entity_id(
-            point_model=point_model,
-            vsn_model=coordinator.vsn_model,
-            is_datalogger=is_datalogger,
-        )
+        # Build unique_id: device_identifier + point_name (no model)
+        unique_id = f"{device_identifier}_{point_name}"
+        self._attr_unique_id = unique_id
 
-        # Build full entity ID using the new template
-        # point_name is now the simplified name from mapping (e.g., "watts", "dc_current_1", "uptime")
-        entity_id = _build_entity_id(
-            device_type_simple=device_type_simple,
-            device_sn_compact=device_sn_compact,
-            model=model_for_id,
-            point_name=point_name,
-        )
-
-        # Set unique_id to match entity_id for consistency
-        self._attr_unique_id = entity_id
-
-        # Set entity name to the full template format
-        # With has_entity_name=False, HA slugifies _attr_name to create entity_id
-        # So we set _attr_name to our template format (it will be slugified to entity_id)
-        self._attr_name = entity_id
-
-        # Store the display name separately for use in extra_state_attributes
-        self._display_name = point_data.get(
+        # Set entity name to friendly display name (what users see in device cards)
+        # With has_entity_name=True, HA will auto-construct:
+        #   entity_id = slugify(device_name) + "_" + slugify(entity_name)
+        #   friendly_name = device_name + " " + entity_name
+        self._attr_name = point_data.get(
             "ha_display_name",
-            point_data.get("description", point_data.get("label", point_name))
+            point_data.get("label", point_name)
         )
+
+        # Store device identifier for device_info
+        self._device_identifier = device_identifier
 
         _LOGGER.debug(
-            "Built entity ID: %s (device_type=%s, sn=%s, model=%s, point=%s)",
-            entity_id,
-            device_type_simple,
-            device_sn_compact,
-            model_for_id,
-            point_name,
+            "Created sensor: %s (device=%s, unique_id=%s)",
+            self._attr_name,
+            device_identifier,
+            unique_id,
         )
 
         # Check if initial value is numeric - determines sensor type
@@ -369,20 +304,44 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         if not point_data:
             return {}
 
+        # Comprehensive attributes including mapping information
         attributes = {
+            # Identity
             "device_id": self._device_id,
             "device_type": self._device_type,
-            "description": point_data.get("description"),
-            "friendly_name": self._display_name,  # User-friendly display name
+            "point_name": self._point_name,
+
+            # Display Names
+            "friendly_name": point_data.get("ha_display_name", ""),
+            "label": point_data.get("label", ""),
+
+            # VSN REST API Names
+            "vsn300_rest_name": point_data.get("vsn300_name", ""),
+            "vsn700_rest_name": point_data.get("vsn700_name", ""),
+
+            # SunSpec Information
+            "sunspec_model": point_data.get("model", ""),  # Now contains comma-separated models
+            "sunspec_name": point_data.get("sunspec_name", ""),
+            "description": point_data.get("description", ""),
+
+            # Compatibility Flags (derived from model string)
+            "vsn300_compatible": "VSN300-only" in point_data.get("model", "") or
+                               ("VSN700-only" not in point_data.get("model", "") and
+                                "ABB Proprietary" not in point_data.get("model", "")),
+            "vsn700_compatible": "VSN700-only" in point_data.get("model", "") or
+                               ("VSN300-only" not in point_data.get("model", "") and
+                                point_data.get("model", "") != ""),
+
+            # Category
+            "category": point_data.get("category", ""),
         }
 
         # Add timestamp if available
         if timestamp := device_data.get("timestamp"):
             attributes["last_updated"] = timestamp
 
-        # Add mapping info for debugging
-        if sunspec_name := point_data.get("sunspec_name"):
-            attributes["sunspec_name"] = sunspec_name
+        # Clean up empty strings to None for cleaner display
+        attributes = {k: (v if v != "" else None) for k, v in attributes.items()}
 
         return attributes
 
@@ -406,27 +365,18 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
                 firmware_version = discovered_device.firmware_version
                 hardware_version = discovered_device.hardware_version
 
-                # Build device name according to user requirements:
-                # 1. For inverters: "Model (Serial)" e.g., "PVI-10.0-OUTD (077909-3G82-3112)"
-                # 2. For datalogger: "VSN300/VSN700 (Serial/CleanMAC)"
-                if is_datalogger:
-                    device_name = f"{self.coordinator.vsn_model} ({self._device_id})"
+                # Get configuration URL for datalogger
+                if is_datalogger and self.coordinator.discovery_result:
                     # Datalogger gets the configuration URL (VSN web interface)
-                    if self.coordinator.discovery_result:
-                        # Extract host from stored base_url or use hostname
-                        hostname = self.coordinator.discovery_result.hostname
-                        if hostname:
-                            configuration_url = f"http://{hostname}"
-                elif device_model:
-                    device_name = f"{device_model} ({self._device_id})"
-                else:
-                    # Fallback: Use device type with serial
-                    device_name = f"{self._device_type} ({self._device_id})"
+                    hostname = self.coordinator.discovery_result.hostname
+                    if hostname:
+                        configuration_url = f"http://{hostname}"
                 break
 
-        # Fallback if not found in discovery
-        if device_name is None:
-            device_name = f"VSN Device {self._device_id}"
+        # Use device identifier as device name for entity_id generation
+        # This creates consistent entity IDs following the template:
+        #   sensor.abb_vsn_rest_{device_type}_{serial}_{entity_name}
+        device_name = self._device_identifier
 
         # Build device info dictionary with all available fields
         device_info_dict = {
