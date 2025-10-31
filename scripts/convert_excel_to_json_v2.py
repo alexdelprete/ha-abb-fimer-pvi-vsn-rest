@@ -31,14 +31,14 @@ def convert_excel_to_json_v2():
 
     # Convert rows to list of dictionaries
     rows = []
-    for row_idx, row in enumerate(ws.iter_rows(min_row=2, values_only=True), start=2):
+    for _row_idx, row in enumerate(ws.iter_rows(min_row=2, values_only=True), start=2):
         if not any(row):
             continue
 
         row_dict = {}
         models = []
 
-        for col_idx, (header, value) in enumerate(zip(headers, row)):
+        for _col_idx, (header, value) in enumerate(zip(headers, row, strict=False)):
             # Handle model flags specially - convert to array
             if header in model_flags:
                 if value == "YES":

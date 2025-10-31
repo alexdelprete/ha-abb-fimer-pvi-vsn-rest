@@ -13,12 +13,12 @@ This script:
 """
 
 import json
-from pathlib import Path
 from collections import defaultdict
+from pathlib import Path
 from typing import Any
 
 import openpyxl
-from openpyxl.styles import Font, PatternFill, Alignment
+from openpyxl.styles import Alignment, Font, PatternFill
 from openpyxl.utils import get_column_letter
 
 
@@ -27,7 +27,7 @@ def load_current_mapping() -> list[dict[str, Any]]:
     json_path = Path("docs/vsn-sunspec-point-mapping.json")
     print(f"Loading current mapping from: {json_path}")
 
-    with open(json_path, "r", encoding="utf-8") as f:
+    with open(json_path, encoding="utf-8") as f:
         data = json.load(f)
 
     print(f"Loaded {len(data)} total points")
@@ -84,7 +84,7 @@ def analyze_quality_issues(data: list[dict[str, Any]]) -> dict[str, list[dict[st
         if not label:
             issues["empty_label"].append(item)
 
-    print(f"\nQuality Issues:")
+    print("\nQuality Issues:")
     print(f"  Description = Label: {len(issues['description_equals_label'])} ({len(issues['description_equals_label'])/len(data)*100:.1f}%)")
     print(f"  Category = Unknown: {len(issues['unknown_category'])} ({len(issues['unknown_category'])/len(data)*100:.1f}%)")
     print(f"  Empty Description: {len(issues['empty_description'])}")
@@ -103,11 +103,11 @@ def extract_model_from_string(model_str: str) -> str:
     # Check for specific model patterns
     if model_str.startswith("M") and model_str[1:].replace("M", "").isdigit():
         return model_str.upper()
-    elif model_str == "VSN300-only":
+    if model_str == "VSN300-only":
         return "VSN300_Only"
-    elif model_str == "VSN700-only":
+    if model_str == "VSN700-only":
         return "VSN700_Only"
-    elif model_str == "ABB Proprietary":
+    if model_str == "ABB Proprietary":
         return "ABB_Proprietary"
 
     return model_str
@@ -123,7 +123,6 @@ def merge_duplicate_group(group: list[dict[str, Any]]) -> dict[str, Any]:
 
     # Extract models from all items in group
     models = set()
-    model_notes = []
 
     for item in group:
         model_str = item.get("SunSpec Model", "")
@@ -192,7 +191,7 @@ def suggest_description_improvements(merged_data: list[dict[str, Any]]) -> dict[
         sunspec_name = item.get("SunSpec Normalized Name", "")
         ha_name = item.get("HA Name", "")
         label = item.get("Label", "")
-        description = item.get("Description", "")
+        item.get("Description", "")
 
         # Check if needs improvement
         if item.get("Description_Quality") == "NEEDS_FIX":
@@ -222,12 +221,7 @@ def suggest_category_fixes(merged_data: list[dict[str, Any]]) -> dict[str, str]:
             suggested_category = "Unknown"
 
             # Energy counter patterns
-            if (ha_name.startswith("e0_") or ha_name.startswith("e1_") or
-                ha_name.startswith("e2_") or ha_name.startswith("e3_") or
-                ha_name.startswith("e4_") or ha_name.startswith("e5_") or
-                ha_name.startswith("e6_") or ha_name.startswith("e7_") or
-                ha_name.startswith("e8_") or "energy" in label.lower() or
-                "charge" in label.lower() or "discharge" in label.lower()):
+            if (ha_name.startswith(("e0_", "e1_", "e2_", "e3_", "e4_", "e5_", "e6_", "e7_", "e8_")) or "energy" in label.lower() or "charge" in label.lower() or "discharge" in label.lower()):
                 suggested_category = "Energy Counter"
 
             # House meter patterns
@@ -283,7 +277,7 @@ def create_excel_report(merged_data: list[dict[str, Any]], analysis: dict[str, A
 
     # Save workbook
     wb.save(output_path)
-    print(f"✓ Excel file created successfully")
+    print("✓ Excel file created successfully")
 
 
 def create_all_points_sheet(ws, merged_data: list[dict[str, Any]]):
@@ -345,9 +339,7 @@ def create_all_points_sheet(ws, merged_data: list[dict[str, Any]]):
             cell = ws.cell(row=row_idx, column=col_idx, value=value)
 
             # Highlight quality issues
-            if column == "Description_Quality" and value == "NEEDS_FIX":
-                cell.fill = PatternFill(start_color="FFCCCC", end_color="FFCCCC", fill_type="solid")
-            elif column == "Category_Status" and value == "UNKNOWN":
+            if (column == "Description_Quality" and value == "NEEDS_FIX") or (column == "Category_Status" and value == "UNKNOWN"):
                 cell.fill = PatternFill(start_color="FFCCCC", end_color="FFCCCC", fill_type="solid")
 
     # Auto-size columns
@@ -470,7 +462,7 @@ def main():
     # Merge duplicates
     print("\nMerging duplicates...")
     merged_data = []
-    for sunspec_name, group in sorted(groups.items()):
+    for _sunspec_name, group in sorted(groups.items()):
         merged = merge_duplicate_group(group)
         if merged:
             merged_data.append(merged)
@@ -512,12 +504,12 @@ def main():
     print(f"Deduplicated points: {len(merged_data)}")
     print(f"Rows eliminated: {len(current_data) - len(merged_data)} ({((len(current_data) - len(merged_data)) / len(current_data) * 100):.1f}%)")
     print(f"\nOutput file: {output_path}")
-    print(f"\nNext steps:")
+    print("\nNext steps:")
     print(f"  1. Review {output_path} - Sheet: 'All Points'")
-    print(f"  2. Check 'Quality Report' sheet for suggested improvements")
-    print(f"  3. Apply description and category fixes")
-    print(f"  4. Verify model flags are correct")
-    print(f"  5. Save and proceed with integration updates")
+    print("  2. Check 'Quality Report' sheet for suggested improvements")
+    print("  3. Apply description and category fixes")
+    print("  4. Verify model flags are correct")
+    print("  5. Save and proceed with integration updates")
     print("=" * 80)
 
 

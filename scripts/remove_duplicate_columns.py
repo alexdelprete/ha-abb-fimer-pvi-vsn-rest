@@ -57,7 +57,7 @@ def remove_duplicate_columns():
         ws.delete_cols(col_idx)
 
     # Save the modified workbook
-    print(f"\nSaving modified Excel file...")
+    print("\nSaving modified Excel file...")
     wb.save(excel_path)
     print(f"✓ Successfully removed duplicate columns from {excel_path}")
 

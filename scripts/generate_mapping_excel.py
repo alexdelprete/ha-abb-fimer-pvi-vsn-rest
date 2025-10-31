@@ -925,6 +925,7 @@ def generate_simplified_point_name(label, model=None):
         "DC Current #1" → "dc_current_1"
         "Phase Voltage BC" → "phase_voltage_bc"
         "Uptime" → "uptime"
+
     """
     # Convert to lowercase and replace spaces/special chars with underscores
     point_name = label.lower()
@@ -946,9 +947,8 @@ def generate_simplified_point_name(label, model=None):
         point_name = point_name.replace("__", "_")
 
     # Strip leading/trailing underscores
-    point_name = point_name.strip("_")
+    return point_name.strip("_")
 
-    return point_name
 
 
 def generate_description_from_name(point_name, category=None):

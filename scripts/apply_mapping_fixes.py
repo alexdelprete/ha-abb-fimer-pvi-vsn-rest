@@ -11,8 +11,6 @@ This script:
 from pathlib import Path
 
 import openpyxl
-from openpyxl.styles import Font, PatternFill
-
 
 # Comprehensive description improvements
 DESCRIPTION_FIXES = {
@@ -147,18 +145,17 @@ def get_comprehensive_category(row_data: dict) -> str:
         # Check model flags
         if row_data.get("M103") == "YES" or row_data.get("M160") == "YES":
             return "Inverter"
-        elif row_data.get("M203") == "YES" or row_data.get("M212") == "YES":
+        if row_data.get("M203") == "YES" or row_data.get("M212") == "YES":
             return "Meter"
-        else:
-            # Default to Inverter if unclear
-            return "Inverter"
+        # Default to Inverter if unclear
+        return "Inverter"
 
     # Power/frequency measurements
     power_points = ["w", "var", "va", "hz", "pf"]
     if sunspec_name.lower() in power_points:
         if row_data.get("M103") == "YES":
             return "Inverter"
-        elif row_data.get("M203") == "YES":
+        if row_data.get("M203") == "YES":
             return "Meter"
 
     # DC measurements (definitely Inverter)
@@ -178,15 +175,14 @@ def get_comprehensive_category(row_data: dict) -> str:
     if row_data.get("VSN300_Only") == "YES" or row_data.get("VSN700_Only") == "YES":
         if any(p in ha_name for p in ["device", "manufacturer", "model", "serial", "address"]):
             return "Device Info"
-        else:
-            return "System Monitoring"
+        return "System Monitoring"
 
     # Default based on model
     if row_data.get("M103") == "YES" or row_data.get("M160") == "YES":
         return "Inverter"
-    elif row_data.get("M203") == "YES":
+    if row_data.get("M203") == "YES":
         return "Meter"
-    elif row_data.get("M802") == "YES":
+    if row_data.get("M802") == "YES":
         return "Battery"
 
     # Last resort: keep Unknown (will need manual review)
@@ -223,7 +219,7 @@ def apply_fixes_to_excel(input_path: Path, output_path: Path):
 
         sunspec_name = row_data.get("SunSpec Normalized Name", "")
         ha_name = row_data.get("HA Name", "")
-        description = row_data.get("Description", "")
+        row_data.get("Description", "")
         label = row_data.get("Label", "")
         category = row_data.get("Category", "")
         description_quality = row_data.get("Description_Quality", "")
@@ -289,7 +285,7 @@ def main():
         print(f"ERROR: Input file not found: {input_path}")
         return
 
-    stats = apply_fixes_to_excel(input_path, output_path)
+    apply_fixes_to_excel(input_path, output_path)
 
     print("\nNext steps:")
     print("  1. Review output file for any remaining 'Unknown' categories")
