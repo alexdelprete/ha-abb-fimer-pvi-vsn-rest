@@ -295,10 +295,12 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
             )
 
         # Set entity_category if specified (e.g., "diagnostic" for M1/system monitoring)
+        # OR if this sensor belongs to a datalogger device (all datalogger entities are diagnostic)
         entity_category_str = point_data.get("entity_category")
-        if entity_category_str == "diagnostic":
+        if entity_category_str == "diagnostic" or is_datalogger:
             self._attr_entity_category = EntityCategory.DIAGNOSTIC
-            _LOGGER.debug("Sensor %s set as diagnostic entity", point_name)
+            reason = "mapping" if entity_category_str == "diagnostic" else "datalogger device"
+            _LOGGER.debug("Sensor %s set as diagnostic entity (reason: %s)", point_name, reason)
 
         _LOGGER.debug(
             "Created sensor: %s (device_class=%s, state_class=%s, unit=%s, entity_category=%s)",
