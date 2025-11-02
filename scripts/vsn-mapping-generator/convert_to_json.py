@@ -12,8 +12,9 @@ import openpyxl
 
 def convert_excel_to_json():
     """Convert Excel mapping file (with model flags) to JSON format."""
-    excel_path = Path("docs/vsn-sunspec-point-mapping.xlsx")
-    json_path = Path("docs/vsn-sunspec-point-mapping.json")
+    script_dir = Path(__file__).parent
+    excel_path = script_dir / "output" / "vsn-sunspec-point-mapping.xlsx"
+    json_path = script_dir / "output" / "vsn-sunspec-point-mapping.json"
 
     print(f"Loading Excel file: {excel_path}")
     wb = openpyxl.load_workbook(excel_path)
@@ -80,7 +81,9 @@ def convert_excel_to_json():
     print(f"  Total entries: {len(rows)}")
 
     # Also copy to integration data folder
-    data_path = Path("custom_components/abb_fimer_pvi_vsn_rest/data/vsn-sunspec-point-mapping.json")
+    # Go up two levels from scripts/vsn-mapping-generator to get to repo root
+    repo_root = script_dir.parent.parent
+    data_path = repo_root / "custom_components" / "abb_fimer_pvi_vsn_rest" / "data" / "vsn-sunspec-point-mapping.json"
     print(f"Copying to integration data folder: {data_path}")
 
     with open(data_path, "w", encoding="utf-8") as f:
