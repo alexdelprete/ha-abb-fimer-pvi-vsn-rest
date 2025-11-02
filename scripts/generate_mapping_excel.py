@@ -1072,7 +1072,7 @@ def build_vsn700_lookup(rows):
     vsn700_lookup = {}
     for row in rows:
         vsn700_name = row[0]  # Column 1 = REST Name (VSN700)
-        data_source = row[19]  # Column 20 = Data Source
+        data_source = row[16]  # Column 17 = Data Source (index 16)
 
         # Only collect entries with good data sources (not generated)
         if (
@@ -2049,8 +2049,8 @@ summary_ws = wb.create_sheet("Summary")
 summary_ws.append(["Category", "Count"])
 summary_ws.append(["Total Points", len(rows)])
 summary_ws.append(
-    ["Standard SunSpec (Both protocols)", len([r for r in rows if r[18] == "YES"])]
-)  # Column 19 (0-indexed: 18) = Available in Modbus
+    ["Standard SunSpec (Both protocols)", len([r for r in rows if r[15] == "YES"])]
+)  # Column 16 (0-indexed: 15) = Available in Modbus
 summary_ws.append(
     ["M64061 (Maybe in Modbus)", len([r for r in rows if r[9] == "M64061"])]
 )  # Column 10 (0-indexed: 9) = SunSpec Model
@@ -2058,8 +2058,8 @@ summary_ws.append(
     ["ABB Proprietary (REST only)", len([r for r in rows if r[9] == "ABB Proprietary"])]
 )  # Column 10 (0-indexed: 9) = SunSpec Model
 summary_ws.append(
-    ["Diagnostic entities", len([r for r in rows if r[17] == "diagnostic"])]
-)  # Column 18 (0-indexed: 17) = Entity Category
+    ["Diagnostic entities", len([r for r in rows if r[14] == "diagnostic"])]
+)  # Column 15 (0-indexed: 14) = Entity Category
 summary_ws.append(
     ["In /livedata", len([r for r in rows if r[4] == "✓"])]
 )  # Column 5 (0-indexed: 4) = In /livedata
@@ -2089,15 +2089,15 @@ wb.save(output_path)
 print(f"\n✓ Excel file created: {output_path}")
 print(f"  Total rows: {len(rows)}")
 print(
-    f"  Standard SunSpec: {len([r for r in rows if r[18] == 'YES'])}"
-)  # Column 19 (0-indexed: 18) = Available in Modbus
+    f"  Standard SunSpec: {len([r for r in rows if r[15] == 'YES'])}"
+)  # Column 16 (0-indexed: 15) = Available in Modbus
 print(
     f"  M64061: {len([r for r in rows if r[9] == 'M64061'])}"
 )  # Column 10 (0-indexed: 9) = SunSpec Model
 print(f"  ABB Proprietary: {len([r for r in rows if r[9] == 'ABB Proprietary'])}")
 print(
-    f"  Diagnostic entities: {len([r for r in rows if r[17] == 'diagnostic'])}"
-)  # Column 18 (0-indexed: 17) = Entity Category
+    f"  Diagnostic entities: {len([r for r in rows if r[14] == 'diagnostic'])}"
+)  # Column 15 (0-indexed: 14) = Entity Category
 print(
     f"  Points with SunSpec labels: {len([r for r in rows if r[6] and r[6] != 'N/A'])}"
 )  # Column 7 (0-indexed: 6) = Label
