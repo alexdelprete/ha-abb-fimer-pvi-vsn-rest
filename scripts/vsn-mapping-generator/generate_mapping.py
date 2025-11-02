@@ -24,7 +24,7 @@ from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 
 # Script metadata
-SCRIPT_VERSION = "2.0.0"
+SCRIPT_VERSION = "2.0.2"
 SCRIPT_DATE = datetime.now().strftime("%Y-%m-%d")
 
 # Get script directory for relative paths
@@ -316,6 +316,35 @@ CHANGELOG_ENTRIES = [
             "System info: Added descriptive text for configuration points"
         ],
         "source": "Automated logic improvement"
+    },
+    {
+        "date": "2024-11-02",
+        "version": "2.0.1",
+        "type": "VSN300 Parser Fix",
+        "description": "Fixed C_ prefix parsing for VSN300 Model 1 (Common) points",
+        "details": [
+            "Added special handler for C_ prefix points to map to Model 1",
+            "Fixed 6 points: C_Mn, C_Md, C_SN, C_Vr, C_Opt, C_DA",
+            "Updated main processing loop to include VSN300-only points in mapping",
+            "Improved VSN300 name detection for points in VSN_TO_SUNSPEC_MAP",
+            "These points now get proper SunSpec labels like 'Manufacturer', 'Serial Number', etc."
+        ],
+        "source": "User-reported issue fix"
+    },
+    {
+        "date": "2024-11-02",
+        "version": "2.0.2",
+        "type": "SunSpec Parser Improvements",
+        "description": "Major improvements to SunSpec workbook parser with updated data file",
+        "details": [
+            "Fixed column mapping to use correct columns: C=Name, M=Label, N=Description",
+            "Expanded from reading 12 hardcoded tabs to all 112 numeric model sheets",
+            "Updated SunSpec workbook file with complete M160 descriptions",
+            "M160 MPPT points now have proper descriptions (DC Current, DC Voltage, DC Power)",
+            "Improved coverage from ~10% to 100% of available SunSpec models",
+            "Maintained ABB Excel usage only for M64061 proprietary model"
+        ],
+        "source": "User-reported parser issue"
     }
 ]
 
@@ -486,48 +515,36 @@ def load_sunspec_models_metadata(workbook_path):
     models_data = {}
     wb = openpyxl.load_workbook(workbook_path, read_only=True)
 
-    model_sheets = ["1", "101", "103", "120", "124", "160", "201", "203", "204", "802", "803", "804"]
+    # Get all numeric sheet names (model numbers)
+    model_sheets = []
+    for sheet_name in wb.sheetnames:
+        # Include numeric sheets (model numbers) but exclude "Index" and other non-model sheets
+        if sheet_name.isdigit():
+            model_sheets.append(sheet_name)
+
+    print(f"  Found {len(model_sheets)} model sheets to process")
 
     for sheet_name in model_sheets:
-        if sheet_name not in wb.sheetnames:
-            continue
-
         ws = wb[sheet_name]
         model_key = f"M{sheet_name}"
         models_data[model_key] = {}
 
-        # Find header row (contains "Name" column)
-        header_row = None
-        for row_idx in range(1, 10):
-            for col_idx in range(1, 10):
-                if ws.cell(row_idx, col_idx).value == "Name":
-                    header_row = row_idx
-                    break
-            if header_row:
-                break
+        # SunSpec workbook standard column mapping:
+        # Column C (3) = Name
+        # Column M (13) = Label
+        # Column N (14) = Description
+        name_col = 3    # Column C
+        label_col = 13  # Column M
+        desc_col = 14   # Column N
 
-        if not header_row:
-            continue
-
-        # Find column indices
-        name_col = label_col = desc_col = None
-        for col_idx in range(1, ws.max_column + 1):
-            cell_value = ws.cell(header_row, col_idx).value
-            if cell_value == "Name":
-                name_col = col_idx
-            elif cell_value == "Label":
-                label_col = col_idx
-            elif cell_value == "Description":
-                desc_col = col_idx
-
-        # Read data rows
-        for row_idx in range(header_row + 1, ws.max_row + 1):
-            name = ws.cell(row_idx, name_col).value if name_col else None
+        # Row 1 contains headers, data starts at row 2
+        for row_idx in range(2, ws.max_row + 1):
+            name = ws.cell(row_idx, name_col).value
             if not name:
                 continue
 
-            label = ws.cell(row_idx, label_col).value if label_col else ""
-            description = ws.cell(row_idx, desc_col).value if desc_col else ""
+            label = ws.cell(row_idx, label_col).value
+            description = ws.cell(row_idx, desc_col).value
 
             models_data[model_key][name] = {
                 "label": label or "",
@@ -1080,7 +1097,8 @@ def generate_mapping_excel_complete():
 
     # Process standard SunSpec points
     for vsn_name, mapping in VSN_TO_SUNSPEC_MAP.items():
-        if vsn_name in vsn700_livedata_points or vsn_name in vsn700_feeds_points:
+        if (vsn_name in vsn700_livedata_points or vsn_name in vsn700_feeds_points or
+            vsn_name in vsn300_livedata_points):
             sunspec_name = mapping["sunspec"] if mapping["sunspec"] else vsn_name
             model = mapping["model"]
 
@@ -1102,10 +1120,13 @@ def generate_mapping_excel_complete():
             )
 
             # Determine VSN300 name
-            vsn300_name = mapping.get("modbus", "N/A")
-            if vsn300_name and vsn300_name != "N/A":
-                if vsn300_name not in vsn300_livedata_points:
-                    vsn300_name = "N/A"
+            # Check if this exact VSN name is in VSN300 livedata
+            if vsn_name in vsn300_livedata_points:
+                vsn300_name = vsn_name
+            elif mapping.get("modbus", "N/A") in vsn300_livedata_points:
+                vsn300_name = mapping.get("modbus", "N/A")
+            else:
+                vsn300_name = "N/A"
 
             # Detect models
             models = detect_models_from_point(vsn300_name, vsn_name, model)
@@ -1224,25 +1245,35 @@ def generate_mapping_excel_complete():
     # Process VSN300-only points (points in VSN300 livedata not yet processed)
     for point_name in vsn300_livedata_points:
         if point_name not in processed_points:
-            # Extract model from VSN300 naming pattern m{model}_{instance}_{point}
+            # Extract model from VSN300 naming pattern
             model = None
             sunspec_name = point_name
-            if point_name.startswith("m") and "_" in point_name:
+
+            # Special handling for C_ prefix (Common Model M1 points)
+            if point_name.startswith("C_"):
+                model = "M1"
+                sunspec_name = point_name[2:]  # Strip "C_" prefix
+            elif point_name.startswith("m") and "_" in point_name:
+                # Standard pattern m{model}_{instance}_{point}
                 match = re.match(r"m(\d+)_(\d+)_(.+)", point_name)
                 if match:
                     model_num, instance, sunspec_point = match.groups()
                     model = f"M{model_num}"
                     sunspec_name = sunspec_point
 
-            label = generate_label_from_name(point_name)
-            ha_name = generate_simplified_point_name(label, model or "VSN300_Only")
-
             # Lookup from SunSpec metadata if we have a model
+            label = ""
             workbook_description = ""
             if model and sunspec_metadata:
-                _, workbook_description = lookup_label_description(
+                label, workbook_description = lookup_label_description(
                     sunspec_metadata, model, sunspec_name
                 )
+
+            # If no label from SunSpec, generate from name
+            if not label:
+                label = generate_label_from_name(point_name)
+
+            ha_name = generate_simplified_point_name(label, model or "VSN300_Only")
 
             # Get description
             feeds_info = feeds_titles.get(point_name)
