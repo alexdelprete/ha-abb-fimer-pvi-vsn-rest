@@ -49,8 +49,8 @@ logging.basicConfig(
 )
 _LOGGER = logging.getLogger(__name__)
 
-# URL to the mapping JSON on GitHub
-MAPPING_URL = "https://raw.githubusercontent.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/master/docs/vsn-sunspec-point-mapping.json"
+# URL to the mapping JSON on GitHub (integration runtime location)
+MAPPING_URL = "https://raw.githubusercontent.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/master/custom_components/abb_fimer_pvi_vsn_rest/data/vsn-sunspec-point-mapping.json"
 
 
 # ============================================================================
