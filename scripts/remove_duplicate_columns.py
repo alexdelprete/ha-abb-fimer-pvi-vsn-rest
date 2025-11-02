@@ -19,7 +19,7 @@ except ImportError:
 def remove_duplicate_columns():
     """Remove duplicate columns from the mapping Excel file."""
     # File path
-    excel_path = Path(__file__).parent.parent / "docs" / "vsn-sunspec-point-mapping-v2.xlsx"
+    excel_path = Path(__file__).parent.parent / "docs" / "vsn-sunspec-point-mapping.xlsx"
 
     if not excel_path.exists():
         print(f"Error: File not found: {excel_path}")

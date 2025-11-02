@@ -1,6 +1,6 @@
-"""Convert VSN-SunSpec point mapping Excel (v2 with model flags) to JSON format.
+"""Convert VSN-SunSpec point mapping Excel (with model flags) to JSON format.
 
-This script reads the new Excel structure with model flag columns and generates
+This script reads the Excel structure with model flag columns and generates
 a JSON file where each point has an array of applicable models.
 """
 
@@ -10,9 +10,9 @@ from pathlib import Path
 import openpyxl
 
 
-def convert_excel_to_json_v2():
-    """Convert v2 Excel mapping file (with model flags) to JSON format."""
-    excel_path = Path("docs/vsn-sunspec-point-mapping-v2.xlsx")
+def convert_excel_to_json():
+    """Convert Excel mapping file (with model flags) to JSON format."""
+    excel_path = Path("docs/vsn-sunspec-point-mapping.xlsx")
     json_path = Path("docs/vsn-sunspec-point-mapping.json")
 
     print(f"Loading Excel file: {excel_path}")
@@ -104,4 +104,4 @@ def convert_excel_to_json_v2():
 
 
 if __name__ == "__main__":
-    convert_excel_to_json_v2()
+    convert_excel_to_json()

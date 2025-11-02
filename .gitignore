@@ -43,5 +43,5 @@ docs/vsn-data/
 # Mapping file backups and temporary versions
 docs/vsn-sunspec-point-mapping-backup-*.xlsx
 docs/vsn-sunspec-point-mapping-*-fixed.xlsx
-docs/vsn-sunspec-point-mapping-v2-*.xlsx
-!docs/vsn-sunspec-point-mapping-v2.xlsx
+docs/vsn-sunspec-point-mapping-*.xlsx
+!docs/vsn-sunspec-point-mapping.xlsx

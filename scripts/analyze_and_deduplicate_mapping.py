@@ -494,7 +494,7 @@ def main():
     }
 
     # Create Excel report
-    output_path = Path("docs/vsn-sunspec-point-mapping-v2.xlsx")
+    output_path = Path("docs/vsn-sunspec-point-mapping.xlsx")
     create_excel_report(merged_data, analysis, output_path)
 
     print("\n" + "=" * 80)

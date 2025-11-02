@@ -278,8 +278,8 @@ def main():
     print("Applying Description and Category Fixes to Mapping")
     print("=" * 80)
 
-    input_path = Path("docs/vsn-sunspec-point-mapping-v2.xlsx")
-    output_path = Path("docs/vsn-sunspec-point-mapping-v2-fixed.xlsx")
+    input_path = Path("docs/vsn-sunspec-point-mapping.xlsx")
+    output_path = Path("docs/vsn-sunspec-point-mapping-fixed.xlsx")
 
     if not input_path.exists():
         print(f"ERROR: Input file not found: {input_path}")
@@ -290,7 +290,7 @@ def main():
     print("\nNext steps:")
     print("  1. Review output file for any remaining 'Unknown' categories")
     print("  2. Verify descriptions are appropriate")
-    print("  3. Replace original v2 file if satisfied")
+    print("  3. Replace original file if satisfied")
     print("  4. Proceed with JSON regeneration")
 
 

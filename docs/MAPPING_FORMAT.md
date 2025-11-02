@@ -9,7 +9,7 @@ is normalized to Home Assistant entities with proper metadata.
 
 ### Source (Excel)
 
-- **Location**: `docs/vsn-sunspec-point-mapping-v2.xlsx`
+- **Location**: `docs/vsn-sunspec-point-mapping.xlsx`
 - **Purpose**: Human-readable/editable mapping maintained in Excel
 - **Format**: Deduplicated structure with model flag columns
 - **Points**: 210 unique mappings (deduplicated from original 277)
@@ -77,18 +77,18 @@ Each mapping entry contains:
 When the Excel file is updated, regenerate the JSON:
 
 ```bash
-python scripts/convert_excel_to_json_v2.py
+python scripts/convert_excel_to_json.py
 ```
 
 This will:
 
-1. Read `docs/vsn-sunspec-point-mapping-v2.xlsx`
+1. Read `docs/vsn-sunspec-point-mapping.xlsx`
 2. Convert to JSON format with models array structure
 3. Write to `docs/vsn-sunspec-point-mapping.json`
 4. Copy to `custom_components/abb_fimer_pvi_vsn_rest/data/vsn-sunspec-point-mapping.json`
 5. Display model statistics
 
-## Statistics (v2 - Deduplicated)
+## Statistics (Deduplicated)
 
 - **Total unique mappings**: 210 (deduplicated from original 277)
 - **Model distribution**:
@@ -129,8 +129,8 @@ This will:
 
 ## Workflow
 
-1. **Edit** mapping in Excel (`vsn-sunspec-point-mapping-v2.xlsx`)
-2. **Convert** to JSON using `convert_excel_to_json_v2.py`
+1. **Edit** mapping in Excel (`vsn-sunspec-point-mapping.xlsx`)
+2. **Convert** to JSON using `convert_excel_to_json.py`
 3. **Commit** both files to git (Excel + both JSON copies)
 4. **Integration** loads JSON at runtime (no openpyxl needed)
 
@@ -164,25 +164,25 @@ directly or loaded from a URL, eliminating the need for the docs folder.
 
 ### Adding New Points
 
-1. Open Excel file (`vsn-sunspec-point-mapping-v2.xlsx`)
+1. Open Excel file (`vsn-sunspec-point-mapping.xlsx`)
 2. Add row with all columns filled
 3. Set appropriate model flags (M1, M103, etc.)
 4. Save Excel
-5. Run `convert_excel_to_json_v2.py`
+5. Run `convert_excel_to_json.py`
 6. Test with `test_vsn_client.py`
 7. Commit all files (Excel + both JSON copies)
 
 ### Updating Metadata
 
 1. Edit Excel file (labels, descriptions, HA units, device classes, etc.)
-2. Run `convert_excel_to_json_v2.py`
+2. Run `convert_excel_to_json.py`
 3. Test changes
 4. Commit all files
 
 ### Removing Points
 
 1. Delete row in Excel
-2. Run `convert_excel_to_json_v2.py`
+2. Run `convert_excel_to_json.py`
 3. Test to ensure no breakage
 4. Commit all files
 
@@ -197,7 +197,7 @@ directly or loaded from a URL, eliminating the need for the docs folder.
 ## See Also
 
 - `generate_mapping_excel.py` - Original script that created the Excel file
-- `convert_excel_to_json_v2.py` - Converts v2 Excel (with model flags) to JSON
+- `convert_excel_to_json.py` - Converts Excel (with model flags) to JSON
 - `analyze_and_deduplicate_mapping.py` - Analyzes and deduplicates mapping entries
 - `apply_mapping_fixes.py` - Applies automated description and category fixes
 - `mapping_loader.py` - Loads JSON and provides lookup methods

@@ -131,9 +131,9 @@ Transforms VSN proprietary format to SunSpec-compatible schema.
 - Populate comprehensive point attributes
 - Handle device ID normalization (MAC → S/N for datalogger)
 
-**Mapping Structure (v2 - Deduplicated):**
+**Mapping Structure (Deduplicated):**
 
-- **Source**: `docs/vsn-sunspec-point-mapping-v2.xlsx` (Excel with model flags)
+- **Source**: `docs/vsn-sunspec-point-mapping.xlsx` (Excel with model flags)
 - **Runtime**: `custom_components/.../data/vsn-sunspec-point-mapping.json`
 - **Format**: 210 unique points with `models` array for multi-model support
 
@@ -165,8 +165,8 @@ Transforms VSN proprietary format to SunSpec-compatible schema.
 
 **Mapping Workflow:**
 
-1. Edit Excel: `docs/vsn-sunspec-point-mapping-v2.xlsx`
-2. Convert to JSON: `python scripts/convert_excel_to_json_v2.py`
+1. Edit Excel: `docs/vsn-sunspec-point-mapping.xlsx`
+2. Convert to JSON: `python scripts/convert_excel_to_json.py`
 3. Commit both files (Excel + both JSON copies)
 
 See [docs/MAPPING_FORMAT.md](docs/MAPPING_FORMAT.md) for full documentation.
@@ -511,7 +511,7 @@ Use this data to verify mapping and normalization.
 
 ### Adding New Mapping Points
 
-1. Open Excel file: `docs/vsn-sunspec-point-mapping-v2.xlsx`
+1. Open Excel file: `docs/vsn-sunspec-point-mapping.xlsx`
 2. Add new row with all required columns:
    - VSN REST names (VSN300 and VSN700)
    - SunSpec Normalized Name
@@ -525,15 +525,15 @@ Use this data to verify mapping and normalization.
    - Entity Category (if diagnostic)
    - Model flags (M1, M103, M160, etc.)
 3. Save Excel file
-4. Convert to JSON: `python scripts/convert_excel_to_json_v2.py`
+4. Convert to JSON: `python scripts/convert_excel_to_json.py`
 5. Test with real VSN device or test data
 6. Commit all files: Excel + both JSON copies
 
 ### Updating Existing Mappings
 
-1. Edit Excel file: `docs/vsn-sunspec-point-mapping-v2.xlsx`
+1. Edit Excel file: `docs/vsn-sunspec-point-mapping.xlsx`
 2. Modify descriptions, labels, device classes, etc.
-3. Convert to JSON: `python scripts/convert_excel_to_json_v2.py`
+3. Convert to JSON: `python scripts/convert_excel_to_json.py`
 4. Test changes
 5. Commit all files
 
@@ -707,14 +707,14 @@ No external libraries for Modbus or SunSpec - we implement what we need.
 
 **Mapping Files:**
 
-- `docs/vsn-sunspec-point-mapping-v2.xlsx`: Source mapping (Excel with model flags)
+- `docs/vsn-sunspec-point-mapping.xlsx`: Source mapping (Excel with model flags)
 - `docs/vsn-sunspec-point-mapping.json`: Generated mapping (docs copy)
 - `custom_components/.../data/vsn-sunspec-point-mapping.json`: Runtime mapping
 
 **Scripts:**
 
 - `scripts/generate_mapping_excel.py`: Original script to create Excel mapping
-- `scripts/convert_excel_to_json_v2.py`: Convert v2 Excel to JSON (current)
+- `scripts/convert_excel_to_json.py`: Convert Excel to JSON (current)
 - `scripts/analyze_and_deduplicate_mapping.py`: Analyze and deduplicate mappings
 - `scripts/apply_mapping_fixes.py`: Apply automated fixes to mappings
 - `scripts/vsn_client.py`: Standalone test client

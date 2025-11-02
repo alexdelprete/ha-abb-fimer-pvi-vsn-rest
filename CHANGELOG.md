@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Removed v2 suffix from mapping files and scripts**
+  - Renamed `convert_excel_to_json_v2.py` to `convert_excel_to_json.py`
+  - Renamed `vsn-sunspec-point-mapping-v2.xlsx` to `vsn-sunspec-point-mapping.xlsx`
+  - Updated all references in scripts and documentation
+  - The v2 suffix was a temporary versioning that's no longer needed
+
 ## [1.0.0-beta.15] - 2025-01-31
 
 ### Fixed
