@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import logging
+from datetime import datetime
 from typing import Any
+from zoneinfo import ZoneInfo
 
 from homeassistant.components.sensor import (
     SensorDeviceClass,
@@ -312,7 +314,7 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         )
 
     @property
-    def native_value(self) -> float | int | str | None:
+    def native_value(self) -> float | int | str | datetime | None:
         """Return the state of the sensor."""
         if not self.coordinator.data:
             return None
@@ -333,7 +335,30 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
             )
             return None
 
-        return point_data.get("value")
+        value = point_data.get("value")
+
+        # Convert Unix timestamps to datetime for timestamp device class
+        # Use Home Assistant's configured timezone
+        if (
+            self._attr_device_class == SensorDeviceClass.TIMESTAMP
+            and isinstance(value, (int, float))
+            and value > 0
+        ):
+            try:
+                # Get HA's configured timezone
+                tz = ZoneInfo(self.hass.config.time_zone)
+                # Convert Unix timestamp to datetime in HA's timezone
+                return datetime.fromtimestamp(value, tz=tz)
+            except (ValueError, OSError, KeyError) as err:
+                _LOGGER.warning(
+                    "Failed to convert timestamp %s for %s: %s",
+                    value,
+                    self._point_name,
+                    err,
+                )
+                return None
+
+        return value
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
