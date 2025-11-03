@@ -139,7 +139,6 @@ ABB_PROPRIETARY = {
 DISPLAY_NAME_CORRECTIONS = {
     # Datalogger entities
     "Serial number (datalogger)": "Serial Number",
-    "WiFi local IP address": "IP address",
     "WiFi network name (SSID)": "WiFi SSID",
     "Wlan 0 Mode operating mode": "Wlan 0 mode",
     # Inverter entities
@@ -239,7 +238,6 @@ DISPLAY_NAME_CORRECTIONS = {
 
     # Voltage display names
     "DC bus bulk capacitor voltage": "Bulk DC Voltage",
-    "DC bus bulk capacitor midpoint voltage": "Bulk DC Midpoint Voltage",
     "Three-phase AC line-to-line voltage between L1 and L2": "AC Voltage A-B",
     "Three-phase AC line-to-line voltage between L2 and L3": "AC Voltage B-C",
     "Three-phase AC line-to-line voltage between L3 and L1": "AC Voltage C-A",
@@ -259,8 +257,6 @@ DISPLAY_NAME_CORRECTIONS = {
 
     # Power display names
     "Battery charge/discharge power": "Battery Power",
-    "Battery charging power": "Battery Charge Power",
-    "Battery discharging power": "Battery Discharge Power",
     "AC power in stand-alone (off-grid) mode": "AC Power Stand Alone",
     "AC power exported to grid": "AC Power To Grid",
     "Inverter nominal rated power": "Nominal Power",
@@ -271,10 +267,6 @@ DISPLAY_NAME_CORRECTIONS = {
     "Cumulative energy absorbed from grid": "Total Energy Absorbed",
     "Cumulative apparent energy (kVAh)": "Total Apparent Energy",
 
-    # Fan display names
-    "Cooling fan 1 speed in RPM": "Fan 1 Speed",
-    "Cooling fan 2 speed in RPM": "Fan 2 Speed",
-
     # Battery display name
     "Battery state of charge percentage": "Battery State of Charge",
 
@@ -283,81 +275,8 @@ DISPLAY_NAME_CORRECTIONS = {
     "External grid control current state": "Grid External Control State",
 
     # Other measurement display names
-    "DC insulation resistance to ground": "Insulation Resistance",
     "Current measurement shunt voltage": "Shunt Voltage",
     "Inverter device type identifier": "Device Type",
-
-    # ==========================================
-    # v2.0.6 CORRECTED Display Name Improvements
-    # ==========================================
-
-    # Status/Alarm Display Names (9) - CORRECTED
-    "Current alarm status code": "Alarm Status",
-    "Overall inverter operating state": "Global Status",
-    "Digital input status register": "Digital Input Status",
-    "Active warning condition flags": "Warning Flags",
-    "AC power derating active condition flags": "AC Derating Flags",
-    "DC input 1 connection status": "DC Input 1 Status",
-    "DC input 2 connection status": "DC Input 2 Status",
-    "DC string 1 operating state": "DC String 1 State",
-    "DC string 2 operating state": "DC String 2 State",
-
-    # Meter/Grid Display Names (14) - CORRECTED
-    "Active power at grid connection point": "Grid Power",
-    "Current at grid connection point": "Grid Current",
-    "Reactive power at grid connection point": "Grid Reactive Power",
-    "Power factor at grid connection point": "Grid Power Factor",
-    "Grid frequency measurement": "Grid Frequency",
-    "Grid voltage phase A (L1) to neutral": "Grid Voltage L1-N",
-    "Grid voltage phase L1 to neutral": "Grid Voltage L1-N",
-    "Grid voltage phase L2 to neutral": "Grid Voltage L2-N",
-    "Cumulative battery energy charged": "Battery Energy Charged",
-    "Cumulative battery energy discharged": "Battery Energy Discharged",
-    "Cumulative energy absorbed from grid": "Grid Energy Absorbed",
-    "Cumulative apparent energy in kVAh": "Apparent Energy",
-
-    # Voltage Display Names (14) - CORRECTED
-    "AC line-to-line voltage phase A-B (L1-L2)": "AC Voltage L1-L2",
-    "AC line-to-line voltage phase B-C (L2-L3)": "AC Voltage L2-L3",
-    "AC line-to-line voltage phase C-A (L3-L1)": "AC Voltage L3-L1",
-    "Voltage to ground reference": "Ground Voltage",
-    "DC bus bulk capacitor voltage": "DC Bus Voltage",
-    "DC voltage for string 1": "DC Voltage #1",
-    "DC voltage for string 2": "DC Voltage #2",
-    "DC Voltage (String 1)": "DC Voltage #1",
-    "DC Voltage (String 2)": "DC Voltage #2",
-    "Maximum voltage across battery cells": "Battery Cell Max Voltage",
-    "Minimum voltage across battery cells": "Battery Cell Min Voltage",
-
-    # Power Display Names (4) - CORRECTED
-    "AC power in stand-alone (off-grid) mode": "Stand-Alone Power",
-    "AC power exported to grid": "Grid Export Power",
-    "Inverter nominal rated power": "Nominal Power",
-    "Inverter nominal apparent power rating": "Nominal Apparent Power",
-
-    # Control Display Names (2) - CORRECTED
-    "External grid control enabled status": "External Grid Control Enabled",
-    "External grid control current state": "External Grid Control State",
-
-    # WiFi/Network Display Names (2) - CORRECTED
-    "WiFi network name (SSID) connected to": "WiFi Network",
-    "WiFi link quality percentage": "WiFi Quality",
-
-    # M1 Common Model Display Names (6)
-    "Device manufacturer name": "Manufacturer",
-    "Device model identifier": "Model",
-    "Device firmware version": "Firmware Version",
-    "Device configuration options": "Options",
-    "Device serial number": "Serial Number",
-    "Device Modbus address": "Modbus Address",
-
-    # Other Display Names (6)
-    "Inverter internal temperature": "Inverter Temperature",
-    "DC-DC boost converter temperature": "Booster Temperature",
-    "Battery state of charge percentage": "Battery SOC",
-    "Additional temperature sensor 1": "Temperature Sensor 1",
-    "Current measurement shunt voltage": "Shunt Voltage",
-    "Power factor (cosine phi)": "Power Factor",
 
     # ==========================================
     # v2.0.7 MASSIVE Display Name Improvements (58 points)
@@ -376,29 +295,17 @@ DISPLAY_NAME_CORRECTIONS = {
     "WiFi local IP address": "WiFi Local IP",
     "WiFi operating mode (client/AP)": "WiFi Mode",
 
-    # Meter Display Names (14)
-    "Meter active power phase L1": "Meter Power A",
-    "Meter active power phase L2": "Meter Power B",
-    "Meter active power phase L3": "Meter Power C",
+    # Meter Display Names (NEW - Phase A/B/C notation)
     "Meter Power Phase A": "Meter Power A",
     "Meter Power Phase B": "Meter Power B",
     "Meter Power Phase C": "Meter Power C",
-    "Meter reactive power phase L1": "Meter Reactive Power A",
-    "Meter reactive power phase L2": "Meter Reactive Power B",
-    "Meter reactive power phase L3": "Meter Reactive Power C",
     "Meter Reactive Power Phase A": "Meter Reactive Power A",
     "Meter Reactive Power Phase B": "Meter Reactive Power B",
     "Meter Reactive Power Phase C": "Meter Reactive Power C",
     "Meter reactive power total": "Meter Reactive Power Total",
-    "Meter voltage phase L1": "Meter Voltage A",
-    "Meter voltage phase L2": "Meter Voltage B",
-    "Meter voltage phase L3": "Meter Voltage C",
     "Meter Voltage Phase A": "Meter Voltage A",
     "Meter Voltage Phase B": "Meter Voltage B",
     "Meter Voltage Phase C": "Meter Voltage C",
-    "Meter current phase L1": "Meter Current A",
-    "Meter current phase L2": "Meter Current B",
-    "Meter current phase L3": "Meter Current C",
     "Meter Current Phase A": "Meter Current A",
     "Meter Current Phase B": "Meter Current B",
     "Meter Current Phase C": "Meter Current C",
@@ -825,76 +732,6 @@ DESCRIPTION_IMPROVEMENTS = {
     "Riso": "DC insulation resistance to ground",
     "Sh U": "Current shunt voltage",
     "Type": "Inverter device type identifier",
-
-    # ==========================================
-    # v2.0.6 CORRECTED Improvements (Using ACTUAL SunSpec Names)
-    # ==========================================
-
-    # Status/Alarm Points (9) - CORRECTED
-    "DI_status": "Digital input status register",  # was DIStatus
-    "AlarmSt": "Current alarm status code",
-    "GlobalSt": "Global inverter status",
-    "WarningFlags": "Active warning condition flags",
-    "PACDeratingFlags": "AC power derating active condition flags",
-    "DcSt1": "DC input 1 connection status",
-    "DcSt2": "DC input 2 connection status",
-    "DC1State": "DC string 1 operating state",
-    "DC2State": "DC string 2 operating state",
-
-    # Meter/Grid Points (14) - CORRECTED with actual SunSpec names
-    "W": "Active power at grid connection point",  # was Pgrid
-    "A": "Current at grid connection point",  # was Igrid
-    "VAr": "Reactive power at grid connection point",  # was Qgrid
-    "PF": "Power factor at grid connection point",
-    "Hz": "Grid frequency",
-    "PhVphA": "AC Voltage Phase A-N",  # was Vgrid
-    "VgridL1_N": "AC Voltage Phase A-N",  # was VgridL1N (fixed underscore)
-    "VgridL2_N": "AC Voltage Phase B-N",  # was VgridL2N (fixed underscore)
-    "ECharge": "Cumulative battery energy charged",  # was E_Ch
-    "EDischarge": "Cumulative battery energy discharged",  # was E_Dh
-    "ETotalAbsorbed": "Cumulative energy absorbed from grid",
-    "ETotalApparent": "Cumulative apparent energy in kVAh",
-
-    # Voltage Points (14) - CORRECTED
-    "PhVphAB": "AC Voltage Phase A-B",
-    "PhVphBC": "AC Voltage Phase B-C",
-    "PhVphCA": "AC Voltage Phase C-A",
-    "VGnd": "Voltage to ground reference",  # capital G version
-    "VBulk": "DC bus bulk capacitor voltage",  # was Vbulkmid
-    "DCV_1": "DC Voltage (String 1)",  # was Vdc
-    "DCV_2": "DC Voltage (String 2)",
-    "VcMax": "Maximum voltage across battery cells",
-    "VcMin": "Minimum voltage across battery cells",
-
-    # Power Points (4) - CORRECTED
-    "PacStandAlone": "AC power in stand-alone (off-grid) mode",
-    "PacTogrid": "AC power exported to grid",
-    "pn": "Inverter nominal rated power",  # was Pn (lowercase)
-    "sn": "Inverter nominal apparent power rating",  # was Sn (lowercase)
-
-    # Control Points (2) - CORRECTED
-    "gridExtCtrlEna": "External grid control enabled status",  # was GridExtCtrlEna
-    "gridExtCtrlState": "External grid control current state",  # was GridExtCtrlState
-
-    # WiFi/Network (2) - CORRECTED
-    "wlan0_essid": "WiFi network name (SSID) connected to",
-    "wlan0_link_quality": "WiFi link quality percentage",  # was wlan0_quality
-
-    # M1 Common Model - Better descriptions (6)
-    "Mn": "Device manufacturer name",
-    "Md": "Device model identifier",
-    "Vr": "Device firmware version",
-    "Opt": "Device configuration options",
-    "SN": "Device serial number",
-    "DA": "Device Modbus address",
-
-    # Other Points (6)
-    "TempInv": "Inverter internal temperature",
-    "TempBst": "DC-DC boost converter temperature",
-    "TSoc": "Battery state of charge percentage",
-    "Temp1": "Additional temperature sensor 1",
-    "ShU": "Current shunt voltage",
-    "cosPhi": "Power factor (cosine phi)",  # was Cosphi
 
     # ==========================================
     # v2.0.7 MASSIVE Systematic Improvements (58 points)
@@ -1651,7 +1488,7 @@ def get_comprehensive_category(label, description, model_flags, vsn300_name, vsn
     if any(phase in label_lower for phase in ["phase", "l1", "l2", "l3", "phv", "aph", "wph"]):
         if model_flags.get("M103") == "YES" or model_flags.get("M160") == "YES":
             return "Inverter"
-        elif model_flags.get("M203") == "YES":
+        if model_flags.get("M203") == "YES":
             return "Meter"
 
     # DC measurements
@@ -1661,15 +1498,15 @@ def get_comprehensive_category(label, description, model_flags, vsn300_name, vsn
     # Model-based fallback
     if model_flags.get("M103") == "YES" or model_flags.get("M160") == "YES":
         return "Inverter"
-    elif model_flags.get("M203") == "YES":
+    if model_flags.get("M203") == "YES":
         return "Meter"
-    elif model_flags.get("M802") == "YES":
+    if model_flags.get("M802") == "YES":
         return "Battery"
-    elif model_flags.get("M64061") == "YES":
+    if model_flags.get("M64061") == "YES":
         return "Inverter"
-    elif model_flags.get("ABB_Proprietary") == "YES":
+    if model_flags.get("ABB_Proprietary") == "YES":
         return "System"
-    elif model_flags.get("VSN300_Only") == "YES" or model_flags.get("VSN700_Only") == "YES":
+    if model_flags.get("VSN300_Only") == "YES" or model_flags.get("VSN700_Only") == "YES":
         return "Datalogger"
 
     return "Unknown"
@@ -1796,7 +1633,7 @@ def create_row_with_model_flags(vsn700_name, vsn300_name, sunspec_name, ha_name,
                                data_source, model_notes, models):
     """Create a complete row with model flags."""
     # Initialize model flags
-    model_flags = {flag: "NO" for flag in MODEL_FLAGS}
+    model_flags = dict.fromkeys(MODEL_FLAGS, "NO")
     for model in models:
         if model in model_flags:
             model_flags[model] = "YES"
@@ -2495,7 +2332,7 @@ def generate_mapping_excel_complete():
     print(f"\n{'='*70}")
     print(f"✓ Excel file created: {output_path}")
     print(f"  Total rows: {len(deduplicated_rows)}")
-    print(f"  Sheets: All Points, Summary, Changelog")
+    print("  Sheets: All Points, Summary, Changelog")
     print(f"{'='*70}\n")
 
     return output_path
