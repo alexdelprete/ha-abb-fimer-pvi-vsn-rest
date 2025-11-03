@@ -7,13 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta.16] - 2025-11-03
+
 ### Changed
 
-- **Removed v2 suffix from mapping files and scripts**
-  - Renamed `convert_excel_to_json_v2.py` to `convert_excel_to_json.py`
-  - Renamed `vsn-sunspec-point-mapping-v2.xlsx` to `vsn-sunspec-point-mapping.xlsx`
-  - Updated all references in scripts and documentation
-  - The v2 suffix was a temporary versioning that's no longer needed
+- **Standardized Phase Naming**: All phase-related points now use A/B/C/N notation (70+ points)
+  - Phase voltages: "AC Voltage Phase A-N" (was "Grid voltage phase A (L1) to neutral")
+  - Line-to-line: "AC Voltage Phase A-B" (was "AC line-to-line voltage phase A-B (L1-L2)")
+  - Currents: "AC Current Phase A" (was "Phase A AC current")
+  - Frequency: "AC Frequency Phase A" (was "AC frequency for phase A")
+  - Meter: "Meter Power Phase A" (was "Meter active power phase L1")
+  - House: "House Power Phase A" (was "House consumption phase L1 power")
+
+- **Removed Redundant Words**: Cleaned up 15+ point descriptions
+  - Removed word "measurement" from all descriptions (was "DC current measurement for string 1")
+  - Standardized string references to "(String #)" format (was "from MPPT string 1")
+  - Fixed "Combined DC input power from all strings" → "Total DC Input Power"
+
+- **Fixed Specific Points**: Corrected inconsistencies and redundancy
+  - GlobalSt: "Global inverter status" (was "Overall inverter operating state")
+  - logger_loggerId: "Logger ID" (fixed repeated word "Logger Logger Id")
+  - InverterSt: Properly capitalized "Inverter Status"
+  - free_ram/flash_free: Improved descriptions ("Available RAM", "Available flash storage")
+
+[Full release notes](docs/releases/v1.0.0-beta.16.md)
 
 ## [1.0.0-beta.15] - 2025-01-31
 

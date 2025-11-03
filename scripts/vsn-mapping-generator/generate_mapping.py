@@ -147,10 +147,16 @@ DISPLAY_NAME_CORRECTIONS = {
     "Booster stage temperature": "Booster temperature",
     "DC bulk capacitor voltage": "DC capacitor voltage",
     "DC bulk mid-point voltage": "DC mid-point voltage",
-    "DC current measurement for string 1": "DC current #1",
-    "DC current measurement for string 2": "DC current #2",
-    "DC voltage measurement for string 1": "DC voltage #1",
-    "DC voltage measurement for string 2": "DC voltage #2",
+    "DC current measurement for string 1": "DC Current #1",
+    "DC current measurement for string 2": "DC Current #2",
+    "DC Current (String 1)": "DC Current #1",
+    "DC Current (String 2)": "DC Current #2",
+    "DC voltage measurement for string 1": "DC Voltage #1",
+    "DC voltage measurement for string 2": "DC Voltage #2",
+    "DC Voltage (String 1)": "DC Voltage #1",
+    "DC Voltage (String 2)": "DC Voltage #2",
+    "DC Power (String 1)": "DC Power #1",
+    "DC Power (String 2)": "DC Power #2",
     "Phase A to neutral voltage measurement": "Phase Voltage AN",
     "Device Modbus address": "Modbus address",
     "Device model identifier from common model": "Model",
@@ -171,21 +177,28 @@ DISPLAY_NAME_CORRECTIONS = {
     "Total energy supplied from backup source": "Backup Energy",
     "Energy measured by current transformer": "Energy CT",
     "Energy measured by direct transducer": "Energy DT",
-    "Total DC energy from MPPT string 1": "String 1 Input Energy",
-    "Total DC energy from MPPT string 2": "String 2 Input Energy",
+    "Total DC energy from MPPT string 1": "String 1 Energy",
+    "Total DC energy from MPPT string 2": "String 2 Energy",
+    "Total DC Energy (String 1)": "String 1 Energy",
+    "Total DC Energy (String 2)": "String 2 Energy",
 
     # String measurement corrections
-    "DC current from MPPT string 1": "String 1 Input Current",
-    "DC current from MPPT string 2": "String 2 Input Current",
+    "DC current from MPPT string 1": "String 1 Current",
+    "DC current from MPPT string 2": "String 2 Current",
     "Combined DC input power from all strings": "Total DC Input Power",
-    "DC input power from MPPT string 1": "String 1 Input Power",
-    "DC input power from MPPT string 2": "String 2 Input Power",
+    "DC input power from MPPT string 1": "String 1 Power",
+    "DC input power from MPPT string 2": "String 2 Power",
+    "DC Input Power (String 1)": "String 1 Power",
+    "DC Input Power (String 2)": "String 2 Power",
 
     # Grid monitoring corrections
     "Grid support Fault Ride Through feature status": "FRT Status",
-    "AC frequency measurement for phase A": "Phase A Frequency",
-    "AC frequency measurement for phase B": "Phase B Frequency",
-    "AC frequency measurement for phase C": "Phase C Frequency",
+    "AC frequency measurement for phase A": "Frequency Phase A",
+    "AC frequency measurement for phase B": "Frequency Phase B",
+    "AC frequency measurement for phase C": "Frequency Phase C",
+    "AC Frequency Phase A": "Frequency Phase A",
+    "AC Frequency Phase B": "Frequency Phase B",
+    "AC Frequency Phase C": "Frequency Phase C",
     "Frequency measured by central controller": "CC Frequency",
 
     # Leakage current corrections
@@ -227,11 +240,17 @@ DISPLAY_NAME_CORRECTIONS = {
     # Voltage display names
     "DC bus bulk capacitor voltage": "Bulk DC Voltage",
     "DC bus bulk capacitor midpoint voltage": "Bulk DC Midpoint Voltage",
-    "Three-phase AC line-to-line voltage between L1 and L2": "AC Voltage L1-L2",
-    "Three-phase AC line-to-line voltage between L2 and L3": "AC Voltage L2-L3",
-    "Three-phase AC line-to-line voltage between L3 and L1": "AC Voltage L3-L1",
-    "Grid line-to-neutral voltage phase L1": "Grid Voltage L1-N",
-    "Grid line-to-neutral voltage phase L2": "Grid Voltage L2-N",
+    "Three-phase AC line-to-line voltage between L1 and L2": "AC Voltage A-B",
+    "Three-phase AC line-to-line voltage between L2 and L3": "AC Voltage B-C",
+    "Three-phase AC line-to-line voltage between L3 and L1": "AC Voltage C-A",
+    "AC Voltage Phase A-B": "AC Voltage A-B",
+    "AC Voltage Phase B-C": "AC Voltage B-C",
+    "AC Voltage Phase C-A": "AC Voltage C-A",
+    "Grid line-to-neutral voltage phase L1": "AC Voltage A-N",
+    "Grid line-to-neutral voltage phase L2": "AC Voltage B-N",
+    "AC Voltage Phase A-N": "AC Voltage A-N",
+    "AC Voltage Phase B-N": "AC Voltage B-N",
+    "AC Voltage Phase C-N": "AC Voltage C-N",
     "DC string 1 input voltage": "DC Input 1 Voltage",
     "DC string 2 input voltage": "DC Input 2 Voltage",
     "Battery pack voltage": "Battery Voltage",
@@ -305,6 +324,8 @@ DISPLAY_NAME_CORRECTIONS = {
     "DC bus bulk capacitor voltage": "DC Bus Voltage",
     "DC voltage for string 1": "DC Voltage #1",
     "DC voltage for string 2": "DC Voltage #2",
+    "DC Voltage (String 1)": "DC Voltage #1",
+    "DC Voltage (String 2)": "DC Voltage #2",
     "Maximum voltage across battery cells": "Battery Cell Max Voltage",
     "Minimum voltage across battery cells": "Battery Cell Min Voltage",
 
@@ -356,19 +377,31 @@ DISPLAY_NAME_CORRECTIONS = {
     "WiFi operating mode (client/AP)": "WiFi Mode",
 
     # Meter Display Names (14)
-    "Meter active power phase L1": "Meter Power L1",
-    "Meter active power phase L2": "Meter Power L2",
-    "Meter active power phase L3": "Meter Power L3",
-    "Meter reactive power phase L1": "Meter Reactive Power L1",
-    "Meter reactive power phase L2": "Meter Reactive Power L2",
-    "Meter reactive power phase L3": "Meter Reactive Power L3",
+    "Meter active power phase L1": "Meter Power A",
+    "Meter active power phase L2": "Meter Power B",
+    "Meter active power phase L3": "Meter Power C",
+    "Meter Power Phase A": "Meter Power A",
+    "Meter Power Phase B": "Meter Power B",
+    "Meter Power Phase C": "Meter Power C",
+    "Meter reactive power phase L1": "Meter Reactive Power A",
+    "Meter reactive power phase L2": "Meter Reactive Power B",
+    "Meter reactive power phase L3": "Meter Reactive Power C",
+    "Meter Reactive Power Phase A": "Meter Reactive Power A",
+    "Meter Reactive Power Phase B": "Meter Reactive Power B",
+    "Meter Reactive Power Phase C": "Meter Reactive Power C",
     "Meter reactive power total": "Meter Reactive Power Total",
-    "Meter voltage phase L1": "Meter Voltage L1",
-    "Meter voltage phase L2": "Meter Voltage L2",
-    "Meter voltage phase L3": "Meter Voltage L3",
-    "Meter current phase L1": "Meter Current L1",
-    "Meter current phase L2": "Meter Current L2",
-    "Meter current phase L3": "Meter Current L3",
+    "Meter voltage phase L1": "Meter Voltage A",
+    "Meter voltage phase L2": "Meter Voltage B",
+    "Meter voltage phase L3": "Meter Voltage C",
+    "Meter Voltage Phase A": "Meter Voltage A",
+    "Meter Voltage Phase B": "Meter Voltage B",
+    "Meter Voltage Phase C": "Meter Voltage C",
+    "Meter current phase L1": "Meter Current A",
+    "Meter current phase L2": "Meter Current B",
+    "Meter current phase L3": "Meter Current C",
+    "Meter Current Phase A": "Meter Current A",
+    "Meter Current Phase B": "Meter Current B",
+    "Meter Current Phase C": "Meter Current C",
     "Meter AC frequency": "Meter Frequency",
 
     # Device/Status Display Names (16)
@@ -406,6 +439,33 @@ DISPLAY_NAME_CORRECTIONS = {
     "DC insulation resistance to ground": "Insulation Resistance",
     "SunSpec Model 126 module enabled": "Model 126 Enabled",
     "SunSpec Model 132 module enabled": "Model 132 Enabled",
+
+    # VSN-specific display name fixes (user-requested)
+    "Inverter St": "Inverter Status",
+    "Inverter status": "Inverter Status",
+    "ram free": "Free RAM",
+    "flash free": "Free Flash Storage",
+    "Logger Sn": "Logger Serial Number",
+    "Logger Logger Id": "Logger ID",
+    "Logger ID": "Logger ID",
+
+    # Additional measurement word removals
+    "Current shunt voltage": "Shunt Voltage",
+    "Grid frequency": "Grid Frequency",
+    "Global inverter status": "Global Status",
+
+    # Phase current corrections
+    "AC Current Phase A": "Current Phase A",
+    "AC Current Phase B": "Current Phase B",
+    "AC Current Phase C": "Current Phase C",
+
+    # House consumption corrections
+    "House Power Phase A": "House Power A",
+    "House Power Phase B": "House Power B",
+    "House Power Phase C": "House Power C",
+    "House Current Phase A": "House Current A",
+    "House Current Phase B": "House Current B",
+    "House Current Phase C": "House Current C",
 }
 
 # Device class/unit fixes
@@ -586,23 +646,23 @@ DESCRIPTION_IMPROVEMENTS = {
     "DA": "Device Modbus address",
 
     # Phase voltages/currents
-    "PhVphA": "Phase A to neutral voltage measurement",
-    "PhVphB": "Phase B to neutral voltage measurement",
-    "PhVphC": "Phase C to neutral voltage measurement",
-    "AphA": "Phase A AC current measurement",
-    "AphB": "Phase B AC current measurement",
-    "AphC": "Phase C AC current measurement",
+    "PhVphA": "AC Voltage Phase A-N",
+    "PhVphB": "AC Voltage Phase B-N",
+    "PhVphC": "AC Voltage Phase C-N",
+    "AphA": "AC Current Phase A",
+    "AphB": "AC Current Phase B",
+    "AphC": "AC Current Phase C",
 
     # DC measurements (MPPT)
-    "DCA_1": "DC current measurement for string 1",
-    "DCA_2": "DC current measurement for string 2",
-    "DCV_1": "DC voltage measurement for string 1",
-    "DCV_2": "DC voltage measurement for string 2",
-    "DCW_1": "DC power measurement for string 1",
-    "DCW_2": "DC power measurement for string 2",
+    "DCA_1": "DC Current (String 1)",
+    "DCA_2": "DC Current (String 2)",
+    "DCV_1": "DC Voltage (String 1)",
+    "DCV_2": "DC Voltage (String 2)",
+    "DCW_1": "DC Power (String 1)",
+    "DCW_2": "DC Power (String 2)",
 
     # Battery specific
-    "Tmp": "Battery temperature measurement",
+    "Tmp": "Battery temperature",
     "BattNum": "Number of battery cells or modules",
     "Chc": "Battery charge cycles counter",
     "Dhc": "Battery discharge cycles counter",
@@ -650,12 +710,12 @@ DESCRIPTION_IMPROVEMENTS = {
     "E8_1Y": "Grid feed-in energy last year",
 
     # House meter
-    "HousePgrid_L1": "House consumption phase L1 power",
-    "HousePgrid_L2": "House consumption phase L2 power",
-    "HousePgrid_L3": "House consumption phase L3 power",
-    "HouseIgrid_L1": "House consumption phase L1 current",
-    "HouseIgrid_L2": "House consumption phase L2 current",
-    "HouseIgrid_L3": "House consumption phase L3 current",
+    "HousePgrid_L1": "House Power Phase A",
+    "HousePgrid_L2": "House Power Phase B",
+    "HousePgrid_L3": "House Power Phase C",
+    "HouseIgrid_L1": "House Current Phase A",
+    "HouseIgrid_L2": "House Current Phase B",
+    "HouseIgrid_L3": "House Current Phase C",
 
     # System info
     "SplitPhase": "Split-phase configuration flag",
@@ -673,21 +733,21 @@ DESCRIPTION_IMPROVEMENTS = {
     "EBackup": "Total energy supplied from backup source",
     "ECt": "Energy measured by current transformer",
     "EDt": "Energy measured by direct transducer",
-    "Ein1": "Total DC energy from MPPT string 1",
-    "Ein2": "Total DC energy from MPPT string 2",
+    "Ein1": "Total DC Energy (String 1)",
+    "Ein2": "Total DC Energy (String 2)",
 
     # String current/power measurements
-    "Iin1": "DC current from MPPT string 1",
-    "Iin2": "DC current from MPPT string 2",
-    "Pin": "Combined DC input power from all strings",
-    "Pin1": "DC input power from MPPT string 1",
-    "Pin2": "DC input power from MPPT string 2",
+    "Iin1": "DC Current (String 1)",
+    "Iin2": "DC Current (String 2)",
+    "Pin": "Total DC Input Power",
+    "Pin1": "DC Input Power (String 1)",
+    "Pin2": "DC Input Power (String 2)",
 
     # Grid monitoring and support
     "FRT_state": "Grid support Fault Ride Through feature status",
-    "HzA": "AC frequency measurement for phase A",
-    "HzB": "AC frequency measurement for phase B",
-    "HzC": "AC frequency measurement for phase C",
+    "HzA": "AC Frequency Phase A",
+    "HzB": "AC Frequency Phase B",
+    "HzC": "AC Frequency Phase C",
     "Fcc": "Frequency measured by central controller",
 
     # Leakage and safety monitoring
@@ -725,11 +785,11 @@ DESCRIPTION_IMPROVEMENTS = {
     # Voltage measurements (additional)
     "Vbulk": "DC bus bulk capacitor voltage",
     "Vbulk_mid": "DC bus bulk capacitor midpoint voltage",
-    "VoutRS": "Three-phase AC line-to-line voltage between L1 and L2",
-    "VoutST": "Three-phase AC line-to-line voltage between L2 and L3",
-    "VoutTR": "Three-phase AC line-to-line voltage between L3 and L1",
-    "Vgrid L1 N": "Grid line-to-neutral voltage phase L1",
-    "Vgrid L2 N": "Grid line-to-neutral voltage phase L2",
+    "VoutRS": "AC Voltage Phase A-B",
+    "VoutST": "AC Voltage Phase B-C",
+    "VoutTR": "AC Voltage Phase C-A",
+    "Vgrid L1 N": "AC Voltage Phase A-N",
+    "Vgrid L2 N": "AC Voltage Phase B-N",
     "Vin1": "DC string 1 input voltage",
     "Vin2": "DC string 2 input voltage",
     "Vba": "Battery pack voltage",
@@ -763,7 +823,7 @@ DESCRIPTION_IMPROVEMENTS = {
 
     # Other measurements
     "Riso": "DC insulation resistance to ground",
-    "Sh U": "Current measurement shunt voltage",
+    "Sh U": "Current shunt voltage",
     "Type": "Inverter device type identifier",
 
     # ==========================================
@@ -773,7 +833,7 @@ DESCRIPTION_IMPROVEMENTS = {
     # Status/Alarm Points (9) - CORRECTED
     "DI_status": "Digital input status register",  # was DIStatus
     "AlarmSt": "Current alarm status code",
-    "GlobalSt": "Overall inverter operating state",
+    "GlobalSt": "Global inverter status",
     "WarningFlags": "Active warning condition flags",
     "PACDeratingFlags": "AC power derating active condition flags",
     "DcSt1": "DC input 1 connection status",
@@ -786,23 +846,23 @@ DESCRIPTION_IMPROVEMENTS = {
     "A": "Current at grid connection point",  # was Igrid
     "VAr": "Reactive power at grid connection point",  # was Qgrid
     "PF": "Power factor at grid connection point",
-    "Hz": "Grid frequency measurement",
-    "PhVphA": "Grid voltage phase A (L1) to neutral",  # was Vgrid
-    "VgridL1_N": "Grid voltage phase L1 to neutral",  # was VgridL1N (fixed underscore)
-    "VgridL2_N": "Grid voltage phase L2 to neutral",  # was VgridL2N (fixed underscore)
+    "Hz": "Grid frequency",
+    "PhVphA": "AC Voltage Phase A-N",  # was Vgrid
+    "VgridL1_N": "AC Voltage Phase A-N",  # was VgridL1N (fixed underscore)
+    "VgridL2_N": "AC Voltage Phase B-N",  # was VgridL2N (fixed underscore)
     "ECharge": "Cumulative battery energy charged",  # was E_Ch
     "EDischarge": "Cumulative battery energy discharged",  # was E_Dh
     "ETotalAbsorbed": "Cumulative energy absorbed from grid",
     "ETotalApparent": "Cumulative apparent energy in kVAh",
 
     # Voltage Points (14) - CORRECTED
-    "PhVphAB": "AC line-to-line voltage phase A-B (L1-L2)",
-    "PhVphBC": "AC line-to-line voltage phase B-C (L2-L3)",
-    "PhVphCA": "AC line-to-line voltage phase C-A (L3-L1)",
+    "PhVphAB": "AC Voltage Phase A-B",
+    "PhVphBC": "AC Voltage Phase B-C",
+    "PhVphCA": "AC Voltage Phase C-A",
     "VGnd": "Voltage to ground reference",  # capital G version
     "VBulk": "DC bus bulk capacitor voltage",  # was Vbulkmid
-    "DCV_1": "DC voltage for string 1",  # was Vdc
-    "DCV_2": "DC voltage for string 2",
+    "DCV_1": "DC Voltage (String 1)",  # was Vdc
+    "DCV_2": "DC Voltage (String 2)",
     "VcMax": "Maximum voltage across battery cells",
     "VcMin": "Minimum voltage across battery cells",
 
@@ -833,7 +893,7 @@ DESCRIPTION_IMPROVEMENTS = {
     "TempBst": "DC-DC boost converter temperature",
     "TSoc": "Battery state of charge percentage",
     "Temp1": "Additional temperature sensor 1",
-    "ShU": "Current measurement shunt voltage",
+    "ShU": "Current shunt voltage",
     "cosPhi": "Power factor (cosine phi)",  # was Cosphi
 
     # ==========================================
@@ -855,19 +915,19 @@ DESCRIPTION_IMPROVEMENTS = {
     "wlan0_mode": "WiFi operating mode (client/AP)",
 
     # Meter (14 points)
-    "MeterPgrid_L1": "Meter active power phase L1",
-    "MeterPgrid_L2": "Meter active power phase L2",
-    "MeterPgrid_L3": "Meter active power phase L3",
-    "MeterQgrid_L1": "Meter reactive power phase L1",
-    "MeterQgrid_L2": "Meter reactive power phase L2",
-    "MeterQgrid_L3": "Meter reactive power phase L3",
+    "MeterPgrid_L1": "Meter Power Phase A",
+    "MeterPgrid_L2": "Meter Power Phase B",
+    "MeterPgrid_L3": "Meter Power Phase C",
+    "MeterQgrid_L1": "Meter Reactive Power Phase A",
+    "MeterQgrid_L2": "Meter Reactive Power Phase B",
+    "MeterQgrid_L3": "Meter Reactive Power Phase C",
     "MeterQgrid_Tot": "Meter reactive power total",
-    "MeterVgrid_L1": "Meter voltage phase L1",
-    "MeterVgrid_L2": "Meter voltage phase L2",
-    "MeterVgrid_L3": "Meter voltage phase L3",
-    "MeterIgrid_L1": "Meter current phase L1",
-    "MeterIgrid_L2": "Meter current phase L2",
-    "MeterIgrid_L3": "Meter current phase L3",
+    "MeterVgrid_L1": "Meter Voltage Phase A",
+    "MeterVgrid_L2": "Meter Voltage Phase B",
+    "MeterVgrid_L3": "Meter Voltage Phase C",
+    "MeterIgrid_L1": "Meter Current Phase A",
+    "MeterIgrid_L2": "Meter Current Phase B",
+    "MeterIgrid_L3": "Meter Current Phase C",
     "MeterFgrid": "Meter AC frequency",
 
     # Device/Firmware/Manufacturing (16 points)
@@ -905,6 +965,13 @@ DESCRIPTION_IMPROVEMENTS = {
     "Isolation_Ohm1": "DC insulation resistance to ground",
     "m126Mod_Ena": "SunSpec Model 126 module enabled",
     "m132Mod_Ena": "SunSpec Model 132 module enabled",
+
+    # VSN-specific points (user-requested fixes)
+    "InverterSt": "Inverter status",
+    "free_ram": "Available RAM",
+    "flash_free": "Available flash storage",
+    "logger_sn": "Logger serial number",
+    "logger_loggerId": "Logger ID",
 }
 
 # ==============================================================================
