@@ -404,6 +404,13 @@ UNIT_CORRECTIONS = {
     "YearWH": "Wh",
 }
 
+# Temperature unit normalization - degC → °C
+TEMPERATURE_UNIT_FIX = {
+    "degC": "°C",
+    "Deg C": "°C",
+    "deg C": "°C",
+}
+
 # ==============================================================================
 # v2.0.9 COMPREHENSIVE HA METADATA DICTIONARY
 # ==============================================================================
@@ -516,7 +523,8 @@ SUNSPEC_TO_HA_METADATA = {
     "TmpOt": {"device_class": "temperature", "state_class": "measurement", "unit": "°C"},
     "TmpInv": {"device_class": "temperature", "state_class": "measurement", "unit": "°C"},
     "TmpBst": {"device_class": "temperature", "state_class": "measurement", "unit": "°C"},
-    "TSoc": {"device_class": "temperature", "state_class": "measurement", "unit": "°C"},
+    "TempInv": {"device_class": "temperature", "state_class": "measurement", "unit": "°C"},
+    "TempBst": {"device_class": "temperature", "state_class": "measurement", "unit": "°C"},
     "Temp1": {"device_class": "temperature", "state_class": "measurement", "unit": "°C"},
 
     # Battery (%, measurement)
@@ -545,29 +553,6 @@ SUNSPEC_TO_HA_METADATA = {
 
 DESCRIPTION_IMPROVEMENTS = {
     # M1 Common Model - Fixed generic descriptions
-    "Mn": "Manufacturer name from device common model",
-    "Md": "Inverter model number and designation",
-    "Opt": "Inverter configuration and installed options",
-    "Vr": "Inverter firmware version",
-    "SN": "Inverter unique serial number",
-    "DA": "Device Modbus address",
-
-    # Phase voltages/currents
-    "PhVphA": "AC Voltage Phase A-N",
-    "PhVphB": "AC Voltage Phase B-N",
-    "PhVphC": "AC Voltage Phase C-N",
-    "AphA": "AC Current Phase A",
-    "AphB": "AC Current Phase B",
-    "AphC": "AC Current Phase C",
-
-    # DC measurements (MPPT)
-    "DCA_1": "DC Current (String 1)",
-    "DCA_2": "DC Current (String 2)",
-    "DCV_1": "DC Voltage (String 1)",
-    "DCV_2": "DC Voltage (String 2)",
-    "DCW_1": "DC Power (String 1)",
-    "DCW_2": "DC Power (String 2)",
-
     # Battery specific
     "Tmp": "Battery temperature",
     "BattNum": "Number of battery cells or modules",
@@ -575,8 +560,6 @@ DESCRIPTION_IMPROVEMENTS = {
     "Dhc": "Battery discharge cycles counter",
     "ETotCharge": "Total battery energy charged over lifetime",
     "ETotDischarge": "Total battery energy discharged over lifetime",
-    "ECharge": "Current battery charge energy",
-    "EDischarge": "Current battery discharge energy",
 
     # Energy counters with periods
     "E0_runtime": "Export energy counter lifetime total",
@@ -670,7 +653,6 @@ DESCRIPTION_IMPROVEMENTS = {
     # System measurements
     "SysTime": "Inverter system timestamp",
     "Vgnd": "Voltage to ground reference",
-    "cosPhi": "Power factor (cosine phi)",
 
     # Alarm and status points
     "Alarm St": "Current alarm status code",
@@ -686,7 +668,6 @@ DESCRIPTION_IMPROVEMENTS = {
     # Temperature points (additional)
     "Temp Inv": "Inverter internal temperature",
     "Temp Bst": "DC-DC boost converter temperature",
-    "Temp1": "Additional temperature sensor 1",
     "Tba": "Battery pack temperature",
 
     # Voltage measurements (additional)
@@ -727,6 +708,72 @@ DESCRIPTION_IMPROVEMENTS = {
     # Grid control
     "Grid Ext Ctrl Ena": "External grid control enabled status",
     "Grid Ext Ctrl State": "External grid control current state",
+
+    # Status/Alarm Points - Fixed keys to match SunSpec Normalized Names
+    "AlarmSt": "Current alarm status code",
+    "DcSt1": "DC string 1 connection status",
+    "DcSt2": "DC string 2 connection status",
+    "DI_status": "Digital input status register",
+    "GlobalSt": "Global inverter status",
+    "WarningFlags": "Active warning condition flags",
+    "PACDeratingFlags": "AC power derating active condition flags",
+    "DC1State": "DC string 1 operating state",
+    "DC2State": "DC string 2 operating state",
+
+    # Meter/Grid Points - Using actual SunSpec names
+    "W": "Active power at grid connection point",
+    "A": "Current at grid connection point",
+    "VAr": "Reactive power at grid connection point",
+    "PF": "Power factor at grid connection point",
+    "Hz": "Grid frequency",
+    "PhVphA": "AC Voltage Phase A-N",
+    "VgridL1_N": "AC Voltage Phase A-N",
+    "VgridL2_N": "AC Voltage Phase B-N",
+    "ECharge": "Cumulative battery energy charged",
+    "EDischarge": "Cumulative battery energy discharged",
+    "ETotalAbsorbed": "Cumulative energy absorbed from grid",
+    "ETotalApparent": "Cumulative apparent energy in kVAh",
+
+    # Voltage Points - Using actual SunSpec names
+    "PhVphAB": "AC Voltage Phase A-B",
+    "PhVphBC": "AC Voltage Phase B-C",
+    "PhVphCA": "AC Voltage Phase C-A",
+    "VGnd": "Voltage to ground reference",
+    "VBulk": "DC bus bulk capacitor voltage",
+    "DCV_1": "DC Voltage (String 1)",
+    "DCV_2": "DC Voltage (String 2)",
+    "VcMax": "Maximum voltage across battery cells",
+    "VcMin": "Minimum voltage across battery cells",
+
+    # Power Points - Using actual SunSpec names
+    "PacStandAlone": "AC power in stand-alone (off-grid) mode",
+    "PacTogrid": "AC power exported to grid",
+    "pn": "Inverter nominal rated power",
+    "sn": "Inverter nominal apparent power rating",
+
+    # Control Points - Using actual SunSpec names
+    "gridExtCtrlEna": "External grid control enabled status",
+    "gridExtCtrlState": "External grid control current state",
+
+    # WiFi/Network - Using actual SunSpec names
+    "wlan0_essid": "WiFi network name (SSID) connected to",
+    "wlan0_link_quality": "WiFi link quality percentage",
+
+    # M1 Common Model - Using actual SunSpec names
+    "Mn": "Device manufacturer name",
+    "Md": "Device model identifier",
+    "Vr": "Device firmware version",
+    "Opt": "Device configuration options",
+    "SN": "Device serial number",
+    "DA": "Device Modbus address",
+
+    # Temperature/Other Points - Using actual SunSpec names
+    "TempInv": "Inverter internal temperature",
+    "TempBst": "DC-DC boost converter temperature",
+    "TSoc": "Battery state of charge percentage",
+    "Temp1": "Additional temperature sensor 1",
+    "ShU": "Current shunt voltage",
+    "cosPhi": "Power factor (cosine phi)",
 
     # Other measurements
     "Riso": "DC insulation resistance to ground",
@@ -1682,6 +1729,10 @@ def create_row_with_model_flags(vsn700_name, vsn300_name, sunspec_name, ha_name,
     # 4. Apply unit corrections (Wh vs kWh fixes)
     if sunspec_name in UNIT_CORRECTIONS:
         row["units"] = UNIT_CORRECTIONS[sunspec_name]
+
+    # 4b. Normalize temperature units (degC → °C)
+    if row["units"] in TEMPERATURE_UNIT_FIX:
+        row["units"] = TEMPERATURE_UNIT_FIX[row["units"]]
 
     # 5. Apply HA metadata from SUNSPEC_TO_HA_METADATA dictionary
     if sunspec_name in SUNSPEC_TO_HA_METADATA:

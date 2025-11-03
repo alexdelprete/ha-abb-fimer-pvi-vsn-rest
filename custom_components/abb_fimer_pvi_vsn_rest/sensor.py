@@ -275,11 +275,11 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
                 if units in ("W", "Wh", "kW", "kWh", "var", "VAR", "VAh", "s", "B"):
                     # Power, energy, reactive power, apparent energy, duration, bytes: no decimals
                     self._attr_suggested_display_precision = 0
-                elif units in ("V", "A", "mA", "%", "Ah"):
-                    # Voltage, current, percentage, capacity: 1 decimal
+                elif units in ("V", "A", "mA", "%", "Ah", "°C", "°F"):
+                    # Voltage, current, percentage, capacity, temperature: 1 decimal
                     self._attr_suggested_display_precision = 1
-                elif units in ("Hz", "°C", "°F", "MOhm", "MΩ", "kΩ"):
-                    # Frequency, temperature, large resistance values: 2 decimals
+                elif units in ("Hz", "MOhm", "MΩ", "kΩ"):
+                    # Frequency, large resistance values: 2 decimals
                     self._attr_suggested_display_precision = 2
                 elif units in ("Ω", "Ohm"):
                     # Small resistance values in ohms: no decimals
