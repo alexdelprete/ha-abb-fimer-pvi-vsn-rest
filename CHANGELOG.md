@@ -9,9 +9,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.0-beta.16] - 2025-11-03
 
+### Fixed
+
+- **Temperature Units**: Changed from "degC" to "°C" for all temperature sensors
+- **Temperature Precision**: Changed from 2 decimals to 1 decimal for better readability
+- **Timestamp Sensor**: Fixed sys_time sensor to convert Unix timestamp to datetime with HA timezone
+  - Now uses `ZoneInfo(hass.config.time_zone)` instead of returning raw integer
+  - Fixes `AttributeError: 'int' object has no attribute 'tzinfo'`
+
 ### Changed
 
-- **Standardized Phase Naming**: All phase-related points now use A/B/C/N notation (70+ points)
+- **Standardized Energy Point Time Periods** (90+ points):
+  - Removed word "counter" from all energy descriptions for conciseness
+  - Standardized time period suffixes:
+    - "- Total" for cumulative totals
+    - "- Lifetime" for lifetime/runtime values (was "Runtime", "lifetime total")
+    - "- Week" for weekly periods (was "last week", "last 7 days", "7D")
+    - "- Month" for monthly periods (was "last month", "last 30 days", "30D")
+    - "- Year" for yearly periods (was "last year", "1Y")
+    - "- Today" for daily periods (was "today", "day")
+  - Examples:
+    - "Export energy counter lifetime total" → "Export energy - Lifetime"
+    - "Battery discharge energy last 7 days" → "Battery discharge energy - Week"
+    - "Meter active power total" → "Meter active power - Total"
+
+- **Improved Point Descriptions** (20+ points):
+  - store_size: "Flash storage used" (improved capitalization)
+  - PF: "Power factor" (simplified)
+  - PowerPeakToday: "Peak power output today"
+  - GlobState: "Global operational state"
+  - sys_load: "System load average"
+  - Fcc: "Central controller frequency"
+  - FRT_state: "Fault Ride Through (FRT) status"
+  - ECt/EDt: Added "(CT)"/"(DT)" acronyms
+  - ETotalApparent: Removed "in kVAh" (unit shown separately)
+  - cosPhi: Display "Power Factor" (removed "Cos φ")
+  - mfg_week_year: "Manufacturing Week/Year" (restored prefix)
+
+- **Standardized Phase Naming**: All phase-related points now use A/B/C/N notation (40+ points)
   - Phase voltages: "AC Voltage Phase A-N" (was "Grid voltage phase A (L1) to neutral")
   - Line-to-line: "AC Voltage Phase A-B" (was "AC line-to-line voltage phase A-B (L1-L2)")
   - Currents: "AC Current Phase A" (was "Phase A AC current")
@@ -19,16 +54,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Meter: "Meter Power Phase A" (was "Meter active power phase L1")
   - House: "House Power Phase A" (was "House consumption phase L1 power")
 
-- **Removed Redundant Words**: Cleaned up 15+ point descriptions
-  - Removed word "measurement" from all descriptions (was "DC current measurement for string 1")
+- **Removed Redundant Words**: Cleaned up descriptions
+  - Removed word "measurement" from descriptions (was "DC current measurement for string 1")
   - Standardized string references to "(String #)" format (was "from MPPT string 1")
   - Fixed "Combined DC input power from all strings" → "Total DC Input Power"
 
-- **Fixed Specific Points**: Corrected inconsistencies and redundancy
-  - GlobalSt: "Global inverter status" (was "Overall inverter operating state")
-  - logger_loggerId: "Logger ID" (fixed repeated word "Logger Logger Id")
+- **Fixed Specific Points**: Corrected inconsistencies
+  - GlobalSt: "Global inverter status"
+  - logger_loggerId: "Logger ID" (fixed repeated word)
   - InverterSt: Properly capitalized "Inverter Status"
-  - free_ram/flash_free: Improved descriptions ("Available RAM", "Available flash storage")
+  - free_ram/flash_free: Improved descriptions
+
+**Summary**: 180+ point descriptions improved (70% of all 258 points), focusing on consistency, conciseness, and professional naming conventions.
 
 [Full release notes](docs/releases/v1.0.0-beta.16.md)
 
