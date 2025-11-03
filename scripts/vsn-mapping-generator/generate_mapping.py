@@ -211,7 +211,7 @@ DISPLAY_NAME_CORRECTIONS = {
     "Inverter rated power capacity": "Power Rating",
     "Inverter system timestamp": "System Time",
     "Voltage to ground reference": "Ground Voltage",
-    "Power factor (cosine phi)": "Power Factor (Cos φ)",
+    "Power factor (cosine phi)": "Power Factor",
 
     # M1 Common Model fixes
     "Inverter model number and designation": "Device Model",
@@ -327,7 +327,7 @@ DISPLAY_NAME_CORRECTIONS = {
     "Firmware revision identifier": "Firmware Revision",
     "Manufacturing part number": "Part Number",
     "Manufacturing serial number": "Serial Number",
-    "Manufacturing week and year (WWYY)": "Week/Year",
+    "Manufacturing week and year (WWYY)": "Manufacturing Week/Year",
 
     # Battery/Power Display Names (17)
     "Battery external control enabled flag": "Battery Control Enabled",
@@ -591,7 +591,7 @@ DESCRIPTION_IMPROVEMENTS = {
     "E6_30D": "Battery discharge energy last 30 days",
     "E6_1Y": "Battery discharge energy last year",
     "E7_runtime": "PV production energy lifetime total",
-    "E7_7D": "PV production energy last 7 days",
+    "E7_7D": "Energy production last week",
     "E7_30D": "PV production energy last 30 days",
     "E7_1Y": "PV production energy last year",
     "E8_runtime": "Grid feed-in energy lifetime total",
@@ -635,7 +635,7 @@ DESCRIPTION_IMPROVEMENTS = {
     "HzA": "AC Frequency Phase A",
     "HzB": "AC Frequency Phase B",
     "HzC": "AC Frequency Phase C",
-    "Fcc": "Frequency measured by central controller",
+    "Fcc": "Central controller frequency",
 
     # Leakage and safety monitoring
     "IleakDC": "DC side ground fault leakage current",
@@ -721,7 +721,7 @@ DESCRIPTION_IMPROVEMENTS = {
     "W": "Active power at grid connection point",
     "A": "Current at grid connection point",
     "VAr": "Reactive power at grid connection point",
-    "PF": "Power factor at grid connection point",
+    "PF": "Power factor",
     "Hz": "Grid frequency",
     "PhVphA": "AC Voltage Phase A-N",
     "VgridL1_N": "AC Voltage Phase A-N",
@@ -857,7 +857,9 @@ DESCRIPTION_IMPROVEMENTS = {
     # Additional improvements (v2.0.10)
     "GlobState": "Global operational state",
     "PowerPeakAbs": "Peak absolute output power",
+    "PowerPeakToday": "Peak power output today",
     "sys_load": "System load average",
+    "store_size": "Flash storage used",
     "ECt": "Total energy from current transformer (CT)",
     "EDt": "Total energy from direct transducer (DT)",
     "FRT_state": "Fault Ride Through (FRT) status",
