@@ -326,8 +326,8 @@ DISPLAY_NAME_CORRECTIONS = {
     "Firmware release version number": "Firmware Version",
     "Firmware revision identifier": "Firmware Revision",
     "Manufacturing part number": "Part Number",
-    "Manufacturing serial number": "Mfg Serial Number",
-    "Manufacturing week and year (WWYY)": "Mfg Week/Year",
+    "Manufacturing serial number": "Serial Number",
+    "Manufacturing week and year (WWYY)": "Week/Year",
 
     # Battery/Power Display Names (17)
     "Battery external control enabled flag": "Battery Control Enabled",
@@ -621,8 +621,6 @@ DESCRIPTION_IMPROVEMENTS = {
 
     # Energy counters
     "EBackup": "Total energy supplied from backup source",
-    "ECt": "Energy measured by current transformer",
-    "EDt": "Energy measured by direct transducer",
     "Ein1": "Total DC Energy (String 1)",
     "Ein2": "Total DC Energy (String 2)",
 
@@ -634,7 +632,6 @@ DESCRIPTION_IMPROVEMENTS = {
     "Pin2": "DC Input Power (String 2)",
 
     # Grid monitoring and support
-    "FRT_state": "Grid support Fault Ride Through feature status",
     "HzA": "AC Frequency Phase A",
     "HzB": "AC Frequency Phase B",
     "HzC": "AC Frequency Phase C",
@@ -732,7 +729,7 @@ DESCRIPTION_IMPROVEMENTS = {
     "ECharge": "Cumulative battery energy charged",
     "EDischarge": "Cumulative battery energy discharged",
     "ETotalAbsorbed": "Cumulative energy absorbed from grid",
-    "ETotalApparent": "Cumulative apparent energy in kVAh",
+    "ETotalApparent": "Cumulative apparent energy",
 
     # Voltage Points - Using actual SunSpec names
     "PhVphAB": "AC Voltage Phase A-B",
@@ -856,6 +853,14 @@ DESCRIPTION_IMPROVEMENTS = {
     "flash_free": "Available flash storage",
     "logger_sn": "Logger serial number",
     "logger_loggerId": "Logger ID",
+
+    # Additional improvements (v2.0.10)
+    "GlobState": "Global operational state",
+    "PowerPeakAbs": "Peak absolute output power",
+    "sys_load": "System load average",
+    "ECt": "Total energy from current transformer (CT)",
+    "EDt": "Total energy from direct transducer (DT)",
+    "FRT_state": "Fault Ride Through (FRT) status",
 }
 
 # ==============================================================================
