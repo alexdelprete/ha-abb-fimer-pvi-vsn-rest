@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.0.0-beta.16] - 2025-11-03
+## [1.0.0-beta.15] - 2025-11-03
 
 ### Fixed
 
@@ -67,39 +67,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 **Summary**: 180+ point descriptions improved (70% of all 258 points), focusing on consistency, conciseness, and professional naming conventions.
 
-[Full release notes](docs/releases/v1.0.0-beta.16.md)
-
-## [1.0.0-beta.15] - 2025-01-31
-
-### Fixed
-
-- **Critical: Device Type Detection**: Fixed device_type being discarded by normalizer
-  - Normalizer now preserves `device_type` and `timestamp` from VSN API responses
-  - Devices correctly identified as "inverter", "datalogger", etc. (instead of "unknown")
-  - Entity IDs now follow correct template: `sensor.abb_vsn_rest_inverter_{serial}_{point}`
-  - Existing users: entity IDs stable (locked by unique_id), friendly names improve
-
-### Changed
-
-- **User-Friendly Device Names**: Implemented "Manufacturer Type Model (Serial)" format
-  - Added `_format_device_name()` helper function
-  - Examples: "Power-One Inverter PVI-3.0-TL-OUTD (077909-3G)", "ABB Datalogger VSN300 (111033-3N)"
-  - Serial format: First 8 chars with hyphen for readability (e.g., "077909-3G")
-  - Manufacturer from SunSpec M1 Common Model (per-device)
-
-- **Modern HA Entity Naming**: Implemented `_attr_suggested_object_id` pattern
-  - Decouples entity_id generation from display names
-  - Entity IDs: Technical, stable (controlled by suggested_object_id)
-  - Friendly names: User-friendly, readable (device name + entity name)
-  - Follows modern Home Assistant best practices
-
-### Code Quality
-
-- **Fixed Pre-existing Ruff Error**: RET504 in sensor.py (unnecessary assignment before return)
-
 [Full release notes](docs/releases/v1.0.0-beta.15.md)
 
-## [1.0.0-beta.14] - 2025-01-31
+## [1.0.0-beta.14] - 2025-10-31
 
 ### Changed
 
