@@ -17,6 +17,7 @@ This generator creates a complete mapping file that:
 vsn-mapping-generator/
 ├── generate_mapping.py           # Main mapping generator script
 ├── convert_to_json.py            # Excel to JSON converter
+├── extract_manual_changes.py    # Backport tool for manual Excel edits
 ├── README.md                     # This file
 ├── data/                         # Input data files
 │   ├── vsn300/
@@ -148,8 +149,58 @@ Points with the same SunSpec normalized name are merged, preserving the best ava
 2. Replace `data/sunspec/models_workbook.xlsx`
 3. Run `generate_mapping.py`
 
+## Manual Editing Workflow (v2.0.9+)
+
+You can now manually edit the generated Excel file and backport your changes to the generator:
+
+### 1. Save a Backup
+```bash
+copy output\vsn-sunspec-point-mapping.xlsx output\vsn-sunspec-point-mapping-original.xlsx
+```
+
+### 2. Edit the Excel File
+Open `output/vsn-sunspec-point-mapping.xlsx` and edit:
+- **Label**: Human-readable label for the point
+- **Description**: Detailed description of what the point measures
+- **HA Display Name**: User-friendly name shown in Home Assistant
+
+### 3. Extract Changes
+```bash
+python extract_manual_changes.py
+```
+
+This will:
+- Compare original vs edited files
+- Extract all differences
+- Generate Python code in `output/manual_changes_backport.txt`
+
+### 4. Apply Changes to Generator
+1. Open `output/manual_changes_backport.txt`
+2. Copy the generated code sections
+3. Paste into the appropriate dictionaries in `generate_mapping.py`:
+   - `DESCRIPTION_IMPROVEMENTS` (around line 579)
+   - `DISPLAY_NAME_CORRECTIONS` (around line 139)
+   - `LABEL_CORRECTIONS` (around line 422)
+
+### 5. Regenerate
+```bash
+python generate_mapping.py && python convert_to_json.py
+```
+
+Your manual improvements are now permanent and will be applied on every regeneration!
+
 ## Version History
 
+- **v2.0.9** (2024-11-03): Comprehensive data quality improvements
+  - Fixed label spacing (DC1/DC2 states)
+  - Removed energy prefixes (E#/Ein)
+  - Standardized time periods (30 days→month, 7 days→week)
+  - Corrected Wh/kWh units
+  - Added comprehensive HA metadata (device_class, state_class, units)
+  - Created `extract_manual_changes.py` for backporting manual edits
+- **v2.0.8** (2024-11-02): Fixed acronym spacing in labels (FRT, MPPT, QAC, SAC, PAC, DI, WH)
+- **v2.0.7** (2024-11-02): Massive systematic improvements (58 points)
+- **v2.0.6** (2024-11-02): Corrected SunSpec normalized names
 - **v2.0.0** (2024-11-02): Self-contained generator with status.json processing
 - **v1.0.0** (2024-11-02): Initial comprehensive generator replacing multi-script workflow
 
