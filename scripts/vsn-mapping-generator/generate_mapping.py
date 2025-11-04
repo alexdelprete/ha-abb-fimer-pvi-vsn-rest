@@ -402,6 +402,9 @@ UNIT_CORRECTIONS = {
     "MonthWH": "Wh",
     "WeekWH": "Wh",
     "YearWH": "Wh",
+    # uA to mA fixes - HA doesn't support uA for current device class
+    "ILeakDcAc": "mA",
+    "ILeakDcDc": "mA",
 }
 
 # Temperature unit normalization - degC → °C

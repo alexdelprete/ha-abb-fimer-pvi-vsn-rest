@@ -340,7 +340,7 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         # Convert Unix timestamps to datetime for timestamp device class
         # Use Home Assistant's configured timezone
         if (
-            self._attr_device_class == SensorDeviceClass.TIMESTAMP
+            getattr(self, "_attr_device_class", None) == SensorDeviceClass.TIMESTAMP
             and isinstance(value, (int, float))
             and value > 0
         ):
