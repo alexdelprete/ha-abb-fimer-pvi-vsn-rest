@@ -18,7 +18,7 @@ from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN
+from .const import AURORA_EPOCH_OFFSET, DOMAIN, STATE_ENTITY_MAPPINGS
 from .coordinator import ABBFimerPVIVSNRestCoordinator
 
 _LOGGER = logging.getLogger(__name__)
@@ -202,6 +202,10 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         self._point_name = point_name
         self._point_data = point_data  # Store for attributes
 
+        # Store SunSpec normalized name and check if state mapping applies
+        self._sunspec_name = point_data.get("sunspec_name", "")
+        self._state_mapping = STATE_ENTITY_MAPPINGS.get(self._sunspec_name)
+
         # Enable modern entity naming pattern
         self._attr_has_entity_name = True
 
@@ -350,7 +354,8 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
 
         value = point_data.get("value")
 
-        # Convert Unix timestamps to datetime for timestamp device class
+        # Convert Aurora timestamps to datetime for timestamp device class
+        # Aurora protocol uses Jan 1, 2000 epoch instead of Unix epoch (Jan 1, 1970)
         # Use Home Assistant's configured timezone
         if (
             getattr(self, "_attr_device_class", None) == SensorDeviceClass.TIMESTAMP
@@ -360,8 +365,8 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
             try:
                 # Get HA's configured timezone
                 tz = ZoneInfo(self.hass.config.time_zone)
-                # Convert Unix timestamp to datetime in HA's timezone
-                return datetime.fromtimestamp(value, tz=tz)
+                # Add Aurora epoch offset to convert to Unix timestamp, then to datetime
+                return datetime.fromtimestamp(value + AURORA_EPOCH_OFFSET, tz=tz)
             except (ValueError, OSError, KeyError) as err:
                 _LOGGER.warning(
                     "Failed to convert timestamp %s for %s: %s",
@@ -370,6 +375,15 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
                     err,
                 )
                 return None
+
+        # Translate integer state codes to descriptive strings using Aurora protocol mappings
+        # If this entity has a state mapping and the value is an integer, translate it
+        if self._state_mapping and isinstance(value, int):
+            state_text = self._state_mapping.get(value)
+            if state_text:
+                return state_text
+            # Unknown state code - return with code for debugging
+            return f"Unknown ({value})"
 
         return value
 
@@ -426,6 +440,12 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         # Add timestamp if available
         if timestamp := device_data.get("timestamp"):
             attributes["last_updated"] = timestamp
+
+        # Add raw state code if state translation is active
+        if self._state_mapping:
+            raw_value = point_data.get("value")
+            if isinstance(raw_value, int):
+                attributes["raw_state_code"] = raw_value
 
         # Clean up empty strings to None for cleaner display
         return {k: (v if v != "" else None) for k, v in attributes.items()}

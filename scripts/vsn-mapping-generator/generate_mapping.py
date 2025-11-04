@@ -47,7 +47,7 @@ MODEL_FLAGS = [
     "ABB_Proprietary"
 ]
 
-# Full Excel headers (26 columns total)
+# Full Excel headers (27 columns total)
 EXCEL_HEADERS = MODEL_FLAGS + [
     "REST Name (VSN700)",
     "REST Name (VSN300)",
@@ -62,6 +62,7 @@ EXCEL_HEADERS = MODEL_FLAGS + [
     "HA Unit of Measurement",
     "HA State Class",
     "HA Device Class",
+    "HA Icon",
     "Entity Category",
     "Available in Modbus",
     "Data Source",
@@ -379,6 +380,10 @@ DISPLAY_NAME_CORRECTIONS = {
     "Datalogger serial number": "Serial Number",
     "Device 2 Firmware": "Firmware Version",
     "WiFi network name (SSID) connected to": "WiFi network name (SSID)",
+
+    # DC voltage display names - add string context
+    "DC Voltage #1": "DC Voltage (String 1)",
+    "DC Voltage #2": "DC Voltage (String 2)",
 }
 
 # Device class/unit fixes (keyed by label, not SunSpec name)
@@ -400,6 +405,8 @@ DEVICE_CLASS_FIXES = {
     "Options": {"entity_category": "diagnostic"},
     "Global St": {"entity_category": "diagnostic"},
     "Inverter St": {"entity_category": "diagnostic"},
+    # Configuration settings should be diagnostic
+    "Country Std": {"entity_category": "diagnostic"},
 }
 
 # ==============================================================================
@@ -425,11 +432,18 @@ UNIT_CORRECTIONS = {
     "MonthWH": "Wh",
     "WeekWH": "Wh",
     "YearWH": "Wh",
+    "WH": "Wh",  # AC Energy should be Wh not kWh
     # uA to mA fixes - HA doesn't support uA for current device class
     "ILeakDcAc": "mA",
     "ILeakDcDc": "mA",
     # System monitoring unit fixes
     "sys_load": "",  # Fix "none" unit to empty string
+    # DC power unit fixes - feeds data has kW but should be W
+    "DCW": "W",
+    "DCW_1": "W",
+    "DCW_2": "W",
+    # Resistance unit fixes - MOhm to MΩ
+    "Isolation_Ohm1": "MΩ",
 }
 
 # Temperature unit normalization - degC → °C
@@ -465,6 +479,47 @@ SUNSPEC_TO_HA_METADATA = {
     "MonthWH": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
     "YearWH": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
 
+    # Energy counters - E series (Wh, total)
+    "E0_runtime": {"device_class": "energy", "state_class": "total_increasing", "unit": "Wh"},
+    "E0_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "E0_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "E0_1Y": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "E1_runtime": {"device_class": "energy", "state_class": "total_increasing", "unit": "Wh"},
+    "E1_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "E1_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "E3_runtime": {"device_class": "energy", "state_class": "total_increasing", "unit": "Wh"},
+    "E3_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "E3_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "E6_runtime": {"device_class": "energy", "state_class": "total_increasing", "unit": "Wh"},
+    "E6_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "E6_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "E6_total": {"device_class": "energy", "state_class": "total_increasing", "unit": "Wh"},
+    "E7_runtime": {"device_class": "energy", "state_class": "total_increasing", "unit": "Wh"},
+    "E7_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "E7_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "E7_total": {"device_class": "energy", "state_class": "total_increasing", "unit": "Wh"},
+    "E8_runtime": {"device_class": "energy", "state_class": "total_increasing", "unit": "Wh"},
+    "E8_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "E8_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "E15_runtime": {"device_class": "energy", "state_class": "total_increasing", "unit": "Wh"},
+    "E15_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "E15_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "Ein_runtime": {"device_class": "energy", "state_class": "total_increasing", "unit": "Wh"},
+    "Ein_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "Ein_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "ECharge_runtime": {"device_class": "energy", "state_class": "total_increasing", "unit": "Wh"},
+    "ECharge_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "ECharge_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "EDischarge_runtime": {"device_class": "energy", "state_class": "total_increasing", "unit": "Wh"},
+    "EDischarge_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "EDischarge_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "ETotCharge_runtime": {"device_class": "energy", "state_class": "total_increasing", "unit": "Wh"},
+    "ETotCharge_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "ETotCharge_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "ETotDischarge_runtime": {"device_class": "energy", "state_class": "total_increasing", "unit": "Wh"},
+    "ETotDischarge_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "ETotDischarge_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+
     # Power measurements (W, measurement)
     "W": {"device_class": "power", "state_class": "measurement", "unit": "W"},
     "WphA": {"device_class": "power", "state_class": "measurement", "unit": "W"},
@@ -478,6 +533,16 @@ SUNSPEC_TO_HA_METADATA = {
     "WRtg": {"device_class": "power", "state_class": "measurement", "unit": "W"},
     "PacStandAlone": {"device_class": "power", "state_class": "measurement", "unit": "W"},
     "PacTogrid": {"device_class": "power", "state_class": "measurement", "unit": "W"},
+    "Pin": {"device_class": "power", "state_class": "measurement", "unit": "W"},
+    "Pin1": {"device_class": "power", "state_class": "measurement", "unit": "W"},
+    "Pin2": {"device_class": "power", "state_class": "measurement", "unit": "W"},
+    "PbaT": {"device_class": "power", "state_class": "measurement", "unit": "W"},
+    "MeterPgrid_Tot": {"device_class": "power", "state_class": "measurement", "unit": "W"},
+    "HousePgrid_Tot": {"device_class": "power", "state_class": "measurement", "unit": "W"},
+    "HousePgrid_L1": {"device_class": "power", "state_class": "measurement", "unit": "W"},
+    "HousePgrid_L2": {"device_class": "power", "state_class": "measurement", "unit": "W"},
+    "HousePgrid_L3": {"device_class": "power", "state_class": "measurement", "unit": "W"},
+    "HousePInverter": {"device_class": "power", "state_class": "measurement", "unit": "W"},
     # Note: "pn" in datalogger context is product number (text), not power
     # Removed from here to avoid confusion
 
@@ -511,6 +576,9 @@ SUNSPEC_TO_HA_METADATA = {
     "MeterIgrid_L1": {"device_class": "current", "state_class": "measurement", "unit": "A"},
     "MeterIgrid_L2": {"device_class": "current", "state_class": "measurement", "unit": "A"},
     "MeterIgrid_L3": {"device_class": "current", "state_class": "measurement", "unit": "A"},
+    "HouseIgrid_L1": {"device_class": "current", "state_class": "measurement", "unit": "A"},
+    "HouseIgrid_L2": {"device_class": "current", "state_class": "measurement", "unit": "A"},
+    "HouseIgrid_L3": {"device_class": "current", "state_class": "measurement", "unit": "A"},
     "ILeakDcAc": {"device_class": "current", "state_class": "measurement", "unit": "mA"},
     "ILeakDcDc": {"device_class": "current", "state_class": "measurement", "unit": "mA"},
 
@@ -529,6 +597,7 @@ SUNSPEC_TO_HA_METADATA = {
     "DCV_2": {"device_class": "voltage", "state_class": "measurement", "unit": "V"},
     "VGnd": {"device_class": "voltage", "state_class": "measurement", "unit": "V"},
     "Vgnd": {"device_class": "voltage", "state_class": "measurement", "unit": "V"},
+    "VBulk": {"device_class": "voltage", "state_class": "measurement", "unit": "V"},
     "VBulkMid": {"device_class": "voltage", "state_class": "measurement", "unit": "V"},
     "VgridL1_N": {"device_class": "voltage", "state_class": "measurement", "unit": "V"},
     "VgridL2_N": {"device_class": "voltage", "state_class": "measurement", "unit": "V"},
@@ -556,10 +625,11 @@ SUNSPEC_TO_HA_METADATA = {
     "TempInv": {"device_class": "temperature", "state_class": "measurement", "unit": "°C"},
     "TempBst": {"device_class": "temperature", "state_class": "measurement", "unit": "°C"},
     "Temp1": {"device_class": "temperature", "state_class": "measurement", "unit": "°C"},
+    "Booster_Tmp": {"device_class": "temperature", "state_class": "measurement", "unit": "°C"},
 
     # Battery (%, measurement)
-    "SoC": {"device_class": "battery", "state_class": "measurement", "unit": "%"},
-    "SoH": {"device_class": "battery", "state_class": "measurement", "unit": "%"},
+    "Soc": {"device_class": "battery", "state_class": "measurement", "unit": "%"},
+    "Soh": {"device_class": "battery", "state_class": "measurement", "unit": "%"},
 
     # Power Factor (no unit, measurement)
     "PF": {"device_class": "power_factor", "state_class": "measurement", "unit": ""},
@@ -569,15 +639,33 @@ SUNSPEC_TO_HA_METADATA = {
     "Fan1rpm": {"device_class": None, "state_class": "measurement", "unit": "RPM"},
     "Fan2rpm": {"device_class": None, "state_class": "measurement", "unit": "RPM"},
 
-    # Resistance (Ohm, measurement)
-    "Isolation_Ohm1": {"device_class": None, "state_class": "measurement", "unit": "Ω"},
+    # Resistance (MOhm, measurement)
+    "Isolation_Ohm1": {"device_class": None, "state_class": "measurement", "unit": "MΩ"},
 
     # Counters (no device_class, total)
     "CycleNum": {"device_class": None, "state_class": "total", "unit": "cycles"},
     "NumOfMPPT": {"device_class": None, "state_class": "measurement", "unit": "channels"},
 
     # Network Monitoring (%, measurement)
-    "wlan0_link_quality": {"device_class": None, "state_class": "measurement", "unit": "%"},
+    "wlan0_link_quality": {"device_class": "signal_strength", "state_class": "measurement", "unit": "%"},
+
+    # Data Size (bytes, measurement)
+    "store_size": {"device_class": "data_size", "state_class": "measurement", "unit": "B"},
+    "flash_free": {"device_class": "data_size", "state_class": "measurement", "unit": "B"},
+    "free_ram": {"device_class": "data_size", "state_class": "measurement", "unit": "B"},
+
+    # Duration (s, total_increasing)
+    "uptime": {"device_class": "duration", "state_class": "total_increasing", "unit": "s"},
+
+    # Apparent Energy (VAh) - no standard HA device_class, use energy icon
+    "E2_runtime": {"device_class": None, "state_class": "total_increasing", "unit": "VAh", "icon": "mdi:lightning-bolt"},
+    "E2_7D": {"device_class": None, "state_class": "total", "unit": "VAh", "icon": "mdi:lightning-bolt"},
+    "E2_30D": {"device_class": None, "state_class": "total", "unit": "VAh", "icon": "mdi:lightning-bolt"},
+
+    # Peak Power (kW, measurement) - power device_class
+    "PowerPeakAbs": {"device_class": "power", "state_class": "measurement", "unit": "kW"},
+    "PowerPeakToday": {"device_class": "power", "state_class": "measurement", "unit": "kW"},
+    "Ppeak": {"device_class": "power", "state_class": "measurement", "unit": "kW"},
 }
 
 # ==============================================================================
@@ -793,10 +881,15 @@ DESCRIPTION_IMPROVEMENTS = {
     "DC2State": "DC string 2 operating state",
 
     # Meter/Grid Points - Using actual SunSpec names
-    "W": "Active power at grid connection point",
-    "A": "Current at grid connection point",
+    "W": "AC Power",
+    "A": "AC Current",
     "VAr": "Reactive power at grid connection point",
     "PF": "Power factor",
+    "DCW": "DC Power",
+    "DCW_1": "DC Power (String 1)",
+    "DCW_2": "DC Power (String 2)",
+    "DCA_1": "DC Current (String 1)",
+    "DCA_2": "DC Current (String 2)",
     "Hz": "Grid frequency",
     "PhVphA": "AC Voltage Phase A-N",
     "VgridL1_N": "AC Voltage Phase A-N",
@@ -931,8 +1024,9 @@ DESCRIPTION_IMPROVEMENTS = {
 
     # Additional improvements (v2.0.10)
     "GlobState": "Global operational state",
-    "PowerPeakAbs": "Peak absolute output power",
-    "PowerPeakToday": "Peak power output today",
+    "PowerPeakAbs": "Peak Output Power - Lifetime",
+    "PowerPeakToday": "Peak Output Power - Today",
+    "VBulk": "DC Voltage (Bulk Capacitor)",
     "sys_load": "System load average",
     "store_size": "Flash storage used",
     "ECt": "Total energy from current transformer (CT)",
@@ -1786,7 +1880,8 @@ def create_row_with_model_flags(vsn700_name, vsn300_name, sunspec_name, ha_name,
         "entity_category": entity_category,
         "available_in_modbus": available_in_modbus,
         "data_source": data_source,
-        "model_notes": model_notes
+        "model_notes": model_notes,
+        "icon": ""
     }
 
     # Apply corrections
@@ -1829,6 +1924,8 @@ def create_row_with_model_flags(vsn700_name, vsn300_name, sunspec_name, ha_name,
             row["state_class"] = metadata.get("state_class") or ""
         if not row["units"] or row["units"] == "":
             row["units"] = metadata.get("unit") or ""
+        if not row["icon"] or row["icon"] == "":
+            row["icon"] = metadata.get("icon") or ""
 
     # Update category if needed
     if row["category"] in ["Unknown", "", None]:
@@ -1839,6 +1936,10 @@ def create_row_with_model_flags(vsn700_name, vsn300_name, sunspec_name, ha_name,
             vsn300_name,
             vsn700_name
         )
+
+    # Set diagnostic icon for all diagnostic entities (unless already has an icon)
+    if row["entity_category"] == "diagnostic" and not row.get("icon"):
+        row["icon"] = "mdi:information-box-outline"
 
     return row
 
@@ -2428,6 +2529,8 @@ def generate_mapping_excel_complete():
                 value = row_data.get("state_class", "")
             elif header == "HA Device Class":
                 value = row_data.get("device_class", "")
+            elif header == "HA Icon":
+                value = row_data.get("icon", "")
             elif header == "Entity Category":
                 value = row_data.get("entity_category", "")
             elif header == "Available in Modbus":

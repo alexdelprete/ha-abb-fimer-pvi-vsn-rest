@@ -4,8 +4,6 @@
 [![License](https://img.shields.io/github/license/alexdelprete/ha-abb-fimer-pvi-vsn-rest.svg?style=flat-square)](LICENSE)
 [![hacs](https://img.shields.io/badge/HACS-Custom-orange.svg?style=flat-square)](https://github.com/hacs/integration)
 
-⚠️ **BETA v1.0.0-beta.6** - Active Development
-
 Home Assistant custom integration for ABB/FIMER/Power-One PVI inverters via **VSN300/VSN700 datalogger REST API**.
 
 ## Overview
