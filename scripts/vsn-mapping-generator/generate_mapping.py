@@ -373,12 +373,18 @@ DISPLAY_NAME_CORRECTIONS = {
     "House Current Phase A": "House Current A",
     "House Current Phase B": "House Current B",
     "House Current Phase C": "House Current C",
+
+    # Datalogger device entity fixes (remove redundant prefixes)
+    "Datalogger product number": "Product Number",
+    "Datalogger serial number": "Serial Number",
+    "Device 2 Firmware": "Firmware Version",
+    "WiFi network name (SSID) connected to": "WiFi network name (SSID)",
 }
 
 # Device class/unit fixes (keyed by label, not SunSpec name)
 DEVICE_CLASS_FIXES = {
     "Device Address": {"device_class": None, "unit": None, "entity_category": "diagnostic"},
-    "Version": {"device_class": None, "unit": None},
+    "Version": {"device_class": None, "unit": None, "entity_category": "diagnostic"},
     "Sys Time": {"device_class": "timestamp", "entity_category": "diagnostic"},
     # Device information fields should be diagnostic (use label names)
     "Manufacturer": {"entity_category": "diagnostic"},
@@ -387,6 +393,13 @@ DEVICE_CLASS_FIXES = {
     "Firmware Version": {"entity_category": "diagnostic"},
     # Datalogger identification fields
     "Product Number": {"device_class": None, "unit": None, "entity_category": "diagnostic"},
+    # Inverter status entities should be diagnostic
+    "Alarm St": {"entity_category": "diagnostic"},
+    "Dc St1": {"entity_category": "diagnostic"},
+    "Dc St2": {"entity_category": "diagnostic"},
+    "Options": {"entity_category": "diagnostic"},
+    "Global St": {"entity_category": "diagnostic"},
+    "Inverter St": {"entity_category": "diagnostic"},
 }
 
 # ==============================================================================
@@ -415,6 +428,8 @@ UNIT_CORRECTIONS = {
     # uA to mA fixes - HA doesn't support uA for current device class
     "ILeakDcAc": "mA",
     "ILeakDcDc": "mA",
+    # System monitoring unit fixes
+    "sys_load": "",  # Fix "none" unit to empty string
 }
 
 # Temperature unit normalization - degC → °C
@@ -560,6 +575,9 @@ SUNSPEC_TO_HA_METADATA = {
     # Counters (no device_class, total)
     "CycleNum": {"device_class": None, "state_class": "total", "unit": "cycles"},
     "NumOfMPPT": {"device_class": None, "state_class": "measurement", "unit": "channels"},
+
+    # Network Monitoring (%, measurement)
+    "wlan0_link_quality": {"device_class": None, "state_class": "measurement", "unit": "%"},
 }
 
 # ==============================================================================
@@ -799,15 +817,15 @@ DESCRIPTION_IMPROVEMENTS = {
     "PacStandAlone": "AC power in stand-alone (off-grid) mode",
     "PacTogrid": "AC power exported to grid",
     # Note: sn/pn in datalogger context are identification fields, not power
-    "pn": "Datalogger product number",
-    "sn": "Datalogger serial number",
+    "pn": "Product number",
+    "sn": "Serial number",
 
     # Control Points - Using actual SunSpec names
     "gridExtCtrlEna": "External grid control enabled status",
     "gridExtCtrlState": "External grid control current state",
 
     # WiFi/Network - Using actual SunSpec names
-    "wlan0_essid": "WiFi network name (SSID) connected to",
+    "wlan0_essid": "WiFi network name (SSID)",
     "wlan0_link_quality": "WiFi link quality percentage",
 
     # M1 Common Model - Using actual SunSpec names
@@ -875,9 +893,9 @@ DESCRIPTION_IMPROVEMENTS = {
     "device_0_devType": "Device 0 component type",
     "device_1_devType": "Device 1 component type",
     "device_2_devType": "Device 2 component type",
-    "device_0_fwVer": "Device 0 firmware version",
-    "device_1_fwVer": "Device 1 firmware version",
-    "device_2_fwVer": "Device 2 firmware version",
+    "device_0_fwVer": "Firmware version",
+    "device_1_fwVer": "Firmware version",
+    "device_2_fwVer": "Firmware version",
     "fw_build_date": "Firmware build date and time",
     "fw_build_number": "Firmware build commit hash",
     "fw_release_number": "Firmware release version number",
