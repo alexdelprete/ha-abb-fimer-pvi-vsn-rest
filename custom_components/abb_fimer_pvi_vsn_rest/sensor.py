@@ -131,7 +131,12 @@ async def async_setup_entry(
         device_type = device_data.get("device_type", "unknown")
         points = device_data.get("points", {})
 
-        _LOGGER.debug("Device %s (%s): %d points", device_id, device_type, len(points))
+        _LOGGER.debug(
+            "Device %s (%s): creating %d sensor entities",
+            device_id,
+            device_type,
+            len(points),
+        )
 
         is_datalogger = device_id == datalogger_device_id
 
@@ -143,6 +148,14 @@ async def async_setup_entry(
                 point_name=point_name,
                 point_data=point_data,
             )
+
+            # Log individual entity creation in debug mode
+            if _LOGGER.isEnabledFor(logging.DEBUG):
+                _LOGGER.debug(
+                    "  Creating entity: %s (unique_id: %s)",
+                    point_data.get("ha_display_name", point_name),
+                    sensor.unique_id,
+                )
 
             if is_datalogger:
                 datalogger_sensors.append(sensor)

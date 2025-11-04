@@ -128,7 +128,26 @@ class ABBFimerVSNRestClient:
             ) as response:
                 if response.status == 200:
                     data = await response.json()
-                    _LOGGER.debug("Fetched livedata: %d devices", len(data))
+                    # Count total points across all devices
+                    total_points = sum(
+                        len(device_data.get("points", []))
+                        for device_data in data.values()
+                    )
+                    _LOGGER.debug(
+                        "%s livedata fetched: %d devices, %d total points",
+                        self.vsn_model,
+                        len(data),
+                        total_points,
+                    )
+                    # Log detailed point breakdown if debug level
+                    if _LOGGER.isEnabledFor(logging.DEBUG):
+                        for device_id, device_data in data.items():
+                            point_count = len(device_data.get("points", []))
+                            _LOGGER.debug(
+                                "  Device %s: %d points",
+                                device_id,
+                                point_count,
+                            )
                     return data
                 if response.status == 401:
                     raise VSNAuthenticationError(
@@ -159,7 +178,31 @@ class ABBFimerVSNRestClient:
             raise VSNConnectionError("Normalizer not initialized after connect()")
 
         raw_data = await self.get_livedata()
-        return self._normalizer.normalize(raw_data)
+        normalized_data = self._normalizer.normalize(raw_data)
+
+        # Log normalization statistics
+        if _LOGGER.isEnabledFor(logging.DEBUG):
+            normalized_devices = normalized_data.get("devices", {})
+            total_normalized = sum(
+                len(device_data.get("points", {}))
+                for device_data in normalized_devices.values()
+            )
+            _LOGGER.debug(
+                "Normalization complete: %d devices, %d normalized points",
+                len(normalized_devices),
+                total_normalized,
+            )
+            for device_id, device_data in normalized_devices.items():
+                point_count = len(device_data.get("points", {}))
+                device_type = device_data.get("device_type", "unknown")
+                _LOGGER.debug(
+                    "  Device %s (%s): %d points",
+                    device_id,
+                    device_type,
+                    point_count,
+                )
+
+        return normalized_data
 
     async def close(self) -> None:
         """Close the client (session management is external)."""

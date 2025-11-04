@@ -131,6 +131,14 @@ class VSNDataNormalizer:
                         break
 
             normalized_points = {}
+            unmapped_points = []
+            total_raw_points = len(device_data["points"])
+
+            _LOGGER.debug(
+                "Processing device %s: %d raw points",
+                actual_device_id,
+                total_raw_points,
+            )
 
             for point in device_data["points"]:
                 point_name = point.get("name")
@@ -168,6 +176,7 @@ class VSNDataNormalizer:
                     mapping = self._mapping_loader.get_by_vsn700(point_name)
 
                 if not mapping:
+                    unmapped_points.append(point_name)
                     _LOGGER.debug(
                         "No mapping found for %s point: %s",
                         self.vsn_model,
@@ -194,6 +203,26 @@ class VSNDataNormalizer:
 
                 # Use HA entity name as the key for normalized data
                 normalized_points[mapping.ha_entity_name] = normalized_point
+
+            # Log mapping statistics for this device
+            mapped_count = len(normalized_points)
+            unmapped_count = len(unmapped_points)
+            _LOGGER.debug(
+                "Device %s: mapped %d/%d points (%d unmapped)",
+                actual_device_id,
+                mapped_count,
+                total_raw_points,
+                unmapped_count,
+            )
+
+            # Log unmapped points if any (for troubleshooting)
+            if unmapped_points and _LOGGER.isEnabledFor(logging.DEBUG):
+                _LOGGER.debug(
+                    "Device %s unmapped points: %s",
+                    actual_device_id,
+                    ", ".join(unmapped_points[:10])  # Limit to first 10 to avoid spam
+                    + (f" ... and {len(unmapped_points) - 10} more" if len(unmapped_points) > 10 else ""),
+                )
 
             if normalized_points:
                 # Use actual_device_id (logger S/N for datalogger, inverter S/N for inverter)
