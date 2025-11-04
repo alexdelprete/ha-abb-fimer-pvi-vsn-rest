@@ -78,7 +78,7 @@ VSN_TO_SUNSPEC_MAP = {
     "Igrid": {"sunspec": "A", "model": "M103", "category": "Inverter", "units": "A", "state_class": "measurement", "device_class": "current", "in_modbus": "YES", "modbus": "m103_1_A"},
     "Vgrid": {"sunspec": "PhVphA", "model": "M103", "category": "Inverter", "units": "V", "state_class": "measurement", "device_class": "voltage", "in_modbus": "YES", "modbus": "m103_1_PhVphA"},
     "Etotal": {"sunspec": "TotWhExp", "model": "M103", "category": "Energy Counter", "units": "kWh", "state_class": "total_increasing", "device_class": "energy", "in_modbus": "YES", "modbus": "m103_1_TotWhExp"},
-    "PF": {"sunspec": "PF", "model": "M103", "category": "Inverter", "units": "%", "state_class": "measurement", "device_class": "power_factor", "in_modbus": "YES", "modbus": "m103_1_PF"},
+    "PF": {"sunspec": "PF", "model": "M103", "category": "Inverter", "units": "", "state_class": "measurement", "device_class": "power_factor", "in_modbus": "YES", "modbus": "m103_1_PF"},
 
     # Three-phase measurements (M103)
     "Pgrid_L1": {"sunspec": "WphA", "model": "M103", "category": "Inverter", "units": "W", "state_class": "measurement", "device_class": "power", "in_modbus": "YES", "modbus": None},
@@ -375,11 +375,18 @@ DISPLAY_NAME_CORRECTIONS = {
     "House Current Phase C": "House Current C",
 }
 
-# Device class/unit fixes
+# Device class/unit fixes (keyed by label, not SunSpec name)
 DEVICE_CLASS_FIXES = {
-    "Device Address": {"device_class": None, "unit": None},
+    "Device Address": {"device_class": None, "unit": None, "entity_category": "diagnostic"},
     "Version": {"device_class": None, "unit": None},
     "Sys Time": {"device_class": "timestamp", "entity_category": "diagnostic"},
+    # Device information fields should be diagnostic (use label names)
+    "Manufacturer": {"entity_category": "diagnostic"},
+    "Model": {"entity_category": "diagnostic"},
+    "Serial Number": {"entity_category": "diagnostic"},  # Applies to both inverter SN and datalogger sn
+    "Firmware Version": {"entity_category": "diagnostic"},
+    # Datalogger identification fields
+    "Product Number": {"device_class": None, "unit": None, "entity_category": "diagnostic"},
 }
 
 # ==============================================================================
@@ -390,6 +397,9 @@ LABEL_CORRECTIONS = {
     # DC spacing fixes (v2.0.9)
     "D C1 State": "DC1 State",
     "D C2 State": "DC2 State",
+    # Datalogger identification fields (not power!)
+    "Sn": "Serial Number",
+    "Pn": "Product Number",
 }
 
 # ==============================================================================
@@ -453,7 +463,8 @@ SUNSPEC_TO_HA_METADATA = {
     "WRtg": {"device_class": "power", "state_class": "measurement", "unit": "W"},
     "PacStandAlone": {"device_class": "power", "state_class": "measurement", "unit": "W"},
     "PacTogrid": {"device_class": "power", "state_class": "measurement", "unit": "W"},
-    "pn": {"device_class": "power", "state_class": "measurement", "unit": "W"},
+    # Note: "pn" in datalogger context is product number (text), not power
+    # Removed from here to avoid confusion
 
     # Reactive Power (var, measurement)
     "VAr": {"device_class": "reactive_power", "state_class": "measurement", "unit": "var"},
@@ -471,7 +482,8 @@ SUNSPEC_TO_HA_METADATA = {
     "VAphB": {"device_class": "apparent_power", "state_class": "measurement", "unit": "VA"},
     "VAphC": {"device_class": "apparent_power", "state_class": "measurement", "unit": "VA"},
     "VARtg": {"device_class": "apparent_power", "state_class": "measurement", "unit": "VA"},
-    "sn": {"device_class": "apparent_power", "state_class": "measurement", "unit": "VA"},
+    # Note: "sn" in datalogger context is serial number (text), not apparent power
+    # Removed from here to avoid confusion
 
     # Current (A, measurement)
     "A": {"device_class": "current", "state_class": "measurement", "unit": "A"},
@@ -535,8 +547,8 @@ SUNSPEC_TO_HA_METADATA = {
     "SoH": {"device_class": "battery", "state_class": "measurement", "unit": "%"},
 
     # Power Factor (no unit, measurement)
-    "PF": {"device_class": "power_factor", "state_class": "measurement", "unit": "%"},
-    "cosPhi": {"device_class": "power_factor", "state_class": "measurement", "unit": None},
+    "PF": {"device_class": "power_factor", "state_class": "measurement", "unit": ""},
+    "cosPhi": {"device_class": "power_factor", "state_class": "measurement", "unit": ""},
 
     # Fan Speed (RPM, measurement)
     "Fan1rpm": {"device_class": None, "state_class": "measurement", "unit": "RPM"},
@@ -786,8 +798,9 @@ DESCRIPTION_IMPROVEMENTS = {
     # Power Points - Using actual SunSpec names
     "PacStandAlone": "AC power in stand-alone (off-grid) mode",
     "PacTogrid": "AC power exported to grid",
-    "pn": "Inverter nominal rated power",
-    "sn": "Inverter nominal apparent power rating",
+    # Note: sn/pn in datalogger context are identification fields, not power
+    "pn": "Datalogger product number",
+    "sn": "Datalogger serial number",
 
     # Control Points - Using actual SunSpec names
     "gridExtCtrlEna": "External grid control enabled status",
@@ -1760,32 +1773,35 @@ def create_row_with_model_flags(vsn700_name, vsn300_name, sunspec_name, ha_name,
 
     # Apply corrections
     row = apply_display_name_corrections(row)
-    row = apply_device_class_fixes(row)
 
     # ==========================================
     # v2.0.9 CORRECTIONS
     # ==========================================
 
-    # 1. Apply label corrections (D C1 State → DC1 State, etc.)
+    # 1. Apply label corrections FIRST (D C1 State → DC1 State, Sn → Serial Number, etc.)
+    # IMPORTANT: Must run before apply_device_class_fixes since DEVICE_CLASS_FIXES uses corrected label names
     row["label"] = apply_label_corrections(row["label"])
 
-    # 2. Clean E# and Ein prefixes from description and ha_display_name
+    # 2. Apply device class fixes (now that labels are corrected)
+    row = apply_device_class_fixes(row)
+
+    # 3. Clean E# and Ein prefixes from description and ha_display_name
     row["description"] = clean_energy_prefix(row["description"])
     row["ha_display_name"] = clean_energy_prefix(row["ha_display_name"])
 
-    # 3. Standardize time periods (30 days → month, 7 days → week)
+    # 4. Standardize time periods (30 days → month, 7 days → week)
     row["description"] = standardize_time_periods(row["description"])
     row["ha_display_name"] = standardize_time_periods(row["ha_display_name"])
 
-    # 4. Apply unit corrections (Wh vs kWh fixes)
+    # 5. Apply unit corrections (Wh vs kWh fixes)
     if sunspec_name in UNIT_CORRECTIONS:
         row["units"] = UNIT_CORRECTIONS[sunspec_name]
 
-    # 4b. Normalize temperature units (degC → °C)
+    # 6. Normalize temperature units (degC → °C)
     if row["units"] in TEMPERATURE_UNIT_FIX:
         row["units"] = TEMPERATURE_UNIT_FIX[row["units"]]
 
-    # 5. Apply HA metadata from SUNSPEC_TO_HA_METADATA dictionary
+    # 7. Apply HA metadata from SUNSPEC_TO_HA_METADATA dictionary
     if sunspec_name in SUNSPEC_TO_HA_METADATA:
         metadata = SUNSPEC_TO_HA_METADATA[sunspec_name]
         # Only override if current values are empty/None
