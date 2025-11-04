@@ -7,6 +7,53 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta.19] - 2025-11-04
+
+### Added
+
+- **Aurora Protocol Integration**:
+  - Fixed SysTime timestamp conversion using Aurora epoch (Jan 1, 2000 instead of Unix epoch)
+  - Added `AURORA_EPOCH_OFFSET` constant (946684800 seconds) for correct timestamp handling
+  - Implemented state mapping for 6 status entities with 195 total state descriptions:
+    - GlobState: 42 operational states (e.g., "Run", "Wait Sun / Grid", "Ground Fault")
+    - DC1State/DC2State: 20 DC converter states each (e.g., "MPPT", "Ramp Start", "DcDc OFF")
+    - InvState: 38 inverter states (e.g., "Run", "Stand By", "Checking Grid")
+    - AlarmState/AlarmSt: 65 alarm codes (e.g., "No Alarm", "Ground Fault", "Grid Fail")
+  - Status entities now display human-readable text instead of raw integer codes
+  - Raw state codes preserved in `raw_state_code` entity attribute for debugging
+  - Unknown codes display as "Unknown (code)" for visibility
+
+- **Icon Support** (27 columns total in mapping):
+  - Energy icon (`mdi:lightning-bolt`) for 3 VAh apparent energy entities (E2_runtime, E2_7D, E2_30D)
+  - Diagnostic icon (`mdi:information-box-outline`) for all 51 diagnostic entities
+
+- **Device Class Improvements**:
+  - Added device_class for 59 measurement entities (182 → 123 without device_class)
+  - Fixed 39 energy entities (Wh) with proper energy device_class and state_class
+  - Fixed 10 power entities (W) with correct power device_class
+  - Added data_size device_class for bytes entities
+  - Added duration device_class for uptime measurements
+  - Added signal_strength device_class for wlan0_link_quality
+
+### Fixed
+
+- **Timestamp Display**: SysTime now shows correct dates (2023) instead of incorrect dates (1993)
+- **Isolation Resistance Unit**: Changed from Ω to MΩ (verified from feeds data)
+- **Battery Metrics**: Fixed capitalization (Soc, Soh)
+- **House Metrics**: Fixed HousePgrid_L1/L2/L3, HouseIgrid_L1/L2/L3
+
+### Technical
+
+- Added Aurora protocol state mappings to const.py (GLOBAL_STATE_MAP, DCDC_STATE_MAP, INVERTER_STATE_MAP, ALARM_STATE_MAP)
+- Added STATE_ENTITY_MAPPINGS configuration dictionary
+- Implemented state translation logic in sensor.py native_value property
+- Enhanced mapping generator with icon support and diagnostic entity auto-assignment
+- Updated mapping to 258 unique data points
+
+**Full Release Notes**: [v1.0.0-beta.19](docs/releases/v1.0.0-beta.19.md)
+
+**Credits**: Special thanks to [xreef/ABB_Aurora_Solar_Inverter_Library](https://github.com/xreef/ABB_Aurora_Solar_Inverter_Library) for Aurora protocol documentation.
+
 ## [1.0.0-beta.15] - 2025-11-03
 
 ### Fixed

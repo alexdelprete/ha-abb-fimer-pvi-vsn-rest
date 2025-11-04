@@ -6,16 +6,18 @@ This is the **ha-abb-fimer-pvi-vsn-rest** integration for Home Assistant.
 It provides monitoring of ABB/FIMER/Power-One PVI inverters through VSN300
 or VSN700 dataloggers via their REST API.
 
-**Current Status**: v1.0.0-beta.14 - Active development
+**Current Status**: v1.0.0-beta.19 - Active development
 
 **Key Features**:
 
 - Automatic VSN300/VSN700 detection
 - Multi-device support (inverters, meters, batteries)
-- SunSpec-normalized data schema
+- SunSpec-normalized data schema with Aurora protocol integration
 - Modern Home Assistant entity naming pattern
-- Comprehensive sensor attributes
-- 210 unique mapped data points
+- Comprehensive sensor attributes with 258 unique mapped data points
+- Human-readable state translations for status entities
+- Custom icon support (energy icons, diagnostic icons)
+- Correct timestamp handling with Aurora epoch offset
 
 ## Architecture
 
@@ -369,6 +371,92 @@ All HA device info fields populated from discovery:
 - SunSpec: sunspec_model, sunspec_name, description
 - Compatibility: vsn300_compatible, vsn700_compatible
 - Category: category
+
+### Aurora Protocol Integration
+
+The integration uses the Aurora protocol specifications for accurate data interpretation.
+
+**Key References:**
+
+- [ABB Aurora Solar Inverter Library](https://github.com/xreef/ABB_Aurora_Solar_Inverter_Library)
+- Timestamp utils: [utils.h](https://github.com/xreef/ABB_Aurora_Solar_Inverter_Library/blob/master/include/utils.h#L8)
+- State mappings: [statesNaming.h](https://github.com/xreef/ABB_Aurora_Solar_Inverter_Library/blob/master/include/statesNaming.h)
+
+**1. Timestamp Handling (const.py):**
+
+Aurora protocol uses a custom epoch (Jan 1, 2000) instead of Unix epoch (Jan 1, 1970).
+
+```python
+# Aurora protocol epoch offset (Jan 1, 2000 00:00:00 UTC)
+AURORA_EPOCH_OFFSET = 946684800  # seconds between Unix and Aurora epochs
+```
+
+**Implementation (sensor.py):**
+
+- SysTime entity uses `device_class="timestamp"`
+- Raw value from API is in Aurora epoch (seconds since Jan 1, 2000)
+- Conversion: `datetime.fromtimestamp(value + AURORA_EPOCH_OFFSET, tz=tz)`
+- Result: Correct datetime display in Home Assistant
+
+**2. State Mapping (const.py):**
+
+Status entities with integer state codes are translated to human-readable text:
+
+| State Map | Description | States | Entities |
+|-----------|-------------|--------|----------|
+| `GLOBAL_STATE_MAP` | System-wide operational states | 42 | GlobState |
+| `DCDC_STATE_MAP` | DC-DC converter states | 20 | DC1State, DC2State |
+| `INVERTER_STATE_MAP` | Inverter operational states | 38 | InvState |
+| `ALARM_STATE_MAP` | Alarm and error codes | 65 | AlarmState, AlarmSt |
+
+**Entity Configuration:**
+
+```python
+STATE_ENTITY_MAPPINGS = {
+    "GlobState": GLOBAL_STATE_MAP,
+    "DC1State": DCDC_STATE_MAP,
+    "DC2State": DCDC_STATE_MAP,
+    "InvState": INVERTER_STATE_MAP,
+    "AlarmState": ALARM_STATE_MAP,
+    "AlarmSt": ALARM_STATE_MAP,  # VSN300 alarm
+}
+```
+
+**Implementation (sensor.py):**
+
+- State mapping applied in `native_value` property
+- Integer codes automatically translated to descriptive text
+- Unknown codes display as "Unknown (code)" for visibility
+- Raw state code preserved in `raw_state_code` attribute
+
+**Example Translations:**
+
+- `6` → "Run" (Global State)
+- `2` → "MPPT" (DC-DC State)
+- `0` → "No Alarm" (Alarm State)
+- `18` → "Ground Fault" (Alarm State)
+
+### Custom Icons
+
+The integration supports custom icons for special entity types:
+
+**Icon Support (generate_mapping.py):**
+
+1. **Energy Icons** (VAh entities):
+   - 3 VAh apparent energy entities get `mdi:lightning-bolt`
+   - Applied via `SUNSPEC_TO_HA_METADATA` dictionary
+   - Entities: E2_runtime, E2_7D, E2_30D
+
+2. **Diagnostic Icons** (diagnostic entities):
+   - All 51 diagnostic entities get `mdi:information-box-outline`
+   - Auto-applied when `entity_category == "diagnostic"`
+   - Includes: device info, configuration, status entities
+
+**Implementation:**
+
+- Icons stored in mapping JSON with "HA Icon" field (27th column)
+- Integration sets `_attr_icon` from mapping data
+- Falls back to HA default icons when not specified
 
 ## Important Patterns
 
