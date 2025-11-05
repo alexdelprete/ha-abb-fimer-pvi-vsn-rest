@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta.20] - 2025-11-05
+
+### Fixed
+
+- **Device Name Serial Number**: Fixed device names to show full serial number (e.g., `111033-3N16-1421`) instead of truncated 8-character version (e.g., `111033-3N`)
+  - Updated `_format_device_name()` to use full original serial number with dashes preserved
+  - Affects both hub device name and all device names in Home Assistant UI
+  - Better device identification and consistency
+
+### Documentation
+
+- **Aurora Protocol References**: Added comprehensive Aurora Communication Protocol v4.2 documentation references
+  - Added online PDF reference to AURORA_EPOCH_OFFSET constant comments
+  - Added online PDF reference to State Mappings comments
+  - Added local copy of Aurora protocol PDF to `docs/AuroraCommunicationProtocol_4_2.pdf`
+  - Updated CLAUDE.md with protocol documentation references
+
+### Technical
+
+- Updated `_format_device_name()` function in sensor.py (parameter renamed: `device_sn_compact` → `device_sn_original`)
+- Enhanced const.py with Aurora protocol documentation links
+
+**Full release notes**: [v1.0.0-beta.20](docs/releases/v1.0.0-beta.20.md)
+
 ## [1.0.0-beta.19] - 2025-11-04
 
 ### Added
