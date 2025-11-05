@@ -662,10 +662,12 @@ SUNSPEC_TO_HA_METADATA = {
     "E2_7D": {"device_class": None, "state_class": "total", "unit": "VAh", "icon": "mdi:lightning-bolt"},
     "E2_30D": {"device_class": None, "state_class": "total", "unit": "VAh", "icon": "mdi:lightning-bolt"},
 
-    # Peak Power (kW, measurement) - power device_class
-    "PowerPeakAbs": {"device_class": "power", "state_class": "measurement", "unit": "kW"},
-    "PowerPeakToday": {"device_class": "power", "state_class": "measurement", "unit": "kW"},
-    "Ppeak": {"device_class": "power", "state_class": "measurement", "unit": "kW"},
+    # Peak Power (W, measurement) - power device_class
+    # Note: Uses W (not kW) per SunSpec specification and livedata format
+    # Feeds endpoint shows kW for display, but livedata provides W values
+    "PowerPeakAbs": {"device_class": "power", "state_class": "measurement", "unit": "W"},
+    "PowerPeakToday": {"device_class": "power", "state_class": "measurement", "unit": "W"},
+    "Ppeak": {"device_class": "power", "state_class": "measurement", "unit": "W"},
 }
 
 # ==============================================================================
@@ -1922,8 +1924,10 @@ def create_row_with_model_flags(vsn700_name, vsn300_name, sunspec_name, ha_name,
             row["device_class"] = metadata.get("device_class") or ""
         if not row["state_class"] or row["state_class"] == "":
             row["state_class"] = metadata.get("state_class") or ""
-        if not row["units"] or row["units"] == "":
-            row["units"] = metadata.get("unit") or ""
+        # ALWAYS override units from SUNSPEC_TO_HA_METADATA (takes precedence over feeds data)
+        # This ensures SunSpec-compliant units (W, Wh) are used instead of display units (kW, kWh)
+        if metadata.get("unit"):
+            row["units"] = metadata.get("unit")
         if not row["icon"] or row["icon"] == "":
             row["icon"] = metadata.get("icon") or ""
 
