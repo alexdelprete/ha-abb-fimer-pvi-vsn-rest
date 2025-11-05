@@ -27,10 +27,12 @@ ENDPOINT_FEEDS = "/v1/feeds"
 # Aurora protocol epoch offset (Jan 1, 2000 00:00:00 UTC)
 # The Aurora protocol uses a custom epoch instead of Unix epoch (Jan 1, 1970)
 # Reference: https://github.com/xreef/ABB_Aurora_Solar_Inverter_Library/blob/master/include/utils.h#L8
+# Protocol documentation: https://mischianti.org/wp-content/uploads/2022/01/AuroraCommunicationProtocol_4_2.pdf
 AURORA_EPOCH_OFFSET = 946684800
 
 # Aurora Protocol State Mappings
 # Reference: https://github.com/xreef/ABB_Aurora_Solar_Inverter_Library/blob/master/include/statesNaming.h
+# Protocol documentation: https://mischianti.org/wp-content/uploads/2022/01/AuroraCommunicationProtocol_4_2.pdf
 # These mappings translate integer state codes to human-readable descriptions
 
 # Global operational states (42 states: 0-38, 98-101)

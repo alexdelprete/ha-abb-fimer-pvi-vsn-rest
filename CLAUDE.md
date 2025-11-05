@@ -381,6 +381,8 @@ The integration uses the Aurora protocol specifications for accurate data interp
 - [ABB Aurora Solar Inverter Library](https://github.com/xreef/ABB_Aurora_Solar_Inverter_Library)
 - Timestamp utils: [utils.h](https://github.com/xreef/ABB_Aurora_Solar_Inverter_Library/blob/master/include/utils.h#L8)
 - State mappings: [statesNaming.h](https://github.com/xreef/ABB_Aurora_Solar_Inverter_Library/blob/master/include/statesNaming.h)
+- Official Protocol Documentation: [Aurora Communication Protocol v4.2](https://mischianti.org/wp-content/uploads/2022/01/AuroraCommunicationProtocol_4_2.pdf)
+  - Also available locally in `docs/AuroraCommunicationProtocol_4_2.pdf`
 
 **1. Timestamp Handling (const.py):**
 

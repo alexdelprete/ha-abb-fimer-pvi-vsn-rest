@@ -61,7 +61,7 @@ def _format_device_name(
     manufacturer: str,
     device_type_simple: str,
     device_model: str | None,
-    device_sn_compact: str,
+    device_sn_original: str,
 ) -> str:
     """Format user-friendly device name: 'Manufacturer Type Model (Serial)'.
 
@@ -69,32 +69,32 @@ def _format_device_name(
         manufacturer: Device manufacturer (e.g., "Power-One", "ABB", "FIMER")
         device_type_simple: Simplified device type (e.g., "inverter", "datalogger")
         device_model: Device model (e.g., "PVI-3.0-TL-OUTD", "VSN300")
-        device_sn_compact: Compacted serial number (e.g., "0779093g823112")
+        device_sn_original: Original serial number with dashes (e.g., "077909-3G82-3112")
 
     Returns:
-        Formatted device name (e.g., "Power-One Inverter PVI-3.0-TL-OUTD (077909-3G)")
+        Formatted device name (e.g., "Power-One Inverter PVI-3.0-TL-OUTD (077909-3G82-3112)")
 
     Examples:
-        >>> _format_device_name("Power-One", "inverter", "PVI-3.0-TL-OUTD", "0779093g823112")
-        'Power-One Inverter PVI-3.0-TL-OUTD (077909-3G)'
-        >>> _format_device_name("ABB", "datalogger", "VSN300", "1110333n161421")
-        'ABB Datalogger VSN300 (111033-3N)'
-        >>> _format_device_name("FIMER", "inverter", None, "0779093g823112")
-        'FIMER Inverter 077909-3G'
+        >>> _format_device_name("Power-One", "inverter", "PVI-3.0-TL-OUTD", "077909-3G82-3112")
+        'Power-One Inverter PVI-3.0-TL-OUTD (077909-3G82-3112)'
+        >>> _format_device_name("ABB", "datalogger", "VSN300", "111033-3N16-1421")
+        'ABB Datalogger VSN300 (111033-3N16-1421)'
+        >>> _format_device_name("FIMER", "inverter", None, "077909-3G82-3112")
+        'FIMER Inverter 077909-3G82-3112'
 
     """
-    # Format short serial with hyphen for readability: XXXXXX-XX
-    sn_short = f"{device_sn_compact[:6].upper()}-{device_sn_compact[6:8].upper()}"
+    # Use full serial number in uppercase (preserves original dash formatting)
+    sn_display = device_sn_original.upper()
 
     # Capitalize device type for display
     device_type_display = device_type_simple.title()
 
     # Format: "Manufacturer Type Model (Serial)"
     if device_model:
-        return f"{manufacturer} {device_type_display} {device_model} ({sn_short})"
+        return f"{manufacturer} {device_type_display} {device_model} ({sn_display})"
 
     # Fallback without model: "Manufacturer Type Serial"
-    return f"{manufacturer} {device_type_display} {sn_short}"
+    return f"{manufacturer} {device_type_display} {sn_display}"
 
 
 async def async_setup_entry(
@@ -480,14 +480,14 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
 
         # Format friendly device name: "Manufacturer Type Model (Serial)"
         # Examples:
-        #   "Power-One Inverter PVI-3.0-TL-OUTD (077909-3G)"
-        #   "ABB Datalogger VSN300 (111033-3N)"
+        #   "Power-One Inverter PVI-3.0-TL-OUTD (077909-3G82-3112)"
+        #   "ABB Datalogger VSN300 (111033-3N16-1421)"
         # This is for display only; entity_id is controlled by _attr_suggested_object_id
         device_name = _format_device_name(
             manufacturer=manufacturer,
             device_type_simple=self._device_type_simple,
             device_model=device_model,
-            device_sn_compact=self._device_sn_compact,
+            device_sn_original=self._device_id,
         )
 
         # Build device info dictionary with all available fields
