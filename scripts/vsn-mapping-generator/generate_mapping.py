@@ -386,6 +386,219 @@ DISPLAY_NAME_CORRECTIONS = {
     "DC Voltage #2": "DC Voltage (String 2)",
 }
 
+# ==============================================================================
+# DISPLAY NAME STANDARDIZATION (v1.0.0-beta.22)
+# ==============================================================================
+# Standardizes display names to pattern: [Type] [AC/DC] - [Details] - [Time Period]
+# This enables better grouping in Home Assistant's entity lists and UI
+# Format: {current_display_name: standardized_display_name}
+
+DISPLAY_NAME_STANDARDIZATION = {
+    # ========== POWER ENTITIES (24 changes) ==========
+    "AC Power": "Power AC",
+    "DC Power": "Power DC",
+    "DC Power #1": "Power DC - String 1",
+    "DC Power #2": "Power DC - String 2",
+    "House Power A": "Power AC - House Phase A",
+    "House Power B": "Power AC - House Phase B",
+    "House Power C": "Power AC - House Phase C",
+    "House load active power - Total": "Power AC - House Load Total",
+    "Battery Discharge Power": "Power - Battery Discharge",
+    "Battery Charge Power": "Power - Battery Charge",
+    "Battery Power": "Power - Battery Total",
+    "Battery power - Total": "Power - Battery Total",
+    "Total DC Input Power": "Power DC - Input Total",
+    "String 1 Power": "Power DC - String 1",
+    "String 2 Power": "Power DC - String 2",
+    "Peak Power": "Power - Peak",
+    "AC Power To Grid": "Power AC - Export to Grid",
+    "AC Power Stand Alone": "Power AC - Stand Alone Mode",
+    "Home PV Power": "Power - Home PV",
+    "Meter Power A": "Power AC - Meter Phase A",
+    "Meter Power B": "Power AC - Meter Phase B",
+    "Meter Power C": "Power AC - Meter Phase C",
+    "Meter active power - Total": "Power AC - Meter Total",
+    "Power Rating": "Power - Rating",
+
+    # ========== CURRENT ENTITIES (19 changes) ==========
+    "AC Current": "Current AC",
+    "Phase A Current": "Current AC - Phase A",
+    "Phase B Current": "Current AC - Phase B",
+    "Phase C Current": "Current AC - Phase C",
+    "DC Current #1": "Current DC - String 1",
+    "DC Current #2": "Current DC - String 2",
+    "House Current A": "Current AC - House Phase A",
+    "House Current B": "Current AC - House Phase B",
+    "House Current C": "Current AC - House Phase C",
+    "DC-DC Leakage Current": "Current DC - Leakage DC-DC",
+    "DC-AC Leakage Current": "Current DC - Leakage DC-AC",
+    "Inverter Leakage Current": "Current - Inverter Leakage",
+    "DC Leakage Current": "Current DC - Leakage",
+    "Battery Current": "Current - Battery",
+    "String 1 Current": "Current DC - String 1",
+    "String 2 Current": "Current DC - String 2",
+    "Meter Current A": "Current AC - Meter Phase A",
+    "Meter Current B": "Current AC - Meter Phase B",
+    "Meter Current C": "Current AC - Meter Phase C",
+
+    # ========== VOLTAGE ENTITIES (27 changes) ==========
+    "AC Voltage A-N": "Voltage AC - Phase A-N",
+    "Phase Voltage BN": "Voltage AC - Phase B-N",
+    "Phase Voltage CN": "Voltage AC - Phase C-N",
+    "AC Voltage A-B": "Voltage AC - Phase A-B",
+    "AC Voltage B-C": "Voltage AC - Phase B-C",
+    "AC Voltage C-A": "Voltage AC - Phase C-A",
+    "DC Voltage #1": "Voltage DC - String 1",
+    "DC Voltage #2": "Voltage DC - String 2",
+    "DC Voltage (Bulk Capacitor)": "Voltage DC - Bulk Capacitor",
+    "DC Bus Midpoint Voltage": "Voltage DC - Bus Midpoint",
+    "Ground Voltage": "Voltage - Ground",
+    "Battery Voltage": "Voltage - Battery",
+    "Battery Cell Max Voltage": "Voltage - Battery Cell Max",
+    "Battery Cell Min Voltage": "Voltage - Battery Cell Min",
+    "DC Input 1 Voltage": "Voltage DC - Input 1",
+    "DC Input 2 Voltage": "Voltage DC - Input 2",
+    "Shunt Voltage": "Voltage - Shunt",
+    "Meter Voltage A": "Voltage AC - Meter Phase A",
+    "Meter Voltage B": "Voltage AC - Meter Phase B",
+    "Meter Voltage C": "Voltage AC - Meter Phase C",
+    "DC Voltage (String 1)": "Voltage DC - String 1",
+    "DC Voltage (String 2)": "Voltage DC - String 2",
+    "Bulk DC Voltage": "Voltage DC - Bulk Capacitor",
+    "Phase Voltage AN": "Voltage AC - Phase A-N",
+    "AC Voltage B-N": "Voltage AC - Phase B-N",
+    "AC Voltage C-N": "Voltage AC - Phase C-N",
+    "DC capacitor voltage": "Voltage DC - Bulk Capacitor",
+
+    # ========== FREQUENCY ENTITIES (6 changes) ==========
+    "Grid Frequency": "Frequency AC - Grid",
+    "Frequency Phase A": "Frequency AC - Phase A",
+    "Frequency Phase B": "Frequency AC - Phase B",
+    "Frequency Phase C": "Frequency AC - Phase C",
+    "CC Frequency": "Frequency - Central Controller",
+    "Meter Frequency": "Frequency AC - Meter",
+
+    # ========== REACTIVE POWER ENTITIES (5 changes) ==========
+    "Reactive power at grid connection point": "Reactive Power - Grid Connection",
+    "Meter Reactive Power A": "Reactive Power AC - Meter Phase A",
+    "Meter Reactive Power B": "Reactive Power AC - Meter Phase B",
+    "Meter Reactive Power C": "Reactive Power AC - Meter Phase C",
+    "Meter reactive power - Total": "Reactive Power AC - Meter Total",
+
+    # ========== ENERGY ENTITIES (75 changes) ==========
+    # Base energy entities
+    "AC Energy": "Energy AC - Lifetime",
+    "Energy - Year": "Energy - Last Year",
+    "Energy - Week": "Energy - Last 7 Days",
+    "Energy - Month": "Energy - Last 30 Days",
+    "Battery discharge energy - Lifetime": "Energy - Battery Discharge Lifetime",
+    "Battery charge energy - Lifetime": "Energy - Battery Charge Lifetime",
+    "Inverter PV energy (DC input) - Lifetime": "Energy DC - PV Input Lifetime",
+    "Inverter AC energy produced - Lifetime": "Energy AC - Produced Lifetime",
+    "String 1 Energy": "Energy DC - String 1 Lifetime",
+    "String 2 Energy": "Energy DC - String 2 Lifetime",
+    "Total Energy Absorbed": "Energy AC - Absorbed Lifetime",
+    "Total Apparent Energy": "Energy AC Apparent - Lifetime",
+    "Energy imported from grid - Lifetime": "Energy AC - Grid Import Lifetime",
+    "Energy exported to grid - Lifetime": "Energy AC - Grid Export Lifetime",
+    "Inverter backup output energy - Lifetime": "Energy AC - Backup Output Lifetime",
+
+    # E0 series (Inverter AC energy produced)
+    "Inverter AC energy produced - Since Restart": "Energy AC - Produced Since Restart",
+    "Inverter AC energy produced - Last 7 Days": "Energy AC - Produced Last 7 Days",
+    "Inverter AC energy produced - Last 30 Days": "Energy AC - Produced Last 30 Days",
+    "Inverter AC energy produced - Last Year": "Energy AC - Produced Last Year",
+
+    # E1 series (Inverter absorbed AC energy)
+    "Inverter absorbed AC energy - Since Restart": "Energy AC - Absorbed Since Restart",
+    "Inverter absorbed AC energy - Last 7 Days": "Energy AC - Absorbed Last 7 Days",
+    "Inverter absorbed AC energy - Last 30 Days": "Energy AC - Absorbed Last 30 Days",
+    "Inverter absorbed AC energy - Lifetime": "Energy AC - Absorbed Lifetime",
+
+    # E2 series (Inverter apparent AC energy)
+    "Inverter apparent AC energy - Since Restart": "Energy AC Apparent - Since Restart",
+    "Inverter apparent AC energy - Last 7 Days": "Energy AC Apparent - Last 7 Days",
+    "Inverter apparent AC energy - Last 30 Days": "Energy AC Apparent - Last 30 Days",
+    "Inverter apparent AC energy - Lifetime": "Energy AC Apparent - Lifetime",
+
+    # E3 series (Energy exported to grid)
+    "Energy exported to grid - Since Restart": "Energy AC - Grid Export Since Restart",
+    "Energy exported to grid - Last 7 Days": "Energy AC - Grid Export Last 7 Days",
+    "Energy exported to grid - Last 30 Days": "Energy AC - Grid Export Last 30 Days",
+
+    # E6 series (House consumption from inverter)
+    "House consumption from inverter - Lifetime": "Energy - House from Inverter Lifetime",
+    "House consumption from inverter - Since Restart": "Energy - House from Inverter Since Restart",
+    "House consumption from inverter - Last 7 Days": "Energy - House from Inverter Last 7 Days",
+    "House consumption from inverter - Last 30 Days": "Energy - House from Inverter Last 30 Days",
+
+    # E7 series (Total house consumption)
+    "Total house consumption - Lifetime": "Energy - House Consumption Lifetime",
+    "Total house consumption - Since Restart": "Energy - House Consumption Since Restart",
+    "Total house consumption - Last 7 Days": "Energy - House Consumption Last 7 Days",
+    "Total house consumption - Last 30 Days": "Energy - House Consumption Last 30 Days",
+
+    # E8 series (Energy imported from grid)
+    "Energy imported from grid - Since Restart": "Energy AC - Grid Import Since Restart",
+    "Energy imported from grid - Last 7 Days": "Energy AC - Grid Import Last 7 Days",
+    "Energy imported from grid - Last 30 Days": "Energy AC - Grid Import Last 30 Days",
+
+    # E15 series (Inverter backup output energy)
+    "Inverter backup output energy - Since Restart": "Energy AC - Backup Output Since Restart",
+    "Inverter backup output energy - Last 7 Days": "Energy AC - Backup Output Last 7 Days",
+    "Inverter backup output energy - Last 30 Days": "Energy AC - Backup Output Last 30 Days",
+
+    # Ein series (Inverter PV energy DC input)
+    "Inverter PV energy (DC input) - Since Restart": "Energy DC - PV Input Since Restart",
+    "Inverter PV energy (DC input) - Last 7 Days": "Energy DC - PV Input Last 7 Days",
+    "Inverter PV energy (DC input) - Last 30 Days": "Energy DC - PV Input Last 30 Days",
+
+    # Total battery charge/discharge energy
+    "Total battery charge energy - Lifetime": "Energy - Battery Charge Total Lifetime",
+    "Total battery charge energy - Since Restart": "Energy - Battery Charge Total Since Restart",
+    "Total battery charge energy - Last 7 Days": "Energy - Battery Charge Total Last 7 Days",
+    "Total battery charge energy - Last 30 Days": "Energy - Battery Charge Total Last 30 Days",
+    "Total battery discharge energy - Lifetime": "Energy - Battery Discharge Total Lifetime",
+    "Total battery discharge energy - Since Restart": "Energy - Battery Discharge Total Since Restart",
+    "Total battery discharge energy - Last 7 Days": "Energy - Battery Discharge Total Last 7 Days",
+    "Total battery discharge energy - Last 30 Days": "Energy - Battery Discharge Total Last 30 Days",
+
+    # Individual battery charge/discharge energy
+    "Battery charge energy - Since Restart": "Energy - Battery Charge Since Restart",
+    "Battery charge energy - Last 7 Days": "Energy - Battery Charge Last 7 Days",
+    "Battery charge energy - Last 30 Days": "Energy - Battery Charge Last 30 Days",
+    "Battery discharge energy - Since Restart": "Energy - Battery Discharge Since Restart",
+    "Battery discharge energy - Last 7 Days": "Energy - Battery Discharge Last 7 Days",
+    "Battery discharge energy - Last 30 Days": "Energy - Battery Discharge Last 30 Days",
+
+    # ========== TEMPERATURE ENTITIES (9 changes) ==========
+    "Cabinet Temperature": "Temperature - Cabinet",
+    "Other Temperature": "Temperature - Other",
+    "Booster temperature": "Temperature - Booster",
+    "Inverter Temperature": "Temperature - Inverter",
+    "Booster Temperature": "Temperature - Booster",
+    "Cabinet Temperature Max": "Temperature - Cabinet Max",
+    "Cabinet Temperature Min": "Temperature - Cabinet Min",
+    "Battery Temperature": "Temperature - Battery",
+    "Temperature Sensor 1": "Temperature - Sensor 1",
+
+    # ========== RESISTANCE ENTITIES (2 changes) ==========
+    "Insulation Resistance": "Resistance - Insulation",
+
+    # ========== MISCELLANEOUS MEASUREMENT ENTITIES (20 changes) ==========
+    "Power factor": "Power Factor",
+    "Power Factor": "Power Factor",
+    "Power Factor (Cos Phi)": "Power Factor - Cos Phi",
+    "MPPT Count": "Count - MPPT Channels",
+    "Battery Cycle Count": "Count - Battery Cycles",
+    "Fan 1 Speed": "Speed - Fan 1",
+    "Fan 2 Speed": "Speed - Fan 2",
+    "Peak Output Power - Today": "Power - Peak Today",
+    "Peak Output Power - Lifetime": "Power - Peak Lifetime",
+    "Nominal Power": "Power - Nominal Rating",
+    "Nominal Apparent Power": "Power - Nominal Apparent Rating",
+}
+
 # Device class/unit fixes (keyed by label, not SunSpec name)
 DEVICE_CLASS_FIXES = {
     "Device Address": {"device_class": None, "unit": None, "entity_category": "diagnostic"},
@@ -1846,12 +2059,22 @@ def merge_duplicate_rows(rows_by_sunspec):
     return merged_rows
 
 def apply_display_name_corrections(row):
-    """Apply display name corrections to a row."""
+    """Apply display name corrections and standardization to a row.
+
+    Applies in order:
+    1. DISPLAY_NAME_CORRECTIONS - fixes/corrections from previous versions
+    2. DISPLAY_NAME_STANDARDIZATION - TYPE-first pattern for grouping
+    """
     original_display = row.get("ha_display_name", "")
 
-    # Apply corrections
+    # Step 1: Apply corrections (legacy fixes)
     if original_display in DISPLAY_NAME_CORRECTIONS:
         row["ha_display_name"] = DISPLAY_NAME_CORRECTIONS[original_display]
+
+    # Step 2: Apply standardization (v1.0.0-beta.22 - TYPE-first pattern)
+    current_display = row.get("ha_display_name", "")
+    if current_display in DISPLAY_NAME_STANDARDIZATION:
+        row["ha_display_name"] = DISPLAY_NAME_STANDARDIZATION[current_display]
 
     return row
 

@@ -225,18 +225,20 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         # Compact device serial number (remove dashes/colons/underscores, lowercase)
         device_sn_compact = _compact_serial_number(device_id)
 
-        # Build device identifier (no model - simplified template)
-        # This will be used as device name in device_info
-        device_identifier = f"abb_vsn_rest_{device_type_simple}_{device_sn_compact}"
+        # Build device identifier using domain from manifest.json
+        # This ensures namespace isolation and prevents conflicts with other integrations
+        device_identifier = f"{DOMAIN}_{device_type_simple}_{device_sn_compact}"
 
-        # Build unique_id: device_identifier + point_name (no model)
+        # Build unique_id: device_identifier + point_name
+        # Format: {domain}_{device_type}_{serial_compact}_{point_name}
         unique_id = f"{device_identifier}_{point_name}"
         self._attr_unique_id = unique_id
 
         # Set suggested_object_id to control entity_id generation
-        # This ensures entity_id follows the technical template even when device_name is friendly
-        # Format: abb_vsn_rest_{device_type}_{serial}_{point_name}
-        self._attr_suggested_object_id = f"{device_type_simple}_{device_sn_compact}_{point_name}"
+        # This ensures entity_id follows the same format as unique_id for consistency
+        # Format: {domain}_{device_type}_{serial_compact}_{point_name}
+        # Result: sensor.abb_fimer_pvi_vsn_rest_inverter_0779093g823112_ac_power
+        self._attr_suggested_object_id = f"{DOMAIN}_{device_type_simple}_{device_sn_compact}_{point_name}"
 
         # Set entity name to friendly display name (what users see in device cards)
         # With has_entity_name=True, HA will auto-construct:

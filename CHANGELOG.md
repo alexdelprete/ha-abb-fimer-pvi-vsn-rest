@@ -7,6 +7,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta.22] - 2025-11-11
+
+### Changed
+
+- **Entity ID Format**: Added domain prefix to all entity IDs for namespace isolation
+  - Format changed from `sensor.{device_type}_{serial}_{point}` to `sensor.abb_fimer_pvi_vsn_rest_{device_type}_{serial}_{point}`
+  - Prevents conflicts with other integrations and provides clear ownership indication
+  - Domain dynamically sourced from manifest.json instead of hardcoded value
+
+- **Unique ID Format**: Aligned unique IDs with entity ID format
+  - Changed from `abb_vsn_rest_{device_type}_{serial}_{point}` to `abb_fimer_pvi_vsn_rest_{device_type}_{serial}_{point}`
+  - Ensures consistency between unique_id and entity_id formats
+
+- **Display Name Standardization**: Standardized 187 entity display names to TYPE-first pattern `[Type] [AC/DC] - [Details] - [Time Period]`
+  - Energy entities (75): "Inverter AC energy produced - Lifetime" → "Energy AC - Produced Lifetime"
+  - Power entities (24): "AC Power" → "Power AC", "House Power A" → "Power AC - House Phase A"
+  - Voltage entities (27): "AC Voltage A-N" → "Voltage AC - Phase A-N"
+  - Current entities (19): "AC Current" → "Current AC"
+  - Temperature entities (9): "Cabinet Temperature" → "Temperature - Cabinet"
+  - Frequency entities (6): "Grid Frequency" → "Frequency AC - Grid"
+  - Reactive Power entities (5): "Reactive power at grid connection point" → "Reactive Power - Grid Connection"
+  - Other entities (22): Various measurement types
+  - Enables superior grouping in Home Assistant's entity lists and UI
+
+### Technical
+
+- Updated sensor.py to use DOMAIN constant for entity_id and unique_id generation
+- Added DISPLAY_NAME_STANDARDIZATION dictionary (187 entries) in generate_mapping.py
+- Updated apply_display_name_corrections() to apply both corrections and standardization
+- Regenerated all mapping files (Excel and JSON) with standardized display names
+
+### Breaking Changes
+
+⚠️ **IMPORTANT**: This release contains breaking changes requiring manual entity registry cleanup:
+
+1. All entity IDs will change due to domain prefix addition
+2. All unique IDs will change from `abb_vsn_rest` to `abb_fimer_pvi_vsn_rest` prefix
+3. Entity history will not be transferred to new entity IDs
+4. Manual cleanup required: Delete integration → Clean `.storage/core.entity_registry` → Re-add integration
+
+**Full release notes**: [v1.0.0-beta.22](docs/releases/v1.0.0-beta.22.md)
+
 ## [1.0.0-beta.21] - 2025-11-10
 
 ### Fixed
