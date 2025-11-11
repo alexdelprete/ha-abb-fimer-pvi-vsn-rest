@@ -649,12 +649,20 @@ SUNSPEC_TO_HA_METADATA = {
 
     # Network Monitoring (%, measurement)
     # Note: WiFi link quality is a percentage (0-100%), not signal strength in dB/dBm
-    "wlan0_link_quality": {"device_class": None, "state_class": "measurement", "unit": "%"},
+    "wlan0_link_quality": {"device_class": None, "state_class": "measurement", "unit": "%", "icon": "mdi:wifi-cog"},
+    "wlan0_ipaddr_local": {"icon": "mdi:wifi-cog"},
+    "wlan0_mode": {"icon": "mdi:wifi-cog"},
+    "wlan0_essid": {"icon": "mdi:wifi-cog"},
 
-    # Data Size (bytes, measurement)
-    "store_size": {"device_class": "data_size", "state_class": "measurement", "unit": "B"},
-    "flash_free": {"device_class": "data_size", "state_class": "measurement", "unit": "B"},
-    "free_ram": {"device_class": "data_size", "state_class": "measurement", "unit": "B"},
+    # System Monitoring
+    "sys_load": {"icon": "mdi:gauge"},
+    "type": {"icon": "mdi:information-box-outline"},
+
+    # Data Size (MB, measurement) - Changed from B to MB for better readability
+    # Values are converted from bytes to MB in normalizer.py
+    "store_size": {"device_class": "data_size", "state_class": "measurement", "unit": "MB"},
+    "flash_free": {"device_class": "data_size", "state_class": "measurement", "unit": "MB"},
+    "free_ram": {"device_class": "data_size", "state_class": "measurement", "unit": "MB"},
 
     # Duration (s, total_increasing)
     "uptime": {"device_class": "duration", "state_class": "total_increasing", "unit": "s"},

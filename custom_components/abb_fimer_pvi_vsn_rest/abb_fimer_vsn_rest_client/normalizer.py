@@ -34,6 +34,24 @@ TEMP_CORRECTION_POINTS = {
 }
 TEMP_THRESHOLD_CELSIUS = 70  # Temperatures above this are abnormal and need correction
 
+# String cleanup registry: Points that need value cleanup
+STRING_STRIP_POINTS = {
+    "pn",  # Product number - strip leading/trailing dashes
+}
+
+# Case normalization registry: Points that need title case
+TITLE_CASE_POINTS = {
+    "type",  # Logger type - convert from uppercase to title case
+}
+
+# Byte to MB conversion registry: Storage points for better readability
+# Values are converted from bytes to MB (divide by 1024^2 = 1048576)
+B_TO_MB_POINTS = {
+    "flash_free",  # VSN300 - Available flash storage
+    "free_ram",    # VSN300 - Available RAM
+    "store_size",  # VSN300 - Flash storage used
+}
+
 
 class VSNDataNormalizer:
     """Normalize VSN300/VSN700 data to SunSpec schema."""
@@ -165,6 +183,40 @@ class VSNDataNormalizer:
                         point_value = point_value / 10  # Correct SF from -1 to -2
                         _LOGGER.debug(
                             "Applied temperature scale factor correction to %s: %s°C",
+                            point_name,
+                            point_value,
+                        )
+
+                # Apply string cleanup for points that need it
+                if point_name in STRING_STRIP_POINTS and point_value is not None:
+                    if isinstance(point_value, str):
+                        original_value = point_value
+                        point_value = point_value.strip("-")
+                        _LOGGER.debug(
+                            "Stripped dashes from %s: '%s' → '%s'",
+                            point_name,
+                            original_value,
+                            point_value,
+                        )
+
+                # Apply case normalization for points that need title case
+                if point_name in TITLE_CASE_POINTS and point_value is not None:
+                    if isinstance(point_value, str):
+                        original_value = point_value
+                        point_value = point_value.title()
+                        _LOGGER.debug(
+                            "Applied title case to %s: '%s' → '%s'",
+                            point_name,
+                            original_value,
+                            point_value,
+                        )
+
+                # Convert bytes to megabytes for storage points
+                if point_name in B_TO_MB_POINTS and point_value is not None:
+                    if isinstance(point_value, (int, float)):
+                        point_value = point_value / 1048576  # Bytes to MB (1024^2)
+                        _LOGGER.debug(
+                            "Converted %s from bytes to MB: %.1f MB",
                             point_name,
                             point_value,
                         )

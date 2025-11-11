@@ -301,6 +301,13 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
                 elif units in ("Ω", "Ohm"):
                     # Small resistance values in ohms: no decimals
                     self._attr_suggested_display_precision = 0
+                elif units in ("MB", "GB"):
+                    # Storage sizes: 1 decimal for readability
+                    self._attr_suggested_display_precision = 1
+
+            # Special precision overrides for specific entities
+            if self._point_name == "system_load":
+                self._attr_suggested_display_precision = 2
         else:
             # String sensor: explicitly set ALL numeric attributes to None
             # This prevents HA from inferring numeric type from any attribute
@@ -336,6 +343,40 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
             getattr(self, "_attr_entity_category", None),
             getattr(self, "_attr_icon", None),
         )
+
+    def _format_uptime_seconds(self, seconds: float) -> str:
+        """Format uptime seconds to friendly human-readable string.
+
+        Args:
+            seconds: Uptime in seconds
+
+        Returns:
+            Formatted string like "8 days 22 hours 4 minutes"
+
+        """
+        if not isinstance(seconds, (int, float)) or seconds < 0:
+            return str(seconds)
+
+        seconds = int(seconds)
+        months = seconds // (30 * 24 * 3600)
+        seconds %= (30 * 24 * 3600)
+        days = seconds // (24 * 3600)
+        seconds %= (24 * 3600)
+        hours = seconds // 3600
+        seconds %= 3600
+        minutes = seconds // 60
+
+        parts = []
+        if months > 0:
+            parts.append(f"{months} month{'s' if months != 1 else ''}")
+        if days > 0:
+            parts.append(f"{days} day{'s' if days != 1 else ''}")
+        if hours > 0:
+            parts.append(f"{hours} hour{'s' if hours != 1 else ''}")
+        if minutes > 0 or not parts:
+            parts.append(f"{minutes} minute{'s' if minutes != 1 else ''}")
+
+        return " ".join(parts)
 
     @property
     def native_value(self) -> float | int | str | datetime | None:
@@ -391,6 +432,11 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
                 return state_text
             # Unknown state code - return with code for debugging
             return f"Unknown ({value})"
+
+        # Format uptime to friendly human-readable display
+        # Converts seconds to "X months Y days Z hours W minutes"
+        if self._point_name == "system_uptime" and isinstance(value, (int, float)):
+            return self._format_uptime_seconds(value)
 
         return value
 
