@@ -7,6 +7,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta.21] - 2025-11-10
+
+### Fixed
+
+- **Diagnostic Entity Icons**: Fixed icons not displaying for diagnostic and VAh entities
+  - Implemented complete icon support across data flow (mapping_loader.py, normalizer.py, sensor.py)
+  - 51 diagnostic entities now display information icon (ℹ️ `mdi:information-box-outline`)
+  - 3 VAh entities now display lightning bolt icon (⚡ `mdi:lightning-bolt`)
+
+- **State Entity Mappings**: Fixed state entities showing numeric codes instead of descriptive text
+  - Updated STATE_ENTITY_MAPPINGS dictionary keys to match actual SunSpec normalized names
+  - `global_st` now shows "Run" instead of 6
+  - `dc_st1` and `dc_st2` now show "MPPT" instead of 2
+  - `inverter_st` now shows "Run" instead of 2
+
+- **System Time Display**: Changed `sys_time` entity to show formatted date/time instead of relative time
+  - Removed timestamp device_class to display "2025-11-05 12:04:30" instead of "1 minute ago"
+  - Timestamp conversion (Aurora epoch → datetime) continues to work correctly
+
+- **Unit Validation Errors**: Fixed Home Assistant validation error for `wlan0_link_quality`
+  - Removed signal_strength device_class (percentage is not compatible with signal_strength)
+  - Entity now correctly displays as percentage without inappropriate device_class
+
+- **M1 Entity Names**: Removed redundant "Device" prefix from diagnostic entity display names
+  - "Device manufacturer name" → "Manufacturer name"
+  - "Device model identifier" → "Model identifier"
+  - "Device firmware version" → "Firmware version"
+  - "Device configuration options" → "Configuration options"
+
+### Technical
+
+- Added `icon` field to PointMapping dataclass with complete data flow support
+- Fixed STATE_ENTITY_MAPPINGS keys: "GlobState"→"GlobalSt", "DC1State"→"DcSt1", "DC2State"→"DcSt2", "InvState"→"InverterSt"
+- Updated DESCRIPTION_IMPROVEMENTS in generate_mapping.py for cleaner M1 entity names
+- Regenerated mapping files with all fixes applied
+
+**Full release notes**: [v1.0.0-beta.21](docs/releases/v1.0.0-beta.21.md)
+
 ## [1.0.0-beta.20] - 2025-11-05
 
 ### Fixed

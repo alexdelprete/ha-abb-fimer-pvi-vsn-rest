@@ -199,6 +199,7 @@ class VSNDataNormalizer:
                     "sunspec_name": mapping.sunspec_name,
                     "vsn300_name": mapping.vsn300_name,
                     "vsn700_name": mapping.vsn700_name,
+                    "icon": mapping.icon,
                 }
 
                 # Use HA entity name as the key for normalized data

@@ -1,7 +1,7 @@
 """Constants for ABB FIMER PVI VSN REST integration."""
 
 DOMAIN = "abb_fimer_pvi_vsn_rest"
-VERSION = "1.0.0-beta.20"
+VERSION = "1.0.0-beta.21"
 
 # Configuration
 CONF_HOST = "host"
@@ -218,13 +218,14 @@ ALARM_STATE_MAP = {
 }
 
 # Map SunSpec entity names to their corresponding state mapping dictionary
+# Keys must match the SunSpec normalized names from vsn-sunspec-point-mapping.json
 STATE_ENTITY_MAPPINGS = {
-    "GlobState": GLOBAL_STATE_MAP,
-    "DC1State": DCDC_STATE_MAP,
-    "DC2State": DCDC_STATE_MAP,
-    "InvState": INVERTER_STATE_MAP,
+    "GlobalSt": GLOBAL_STATE_MAP,      # VSN300: m64061_1_GlobalSt
+    "DcSt1": DCDC_STATE_MAP,           # VSN300: m64061_1_DcSt1
+    "DcSt2": DCDC_STATE_MAP,           # VSN300: m64061_1_DcSt2
+    "InverterSt": INVERTER_STATE_MAP,  # VSN300: m64061_1_InverterSt
     "AlarmState": ALARM_STATE_MAP,
-    "AlarmSt": ALARM_STATE_MAP,  # VSN300 alarm state
+    "AlarmSt": ALARM_STATE_MAP,        # VSN300: m64061_1_AlarmSt
 }
 
 STARTUP_MESSAGE = f"""

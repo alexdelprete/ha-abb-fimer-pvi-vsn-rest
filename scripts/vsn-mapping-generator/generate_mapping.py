@@ -390,7 +390,8 @@ DISPLAY_NAME_CORRECTIONS = {
 DEVICE_CLASS_FIXES = {
     "Device Address": {"device_class": None, "unit": None, "entity_category": "diagnostic"},
     "Version": {"device_class": None, "unit": None, "entity_category": "diagnostic"},
-    "Sys Time": {"device_class": "timestamp", "entity_category": "diagnostic"},
+    # System time: Remove timestamp device_class to show formatted date/time instead of relative time
+    "Sys Time": {"device_class": None, "entity_category": "diagnostic"},
     # Device information fields should be diagnostic (use label names)
     "Manufacturer": {"entity_category": "diagnostic"},
     "Model": {"entity_category": "diagnostic"},
@@ -647,7 +648,8 @@ SUNSPEC_TO_HA_METADATA = {
     "NumOfMPPT": {"device_class": None, "state_class": "measurement", "unit": "channels"},
 
     # Network Monitoring (%, measurement)
-    "wlan0_link_quality": {"device_class": "signal_strength", "state_class": "measurement", "unit": "%"},
+    # Note: WiFi link quality is a percentage (0-100%), not signal strength in dB/dBm
+    "wlan0_link_quality": {"device_class": None, "state_class": "measurement", "unit": "%"},
 
     # Data Size (bytes, measurement)
     "store_size": {"device_class": "data_size", "state_class": "measurement", "unit": "B"},
@@ -924,10 +926,10 @@ DESCRIPTION_IMPROVEMENTS = {
     "wlan0_link_quality": "WiFi link quality percentage",
 
     # M1 Common Model - Using actual SunSpec names
-    "Mn": "Device manufacturer name",
-    "Md": "Device model identifier",
-    "Vr": "Device firmware version",
-    "Opt": "Device configuration options",
+    "Mn": "Manufacturer name",
+    "Md": "Model identifier",
+    "Vr": "Firmware version",
+    "Opt": "Configuration options",
     "SN": "Device serial number",
     "DA": "Device Modbus address",
 

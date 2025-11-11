@@ -321,13 +321,20 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
             reason = "mapping" if entity_category_str == "diagnostic" else "datalogger device"
             _LOGGER.debug("Sensor %s set as diagnostic entity (reason: %s)", point_name, reason)
 
+        # Set custom icon if specified in mapping (e.g., MDI icons for diagnostic entities)
+        icon = point_data.get("icon")
+        if icon:
+            self._attr_icon = icon
+            _LOGGER.debug("Sensor %s using custom icon: %s", point_name, icon)
+
         _LOGGER.debug(
-            "Created sensor: %s (device_class=%s, state_class=%s, unit=%s, entity_category=%s)",
+            "Created sensor: %s (device_class=%s, state_class=%s, unit=%s, entity_category=%s, icon=%s)",
             self._attr_name,
             getattr(self, "_attr_device_class", None),
             getattr(self, "_attr_state_class", None),
             getattr(self, "_attr_native_unit_of_measurement", None),
             getattr(self, "_attr_entity_category", None),
+            getattr(self, "_attr_icon", None),
         )
 
     @property

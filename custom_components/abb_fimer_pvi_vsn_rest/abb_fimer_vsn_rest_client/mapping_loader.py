@@ -40,6 +40,7 @@ class PointMapping:
     device_class: str
     entity_category: str | None
     available_in_modbus: str
+    icon: str = ""  # MDI icon for entity (e.g., "mdi:information-box-outline")
 
 
 class VSNMappingLoader:
@@ -185,6 +186,7 @@ class VSNMappingLoader:
             device_class = row.get("HA Device Class") or ""
             entity_category = row.get("Entity Category") or None
             available_in_modbus = row.get("Available in Modbus") or ""
+            icon = row.get("HA Icon") or ""
 
             # Get HA Display Name (fallback to description if not present for backward compat)
             ha_display_name = row.get("HA Display Name") or description or label
@@ -222,6 +224,7 @@ class VSNMappingLoader:
                 device_class=device_class,
                 entity_category=entity_category,
                 available_in_modbus=available_in_modbus,
+                icon=icon,
             )
 
             # Use HA entity name as primary key
