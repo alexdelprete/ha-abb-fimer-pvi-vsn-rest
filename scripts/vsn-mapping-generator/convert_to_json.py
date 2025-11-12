@@ -28,7 +28,17 @@ def convert_excel_to_json():
     print(f"Found {len(headers)} columns")
 
     # Model flag columns
-    model_flags = ["M1", "M103", "M160", "M203", "M802", "M64061", "VSN300_Only", "VSN700_Only", "ABB_Proprietary"]
+    model_flags = [
+        "M1",
+        "M103",
+        "M160",
+        "M203",
+        "M802",
+        "M64061",
+        "VSN300_Only",
+        "VSN700_Only",
+        "ABB_Proprietary",
+    ]
 
     # Convert rows to list of dictionaries
     rows = []
@@ -83,7 +93,13 @@ def convert_excel_to_json():
     # Also copy to integration data folder
     # Go up two levels from scripts/vsn-mapping-generator to get to repo root
     repo_root = script_dir.parent.parent
-    data_path = repo_root / "custom_components" / "abb_fimer_pvi_vsn_rest" / "data" / "vsn-sunspec-point-mapping.json"
+    data_path = (
+        repo_root
+        / "custom_components"
+        / "abb_fimer_pvi_vsn_rest"
+        / "data"
+        / "vsn-sunspec-point-mapping.json"
+    )
     print(f"Copying to integration data folder: {data_path}")
 
     with open(data_path, "w", encoding="utf-8") as f:
