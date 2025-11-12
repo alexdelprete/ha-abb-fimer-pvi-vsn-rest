@@ -7,6 +7,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta.23] - 2025-11-12
+
+### Developer Tools
+
+- **Linting Compliance**: Fixed all 22 ruff linting errors in VSN mapping generator scripts
+  - Package structure (INP001): Added `__init__.py` to scripts package
+  - Performance issues (9 errors): PERF403, PERF102, B007, RUF005
+  - Code style (5 errors): RET504, RET505
+  - Data correctness (F601): Removed duplicate dictionary key
+  - Dead code (F841): Removed unused variable
+  - Code complexity (C901): Refactored complex function
+
+- **Code Refactoring**: Reduced complexity of `generate_mapping_excel_complete()` function
+  - Function length: 537 lines → 74 lines (86% reduction)
+  - Cyclomatic complexity: 71 → <25 (below threshold)
+  - Created 10 focused helper functions with single responsibilities
+  - Improved testability, maintainability, and readability
+
+- **Mapping Files**: Regenerated all VSN-SunSpec point mapping files (258 unique points)
+  - Verified refactored code produces correct output
+  - Added missing `docs/vsn-sunspec-point-mapping.json`
+  - Updated all copies in docs/, output/, and integration data folders
+
+### Technical
+
+- All scripts now pass 100% of ruff linting checks
+- Improved code quality without changing integration functionality
+- No user-facing changes - developer tooling release only
+
+**Full release notes**: [v1.0.0-beta.23](docs/releases/v1.0.0-beta.23.md)
+
 ## [1.0.0-beta.22] - 2025-11-11
 
 ### Changed
