@@ -38,9 +38,7 @@ def load_excel_data(file_path):
     headers = [cell.value for cell in ws[1]]
 
     # Find column indices
-    col_indices = {}
-    for idx, header in enumerate(headers):
-        col_indices[header] = idx
+    col_indices = {header: idx for idx, header in enumerate(headers)}
 
     # Load data
     data = {}

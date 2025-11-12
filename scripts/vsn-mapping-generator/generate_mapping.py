@@ -48,7 +48,8 @@ MODEL_FLAGS = [
 ]
 
 # Full Excel headers (27 columns total)
-EXCEL_HEADERS = MODEL_FLAGS + [
+EXCEL_HEADERS = [
+    *MODEL_FLAGS,
     "REST Name (VSN700)",
     "REST Name (VSN300)",
     "SunSpec Normalized Name",
@@ -1134,7 +1135,6 @@ DESCRIPTION_IMPROVEMENTS = {
     "PhVphBC": "AC Voltage Phase B-C",
     "PhVphCA": "AC Voltage Phase C-A",
     "VGnd": "Voltage to ground reference",
-    "VBulk": "DC bus bulk capacitor voltage",
     "DCV_1": "DC Voltage (String 1)",
     "DCV_2": "DC Voltage (String 2)",
     "VcMax": "Maximum voltage across battery cells",
@@ -1512,7 +1512,7 @@ def load_feeds_titles(vsn300_feeds_path, vsn700_feeds_path):
             vsn300_feeds = json.load(f)
             # feeds is a dictionary, not a list!
             feeds_dict = vsn300_feeds.get("feeds", {})
-            for device_id, feed_data in feeds_dict.items():
+            for feed_data in feeds_dict.values():
                 datastreams = feed_data.get("datastreams", {})
                 for point_name, point_info in datastreams.items():
                     title = point_info.get("title", "")
@@ -1531,7 +1531,7 @@ def load_feeds_titles(vsn300_feeds_path, vsn700_feeds_path):
             vsn700_feeds = json.load(f)
             # feeds is a dictionary, not a list!
             feeds_dict = vsn700_feeds.get("feeds", {})
-            for device_id, feed_data in feeds_dict.items():
+            for feed_data in feeds_dict.values():
                 datastreams = feed_data.get("datastreams", {})
                 for point_name, point_info in datastreams.items():
                     title = point_info.get("title", "")
@@ -1702,9 +1702,7 @@ def clean_energy_prefix(text):
     # Pattern: E0 -, E1 -, E2 -, ..., E99 -, Ein -
     import re
     text = re.sub(r'^E\d+ - ', '', text)
-    text = re.sub(r'^Ein - ', '', text)
-
-    return text
+    return re.sub(r'^Ein - ', '', text)
 
 
 def standardize_time_periods(text):
@@ -1727,9 +1725,7 @@ def standardize_time_periods(text):
     # Replace variations of 7 days
     text = text.replace('last 7 days', 'last week')
     text = text.replace('- 7D', '- last week')
-    text = text.replace(' 7D', ' last week')
-
-    return text
+    return text.replace(' 7D', ' last week')
 
 
 def apply_label_corrections(label):
@@ -1821,9 +1817,7 @@ def generate_label_from_name(point_name):
     result = result.replace("Qac", "QAC")
     result = result.replace("Sac", "SAC")
     result = result.replace("Pac", "PAC")
-    result = result.replace("Digital Input", "DI")
-
-    return result
+    return result.replace("Digital Input", "DI")
 
 def generate_simplified_point_name(label, model):
     """Generate simplified HA entity name from label."""
@@ -1837,9 +1831,7 @@ def generate_simplified_point_name(label, model):
     name = re.sub(r"_+", "_", name)
 
     # Strip leading/trailing underscores
-    name = name.strip("_")
-
-    return name
+    return name.strip("_")
 
 def lookup_label_description(models_data, model, sunspec_point):
     """Lookup label and description from SunSpec metadata."""
@@ -2013,7 +2005,7 @@ def merge_duplicate_rows(rows_by_sunspec):
     """Merge duplicate rows with the same SunSpec name."""
     merged_rows = []
 
-    for sunspec_name, group in rows_by_sunspec.items():
+    for group in rows_by_sunspec.values():
         if len(group) == 1:
             merged_rows.append(group[0])
             continue
@@ -2339,7 +2331,7 @@ def generate_mapping_excel_complete():
         with open(vsn700_livedata_path) as f:
             data = json.load(f)
             # No "livedata" key at root - devices are directly at root
-            for device_id, device_data in data.items():
+            for device_data in data.values():
                 if isinstance(device_data, dict) and "points" in device_data:
                     for point in device_data["points"]:
                         vsn700_livedata_points.add(point["name"])
@@ -2349,7 +2341,7 @@ def generate_mapping_excel_complete():
             data = json.load(f)
             # feeds is a dictionary, not a list!
             feeds_dict = data.get("feeds", {})
-            for device_id, feed_data in feeds_dict.items():
+            for feed_data in feeds_dict.values():
                 datastreams = feed_data.get("datastreams", {})
                 vsn700_feeds_points.update(datastreams.keys())
 
@@ -2357,7 +2349,7 @@ def generate_mapping_excel_complete():
         with open(vsn300_livedata_path) as f:
             data = json.load(f)
             # No "livedata" key at root - devices are directly at root
-            for device_id, device_data in data.items():
+            for device_data in data.values():
                 if isinstance(device_data, dict) and "points" in device_data:
                     for point in device_data["points"]:
                         vsn300_livedata_points.add(point["name"])
@@ -2745,8 +2737,6 @@ def generate_mapping_excel_complete():
     # Add data rows
     for row_idx, row_data in enumerate(deduplicated_rows, 2):
         for col_idx, header in enumerate(EXCEL_HEADERS, 1):
-            # Map header to row key
-            header_key = header.lower().replace(" ", "_").replace("(", "").replace(")", "")
             if header in MODEL_FLAGS:
                 value = row_data.get(header, "NO")
             elif header == "REST Name (VSN700)":

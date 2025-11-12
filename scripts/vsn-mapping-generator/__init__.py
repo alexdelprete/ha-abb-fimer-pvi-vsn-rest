@@ -1,0 +1,1 @@
+"""VSN mapping generator package."""
