@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta.25] - 2025-11-12
+
+### Fixed
+
+- **Entity ID Generation - THE REAL FIX**: Properly fixed entity ID generation by using `has_entity_name=True` with technical device names
+  - Beta.24's fix was incorrect: `suggested_object_id` is ONLY used when `has_entity_name=True`
+  - When `has_entity_name=False`, Home Assistant completely ignores `suggested_object_id`
+  - Implemented correct approach: `has_entity_name=True` + technical device names + simplified `suggested_object_id`
+  - Entity IDs now: `sensor.abb_fimer_pvi_vsn_rest_datalogger_1110333n161421_wlan0_essid` ✅
+  - Entity names on device page: "WiFi SSID" ✅ (clean and friendly)
+  - Device names: Technical format but acceptable trade-off for predictable entity IDs
+
+### Technical Changes
+
+- Set `has_entity_name = True` (required for `suggested_object_id` to work)
+- Changed `suggested_object_id` to just point name (e.g., `"wlan0_essid"`)
+- Use technical device names: `abb_fimer_pvi_vsn_rest_datalogger_1110333n161421`
+- Home Assistant combines device_name + suggested_object_id for predictable entity IDs
+
+### Breaking Changes
+
+⚠️ **IMPORTANT**: This release contains breaking changes requiring manual migration:
+
+1. All entity IDs will change (again - final format this time)
+2. **Migration**: Remove integration via UI (auto-deletes entities) → Reinstall
+3. Update all dashboards and automations with new entity IDs
+
+**Why the change from Beta.24**: After deeper investigation, we discovered `has_entity_name=False` causes HA to ignore `suggested_object_id` entirely. This is the correct implementation based on HA core source code.
+
+**This is the final entity ID format.** No more changes after this.
+
+**Full release notes**: [v1.0.0-beta.25](docs/releases/v1.0.0-beta.25.md)
+
 ## [1.0.0-beta.24] - 2025-11-12
 
 ### Fixed

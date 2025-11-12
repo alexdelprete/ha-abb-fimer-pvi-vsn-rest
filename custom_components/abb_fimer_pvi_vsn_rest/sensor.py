@@ -207,7 +207,7 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         self._state_mapping = STATE_ENTITY_MAPPINGS.get(self._sunspec_name)
 
         # Enable modern entity naming pattern
-        self._attr_has_entity_name = False
+        self._attr_has_entity_name = True
 
         # Determine if this sensor belongs to datalogger device
         is_datalogger = False
@@ -237,18 +237,16 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         unique_id = f"{device_identifier}_{point_name}"
         self._attr_unique_id = unique_id
 
-        # Set suggested_object_id to control entity_id generation
-        # This ensures entity_id follows the same format as unique_id for consistency
-        # Format: {domain}_{device_type}_{serial_compact}_{point_name}
-        # Result: sensor.abb_fimer_pvi_vsn_rest_inverter_0779093g823112_ac_power
-        self._attr_suggested_object_id = (
-            f"{DOMAIN}_{device_type_simple}_{device_sn_compact}_{point_name}"
-        )
+        # Set suggested_object_id for entity_id generation
+        # With has_entity_name=True, HA combines device_name + suggested_object_id
+        # Device name will be technical format: {domain}_{device_type}_{serial_compact}
+        # Result: sensor.abb_fimer_pvi_vsn_rest_inverter_0779093g823112_wlan0_essid
+        self._attr_suggested_object_id = point_name
 
-        # Set entity name to friendly display name (what users see in device cards)
-        # With has_entity_name=False, HA uses suggested_object_id directly:
-        #   entity_id = sensor.{suggested_object_id}
-        #   friendly_name = {_attr_name} (friendly display from mapping)
+        # Set entity name to friendly display name (what users see on device page)
+        # With has_entity_name=True, this is displayed as the entity name in UI
+        # Full friendly_name will be: "{device_name} {entity_name}"
+        # Example: "abb_fimer_pvi_vsn_rest_datalogger_1110333n161421 WiFi SSID"
         self._attr_name = point_data.get(
             "ha_display_name", point_data.get("label", point_name)
         )
@@ -544,17 +542,11 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
                         configuration_url = f"http://{hostname}"
                 break
 
-        # Format friendly device name: "Manufacturer Type Model (Serial)"
-        # Examples:
-        #   "Power-One Inverter PVI-3.0-TL-OUTD (077909-3G82-3112)"
-        #   "ABB Datalogger VSN300 (111033-3N16-1421)"
-        # This is for display only; entity_id is controlled by _attr_suggested_object_id
-        device_name = _format_device_name(
-            manufacturer=manufacturer,
-            device_type_simple=self._device_type_simple,
-            device_model=device_model,
-            device_sn_original=self._device_id,
-        )
+        # Use technical device name for predictable entity IDs
+        # Format: {domain}_{device_type}_{serial_compact}
+        # Example: "abb_fimer_pvi_vsn_rest_datalogger_1110333n161421"
+        # With has_entity_name=True, this becomes the prefix for all entity_ids
+        device_name = f"{DOMAIN}_{self._device_type_simple}_{self._device_sn_compact}"
 
         # Build device info dictionary with all available fields
         device_info_dict = {
