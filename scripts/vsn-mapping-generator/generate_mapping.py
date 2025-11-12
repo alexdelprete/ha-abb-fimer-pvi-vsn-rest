@@ -2273,22 +2273,13 @@ def generate_summary_sheet(wb, rows):
     ws.column_dimensions["A"].width = 30
     ws.column_dimensions["B"].width = 15
 
-def generate_mapping_excel_complete():
-    """Generate complete mapping Excel with all customizations built-in."""
-    print(f"\n{'='*70}")
-    print(f"VSN-SunSpec Point Mapping Generator v{SCRIPT_VERSION}")
-    print(f"Generated: {SCRIPT_DATE}")
-    print(f"{'='*70}\n")
+# ==============================================================================
+# HELPER FUNCTIONS FOR generate_mapping_excel_complete()
+# ==============================================================================
 
-    # Load data sources
+def _load_data_sources(data_dir):
+    """Load all data sources including SunSpec metadata, M64061, feeds, and status."""
     print("Loading data sources...")
-
-    # Define paths relative to script location
-    data_dir = SCRIPT_DIR / "data"
-    output_dir = SCRIPT_DIR / "output"
-
-    # Ensure output directory exists
-    output_dir.mkdir(parents=True, exist_ok=True)
 
     # Load SunSpec metadata
     sunspec_path = data_dir / "sunspec" / "models_workbook.xlsx"
@@ -2305,24 +2296,27 @@ def generate_mapping_excel_complete():
     m64061_metadata = load_m64061_from_abb_excel(abb_excel_path)
     print(f"    Found {len(m64061_metadata)} M64061 points")
 
-    # Load VSN data paths
-    vsn300_livedata_path = data_dir / "vsn300" / "livedata.json"
-    vsn300_feeds_path = data_dir / "vsn300" / "feeds.json"
-    vsn300_status_path = data_dir / "vsn300" / "status.json"
-    vsn700_livedata_path = data_dir / "vsn700" / "livedata.json"
-    vsn700_feeds_path = data_dir / "vsn700" / "feeds.json"
-    vsn700_status_path = data_dir / "vsn700" / "status.json"
-
     # Load feeds titles
+    vsn300_feeds_path = data_dir / "vsn300" / "feeds.json"
+    vsn700_feeds_path = data_dir / "vsn700" / "feeds.json"
     print("  Loading VSN feeds data...")
     feeds_titles = load_feeds_titles(vsn300_feeds_path, vsn700_feeds_path)
 
     # Load status data
+    vsn300_status_path = data_dir / "vsn300" / "status.json"
+    vsn700_status_path = data_dir / "vsn700" / "status.json"
     print("  Loading VSN status data...")
     status_points = load_vsn_status(vsn300_status_path, vsn700_status_path)
     print(f"    Found {len(status_points)} status points")
 
-    # Load point presence from livedata
+    return sunspec_metadata, m64061_metadata, feeds_titles, status_points
+
+def _extract_point_sets(data_dir):
+    """Extract point sets from VSN300 and VSN700 livedata and feeds files."""
+    vsn700_livedata_path = data_dir / "vsn700" / "livedata.json"
+    vsn700_feeds_path = data_dir / "vsn700" / "feeds.json"
+    vsn300_livedata_path = data_dir / "vsn300" / "livedata.json"
+
     vsn700_livedata_points = set()
     vsn700_feeds_points = set()
     vsn300_livedata_points = set()
@@ -2330,7 +2324,6 @@ def generate_mapping_excel_complete():
     if vsn700_livedata_path.exists():
         with open(vsn700_livedata_path) as f:
             data = json.load(f)
-            # No "livedata" key at root - devices are directly at root
             for device_data in data.values():
                 if isinstance(device_data, dict) and "points" in device_data:
                     for point in device_data["points"]:
@@ -2339,7 +2332,6 @@ def generate_mapping_excel_complete():
     if vsn700_feeds_path.exists():
         with open(vsn700_feeds_path) as f:
             data = json.load(f)
-            # feeds is a dictionary, not a list!
             feeds_dict = data.get("feeds", {})
             for feed_data in feeds_dict.values():
                 datastreams = feed_data.get("datastreams", {})
@@ -2348,7 +2340,6 @@ def generate_mapping_excel_complete():
     if vsn300_livedata_path.exists():
         with open(vsn300_livedata_path) as f:
             data = json.load(f)
-            # No "livedata" key at root - devices are directly at root
             for device_data in data.values():
                 if isinstance(device_data, dict) and "points" in device_data:
                     for point in device_data["points"]:
@@ -2358,12 +2349,13 @@ def generate_mapping_excel_complete():
     print(f"  Found {len(vsn700_feeds_points)} VSN700 feeds points")
     print(f"  Found {len(vsn300_livedata_points)} VSN300 livedata points")
 
-    # Process all points
-    print("\nProcessing points...")
-    all_rows = []
-    processed_points = set()
+    return vsn700_livedata_points, vsn700_feeds_points, vsn300_livedata_points
 
-    # Process standard SunSpec points
+def _process_sunspec_points(vsn700_livedata_points, vsn700_feeds_points, vsn300_livedata_points,
+                            sunspec_metadata, feeds_titles, processed_points):
+    """Process standard SunSpec points from VSN_TO_SUNSPEC_MAP."""
+    all_rows = []
+
     for vsn_name, mapping in VSN_TO_SUNSPEC_MAP.items():
         if (vsn_name in vsn700_livedata_points or vsn_name in vsn700_feeds_points or
             vsn_name in vsn300_livedata_points):
@@ -2388,7 +2380,6 @@ def generate_mapping_excel_complete():
             )
 
             # Determine VSN300 name
-            # Check if this exact VSN name is in VSN300 livedata
             if vsn_name in vsn300_livedata_points:
                 vsn300_name = vsn_name
             elif mapping.get("modbus", "N/A") in vsn300_livedata_points:
@@ -2424,9 +2415,14 @@ def generate_mapping_excel_complete():
             all_rows.append(row)
             processed_points.add(vsn_name)
 
-    # Process M64061 points
+    return all_rows
+
+def _process_m64061_points(vsn700_livedata_points, vsn700_feeds_points,
+                          feeds_titles, processed_points):
+    """Process M64061 proprietary points."""
+    all_rows = []
+
     for point_name in M64061_POINTS:
-        # Check if point exists in VSN700 livedata
         if point_name in vsn700_livedata_points and point_name not in processed_points:
             label = generate_label_from_name(point_name)
             ha_name = generate_simplified_point_name(label, "M64061")
@@ -2448,7 +2444,7 @@ def generate_mapping_excel_complete():
                 label=label,
                 description=description,
                 ha_display_name=description if description != label else label,
-                category="Status",  # M64061 points are typically status/alarm points
+                category="Status",
                 units=feeds_info.get("units", "") if feeds_info else "",
                 state_class="",
                 device_class="",
@@ -2462,9 +2458,14 @@ def generate_mapping_excel_complete():
             all_rows.append(row)
             processed_points.add(point_name)
 
-    # Process ABB Proprietary points
+    return all_rows
+
+def _process_abb_proprietary_points(vsn700_livedata_points, vsn700_feeds_points,
+                                    vsn300_livedata_points, feeds_titles, processed_points):
+    """Process ABB proprietary points."""
+    all_rows = []
+
     for point_name in ABB_PROPRIETARY:
-        # Check in both VSN300 and VSN700
         in_vsn700 = point_name in vsn700_livedata_points or point_name in vsn700_feeds_points
         in_vsn300 = point_name in vsn300_livedata_points
 
@@ -2510,7 +2511,13 @@ def generate_mapping_excel_complete():
             all_rows.append(row)
             processed_points.add(point_name)
 
-    # Process VSN300-only points (points in VSN300 livedata not yet processed)
+    return all_rows
+
+def _process_vsn300_only_points(vsn300_livedata_points, sunspec_metadata,
+                                feeds_titles, processed_points):
+    """Process VSN300-only points not yet processed."""
+    all_rows = []
+
     for point_name in vsn300_livedata_points:
         if point_name not in processed_points:
             # Extract model from VSN300 naming pattern
@@ -2520,7 +2527,7 @@ def generate_mapping_excel_complete():
             # Special handling for C_ prefix (Common Model M1 points)
             if point_name.startswith("C_"):
                 model = "M1"
-                sunspec_name = point_name[2:]  # Strip "C_" prefix
+                sunspec_name = point_name[2:]
             elif point_name.startswith("m") and "_" in point_name:
                 # Standard pattern m{model}_{instance}_{point}
                 match = re.match(r"m(\d+)_(\d+)_(.+)", point_name)
@@ -2585,8 +2592,14 @@ def generate_mapping_excel_complete():
             all_rows.append(row)
             processed_points.add(point_name)
 
-    # Process VSN700-only points (points in VSN700 livedata/feeds not yet processed)
+    return all_rows
+
+def _process_vsn700_only_points(vsn700_livedata_points, vsn700_feeds_points,
+                                feeds_titles, processed_points):
+    """Process VSN700-only points not yet processed."""
+    all_rows = []
     all_vsn700_points = vsn700_livedata_points.union(vsn700_feeds_points)
+
     for point_name in all_vsn700_points:
         if point_name not in processed_points:
             label = generate_label_from_name(point_name)
@@ -2632,13 +2645,18 @@ def generate_mapping_excel_complete():
             all_rows.append(row)
             processed_points.add(point_name)
 
-    # Process status points (from /status endpoint)
+    return all_rows
+
+def _process_status_points(status_points, processed_points):
+    """Process status points from /status endpoint."""
+    all_rows = []
+
     for point_name, status_info in status_points.items():
         if point_name not in processed_points:
             label = status_info["label"] if status_info["label"] else generate_label_from_name(point_name)
             ha_name = generate_simplified_point_name(label, "Status")
 
-            # Get description with priority (v2.0.7: apply improvements to status points)
+            # Get description with priority
             description, data_source, _ = get_description_with_priority(
                 point_name, point_name, "Status", label,
                 "", None
@@ -2695,19 +2713,52 @@ def generate_mapping_excel_complete():
             all_rows.append(row)
             processed_points.add(point_name)
 
-    print(f"  Processed {len(all_rows)} total points (including status endpoints)")
+    return all_rows
 
-    # Deduplication
-    print("\nDeduplicating points...")
-    rows_by_sunspec = defaultdict(list)
-    for row in all_rows:
-        sunspec_name = row.get("sunspec_name", "UNKNOWN")
-        rows_by_sunspec[sunspec_name].append(row)
+def _get_cell_value_for_header(header, row_data):
+    """Get the cell value for a given header from row data."""
+    if header in MODEL_FLAGS:
+        return row_data.get(header, "NO")
+    if header == "REST Name (VSN700)":
+        return row_data.get("vsn700_name", "")
+    if header == "REST Name (VSN300)":
+        return row_data.get("vsn300_name", "")
+    if header == "SunSpec Normalized Name":
+        return row_data.get("sunspec_name", "")
+    if header == "HA Name":
+        return row_data.get("ha_name", "")
+    if header == "In /livedata":
+        return row_data.get("in_livedata", "")
+    if header == "In /feeds":
+        return row_data.get("in_feeds", "")
+    if header == "Label":
+        return row_data.get("label", "")
+    if header == "Description":
+        return row_data.get("description", "")
+    if header == "HA Display Name":
+        return row_data.get("ha_display_name", "")
+    if header == "Category":
+        return row_data.get("category", "")
+    if header == "HA Unit of Measurement":
+        return row_data.get("units", "")
+    if header == "HA State Class":
+        return row_data.get("state_class", "")
+    if header == "HA Device Class":
+        return row_data.get("device_class", "")
+    if header == "HA Icon":
+        return row_data.get("icon", "")
+    if header == "Entity Category":
+        return row_data.get("entity_category", "")
+    if header == "Available in Modbus":
+        return row_data.get("available_in_modbus", "")
+    if header == "Data Source":
+        return row_data.get("data_source", "")
+    if header == "Model_Notes":
+        return row_data.get("model_notes", "")
+    return ""
 
-    deduplicated_rows = merge_duplicate_rows(rows_by_sunspec)
-    print(f"  Deduplicated from {len(all_rows)} to {len(deduplicated_rows)} unique points")
-
-    # Create Excel workbook
+def _create_excel_workbook(deduplicated_rows, output_dir):
+    """Create Excel workbook with data, formatting, and additional sheets."""
     print("\nCreating Excel workbook...")
     wb = openpyxl.Workbook()
     ws = wb.active
@@ -2737,47 +2788,7 @@ def generate_mapping_excel_complete():
     # Add data rows
     for row_idx, row_data in enumerate(deduplicated_rows, 2):
         for col_idx, header in enumerate(EXCEL_HEADERS, 1):
-            if header in MODEL_FLAGS:
-                value = row_data.get(header, "NO")
-            elif header == "REST Name (VSN700)":
-                value = row_data.get("vsn700_name", "")
-            elif header == "REST Name (VSN300)":
-                value = row_data.get("vsn300_name", "")
-            elif header == "SunSpec Normalized Name":
-                value = row_data.get("sunspec_name", "")
-            elif header == "HA Name":
-                value = row_data.get("ha_name", "")
-            elif header == "In /livedata":
-                value = row_data.get("in_livedata", "")
-            elif header == "In /feeds":
-                value = row_data.get("in_feeds", "")
-            elif header == "Label":
-                value = row_data.get("label", "")
-            elif header == "Description":
-                value = row_data.get("description", "")
-            elif header == "HA Display Name":
-                value = row_data.get("ha_display_name", "")
-            elif header == "Category":
-                value = row_data.get("category", "")
-            elif header == "HA Unit of Measurement":
-                value = row_data.get("units", "")
-            elif header == "HA State Class":
-                value = row_data.get("state_class", "")
-            elif header == "HA Device Class":
-                value = row_data.get("device_class", "")
-            elif header == "HA Icon":
-                value = row_data.get("icon", "")
-            elif header == "Entity Category":
-                value = row_data.get("entity_category", "")
-            elif header == "Available in Modbus":
-                value = row_data.get("available_in_modbus", "")
-            elif header == "Data Source":
-                value = row_data.get("data_source", "")
-            elif header == "Model_Notes":
-                value = row_data.get("model_notes", "")
-            else:
-                value = ""
-
+            value = _get_cell_value_for_header(header, row_data)
             ws.cell(row=row_idx, column=col_idx, value=value)
 
     # Adjust column widths
@@ -2803,6 +2814,76 @@ def generate_mapping_excel_complete():
     # Save workbook
     output_path = output_dir / "vsn-sunspec-point-mapping.xlsx"
     wb.save(output_path)
+
+    return output_path
+
+def generate_mapping_excel_complete():
+    """Generate complete mapping Excel with all customizations built-in."""
+    print(f"\n{'='*70}")
+    print(f"VSN-SunSpec Point Mapping Generator v{SCRIPT_VERSION}")
+    print(f"Generated: {SCRIPT_DATE}")
+    print(f"{'='*70}\n")
+
+    # Define paths relative to script location
+    data_dir = SCRIPT_DIR / "data"
+    output_dir = SCRIPT_DIR / "output"
+
+    # Ensure output directory exists
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    # Load all data sources
+    sunspec_metadata, m64061_metadata, feeds_titles, status_points = _load_data_sources(data_dir)
+
+    # Extract point sets from VSN data files
+    vsn700_livedata_points, vsn700_feeds_points, vsn300_livedata_points = _extract_point_sets(data_dir)
+
+    # Process all points
+    print("\nProcessing points...")
+    processed_points = set()
+    all_rows = []
+
+    # Process each point type
+    all_rows.extend(_process_sunspec_points(
+        vsn700_livedata_points, vsn700_feeds_points, vsn300_livedata_points,
+        sunspec_metadata, feeds_titles, processed_points
+    ))
+
+    all_rows.extend(_process_m64061_points(
+        vsn700_livedata_points, vsn700_feeds_points,
+        feeds_titles, processed_points
+    ))
+
+    all_rows.extend(_process_abb_proprietary_points(
+        vsn700_livedata_points, vsn700_feeds_points,
+        vsn300_livedata_points, feeds_titles, processed_points
+    ))
+
+    all_rows.extend(_process_vsn300_only_points(
+        vsn300_livedata_points, sunspec_metadata,
+        feeds_titles, processed_points
+    ))
+
+    all_rows.extend(_process_vsn700_only_points(
+        vsn700_livedata_points, vsn700_feeds_points,
+        feeds_titles, processed_points
+    ))
+
+    all_rows.extend(_process_status_points(status_points, processed_points))
+
+    print(f"  Processed {len(all_rows)} total points (including status endpoints)")
+
+    # Deduplication
+    print("\nDeduplicating points...")
+    rows_by_sunspec = defaultdict(list)
+    for row in all_rows:
+        sunspec_name = row.get("sunspec_name", "UNKNOWN")
+        rows_by_sunspec[sunspec_name].append(row)
+
+    deduplicated_rows = merge_duplicate_rows(rows_by_sunspec)
+    print(f"  Deduplicated from {len(all_rows)} to {len(deduplicated_rows)} unique points")
+
+    # Create Excel workbook and save
+    output_path = _create_excel_workbook(deduplicated_rows, output_dir)
 
     print(f"\n{'='*70}")
     print(f"✓ Excel file created: {output_path}")
