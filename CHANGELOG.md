@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta.24] - 2025-11-12
+
+### Fixed
+
+- **Entity ID Generation**: Fixed critical bug where `has_entity_name` was incorrectly set to `True` (introduced in beta.13)
+  - Entity IDs were not following the intended format due to Home Assistant ignoring `suggested_object_id` when `has_entity_name=True`
+  - Users were seeing: `sensor.abb_fimer_datalogger_vsn300_111033_3n16_1421_system_load_average`
+  - Now correctly generates: `sensor.abb_fimer_pvi_vsn_rest_datalogger_1110333n161421_system_load_average`
+  - Reverted `has_entity_name` from `True` back to `False` (beta.12 behavior)
+  - Corrected misleading comments about how `has_entity_name=True` interacts with `suggested_object_id`
+
+### Breaking Changes
+
+⚠️ **IMPORTANT**: This release contains breaking changes requiring manual entity registry cleanup:
+
+1. All entity IDs will change to correct format with compacted serial numbers
+2. Entity history will not be transferred to new entity IDs
+3. **Manual cleanup required**: Delete integration → Clean `.storage/core.entity_registry` → Re-add integration
+4. Update all dashboards and automations with new entity IDs
+
+**Apology**: We apologize for this back-and-forth with entity ID changes. The bug was introduced in beta.13 and this fix restores correct behavior from beta.12.
+
+**Full release notes**: [v1.0.0-beta.24](docs/releases/v1.0.0-beta.24.md)
+
 ## [1.0.0-beta.23] - 2025-11-12
 
 ### Developer Tools

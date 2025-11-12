@@ -207,7 +207,7 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         self._state_mapping = STATE_ENTITY_MAPPINGS.get(self._sunspec_name)
 
         # Enable modern entity naming pattern
-        self._attr_has_entity_name = True
+        self._attr_has_entity_name = False
 
         # Determine if this sensor belongs to datalogger device
         is_datalogger = False
@@ -246,9 +246,9 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         )
 
         # Set entity name to friendly display name (what users see in device cards)
-        # With has_entity_name=True, HA will auto-construct:
-        #   entity_id = slugify(device_name + " " + suggested_object_id) (controlled by suggested_object_id)
-        #   friendly_name = device_name + " " + entity_name (friendly display)
+        # With has_entity_name=False, HA uses suggested_object_id directly:
+        #   entity_id = sensor.{suggested_object_id}
+        #   friendly_name = {_attr_name} (friendly display from mapping)
         self._attr_name = point_data.get(
             "ha_display_name", point_data.get("label", point_name)
         )
