@@ -48,7 +48,7 @@ TITLE_CASE_POINTS = {
 # Values are converted from bytes to MB (divide by 1024^2 = 1048576)
 B_TO_MB_POINTS = {
     "flash_free",  # VSN300 - Available flash storage
-    "free_ram",    # VSN300 - Available RAM
+    "free_ram",  # VSN300 - Available RAM
     "store_size",  # VSN300 - Flash storage used
 }
 
@@ -179,7 +179,10 @@ class VSNDataNormalizer:
                 # Apply temperature correction for points with incorrect scale factor
                 # Some ABB/FIMER inverters report SF=-1 instead of SF=-2 for cabinet temp
                 if point_name in TEMP_CORRECTION_POINTS and point_value is not None:
-                    if isinstance(point_value, (int, float)) and point_value > TEMP_THRESHOLD_CELSIUS:
+                    if (
+                        isinstance(point_value, (int, float))
+                        and point_value > TEMP_THRESHOLD_CELSIUS
+                    ):
                         point_value = point_value / 10  # Correct SF from -1 to -2
                         _LOGGER.debug(
                             "Applied temperature scale factor correction to %s: %s°C",
@@ -247,7 +250,9 @@ class VSNDataNormalizer:
                     "state_class": mapping.state_class,
                     "entity_category": mapping.entity_category,
                     "category": mapping.category,
-                    "model": ", ".join(mapping.models) if mapping.models else "",  # Join models array
+                    "model": ", ".join(mapping.models)
+                    if mapping.models
+                    else "",  # Join models array
                     "sunspec_name": mapping.sunspec_name,
                     "vsn300_name": mapping.vsn300_name,
                     "vsn700_name": mapping.vsn700_name,
@@ -274,7 +279,11 @@ class VSNDataNormalizer:
                     "Device %s unmapped points: %s",
                     actual_device_id,
                     ", ".join(unmapped_points[:10])  # Limit to first 10 to avoid spam
-                    + (f" ... and {len(unmapped_points) - 10} more" if len(unmapped_points) > 10 else ""),
+                    + (
+                        f" ... and {len(unmapped_points) - 10} more"
+                        if len(unmapped_points) > 10
+                        else ""
+                    ),
                 )
 
             if normalized_points:

@@ -99,14 +99,17 @@ class VSNMappingLoader:
         _LOGGER.info("Attempting to fetch from GitHub: %s", url)
 
         try:
-            async with aiohttp.ClientSession() as session, session.get(
-                url, timeout=aiohttp.ClientTimeout(total=30)
-            ) as response:
+            async with (
+                aiohttp.ClientSession() as session,
+                session.get(url, timeout=aiohttp.ClientTimeout(total=30)) as response,
+            ):
                 if response.status == 200:
                     content = await response.text()
                     # Save to local cache using thread pool to avoid blocking
                     await asyncio.to_thread(self._write_file, file_path, content)
-                    _LOGGER.info("Downloaded mapping file from GitHub and cached locally")
+                    _LOGGER.info(
+                        "Downloaded mapping file from GitHub and cached locally"
+                    )
                 else:
                     raise FileNotFoundError(
                         f"Failed to fetch from GitHub: HTTP {response.status}"

@@ -212,7 +212,10 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         # Determine if this sensor belongs to datalogger device
         is_datalogger = False
         for discovered_device in coordinator.discovered_devices:
-            if discovered_device.device_id == device_id and discovered_device.is_datalogger:
+            if (
+                discovered_device.device_id == device_id
+                and discovered_device.is_datalogger
+            ):
                 is_datalogger = True
                 break
 
@@ -238,15 +241,16 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         # This ensures entity_id follows the same format as unique_id for consistency
         # Format: {domain}_{device_type}_{serial_compact}_{point_name}
         # Result: sensor.abb_fimer_pvi_vsn_rest_inverter_0779093g823112_ac_power
-        self._attr_suggested_object_id = f"{DOMAIN}_{device_type_simple}_{device_sn_compact}_{point_name}"
+        self._attr_suggested_object_id = (
+            f"{DOMAIN}_{device_type_simple}_{device_sn_compact}_{point_name}"
+        )
 
         # Set entity name to friendly display name (what users see in device cards)
         # With has_entity_name=True, HA will auto-construct:
         #   entity_id = slugify(device_name + " " + suggested_object_id) (controlled by suggested_object_id)
         #   friendly_name = device_name + " " + entity_name (friendly display)
         self._attr_name = point_data.get(
-            "ha_display_name",
-            point_data.get("label", point_name)
+            "ha_display_name", point_data.get("label", point_name)
         )
 
         # Store device identifier and components for device_info
@@ -327,8 +331,14 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         entity_category_str = point_data.get("entity_category")
         if entity_category_str == "diagnostic" or is_datalogger:
             self._attr_entity_category = EntityCategory.DIAGNOSTIC
-            reason = "mapping" if entity_category_str == "diagnostic" else "datalogger device"
-            _LOGGER.debug("Sensor %s set as diagnostic entity (reason: %s)", point_name, reason)
+            reason = (
+                "mapping"
+                if entity_category_str == "diagnostic"
+                else "datalogger device"
+            )
+            _LOGGER.debug(
+                "Sensor %s set as diagnostic entity (reason: %s)", point_name, reason
+            )
 
         # Set custom icon if specified in mapping (e.g., MDI icons for diagnostic entities)
         icon = point_data.get("icon")
@@ -361,9 +371,9 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
 
         seconds = int(seconds)
         months = seconds // (30 * 24 * 3600)
-        seconds %= (30 * 24 * 3600)
+        seconds %= 30 * 24 * 3600
         days = seconds // (24 * 3600)
-        seconds %= (24 * 3600)
+        seconds %= 24 * 3600
         hours = seconds // 3600
         seconds %= 3600
         minutes = seconds // 60
@@ -466,28 +476,29 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
             "device_id": self._device_id,
             "device_type": self._device_type,
             "point_name": self._point_name,
-
             # Display Names
             "friendly_name": point_data.get("ha_display_name", ""),
             "label": point_data.get("label", ""),
-
             # VSN REST API Names
             "vsn300_rest_name": point_data.get("vsn300_name", ""),
             "vsn700_rest_name": point_data.get("vsn700_name", ""),
-
             # SunSpec Information
-            "sunspec_model": point_data.get("model", ""),  # Now contains comma-separated models
+            "sunspec_model": point_data.get(
+                "model", ""
+            ),  # Now contains comma-separated models
             "sunspec_name": point_data.get("sunspec_name", ""),
             "description": point_data.get("description", ""),
-
             # Compatibility Flags (derived from model string)
-            "vsn300_compatible": "VSN300-only" in point_data.get("model", "") or
-                               ("VSN700-only" not in point_data.get("model", "") and
-                                "ABB Proprietary" not in point_data.get("model", "")),
-            "vsn700_compatible": "VSN700-only" in point_data.get("model", "") or
-                               ("VSN300-only" not in point_data.get("model", "") and
-                                point_data.get("model", "") != ""),
-
+            "vsn300_compatible": "VSN300-only" in point_data.get("model", "")
+            or (
+                "VSN700-only" not in point_data.get("model", "")
+                and "ABB Proprietary" not in point_data.get("model", "")
+            ),
+            "vsn700_compatible": "VSN700-only" in point_data.get("model", "")
+            or (
+                "VSN300-only" not in point_data.get("model", "")
+                and point_data.get("model", "") != ""
+            ),
             # Category
             "category": point_data.get("category", ""),
         }

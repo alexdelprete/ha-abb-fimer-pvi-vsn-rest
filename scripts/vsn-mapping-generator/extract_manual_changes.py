@@ -38,9 +38,7 @@ def load_excel_data(file_path):
     headers = [cell.value for cell in ws[1]]
 
     # Find column indices
-    col_indices = {}
-    for idx, header in enumerate(headers):
-        col_indices[header] = idx
+    col_indices = {header: idx for idx, header in enumerate(headers)}
 
     # Load data
     data = {}
@@ -61,11 +59,7 @@ def load_excel_data(file_path):
 
 def compare_data(original, edited):
     """Compare original and edited data, return differences."""
-    changes = {
-        "label": [],
-        "description": [],
-        "display_name": []
-    }
+    changes = {"label": [], "description": [], "display_name": []}
 
     for sunspec_name in edited:
         if sunspec_name not in original:
@@ -76,33 +70,39 @@ def compare_data(original, edited):
 
         # Check Label changes
         if orig["Label"] != edit["Label"]:
-            changes["label"].append({
-                "sunspec_name": sunspec_name,
-                "vsn700": edit["REST Name (VSN700)"],
-                "vsn300": edit["REST Name (VSN300)"],
-                "old": orig["Label"],
-                "new": edit["Label"]
-            })
+            changes["label"].append(
+                {
+                    "sunspec_name": sunspec_name,
+                    "vsn700": edit["REST Name (VSN700)"],
+                    "vsn300": edit["REST Name (VSN300)"],
+                    "old": orig["Label"],
+                    "new": edit["Label"],
+                }
+            )
 
         # Check Description changes
         if orig["Description"] != edit["Description"]:
-            changes["description"].append({
-                "sunspec_name": sunspec_name,
-                "vsn700": edit["REST Name (VSN700)"],
-                "vsn300": edit["REST Name (VSN300)"],
-                "old": orig["Description"],
-                "new": edit["Description"]
-            })
+            changes["description"].append(
+                {
+                    "sunspec_name": sunspec_name,
+                    "vsn700": edit["REST Name (VSN700)"],
+                    "vsn300": edit["REST Name (VSN300)"],
+                    "old": orig["Description"],
+                    "new": edit["Description"],
+                }
+            )
 
         # Check HA Display Name changes
         if orig["HA Display Name"] != edit["HA Display Name"]:
-            changes["display_name"].append({
-                "sunspec_name": sunspec_name,
-                "vsn700": edit["REST Name (VSN700)"],
-                "vsn300": edit["REST Name (VSN300)"],
-                "old": orig["HA Display Name"],
-                "new": edit["HA Display Name"]
-            })
+            changes["display_name"].append(
+                {
+                    "sunspec_name": sunspec_name,
+                    "vsn700": edit["REST Name (VSN700)"],
+                    "vsn300": edit["REST Name (VSN300)"],
+                    "old": orig["HA Display Name"],
+                    "new": edit["HA Display Name"],
+                }
+            )
 
     return changes
 
@@ -120,12 +120,16 @@ def generate_python_code(changes):
     if changes["description"]:
         output.append("# Add to DESCRIPTION_IMPROVEMENTS dictionary:")
         output.append("# ==========================================")
-        output.append(f"# Manual Improvements from Excel Edit ({len(changes['description'])} changes)")
+        output.append(
+            f"# Manual Improvements from Excel Edit ({len(changes['description'])} changes)"
+        )
         output.append("# ==========================================")
         output.append("")
 
         for change in changes["description"]:
-            output.append(f"# {change['sunspec_name']} (VSN700: {change['vsn700']}, VSN300: {change['vsn300']})")
+            output.append(
+                f"# {change['sunspec_name']} (VSN700: {change['vsn700']}, VSN300: {change['vsn300']})"
+            )
             output.append(f'"{change["sunspec_name"]}": "{change["new"]}",')
             output.append("")
     else:
@@ -138,13 +142,17 @@ def generate_python_code(changes):
         output.append("=" * 100)
         output.append("# Add to DISPLAY_NAME_CORRECTIONS dictionary:")
         output.append("# ==========================================")
-        output.append(f"# Manual Display Name Corrections from Excel Edit ({len(changes['display_name'])} changes)")
+        output.append(
+            f"# Manual Display Name Corrections from Excel Edit ({len(changes['display_name'])} changes)"
+        )
         output.append("# ==========================================")
         output.append("")
 
         for change in changes["display_name"]:
             # Use the OLD description as the key (since that's how DISPLAY_NAME_CORRECTIONS works)
-            output.append(f"# {change['sunspec_name']} (VSN700: {change['vsn700']}, VSN300: {change['vsn300']})")
+            output.append(
+                f"# {change['sunspec_name']} (VSN700: {change['vsn700']}, VSN300: {change['vsn300']})"
+            )
             output.append(f'"{change["old"]}": "{change["new"]}",')
             output.append("")
     else:
@@ -157,12 +165,16 @@ def generate_python_code(changes):
         output.append("=" * 100)
         output.append("# Add to LABEL_CORRECTIONS dictionary:")
         output.append("# ==========================================")
-        output.append(f"# Manual Label Corrections from Excel Edit ({len(changes['label'])} changes)")
+        output.append(
+            f"# Manual Label Corrections from Excel Edit ({len(changes['label'])} changes)"
+        )
         output.append("# ==========================================")
         output.append("")
 
         for change in changes["label"]:
-            output.append(f"# {change['sunspec_name']} (VSN700: {change['vsn700']}, VSN300: {change['vsn300']})")
+            output.append(
+                f"# {change['sunspec_name']} (VSN700: {change['vsn700']}, VSN300: {change['vsn300']})"
+            )
             output.append(f'"{change["old"]}": "{change["new"]}",')
             output.append("")
     else:
@@ -175,7 +187,9 @@ def generate_python_code(changes):
     output.append(f"Label changes: {len(changes['label'])}")
     output.append(f"Description changes: {len(changes['description'])}")
     output.append(f"Display name changes: {len(changes['display_name'])}")
-    output.append(f"Total changes: {len(changes['label']) + len(changes['description']) + len(changes['display_name'])}")
+    output.append(
+        f"Total changes: {len(changes['label']) + len(changes['description']) + len(changes['display_name'])}"
+    )
 
     return "\n".join(output)
 

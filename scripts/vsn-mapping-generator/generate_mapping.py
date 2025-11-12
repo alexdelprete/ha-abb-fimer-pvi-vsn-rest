@@ -44,11 +44,12 @@ MODEL_FLAGS = [
     "M64061",
     "VSN300_Only",
     "VSN700_Only",
-    "ABB_Proprietary"
+    "ABB_Proprietary",
 ]
 
 # Full Excel headers (27 columns total)
-EXCEL_HEADERS = MODEL_FLAGS + [
+EXCEL_HEADERS = [
+    *MODEL_FLAGS,
     "REST Name (VSN700)",
     "REST Name (VSN300)",
     "SunSpec Normalized Name",
@@ -66,71 +67,347 @@ EXCEL_HEADERS = MODEL_FLAGS + [
     "Entity Category",
     "Available in Modbus",
     "Data Source",
-    "Model_Notes"
+    "Model_Notes",
 ]
 
 # VSN to SunSpec mappings (from original script)
 VSN_TO_SUNSPEC_MAP = {
     # Inverter measurements (M103)
-    "Pgrid": {"sunspec": "W", "model": "M103", "category": "Inverter", "units": "W", "state_class": "measurement", "device_class": "power", "in_modbus": "YES", "modbus": "m103_1_W"},
-    "Qgrid": {"sunspec": "VAr", "model": "M103", "category": "Inverter", "units": "var", "state_class": "measurement", "device_class": "reactive_power", "in_modbus": "YES", "modbus": "m103_1_VAr"},
-    "Sgrid": {"sunspec": "VA", "model": "M103", "category": "Inverter", "units": "VA", "state_class": "measurement", "device_class": "apparent_power", "in_modbus": "YES", "modbus": "m103_1_VA"},
-    "Fgrid": {"sunspec": "Hz", "model": "M103", "category": "Inverter", "units": "Hz", "state_class": "measurement", "device_class": "frequency", "in_modbus": "YES", "modbus": "m103_1_Hz"},
-    "Igrid": {"sunspec": "A", "model": "M103", "category": "Inverter", "units": "A", "state_class": "measurement", "device_class": "current", "in_modbus": "YES", "modbus": "m103_1_A"},
-    "Vgrid": {"sunspec": "PhVphA", "model": "M103", "category": "Inverter", "units": "V", "state_class": "measurement", "device_class": "voltage", "in_modbus": "YES", "modbus": "m103_1_PhVphA"},
-    "Etotal": {"sunspec": "TotWhExp", "model": "M103", "category": "Energy Counter", "units": "kWh", "state_class": "total_increasing", "device_class": "energy", "in_modbus": "YES", "modbus": "m103_1_TotWhExp"},
-    "PF": {"sunspec": "PF", "model": "M103", "category": "Inverter", "units": "", "state_class": "measurement", "device_class": "power_factor", "in_modbus": "YES", "modbus": "m103_1_PF"},
-
+    "Pgrid": {
+        "sunspec": "W",
+        "model": "M103",
+        "category": "Inverter",
+        "units": "W",
+        "state_class": "measurement",
+        "device_class": "power",
+        "in_modbus": "YES",
+        "modbus": "m103_1_W",
+    },
+    "Qgrid": {
+        "sunspec": "VAr",
+        "model": "M103",
+        "category": "Inverter",
+        "units": "var",
+        "state_class": "measurement",
+        "device_class": "reactive_power",
+        "in_modbus": "YES",
+        "modbus": "m103_1_VAr",
+    },
+    "Sgrid": {
+        "sunspec": "VA",
+        "model": "M103",
+        "category": "Inverter",
+        "units": "VA",
+        "state_class": "measurement",
+        "device_class": "apparent_power",
+        "in_modbus": "YES",
+        "modbus": "m103_1_VA",
+    },
+    "Fgrid": {
+        "sunspec": "Hz",
+        "model": "M103",
+        "category": "Inverter",
+        "units": "Hz",
+        "state_class": "measurement",
+        "device_class": "frequency",
+        "in_modbus": "YES",
+        "modbus": "m103_1_Hz",
+    },
+    "Igrid": {
+        "sunspec": "A",
+        "model": "M103",
+        "category": "Inverter",
+        "units": "A",
+        "state_class": "measurement",
+        "device_class": "current",
+        "in_modbus": "YES",
+        "modbus": "m103_1_A",
+    },
+    "Vgrid": {
+        "sunspec": "PhVphA",
+        "model": "M103",
+        "category": "Inverter",
+        "units": "V",
+        "state_class": "measurement",
+        "device_class": "voltage",
+        "in_modbus": "YES",
+        "modbus": "m103_1_PhVphA",
+    },
+    "Etotal": {
+        "sunspec": "TotWhExp",
+        "model": "M103",
+        "category": "Energy Counter",
+        "units": "kWh",
+        "state_class": "total_increasing",
+        "device_class": "energy",
+        "in_modbus": "YES",
+        "modbus": "m103_1_TotWhExp",
+    },
+    "PF": {
+        "sunspec": "PF",
+        "model": "M103",
+        "category": "Inverter",
+        "units": "",
+        "state_class": "measurement",
+        "device_class": "power_factor",
+        "in_modbus": "YES",
+        "modbus": "m103_1_PF",
+    },
     # Three-phase measurements (M103)
-    "Pgrid_L1": {"sunspec": "WphA", "model": "M103", "category": "Inverter", "units": "W", "state_class": "measurement", "device_class": "power", "in_modbus": "YES", "modbus": None},
-    "Pgrid_L2": {"sunspec": "WphB", "model": "M103", "category": "Inverter", "units": "W", "state_class": "measurement", "device_class": "power", "in_modbus": "YES", "modbus": None},
-    "Pgrid_L3": {"sunspec": "WphC", "model": "M103", "category": "Inverter", "units": "W", "state_class": "measurement", "device_class": "power", "in_modbus": "YES", "modbus": None},
-
+    "Pgrid_L1": {
+        "sunspec": "WphA",
+        "model": "M103",
+        "category": "Inverter",
+        "units": "W",
+        "state_class": "measurement",
+        "device_class": "power",
+        "in_modbus": "YES",
+        "modbus": None,
+    },
+    "Pgrid_L2": {
+        "sunspec": "WphB",
+        "model": "M103",
+        "category": "Inverter",
+        "units": "W",
+        "state_class": "measurement",
+        "device_class": "power",
+        "in_modbus": "YES",
+        "modbus": None,
+    },
+    "Pgrid_L3": {
+        "sunspec": "WphC",
+        "model": "M103",
+        "category": "Inverter",
+        "units": "W",
+        "state_class": "measurement",
+        "device_class": "power",
+        "in_modbus": "YES",
+        "modbus": None,
+    },
     # DC measurements (M160)
-    "Ppv": {"sunspec": "DCW", "model": "M160", "category": "Inverter", "units": "W", "state_class": "measurement", "device_class": "power", "in_modbus": "YES", "modbus": "m160_1_DCW"},
-    "Vpv_1": {"sunspec": "DCV_1", "model": "M160", "category": "Inverter", "units": "V", "state_class": "measurement", "device_class": "voltage", "in_modbus": "YES", "modbus": "m160_1_DCV_1"},
-    "Ipv_1": {"sunspec": "DCA_1", "model": "M160", "category": "Inverter", "units": "A", "state_class": "measurement", "device_class": "current", "in_modbus": "YES", "modbus": "m160_1_DCA_1"},
-    "Ppv_1": {"sunspec": "DCW_1", "model": "M160", "category": "Inverter", "units": "W", "state_class": "measurement", "device_class": "power", "in_modbus": "YES", "modbus": "m160_1_DCW_1"},
-    "Vpv_2": {"sunspec": "DCV_2", "model": "M160", "category": "Inverter", "units": "V", "state_class": "measurement", "device_class": "voltage", "in_modbus": "YES", "modbus": "m160_1_DCV_2"},
-    "Ipv_2": {"sunspec": "DCA_2", "model": "M160", "category": "Inverter", "units": "A", "state_class": "measurement", "device_class": "current", "in_modbus": "YES", "modbus": "m160_1_DCA_2"},
-    "Ppv_2": {"sunspec": "DCW_2", "model": "M160", "category": "Inverter", "units": "W", "state_class": "measurement", "device_class": "power", "in_modbus": "YES", "modbus": "m160_1_DCW_2"},
-
+    "Ppv": {
+        "sunspec": "DCW",
+        "model": "M160",
+        "category": "Inverter",
+        "units": "W",
+        "state_class": "measurement",
+        "device_class": "power",
+        "in_modbus": "YES",
+        "modbus": "m160_1_DCW",
+    },
+    "Vpv_1": {
+        "sunspec": "DCV_1",
+        "model": "M160",
+        "category": "Inverter",
+        "units": "V",
+        "state_class": "measurement",
+        "device_class": "voltage",
+        "in_modbus": "YES",
+        "modbus": "m160_1_DCV_1",
+    },
+    "Ipv_1": {
+        "sunspec": "DCA_1",
+        "model": "M160",
+        "category": "Inverter",
+        "units": "A",
+        "state_class": "measurement",
+        "device_class": "current",
+        "in_modbus": "YES",
+        "modbus": "m160_1_DCA_1",
+    },
+    "Ppv_1": {
+        "sunspec": "DCW_1",
+        "model": "M160",
+        "category": "Inverter",
+        "units": "W",
+        "state_class": "measurement",
+        "device_class": "power",
+        "in_modbus": "YES",
+        "modbus": "m160_1_DCW_1",
+    },
+    "Vpv_2": {
+        "sunspec": "DCV_2",
+        "model": "M160",
+        "category": "Inverter",
+        "units": "V",
+        "state_class": "measurement",
+        "device_class": "voltage",
+        "in_modbus": "YES",
+        "modbus": "m160_1_DCV_2",
+    },
+    "Ipv_2": {
+        "sunspec": "DCA_2",
+        "model": "M160",
+        "category": "Inverter",
+        "units": "A",
+        "state_class": "measurement",
+        "device_class": "current",
+        "in_modbus": "YES",
+        "modbus": "m160_1_DCA_2",
+    },
+    "Ppv_2": {
+        "sunspec": "DCW_2",
+        "model": "M160",
+        "category": "Inverter",
+        "units": "W",
+        "state_class": "measurement",
+        "device_class": "power",
+        "in_modbus": "YES",
+        "modbus": "m160_1_DCW_2",
+    },
     # M1 Common Model
-    "C_Mn": {"sunspec": "Mn", "model": "M1", "category": "Inverter", "units": "", "state_class": None, "device_class": None, "in_modbus": "YES", "modbus": "m1_Mn"},
-    "C_Md": {"sunspec": "Md", "model": "M1", "category": "Inverter", "units": "", "state_class": None, "device_class": None, "in_modbus": "YES", "modbus": "m1_Md"},
-    "C_Opt": {"sunspec": "Opt", "model": "M1", "category": "Inverter", "units": "", "state_class": None, "device_class": None, "in_modbus": "YES", "modbus": "m1_Opt"},
-    "C_Vr": {"sunspec": "Vr", "model": "M1", "category": "Inverter", "units": "", "state_class": None, "device_class": None, "in_modbus": "YES", "modbus": "m1_Vr"},
-    "C_SN": {"sunspec": "SN", "model": "M1", "category": "Inverter", "units": "", "state_class": None, "device_class": None, "in_modbus": "YES", "modbus": "m1_SN"},
-    "C_DA": {"sunspec": "DA", "model": "M1", "category": "Inverter", "units": "", "state_class": None, "device_class": None, "in_modbus": "YES", "modbus": "m1_DA"},
+    "C_Mn": {
+        "sunspec": "Mn",
+        "model": "M1",
+        "category": "Inverter",
+        "units": "",
+        "state_class": None,
+        "device_class": None,
+        "in_modbus": "YES",
+        "modbus": "m1_Mn",
+    },
+    "C_Md": {
+        "sunspec": "Md",
+        "model": "M1",
+        "category": "Inverter",
+        "units": "",
+        "state_class": None,
+        "device_class": None,
+        "in_modbus": "YES",
+        "modbus": "m1_Md",
+    },
+    "C_Opt": {
+        "sunspec": "Opt",
+        "model": "M1",
+        "category": "Inverter",
+        "units": "",
+        "state_class": None,
+        "device_class": None,
+        "in_modbus": "YES",
+        "modbus": "m1_Opt",
+    },
+    "C_Vr": {
+        "sunspec": "Vr",
+        "model": "M1",
+        "category": "Inverter",
+        "units": "",
+        "state_class": None,
+        "device_class": None,
+        "in_modbus": "YES",
+        "modbus": "m1_Vr",
+    },
+    "C_SN": {
+        "sunspec": "SN",
+        "model": "M1",
+        "category": "Inverter",
+        "units": "",
+        "state_class": None,
+        "device_class": None,
+        "in_modbus": "YES",
+        "modbus": "m1_SN",
+    },
+    "C_DA": {
+        "sunspec": "DA",
+        "model": "M1",
+        "category": "Inverter",
+        "units": "",
+        "state_class": None,
+        "device_class": None,
+        "in_modbus": "YES",
+        "modbus": "m1_DA",
+    },
 }
 
 # M64061 vendor-specific points
 M64061_POINTS = {
-    "AlarmState", "Alm1", "Alm2", "Alm3", "BatteryMode", "BatteryStatus", "FaultStatus",
-    "IsolResist", "RemoteControlRequest", "RemoteControlStatus", "Mode",
-    "CmdTimeout", "CtrlTimeout", "CtrlOpt", "AUX1", "AUX2",
-    "BatteryVoltage", "BatteryTemperature", "BatterySoC", "BatterySoH",
-    "BatteryChargeCurrent", "BatteryDischargeCurrent", "BatteryPower", "BatteryChargePower",
-    "E0", "E1", "E2", "E3", "E4", "E5", "E6", "E7", "E8",
-    "ECharge", "EDischarge", "ETotCharge", "ETotDischarge"
+    "AlarmState",
+    "Alm1",
+    "Alm2",
+    "Alm3",
+    "BatteryMode",
+    "BatteryStatus",
+    "FaultStatus",
+    "IsolResist",
+    "RemoteControlRequest",
+    "RemoteControlStatus",
+    "Mode",
+    "CmdTimeout",
+    "CtrlTimeout",
+    "CtrlOpt",
+    "AUX1",
+    "AUX2",
+    "BatteryVoltage",
+    "BatteryTemperature",
+    "BatterySoC",
+    "BatterySoH",
+    "BatteryChargeCurrent",
+    "BatteryDischargeCurrent",
+    "BatteryPower",
+    "BatteryChargePower",
+    "E0",
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5",
+    "E6",
+    "E7",
+    "E8",
+    "ECharge",
+    "EDischarge",
+    "ETotCharge",
+    "ETotDischarge",
 }
 
 # ABB Proprietary points (REST API only)
 ABB_PROPRIETARY = {
     # Battery measurements
-    "Vbat", "Ibat", "Pbat", "Soc", "Soh", "Wbat_charge", "Wbat_discharge",
-    "Tmp", "BattNum", "Chc", "Dhc",
+    "Vbat",
+    "Ibat",
+    "Pbat",
+    "Soc",
+    "Soh",
+    "Wbat_charge",
+    "Wbat_discharge",
+    "Tmp",
+    "BattNum",
+    "Chc",
+    "Dhc",
     # System configuration
-    "UploadAddr", "UploadPort", "UploadAddr2", "UploadPort2", "ApplVer", "SerNum",
+    "UploadAddr",
+    "UploadPort",
+    "UploadAddr2",
+    "UploadPort2",
+    "ApplVer",
+    "SerNum",
     # Time/Schedule
-    "HWVer", "Year", "Month", "Day", "Weekday", "Hour", "Minute", "Second",
+    "HWVer",
+    "Year",
+    "Month",
+    "Day",
+    "Weekday",
+    "Hour",
+    "Minute",
+    "Second",
     # Grid parameters
-    "SplitPhase", "CountryStd",
+    "SplitPhase",
+    "CountryStd",
     # House meter measurements
-    "HousePgrid", "HousePgrid_L1", "HousePgrid_L2", "HousePgrid_L3",
-    "HouseIgrid", "HouseIgrid_L1", "HouseIgrid_L2", "HouseIgrid_L3",
+    "HousePgrid",
+    "HousePgrid_L1",
+    "HousePgrid_L2",
+    "HousePgrid_L3",
+    "HouseIgrid",
+    "HouseIgrid_L1",
+    "HouseIgrid_L2",
+    "HouseIgrid_L3",
     # Other proprietary
-    "SysTime", "MemFree", "FlashFree", "HDD1Size", "HDD1Used", "SysLoad"
+    "SysTime",
+    "MemFree",
+    "FlashFree",
+    "HDD1Size",
+    "HDD1Used",
+    "SysLoad",
 }
 
 # ==============================================================================
@@ -164,15 +441,12 @@ DISPLAY_NAME_CORRECTIONS = {
     "Device serial number from common model": "Serial Number",
     "Firmware version from device common model": "Firmware Version",
     "Manufacturer name from device common model": "Manufacturer",
-
     # New temperature monitoring corrections
     "Maximum cabinet temperature recorded": "Cabinet Temperature Max",
     "Minimum cabinet temperature recorded": "Cabinet Temperature Min",
-
     # Digital input corrections
     "Operating mode configuration for digital input 0": "Digital Input 0 Mode",
     "Operating mode configuration for digital input 1": "Digital Input 1 Mode",
-
     # Energy counter corrections
     "Total energy supplied from backup source": "Backup Energy",
     "Energy measured by current transformer": "Energy CT",
@@ -181,7 +455,6 @@ DISPLAY_NAME_CORRECTIONS = {
     "Total DC energy from MPPT string 2": "String 2 Energy",
     "Total DC Energy (String 1)": "String 1 Energy",
     "Total DC Energy (String 2)": "String 2 Energy",
-
     # String measurement corrections
     "DC current from MPPT string 1": "String 1 Current",
     "DC current from MPPT string 2": "String 2 Current",
@@ -190,7 +463,6 @@ DISPLAY_NAME_CORRECTIONS = {
     "DC input power from MPPT string 2": "String 2 Power",
     "DC Input Power (String 1)": "String 1 Power",
     "DC Input Power (String 2)": "String 2 Power",
-
     # Grid monitoring corrections
     "Grid support Fault Ride Through feature status": "FRT Status",
     "AC frequency measurement for phase A": "Frequency Phase A",
@@ -200,12 +472,10 @@ DISPLAY_NAME_CORRECTIONS = {
     "AC Frequency Phase B": "Frequency Phase B",
     "AC Frequency Phase C": "Frequency Phase C",
     "Frequency measured by central controller": "CC Frequency",
-
     # Leakage current corrections
     "DC side ground fault leakage current": "DC Leakage Current",
     "Inverter ground fault leakage current": "Inverter Leakage Current",
     "Battery DC current flow": "Battery Current",
-
     # Status and system corrections
     "Current operational state of inverter": "Inverter State",
     "Maximum instantaneous power": "Peak Power",
@@ -213,13 +483,11 @@ DISPLAY_NAME_CORRECTIONS = {
     "Inverter system timestamp": "System Time",
     "Voltage to ground reference": "Ground Voltage",
     "Power factor (cosine phi)": "Power Factor",
-
     # M1 Common Model fixes
     "Inverter model number and designation": "Device Model",
     "Inverter configuration and installed options": "Device Options",
     "Inverter firmware version": "Firmware Version",
     "Inverter unique serial number": "Serial Number",
-
     # Alarm and status display names
     "Current alarm status code": "Alarm Status",
     "Overall inverter operating state": "Global State",
@@ -230,13 +498,11 @@ DISPLAY_NAME_CORRECTIONS = {
     "DC string 2 connection status": "DC Input 2 Status",
     "DC string 1 operating state": "DC Input 1 State",
     "DC string 2 operating state": "DC Input 2 State",
-
     # Temperature display names
     "Inverter internal temperature": "Inverter Temperature",
     "DC-DC boost converter temperature": "Booster Temperature",
     "Additional temperature sensor 1": "Temperature Sensor 1",
     "Battery pack temperature": "Battery Temperature",
-
     # Voltage display names
     "DC bus bulk capacitor voltage": "Bulk DC Voltage",
     "Three-phase AC line-to-line voltage between L1 and L2": "AC Voltage A-B",
@@ -255,7 +521,6 @@ DISPLAY_NAME_CORRECTIONS = {
     "Battery pack voltage": "Battery Voltage",
     "Maximum voltage across battery cells": "Battery Cell Max Voltage",
     "Minimum voltage across battery cells": "Battery Cell Min Voltage",
-
     # Power display names
     "Battery charge/discharge power": "Battery Power",
     "AC power in stand-alone (off-grid) mode": "AC Power Stand Alone",
@@ -263,26 +528,20 @@ DISPLAY_NAME_CORRECTIONS = {
     "Inverter nominal rated power": "Nominal Power",
     "Inverter nominal apparent power rating": "Nominal Apparent Power",
     "AC power factor (cosine phi)": "Power Factor",
-
     # Energy display names
     "Cumulative energy absorbed from grid": "Total Energy Absorbed",
     "Cumulative apparent energy (kVAh)": "Total Apparent Energy",
-
     # Battery display name
     "Battery state of charge percentage": "Battery State of Charge",
-
     # Grid control display names
     "External grid control enabled status": "Grid External Control Enabled",
     "External grid control current state": "Grid External Control State",
-
     # Other measurement display names
     "Current measurement shunt voltage": "Shunt Voltage",
     "Inverter device type identifier": "Device Type",
-
     # ==========================================
     # v2.0.7 MASSIVE Display Name Improvements (58 points)
     # ==========================================
-
     # WiFi/Network Display Names (11)
     "WiFi broadcast address": "WiFi Broadcast",
     "WiFi DHCP state (acquired/pending)": "WiFi DHCP State",
@@ -295,7 +554,6 @@ DISPLAY_NAME_CORRECTIONS = {
     "WiFi finite state machine status": "WiFi FSM Status",
     "WiFi local IP address": "WiFi Local IP",
     "WiFi operating mode (client/AP)": "WiFi Mode",
-
     # Meter Display Names (NEW - Phase A/B/C notation)
     "Meter Power Phase A": "Meter Power A",
     "Meter Power Phase B": "Meter Power B",
@@ -311,7 +569,6 @@ DISPLAY_NAME_CORRECTIONS = {
     "Meter Current Phase B": "Meter Current B",
     "Meter Current Phase C": "Meter Current C",
     "Meter AC frequency": "Meter Frequency",
-
     # Device/Status Display Names (16)
     "Device 0 component name": "Device 0 Name",
     "Device 1 component name": "Device 1 Name",
@@ -329,7 +586,6 @@ DISPLAY_NAME_CORRECTIONS = {
     "Manufacturing part number": "Part Number",
     "Manufacturing serial number": "Serial Number",
     "Manufacturing week and year (WWYY)": "Manufacturing Week/Year",
-
     # Battery/Power Display Names (17)
     "Battery external control enabled flag": "Battery Control Enabled",
     "Battery external control state": "Battery Control State",
@@ -347,7 +603,6 @@ DISPLAY_NAME_CORRECTIONS = {
     "DC insulation resistance to ground": "Insulation Resistance",
     "SunSpec Model 126 module enabled": "Model 126 Enabled",
     "SunSpec Model 132 module enabled": "Model 132 Enabled",
-
     # VSN-specific display name fixes (user-requested)
     "Inverter St": "Inverter Status",
     "Inverter status": "Inverter Status",
@@ -356,17 +611,14 @@ DISPLAY_NAME_CORRECTIONS = {
     "Logger Sn": "Logger Serial Number",
     "Logger Logger Id": "Logger ID",
     "Logger ID": "Logger ID",
-
     # Additional measurement word removals
     "Current shunt voltage": "Shunt Voltage",
     "Grid frequency": "Grid Frequency",
     "Global inverter status": "Global Status",
-
     # Phase current corrections
     "AC Current Phase A": "Current Phase A",
     "AC Current Phase B": "Current Phase B",
     "AC Current Phase C": "Current Phase C",
-
     # House consumption corrections
     "House Power Phase A": "House Power A",
     "House Power Phase B": "House Power B",
@@ -374,13 +626,11 @@ DISPLAY_NAME_CORRECTIONS = {
     "House Current Phase A": "House Current A",
     "House Current Phase B": "House Current B",
     "House Current Phase C": "House Current C",
-
     # Datalogger device entity fixes (remove redundant prefixes)
     "Datalogger product number": "Product Number",
     "Datalogger serial number": "Serial Number",
     "Device 2 Firmware": "Firmware Version",
     "WiFi network name (SSID) connected to": "WiFi network name (SSID)",
-
     # DC voltage display names - add string context
     "DC Voltage #1": "DC Voltage (String 1)",
     "DC Voltage #2": "DC Voltage (String 2)",
@@ -419,7 +669,6 @@ DISPLAY_NAME_STANDARDIZATION = {
     "Meter Power C": "Power AC - Meter Phase C",
     "Meter active power - Total": "Power AC - Meter Total",
     "Power Rating": "Power - Rating",
-
     # ========== CURRENT ENTITIES (19 changes) ==========
     "AC Current": "Current AC",
     "Phase A Current": "Current AC - Phase A",
@@ -440,7 +689,6 @@ DISPLAY_NAME_STANDARDIZATION = {
     "Meter Current A": "Current AC - Meter Phase A",
     "Meter Current B": "Current AC - Meter Phase B",
     "Meter Current C": "Current AC - Meter Phase C",
-
     # ========== VOLTAGE ENTITIES (27 changes) ==========
     "AC Voltage A-N": "Voltage AC - Phase A-N",
     "Phase Voltage BN": "Voltage AC - Phase B-N",
@@ -469,7 +717,6 @@ DISPLAY_NAME_STANDARDIZATION = {
     "AC Voltage B-N": "Voltage AC - Phase B-N",
     "AC Voltage C-N": "Voltage AC - Phase C-N",
     "DC capacitor voltage": "Voltage DC - Bulk Capacitor",
-
     # ========== FREQUENCY ENTITIES (6 changes) ==========
     "Grid Frequency": "Frequency AC - Grid",
     "Frequency Phase A": "Frequency AC - Phase A",
@@ -477,14 +724,12 @@ DISPLAY_NAME_STANDARDIZATION = {
     "Frequency Phase C": "Frequency AC - Phase C",
     "CC Frequency": "Frequency - Central Controller",
     "Meter Frequency": "Frequency AC - Meter",
-
     # ========== REACTIVE POWER ENTITIES (5 changes) ==========
     "Reactive power at grid connection point": "Reactive Power - Grid Connection",
     "Meter Reactive Power A": "Reactive Power AC - Meter Phase A",
     "Meter Reactive Power B": "Reactive Power AC - Meter Phase B",
     "Meter Reactive Power C": "Reactive Power AC - Meter Phase C",
     "Meter reactive power - Total": "Reactive Power AC - Meter Total",
-
     # ========== ENERGY ENTITIES (75 changes) ==========
     # Base energy entities
     "AC Energy": "Energy AC - Lifetime",
@@ -502,57 +747,47 @@ DISPLAY_NAME_STANDARDIZATION = {
     "Energy imported from grid - Lifetime": "Energy AC - Grid Import Lifetime",
     "Energy exported to grid - Lifetime": "Energy AC - Grid Export Lifetime",
     "Inverter backup output energy - Lifetime": "Energy AC - Backup Output Lifetime",
-
     # E0 series (Inverter AC energy produced)
     "Inverter AC energy produced - Since Restart": "Energy AC - Produced Since Restart",
     "Inverter AC energy produced - Last 7 Days": "Energy AC - Produced Last 7 Days",
     "Inverter AC energy produced - Last 30 Days": "Energy AC - Produced Last 30 Days",
     "Inverter AC energy produced - Last Year": "Energy AC - Produced Last Year",
-
     # E1 series (Inverter absorbed AC energy)
     "Inverter absorbed AC energy - Since Restart": "Energy AC - Absorbed Since Restart",
     "Inverter absorbed AC energy - Last 7 Days": "Energy AC - Absorbed Last 7 Days",
     "Inverter absorbed AC energy - Last 30 Days": "Energy AC - Absorbed Last 30 Days",
     "Inverter absorbed AC energy - Lifetime": "Energy AC - Absorbed Lifetime",
-
     # E2 series (Inverter apparent AC energy)
     "Inverter apparent AC energy - Since Restart": "Energy AC Apparent - Since Restart",
     "Inverter apparent AC energy - Last 7 Days": "Energy AC Apparent - Last 7 Days",
     "Inverter apparent AC energy - Last 30 Days": "Energy AC Apparent - Last 30 Days",
     "Inverter apparent AC energy - Lifetime": "Energy AC Apparent - Lifetime",
-
     # E3 series (Energy exported to grid)
     "Energy exported to grid - Since Restart": "Energy AC - Grid Export Since Restart",
     "Energy exported to grid - Last 7 Days": "Energy AC - Grid Export Last 7 Days",
     "Energy exported to grid - Last 30 Days": "Energy AC - Grid Export Last 30 Days",
-
     # E6 series (House consumption from inverter)
     "House consumption from inverter - Lifetime": "Energy - House from Inverter Lifetime",
     "House consumption from inverter - Since Restart": "Energy - House from Inverter Since Restart",
     "House consumption from inverter - Last 7 Days": "Energy - House from Inverter Last 7 Days",
     "House consumption from inverter - Last 30 Days": "Energy - House from Inverter Last 30 Days",
-
     # E7 series (Total house consumption)
     "Total house consumption - Lifetime": "Energy - House Consumption Lifetime",
     "Total house consumption - Since Restart": "Energy - House Consumption Since Restart",
     "Total house consumption - Last 7 Days": "Energy - House Consumption Last 7 Days",
     "Total house consumption - Last 30 Days": "Energy - House Consumption Last 30 Days",
-
     # E8 series (Energy imported from grid)
     "Energy imported from grid - Since Restart": "Energy AC - Grid Import Since Restart",
     "Energy imported from grid - Last 7 Days": "Energy AC - Grid Import Last 7 Days",
     "Energy imported from grid - Last 30 Days": "Energy AC - Grid Import Last 30 Days",
-
     # E15 series (Inverter backup output energy)
     "Inverter backup output energy - Since Restart": "Energy AC - Backup Output Since Restart",
     "Inverter backup output energy - Last 7 Days": "Energy AC - Backup Output Last 7 Days",
     "Inverter backup output energy - Last 30 Days": "Energy AC - Backup Output Last 30 Days",
-
     # Ein series (Inverter PV energy DC input)
     "Inverter PV energy (DC input) - Since Restart": "Energy DC - PV Input Since Restart",
     "Inverter PV energy (DC input) - Last 7 Days": "Energy DC - PV Input Last 7 Days",
     "Inverter PV energy (DC input) - Last 30 Days": "Energy DC - PV Input Last 30 Days",
-
     # Total battery charge/discharge energy
     "Total battery charge energy - Lifetime": "Energy - Battery Charge Total Lifetime",
     "Total battery charge energy - Since Restart": "Energy - Battery Charge Total Since Restart",
@@ -562,7 +797,6 @@ DISPLAY_NAME_STANDARDIZATION = {
     "Total battery discharge energy - Since Restart": "Energy - Battery Discharge Total Since Restart",
     "Total battery discharge energy - Last 7 Days": "Energy - Battery Discharge Total Last 7 Days",
     "Total battery discharge energy - Last 30 Days": "Energy - Battery Discharge Total Last 30 Days",
-
     # Individual battery charge/discharge energy
     "Battery charge energy - Since Restart": "Energy - Battery Charge Since Restart",
     "Battery charge energy - Last 7 Days": "Energy - Battery Charge Last 7 Days",
@@ -570,7 +804,6 @@ DISPLAY_NAME_STANDARDIZATION = {
     "Battery discharge energy - Since Restart": "Energy - Battery Discharge Since Restart",
     "Battery discharge energy - Last 7 Days": "Energy - Battery Discharge Last 7 Days",
     "Battery discharge energy - Last 30 Days": "Energy - Battery Discharge Last 30 Days",
-
     # ========== TEMPERATURE ENTITIES (9 changes) ==========
     "Cabinet Temperature": "Temperature - Cabinet",
     "Other Temperature": "Temperature - Other",
@@ -581,10 +814,8 @@ DISPLAY_NAME_STANDARDIZATION = {
     "Cabinet Temperature Min": "Temperature - Cabinet Min",
     "Battery Temperature": "Temperature - Battery",
     "Temperature Sensor 1": "Temperature - Sensor 1",
-
     # ========== RESISTANCE ENTITIES (2 changes) ==========
     "Insulation Resistance": "Resistance - Insulation",
-
     # ========== MISCELLANEOUS MEASUREMENT ENTITIES (20 changes) ==========
     "Power factor": "Power Factor",
     "Power Factor": "Power Factor",
@@ -601,17 +832,27 @@ DISPLAY_NAME_STANDARDIZATION = {
 
 # Device class/unit fixes (keyed by label, not SunSpec name)
 DEVICE_CLASS_FIXES = {
-    "Device Address": {"device_class": None, "unit": None, "entity_category": "diagnostic"},
+    "Device Address": {
+        "device_class": None,
+        "unit": None,
+        "entity_category": "diagnostic",
+    },
     "Version": {"device_class": None, "unit": None, "entity_category": "diagnostic"},
     # System time: Remove timestamp device_class to show formatted date/time instead of relative time
     "Sys Time": {"device_class": None, "entity_category": "diagnostic"},
     # Device information fields should be diagnostic (use label names)
     "Manufacturer": {"entity_category": "diagnostic"},
     "Model": {"entity_category": "diagnostic"},
-    "Serial Number": {"entity_category": "diagnostic"},  # Applies to both inverter SN and datalogger sn
+    "Serial Number": {
+        "entity_category": "diagnostic"
+    },  # Applies to both inverter SN and datalogger sn
     "Firmware Version": {"entity_category": "diagnostic"},
     # Datalogger identification fields
-    "Product Number": {"device_class": None, "unit": None, "entity_category": "diagnostic"},
+    "Product Number": {
+        "device_class": None,
+        "unit": None,
+        "entity_category": "diagnostic",
+    },
     # Inverter status entities should be diagnostic
     "Alarm St": {"entity_category": "diagnostic"},
     "Dc St1": {"entity_category": "diagnostic"},
@@ -674,66 +915,171 @@ TEMPERATURE_UNIT_FIX = {
 SUNSPEC_TO_HA_METADATA = {
     # Energy measurements (kWh, total_increasing)
     "WH": {"device_class": "energy", "state_class": "total_increasing", "unit": "kWh"},
-    "TotWhExp": {"device_class": "energy", "state_class": "total_increasing", "unit": "kWh"},
-    "TotWhImp": {"device_class": "energy", "state_class": "total_increasing", "unit": "kWh"},
-    "ETotal": {"device_class": "energy", "state_class": "total_increasing", "unit": "kWh"},
+    "TotWhExp": {
+        "device_class": "energy",
+        "state_class": "total_increasing",
+        "unit": "kWh",
+    },
+    "TotWhImp": {
+        "device_class": "energy",
+        "state_class": "total_increasing",
+        "unit": "kWh",
+    },
+    "ETotal": {
+        "device_class": "energy",
+        "state_class": "total_increasing",
+        "unit": "kWh",
+    },
     "Ein": {"device_class": "energy", "state_class": "total_increasing", "unit": "kWh"},
-    "ECharge": {"device_class": "energy", "state_class": "total_increasing", "unit": "kWh"},
-    "EDischarge": {"device_class": "energy", "state_class": "total_increasing", "unit": "kWh"},
-    "ETotCharge": {"device_class": "energy", "state_class": "total_increasing", "unit": "kWh"},
-    "ETotDischarge": {"device_class": "energy", "state_class": "total_increasing", "unit": "kWh"},
-    "EGridImport": {"device_class": "energy", "state_class": "total_increasing", "unit": "kWh"},
-    "EGridExport": {"device_class": "energy", "state_class": "total_increasing", "unit": "kWh"},
-    "ETotalAbsorbed": {"device_class": "energy", "state_class": "total_increasing", "unit": "kWh"},
-    "ETotalApparent": {"device_class": "energy", "state_class": "total", "unit": "kVAh"},
-
+    "ECharge": {
+        "device_class": "energy",
+        "state_class": "total_increasing",
+        "unit": "kWh",
+    },
+    "EDischarge": {
+        "device_class": "energy",
+        "state_class": "total_increasing",
+        "unit": "kWh",
+    },
+    "ETotCharge": {
+        "device_class": "energy",
+        "state_class": "total_increasing",
+        "unit": "kWh",
+    },
+    "ETotDischarge": {
+        "device_class": "energy",
+        "state_class": "total_increasing",
+        "unit": "kWh",
+    },
+    "EGridImport": {
+        "device_class": "energy",
+        "state_class": "total_increasing",
+        "unit": "kWh",
+    },
+    "EGridExport": {
+        "device_class": "energy",
+        "state_class": "total_increasing",
+        "unit": "kWh",
+    },
+    "ETotalAbsorbed": {
+        "device_class": "energy",
+        "state_class": "total_increasing",
+        "unit": "kWh",
+    },
+    "ETotalApparent": {
+        "device_class": "energy",
+        "state_class": "total",
+        "unit": "kVAh",
+    },
     # Energy counters by period (total)
     "DayWH": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
     "WeekWH": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
     "MonthWH": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
     "YearWH": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
-
     # Energy counters - E series (Wh, total)
-    "E0_runtime": {"device_class": "energy", "state_class": "total_increasing", "unit": "Wh"},
+    "E0_runtime": {
+        "device_class": "energy",
+        "state_class": "total_increasing",
+        "unit": "Wh",
+    },
     "E0_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
     "E0_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
     "E0_1Y": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
-    "E1_runtime": {"device_class": "energy", "state_class": "total_increasing", "unit": "Wh"},
+    "E1_runtime": {
+        "device_class": "energy",
+        "state_class": "total_increasing",
+        "unit": "Wh",
+    },
     "E1_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
     "E1_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
-    "E3_runtime": {"device_class": "energy", "state_class": "total_increasing", "unit": "Wh"},
+    "E3_runtime": {
+        "device_class": "energy",
+        "state_class": "total_increasing",
+        "unit": "Wh",
+    },
     "E3_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
     "E3_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
-    "E6_runtime": {"device_class": "energy", "state_class": "total_increasing", "unit": "Wh"},
+    "E6_runtime": {
+        "device_class": "energy",
+        "state_class": "total_increasing",
+        "unit": "Wh",
+    },
     "E6_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
     "E6_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
-    "E6_total": {"device_class": "energy", "state_class": "total_increasing", "unit": "Wh"},
-    "E7_runtime": {"device_class": "energy", "state_class": "total_increasing", "unit": "Wh"},
+    "E6_total": {
+        "device_class": "energy",
+        "state_class": "total_increasing",
+        "unit": "Wh",
+    },
+    "E7_runtime": {
+        "device_class": "energy",
+        "state_class": "total_increasing",
+        "unit": "Wh",
+    },
     "E7_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
     "E7_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
-    "E7_total": {"device_class": "energy", "state_class": "total_increasing", "unit": "Wh"},
-    "E8_runtime": {"device_class": "energy", "state_class": "total_increasing", "unit": "Wh"},
+    "E7_total": {
+        "device_class": "energy",
+        "state_class": "total_increasing",
+        "unit": "Wh",
+    },
+    "E8_runtime": {
+        "device_class": "energy",
+        "state_class": "total_increasing",
+        "unit": "Wh",
+    },
     "E8_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
     "E8_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
-    "E15_runtime": {"device_class": "energy", "state_class": "total_increasing", "unit": "Wh"},
+    "E15_runtime": {
+        "device_class": "energy",
+        "state_class": "total_increasing",
+        "unit": "Wh",
+    },
     "E15_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
     "E15_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
-    "Ein_runtime": {"device_class": "energy", "state_class": "total_increasing", "unit": "Wh"},
+    "Ein_runtime": {
+        "device_class": "energy",
+        "state_class": "total_increasing",
+        "unit": "Wh",
+    },
     "Ein_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
     "Ein_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
-    "ECharge_runtime": {"device_class": "energy", "state_class": "total_increasing", "unit": "Wh"},
+    "ECharge_runtime": {
+        "device_class": "energy",
+        "state_class": "total_increasing",
+        "unit": "Wh",
+    },
     "ECharge_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
     "ECharge_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
-    "EDischarge_runtime": {"device_class": "energy", "state_class": "total_increasing", "unit": "Wh"},
+    "EDischarge_runtime": {
+        "device_class": "energy",
+        "state_class": "total_increasing",
+        "unit": "Wh",
+    },
     "EDischarge_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
     "EDischarge_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
-    "ETotCharge_runtime": {"device_class": "energy", "state_class": "total_increasing", "unit": "Wh"},
+    "ETotCharge_runtime": {
+        "device_class": "energy",
+        "state_class": "total_increasing",
+        "unit": "Wh",
+    },
     "ETotCharge_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
     "ETotCharge_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
-    "ETotDischarge_runtime": {"device_class": "energy", "state_class": "total_increasing", "unit": "Wh"},
-    "ETotDischarge_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
-    "ETotDischarge_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
-
+    "ETotDischarge_runtime": {
+        "device_class": "energy",
+        "state_class": "total_increasing",
+        "unit": "Wh",
+    },
+    "ETotDischarge_7D": {
+        "device_class": "energy",
+        "state_class": "total",
+        "unit": "Wh",
+    },
+    "ETotDischarge_30D": {
+        "device_class": "energy",
+        "state_class": "total",
+        "unit": "Wh",
+    },
     # Power measurements (W, measurement)
     "W": {"device_class": "power", "state_class": "measurement", "unit": "W"},
     "WphA": {"device_class": "power", "state_class": "measurement", "unit": "W"},
@@ -745,40 +1091,117 @@ SUNSPEC_TO_HA_METADATA = {
     "PCh": {"device_class": "power", "state_class": "measurement", "unit": "W"},
     "PDh": {"device_class": "power", "state_class": "measurement", "unit": "W"},
     "WRtg": {"device_class": "power", "state_class": "measurement", "unit": "W"},
-    "PacStandAlone": {"device_class": "power", "state_class": "measurement", "unit": "W"},
+    "PacStandAlone": {
+        "device_class": "power",
+        "state_class": "measurement",
+        "unit": "W",
+    },
     "PacTogrid": {"device_class": "power", "state_class": "measurement", "unit": "W"},
     "Pin": {"device_class": "power", "state_class": "measurement", "unit": "W"},
     "Pin1": {"device_class": "power", "state_class": "measurement", "unit": "W"},
     "Pin2": {"device_class": "power", "state_class": "measurement", "unit": "W"},
     "PbaT": {"device_class": "power", "state_class": "measurement", "unit": "W"},
-    "MeterPgrid_Tot": {"device_class": "power", "state_class": "measurement", "unit": "W"},
-    "HousePgrid_Tot": {"device_class": "power", "state_class": "measurement", "unit": "W"},
-    "HousePgrid_L1": {"device_class": "power", "state_class": "measurement", "unit": "W"},
-    "HousePgrid_L2": {"device_class": "power", "state_class": "measurement", "unit": "W"},
-    "HousePgrid_L3": {"device_class": "power", "state_class": "measurement", "unit": "W"},
-    "HousePInverter": {"device_class": "power", "state_class": "measurement", "unit": "W"},
+    "MeterPgrid_Tot": {
+        "device_class": "power",
+        "state_class": "measurement",
+        "unit": "W",
+    },
+    "HousePgrid_Tot": {
+        "device_class": "power",
+        "state_class": "measurement",
+        "unit": "W",
+    },
+    "HousePgrid_L1": {
+        "device_class": "power",
+        "state_class": "measurement",
+        "unit": "W",
+    },
+    "HousePgrid_L2": {
+        "device_class": "power",
+        "state_class": "measurement",
+        "unit": "W",
+    },
+    "HousePgrid_L3": {
+        "device_class": "power",
+        "state_class": "measurement",
+        "unit": "W",
+    },
+    "HousePInverter": {
+        "device_class": "power",
+        "state_class": "measurement",
+        "unit": "W",
+    },
     # Note: "pn" in datalogger context is product number (text), not power
     # Removed from here to avoid confusion
-
     # Reactive Power (var, measurement)
-    "VAr": {"device_class": "reactive_power", "state_class": "measurement", "unit": "var"},
-    "VArphA": {"device_class": "reactive_power", "state_class": "measurement", "unit": "var"},
-    "VArphB": {"device_class": "reactive_power", "state_class": "measurement", "unit": "var"},
-    "VArphC": {"device_class": "reactive_power", "state_class": "measurement", "unit": "var"},
-    "MeterQgrid_L1": {"device_class": "reactive_power", "state_class": "measurement", "unit": "var"},
-    "MeterQgrid_L2": {"device_class": "reactive_power", "state_class": "measurement", "unit": "var"},
-    "MeterQgrid_L3": {"device_class": "reactive_power", "state_class": "measurement", "unit": "var"},
-    "MeterQgrid_Tot": {"device_class": "reactive_power", "state_class": "measurement", "unit": "var"},
-
+    "VAr": {
+        "device_class": "reactive_power",
+        "state_class": "measurement",
+        "unit": "var",
+    },
+    "VArphA": {
+        "device_class": "reactive_power",
+        "state_class": "measurement",
+        "unit": "var",
+    },
+    "VArphB": {
+        "device_class": "reactive_power",
+        "state_class": "measurement",
+        "unit": "var",
+    },
+    "VArphC": {
+        "device_class": "reactive_power",
+        "state_class": "measurement",
+        "unit": "var",
+    },
+    "MeterQgrid_L1": {
+        "device_class": "reactive_power",
+        "state_class": "measurement",
+        "unit": "var",
+    },
+    "MeterQgrid_L2": {
+        "device_class": "reactive_power",
+        "state_class": "measurement",
+        "unit": "var",
+    },
+    "MeterQgrid_L3": {
+        "device_class": "reactive_power",
+        "state_class": "measurement",
+        "unit": "var",
+    },
+    "MeterQgrid_Tot": {
+        "device_class": "reactive_power",
+        "state_class": "measurement",
+        "unit": "var",
+    },
     # Apparent Power (VA, measurement)
-    "VA": {"device_class": "apparent_power", "state_class": "measurement", "unit": "VA"},
-    "VAphA": {"device_class": "apparent_power", "state_class": "measurement", "unit": "VA"},
-    "VAphB": {"device_class": "apparent_power", "state_class": "measurement", "unit": "VA"},
-    "VAphC": {"device_class": "apparent_power", "state_class": "measurement", "unit": "VA"},
-    "VARtg": {"device_class": "apparent_power", "state_class": "measurement", "unit": "VA"},
+    "VA": {
+        "device_class": "apparent_power",
+        "state_class": "measurement",
+        "unit": "VA",
+    },
+    "VAphA": {
+        "device_class": "apparent_power",
+        "state_class": "measurement",
+        "unit": "VA",
+    },
+    "VAphB": {
+        "device_class": "apparent_power",
+        "state_class": "measurement",
+        "unit": "VA",
+    },
+    "VAphC": {
+        "device_class": "apparent_power",
+        "state_class": "measurement",
+        "unit": "VA",
+    },
+    "VARtg": {
+        "device_class": "apparent_power",
+        "state_class": "measurement",
+        "unit": "VA",
+    },
     # Note: "sn" in datalogger context is serial number (text), not apparent power
     # Removed from here to avoid confusion
-
     # Current (A, measurement)
     "A": {"device_class": "current", "state_class": "measurement", "unit": "A"},
     "AphA": {"device_class": "current", "state_class": "measurement", "unit": "A"},
@@ -787,15 +1210,46 @@ SUNSPEC_TO_HA_METADATA = {
     "DCA": {"device_class": "current", "state_class": "measurement", "unit": "A"},
     "DCA_1": {"device_class": "current", "state_class": "measurement", "unit": "A"},
     "DCA_2": {"device_class": "current", "state_class": "measurement", "unit": "A"},
-    "MeterIgrid_L1": {"device_class": "current", "state_class": "measurement", "unit": "A"},
-    "MeterIgrid_L2": {"device_class": "current", "state_class": "measurement", "unit": "A"},
-    "MeterIgrid_L3": {"device_class": "current", "state_class": "measurement", "unit": "A"},
-    "HouseIgrid_L1": {"device_class": "current", "state_class": "measurement", "unit": "A"},
-    "HouseIgrid_L2": {"device_class": "current", "state_class": "measurement", "unit": "A"},
-    "HouseIgrid_L3": {"device_class": "current", "state_class": "measurement", "unit": "A"},
-    "ILeakDcAc": {"device_class": "current", "state_class": "measurement", "unit": "mA"},
-    "ILeakDcDc": {"device_class": "current", "state_class": "measurement", "unit": "mA"},
-
+    "MeterIgrid_L1": {
+        "device_class": "current",
+        "state_class": "measurement",
+        "unit": "A",
+    },
+    "MeterIgrid_L2": {
+        "device_class": "current",
+        "state_class": "measurement",
+        "unit": "A",
+    },
+    "MeterIgrid_L3": {
+        "device_class": "current",
+        "state_class": "measurement",
+        "unit": "A",
+    },
+    "HouseIgrid_L1": {
+        "device_class": "current",
+        "state_class": "measurement",
+        "unit": "A",
+    },
+    "HouseIgrid_L2": {
+        "device_class": "current",
+        "state_class": "measurement",
+        "unit": "A",
+    },
+    "HouseIgrid_L3": {
+        "device_class": "current",
+        "state_class": "measurement",
+        "unit": "A",
+    },
+    "ILeakDcAc": {
+        "device_class": "current",
+        "state_class": "measurement",
+        "unit": "mA",
+    },
+    "ILeakDcDc": {
+        "device_class": "current",
+        "state_class": "measurement",
+        "unit": "mA",
+    },
     # Voltage (V, measurement)
     "PhVphA": {"device_class": "voltage", "state_class": "measurement", "unit": "V"},
     "PhVphB": {"device_class": "voltage", "state_class": "measurement", "unit": "V"},
@@ -816,80 +1270,179 @@ SUNSPEC_TO_HA_METADATA = {
     "VgridL1_N": {"device_class": "voltage", "state_class": "measurement", "unit": "V"},
     "VgridL2_N": {"device_class": "voltage", "state_class": "measurement", "unit": "V"},
     "VgridL3_N": {"device_class": "voltage", "state_class": "measurement", "unit": "V"},
-    "MeterVgrid_L1": {"device_class": "voltage", "state_class": "measurement", "unit": "V"},
-    "MeterVgrid_L2": {"device_class": "voltage", "state_class": "measurement", "unit": "V"},
-    "MeterVgrid_L3": {"device_class": "voltage", "state_class": "measurement", "unit": "V"},
+    "MeterVgrid_L1": {
+        "device_class": "voltage",
+        "state_class": "measurement",
+        "unit": "V",
+    },
+    "MeterVgrid_L2": {
+        "device_class": "voltage",
+        "state_class": "measurement",
+        "unit": "V",
+    },
+    "MeterVgrid_L3": {
+        "device_class": "voltage",
+        "state_class": "measurement",
+        "unit": "V",
+    },
     "VcMax": {"device_class": "voltage", "state_class": "measurement", "unit": "V"},
     "VcMin": {"device_class": "voltage", "state_class": "measurement", "unit": "V"},
-
     # Frequency (Hz, measurement)
     "Hz": {"device_class": "frequency", "state_class": "measurement", "unit": "Hz"},
     "HzA": {"device_class": "frequency", "state_class": "measurement", "unit": "Hz"},
     "HzB": {"device_class": "frequency", "state_class": "measurement", "unit": "Hz"},
     "HzC": {"device_class": "frequency", "state_class": "measurement", "unit": "Hz"},
-    "MeterFgrid": {"device_class": "frequency", "state_class": "measurement", "unit": "Hz"},
-
+    "MeterFgrid": {
+        "device_class": "frequency",
+        "state_class": "measurement",
+        "unit": "Hz",
+    },
     # Temperature (°C, measurement)
-    "TmpCab": {"device_class": "temperature", "state_class": "measurement", "unit": "°C"},
-    "TmpSnk": {"device_class": "temperature", "state_class": "measurement", "unit": "°C"},
-    "TmpTrns": {"device_class": "temperature", "state_class": "measurement", "unit": "°C"},
-    "TmpOt": {"device_class": "temperature", "state_class": "measurement", "unit": "°C"},
-    "TmpInv": {"device_class": "temperature", "state_class": "measurement", "unit": "°C"},
-    "TmpBst": {"device_class": "temperature", "state_class": "measurement", "unit": "°C"},
-    "TempInv": {"device_class": "temperature", "state_class": "measurement", "unit": "°C"},
-    "TempBst": {"device_class": "temperature", "state_class": "measurement", "unit": "°C"},
-    "Temp1": {"device_class": "temperature", "state_class": "measurement", "unit": "°C"},
-    "Booster_Tmp": {"device_class": "temperature", "state_class": "measurement", "unit": "°C"},
-
+    "TmpCab": {
+        "device_class": "temperature",
+        "state_class": "measurement",
+        "unit": "°C",
+    },
+    "TmpSnk": {
+        "device_class": "temperature",
+        "state_class": "measurement",
+        "unit": "°C",
+    },
+    "TmpTrns": {
+        "device_class": "temperature",
+        "state_class": "measurement",
+        "unit": "°C",
+    },
+    "TmpOt": {
+        "device_class": "temperature",
+        "state_class": "measurement",
+        "unit": "°C",
+    },
+    "TmpInv": {
+        "device_class": "temperature",
+        "state_class": "measurement",
+        "unit": "°C",
+    },
+    "TmpBst": {
+        "device_class": "temperature",
+        "state_class": "measurement",
+        "unit": "°C",
+    },
+    "TempInv": {
+        "device_class": "temperature",
+        "state_class": "measurement",
+        "unit": "°C",
+    },
+    "TempBst": {
+        "device_class": "temperature",
+        "state_class": "measurement",
+        "unit": "°C",
+    },
+    "Temp1": {
+        "device_class": "temperature",
+        "state_class": "measurement",
+        "unit": "°C",
+    },
+    "Booster_Tmp": {
+        "device_class": "temperature",
+        "state_class": "measurement",
+        "unit": "°C",
+    },
     # Battery (%, measurement)
     "Soc": {"device_class": "battery", "state_class": "measurement", "unit": "%"},
     "Soh": {"device_class": "battery", "state_class": "measurement", "unit": "%"},
-
     # Power Factor (no unit, measurement)
     "PF": {"device_class": "power_factor", "state_class": "measurement", "unit": ""},
-    "cosPhi": {"device_class": "power_factor", "state_class": "measurement", "unit": ""},
-
+    "cosPhi": {
+        "device_class": "power_factor",
+        "state_class": "measurement",
+        "unit": "",
+    },
     # Fan Speed (RPM, measurement)
     "Fan1rpm": {"device_class": None, "state_class": "measurement", "unit": "RPM"},
     "Fan2rpm": {"device_class": None, "state_class": "measurement", "unit": "RPM"},
-
     # Resistance (MOhm, measurement)
-    "Isolation_Ohm1": {"device_class": None, "state_class": "measurement", "unit": "MΩ"},
-
+    "Isolation_Ohm1": {
+        "device_class": None,
+        "state_class": "measurement",
+        "unit": "MΩ",
+    },
     # Counters (no device_class, total)
     "CycleNum": {"device_class": None, "state_class": "total", "unit": "cycles"},
-    "NumOfMPPT": {"device_class": None, "state_class": "measurement", "unit": "channels"},
-
+    "NumOfMPPT": {
+        "device_class": None,
+        "state_class": "measurement",
+        "unit": "channels",
+    },
     # Network Monitoring (%, measurement)
     # Note: WiFi link quality is a percentage (0-100%), not signal strength in dB/dBm
-    "wlan0_link_quality": {"device_class": None, "state_class": "measurement", "unit": "%", "icon": "mdi:wifi-cog"},
+    "wlan0_link_quality": {
+        "device_class": None,
+        "state_class": "measurement",
+        "unit": "%",
+        "icon": "mdi:wifi-cog",
+    },
     "wlan0_ipaddr_local": {"icon": "mdi:wifi-cog"},
     "wlan0_mode": {"icon": "mdi:wifi-cog"},
     "wlan0_essid": {"icon": "mdi:wifi-cog"},
-
     # System Monitoring
     "sys_load": {"icon": "mdi:gauge"},
     "type": {"icon": "mdi:information-box-outline"},
-
     # Data Size (MB, measurement) - Changed from B to MB for better readability
     # Values are converted from bytes to MB in normalizer.py
-    "store_size": {"device_class": "data_size", "state_class": "measurement", "unit": "MB"},
-    "flash_free": {"device_class": "data_size", "state_class": "measurement", "unit": "MB"},
-    "free_ram": {"device_class": "data_size", "state_class": "measurement", "unit": "MB"},
-
+    "store_size": {
+        "device_class": "data_size",
+        "state_class": "measurement",
+        "unit": "MB",
+    },
+    "flash_free": {
+        "device_class": "data_size",
+        "state_class": "measurement",
+        "unit": "MB",
+    },
+    "free_ram": {
+        "device_class": "data_size",
+        "state_class": "measurement",
+        "unit": "MB",
+    },
     # Duration (s, total_increasing)
-    "uptime": {"device_class": "duration", "state_class": "total_increasing", "unit": "s"},
-
+    "uptime": {
+        "device_class": "duration",
+        "state_class": "total_increasing",
+        "unit": "s",
+    },
     # Apparent Energy (VAh) - no standard HA device_class, use energy icon
-    "E2_runtime": {"device_class": None, "state_class": "total_increasing", "unit": "VAh", "icon": "mdi:lightning-bolt"},
-    "E2_7D": {"device_class": None, "state_class": "total", "unit": "VAh", "icon": "mdi:lightning-bolt"},
-    "E2_30D": {"device_class": None, "state_class": "total", "unit": "VAh", "icon": "mdi:lightning-bolt"},
-
+    "E2_runtime": {
+        "device_class": None,
+        "state_class": "total_increasing",
+        "unit": "VAh",
+        "icon": "mdi:lightning-bolt",
+    },
+    "E2_7D": {
+        "device_class": None,
+        "state_class": "total",
+        "unit": "VAh",
+        "icon": "mdi:lightning-bolt",
+    },
+    "E2_30D": {
+        "device_class": None,
+        "state_class": "total",
+        "unit": "VAh",
+        "icon": "mdi:lightning-bolt",
+    },
     # Peak Power (W, measurement) - power device_class
     # Note: Uses W (not kW) per SunSpec specification and livedata format
     # Feeds endpoint shows kW for display, but livedata provides W values
-    "PowerPeakAbs": {"device_class": "power", "state_class": "measurement", "unit": "W"},
-    "PowerPeakToday": {"device_class": "power", "state_class": "measurement", "unit": "W"},
+    "PowerPeakAbs": {
+        "device_class": "power",
+        "state_class": "measurement",
+        "unit": "W",
+    },
+    "PowerPeakToday": {
+        "device_class": "power",
+        "state_class": "measurement",
+        "unit": "W",
+    },
     "Ppeak": {"device_class": "power", "state_class": "measurement", "unit": "W"},
 }
 
@@ -906,7 +1459,6 @@ DESCRIPTION_IMPROVEMENTS = {
     "Dhc": "Battery discharge cycles counter",
     "ETotCharge": "Total battery charge energy - Lifetime",
     "ETotDischarge": "Total battery discharge energy - Lifetime",
-
     # Energy counters with periods
     # E0 series: Inverter AC energy produced (from VSN700 feed title)
     "E0_runtime": "Inverter AC energy produced - Since Restart",
@@ -953,7 +1505,6 @@ DESCRIPTION_IMPROVEMENTS = {
     "E8_7D": "Energy imported from grid - Last 7 Days",
     "E8_30D": "Energy imported from grid - Last 30 Days",
     "E8_1Y": "Energy imported from grid - Last Year",
-
     # House meter
     "HousePgrid_L1": "House Power Phase A",
     "HousePgrid_L2": "House Power Phase B",
@@ -961,19 +1512,15 @@ DESCRIPTION_IMPROVEMENTS = {
     "HouseIgrid_L1": "House Current Phase A",
     "HouseIgrid_L2": "House Current Phase B",
     "HouseIgrid_L3": "House Current Phase C",
-
     # System info
     "SplitPhase": "Split-phase configuration flag",
     "CountryStd": "Country grid standard setting",
-
     # Temperature monitoring
     "TcMax": "Maximum cabinet temperature recorded",
     "TcMin": "Minimum cabinet temperature recorded",
-
     # Digital inputs
     "DI0_mode": "Operating mode configuration for digital input 0",
     "DI1_mode": "Operating mode configuration for digital input 1",
-
     # Energy counters - base totals (lifetime cumulative)
     "EBackup": "Inverter backup output energy - Lifetime",
     "ETotal": "Inverter AC energy produced - Lifetime",
@@ -986,7 +1533,6 @@ DESCRIPTION_IMPROVEMENTS = {
     "EGridExport": "Energy exported to grid - Lifetime",
     "ETotalAbsorbed": "Inverter absorbed AC energy - Lifetime",
     "ETotalApparent": "Inverter apparent AC energy - Lifetime",
-
     # Energy by time periods
     "DayWH": "Energy - Today",
     "WeekWH": "Energy - Week",
@@ -994,17 +1540,14 @@ DESCRIPTION_IMPROVEMENTS = {
     "YearWH": "Energy - Year",
     "E6_total": "House consumption from inverter - Lifetime",
     "E7_total": "Total house consumption - Lifetime",
-
     # E15 series: Inverter backup output energy (from VSN700 feed title)
     "E15_runtime": "Inverter backup output energy - Since Restart",
     "E15_7D": "Inverter backup output energy - Last 7 Days",
     "E15_30D": "Inverter backup output energy - Last 30 Days",
-
     # Ein series: Inverter PV energy DC input (from VSN700 feed title)
     "Ein_runtime": "Inverter PV energy (DC input) - Since Restart",
     "Ein_7D": "Inverter PV energy (DC input) - Last 7 Days",
     "Ein_30D": "Inverter PV energy (DC input) - Last 30 Days",
-
     # ECharge/EDischarge series: Per-battery measurements (from VSN700 feed title)
     "ECharge_runtime": "Battery charge energy - Since Restart",
     "ECharge_7D": "Battery charge energy - Last 7 Days",
@@ -1012,7 +1555,6 @@ DESCRIPTION_IMPROVEMENTS = {
     "EDischarge_runtime": "Battery discharge energy - Since Restart",
     "EDischarge_7D": "Battery discharge energy - Last 7 Days",
     "EDischarge_30D": "Battery discharge energy - Last 30 Days",
-
     # ETotCharge/ETotDischarge series: Total for all batteries (from VSN700 feed title)
     "ETotCharge_runtime": "Total battery charge energy - Since Restart",
     "ETotCharge_7D": "Total battery charge energy - Last 7 Days",
@@ -1020,34 +1562,28 @@ DESCRIPTION_IMPROVEMENTS = {
     "ETotDischarge_runtime": "Total battery discharge energy - Since Restart",
     "ETotDischarge_7D": "Total battery discharge energy - Last 7 Days",
     "ETotDischarge_30D": "Total battery discharge energy - Last 30 Days",
-
     # String current/power measurements
     "Iin1": "DC Current (String 1)",
     "Iin2": "DC Current (String 2)",
     "Pin": "Total DC Input Power",
     "Pin1": "DC Input Power (String 1)",
     "Pin2": "DC Input Power (String 2)",
-
     # Grid monitoring and support
     "HzA": "AC Frequency Phase A",
     "HzB": "AC Frequency Phase B",
     "HzC": "AC Frequency Phase C",
     "Fcc": "Central controller frequency",
-
     # Leakage and safety monitoring
     "IleakDC": "DC side ground fault leakage current",
     "IleakInv": "Inverter ground fault leakage current",
     "Iba": "Battery DC current flow",
-
     # Inverter status and power
     "InvState": "Current operational state of inverter",
     "Ppeak": "Maximum instantaneous power",
     "WRtg": "Inverter rated power capacity",
-
     # System measurements
     "SysTime": "Inverter system timestamp",
     "Vgnd": "Voltage to ground reference",
-
     # Alarm and status points
     "Alarm St": "Current alarm status code",
     "Global St": "Overall inverter operating state",
@@ -1058,12 +1594,10 @@ DESCRIPTION_IMPROVEMENTS = {
     "Dc St2": "DC string 2 connection status",
     "D C1 State": "DC string 1 operating state",
     "D C2 State": "DC string 2 operating state",
-
     # Temperature points (additional)
     "Temp Inv": "Inverter internal temperature",
     "Temp Bst": "DC-DC boost converter temperature",
     "Tba": "Battery pack temperature",
-
     # Voltage measurements (additional)
     "Vbulk": "DC bus bulk capacitor voltage",
     "Vbulk_mid": "DC bus bulk capacitor midpoint voltage",
@@ -1077,7 +1611,6 @@ DESCRIPTION_IMPROVEMENTS = {
     "Vba": "Battery pack voltage",
     "Vc Max": "Maximum voltage across battery cells",
     "Vc Min": "Minimum voltage across battery cells",
-
     # Power measurements (additional)
     "Pba": "Battery charge/discharge power",
     "P Ch": "Battery charging power",
@@ -1087,22 +1620,17 @@ DESCRIPTION_IMPROVEMENTS = {
     "Pn": "Inverter nominal rated power",
     "Sn": "Inverter nominal apparent power rating",
     "Cos phi": "AC power factor (cosine phi)",
-
     # Energy counters (additional)
     "E Total Absorbed": "Cumulative energy absorbed from grid",
     "E Total Apparent": "Cumulative apparent energy (kVAh)",
-
     # Fan and cooling
     "Fan1Rpm": "Cooling fan 1 speed in RPM",
     "Fan2Rpm": "Cooling fan 2 speed in RPM",
-
     # Battery
     "T Soc": "Battery state of charge percentage",
-
     # Grid control
     "Grid Ext Ctrl Ena": "External grid control enabled status",
     "Grid Ext Ctrl State": "External grid control current state",
-
     # Status/Alarm Points - Fixed keys to match SunSpec Normalized Names
     "AlarmSt": "Current alarm status code",
     "DcSt1": "DC string 1 connection status",
@@ -1113,7 +1641,6 @@ DESCRIPTION_IMPROVEMENTS = {
     "PACDeratingFlags": "AC power derating active condition flags",
     "DC1State": "DC string 1 operating state",
     "DC2State": "DC string 2 operating state",
-
     # Meter/Grid Points - Using actual SunSpec names
     "W": "AC Power",
     "A": "AC Current",
@@ -1128,33 +1655,27 @@ DESCRIPTION_IMPROVEMENTS = {
     "PhVphA": "AC Voltage Phase A-N",
     "VgridL1_N": "AC Voltage Phase A-N",
     "VgridL2_N": "AC Voltage Phase B-N",
-
     # Voltage Points - Using actual SunSpec names
     "PhVphAB": "AC Voltage Phase A-B",
     "PhVphBC": "AC Voltage Phase B-C",
     "PhVphCA": "AC Voltage Phase C-A",
     "VGnd": "Voltage to ground reference",
-    "VBulk": "DC bus bulk capacitor voltage",
     "DCV_1": "DC Voltage (String 1)",
     "DCV_2": "DC Voltage (String 2)",
     "VcMax": "Maximum voltage across battery cells",
     "VcMin": "Minimum voltage across battery cells",
-
     # Power Points - Using actual SunSpec names
     "PacStandAlone": "AC power in stand-alone (off-grid) mode",
     "PacTogrid": "AC power exported to grid",
     # Note: sn/pn in datalogger context are identification fields, not power
     "pn": "Product number",
     "sn": "Serial number",
-
     # Control Points - Using actual SunSpec names
     "gridExtCtrlEna": "External grid control enabled status",
     "gridExtCtrlState": "External grid control current state",
-
     # WiFi/Network - Using actual SunSpec names
     "wlan0_essid": "WiFi network name (SSID)",
     "wlan0_link_quality": "WiFi link quality percentage",
-
     # M1 Common Model - Using actual SunSpec names
     "Mn": "Manufacturer name",
     "Md": "Model identifier",
@@ -1162,7 +1683,6 @@ DESCRIPTION_IMPROVEMENTS = {
     "Opt": "Configuration options",
     "SN": "Device serial number",
     "DA": "Device Modbus address",
-
     # Temperature/Other Points - Using actual SunSpec names
     "TempInv": "Inverter internal temperature",
     "TempBst": "DC-DC boost converter temperature",
@@ -1170,17 +1690,14 @@ DESCRIPTION_IMPROVEMENTS = {
     "Temp1": "Additional temperature sensor 1",
     "ShU": "Current shunt voltage",
     "cosPhi": "Power factor (cosine phi)",
-
     # Other measurements
     "Riso": "DC insulation resistance to ground",
     "Sh U": "Current shunt voltage",
     "Type": "Inverter device type identifier",
-
     # ==========================================
     # v2.0.7 MASSIVE Systematic Improvements (58 points)
     # Fixes: WiFi/Network, Meter, Device/Status, Battery/Power
     # ==========================================
-
     # WiFi/Network (11 points)
     "wlan_0_broadcast": "WiFi broadcast address",
     "wlan_0_dhcpState": "WiFi DHCP state (acquired/pending)",
@@ -1193,7 +1710,6 @@ DESCRIPTION_IMPROVEMENTS = {
     "wlan_fsm_status": "WiFi finite state machine status",
     "wlan0_ipaddr_local": "WiFi local IP address",
     "wlan0_mode": "WiFi operating mode (client/AP)",
-
     # Meter (14 points)
     "MeterPgrid_L1": "Meter Power Phase A",
     "MeterPgrid_L2": "Meter Power Phase B",
@@ -1212,7 +1728,6 @@ DESCRIPTION_IMPROVEMENTS = {
     "MeterIgrid_L2": "Meter Current Phase B",
     "MeterIgrid_L3": "Meter Current Phase C",
     "MeterFgrid": "Meter AC frequency",
-
     # Device/Firmware/Manufacturing (16 points)
     "device_0_devName": "Device 0 component name",
     "device_1_devName": "Device 1 component name",
@@ -1230,7 +1745,6 @@ DESCRIPTION_IMPROVEMENTS = {
     "mfg_part_number": "Manufacturing part number",
     "mfg_serial_number": "Manufacturing serial number",
     "mfg_week_year": "Manufacturing week and year (WWYY)",
-
     # Battery/Power/Control (17 points)
     "BattExtCtrlEna": "Battery external control enabled flag",
     "BattExtCtrlState": "Battery external control state",
@@ -1248,14 +1762,12 @@ DESCRIPTION_IMPROVEMENTS = {
     "Isolation_Ohm1": "DC insulation resistance to ground",
     "m126Mod_Ena": "SunSpec Model 126 module enabled",
     "m132Mod_Ena": "SunSpec Model 132 module enabled",
-
     # VSN-specific points (user-requested fixes)
     "InverterSt": "Inverter status",
     "free_ram": "Available RAM",
     "flash_free": "Available flash storage",
     "logger_sn": "Logger serial number",
     "logger_loggerId": "Logger ID",
-
     # Additional improvements (v2.0.10)
     "GlobState": "Global operational state",
     "PowerPeakAbs": "Peak Output Power - Lifetime",
@@ -1282,9 +1794,9 @@ CHANGELOG_ENTRIES = [
             "Generated 210 deduplicated points (from 277 raw)",
             "Applied model flag detection from point names",
             "Implemented 4-tier description priority system",
-            "Added comprehensive category assignment logic"
+            "Added comprehensive category assignment logic",
         ],
-        "source": "Script automation"
+        "source": "Script automation",
     },
     {
         "date": "2024-11-02",
@@ -1296,9 +1808,9 @@ CHANGELOG_ENTRIES = [
             "Inverter: Alarm status, Booster temperature, DC capacitor/mid-point voltage",
             "MPPT: DC current/voltage #1/#2 (instead of 'for string X')",
             "Device info: Model, Options, Serial Number, Firmware Version, Manufacturer",
-            "Grid: Phase Voltage AN (instead of 'Phase A to neutral voltage measurement')"
+            "Grid: Phase Voltage AN (instead of 'Phase A to neutral voltage measurement')",
         ],
-        "source": "User request"
+        "source": "User request",
     },
     {
         "date": "2024-11-02",
@@ -1308,9 +1820,9 @@ CHANGELOG_ENTRIES = [
         "details": [
             "Device Address: Removed device_class=current and unit=A",
             "Firmware Version: Removed device_class=voltage and unit=V",
-            "System timestamp: Set device_class=timestamp with entity_category=diagnostic"
+            "System timestamp: Set device_class=timestamp with entity_category=diagnostic",
         ],
-        "source": "User request"
+        "source": "User request",
     },
     {
         "date": "2024-11-02",
@@ -1324,9 +1836,9 @@ CHANGELOG_ENTRIES = [
             "Battery: Added comprehensive battery point descriptions",
             "Energy counters: Standardized period descriptions (lifetime, 7D, 30D, 1Y)",
             "House meter: Clarified consumption measurements",
-            "System info: Added descriptive text for configuration points"
+            "System info: Added descriptive text for configuration points",
         ],
-        "source": "Automated logic improvement"
+        "source": "Automated logic improvement",
     },
     {
         "date": "2024-11-02",
@@ -1338,9 +1850,9 @@ CHANGELOG_ENTRIES = [
             "Fixed 6 points: C_Mn, C_Md, C_SN, C_Vr, C_Opt, C_DA",
             "Updated main processing loop to include VSN300-only points in mapping",
             "Improved VSN300 name detection for points in VSN_TO_SUNSPEC_MAP",
-            "These points now get proper SunSpec labels like 'Manufacturer', 'Serial Number', etc."
+            "These points now get proper SunSpec labels like 'Manufacturer', 'Serial Number', etc.",
         ],
-        "source": "User-reported issue fix"
+        "source": "User-reported issue fix",
     },
     {
         "date": "2024-11-02",
@@ -1353,9 +1865,9 @@ CHANGELOG_ENTRIES = [
             "Updated SunSpec workbook file with complete M160 descriptions",
             "M160 MPPT points now have proper descriptions (DC Current, DC Voltage, DC Power)",
             "Improved coverage from ~10% to 100% of available SunSpec models",
-            "Maintained ABB Excel usage only for M64061 proprietary model"
+            "Maintained ABB Excel usage only for M64061 proprietary model",
         ],
-        "source": "User-reported parser issue"
+        "source": "User-reported parser issue",
     },
     {
         "date": "2024-11-02",
@@ -1371,9 +1883,9 @@ CHANGELOG_ENTRIES = [
             "Phase frequencies: HzA/B/C labeled as 'Phase X Frequency'",
             "Leakage currents: IleakDC/IleakInv with ground fault context",
             "System measurements: Improved Vgnd, SysTime, cosPhi descriptions",
-            "Added 29 new display name corrections for better UI presentation"
+            "Added 29 new display name corrections for better UI presentation",
         ],
-        "source": "User feedback on generic labels"
+        "source": "User feedback on generic labels",
     },
     {
         "date": "2024-11-02",
@@ -1391,9 +1903,9 @@ CHANGELOG_ENTRIES = [
             "Battery (1 point): T Soc as 'Battery State of Charge'",
             "Grid Control (2 points): Grid Ext Ctrl Ena/State with clear status descriptions",
             "Other (5 points): Riso, Sh U, Type with technical explanations",
-            "Added 48 display name corrections for improved Home Assistant UI"
+            "Added 48 display name corrections for improved Home Assistant UI",
         ],
-        "source": "User feedback on remaining generic/unclear descriptions"
+        "source": "User feedback on remaining generic/unclear descriptions",
     },
     {
         "date": "2024-11-02",
@@ -1408,9 +1920,9 @@ CHANGELOG_ENTRIES = [
             "Missing underscores: VgridL1N→VgridL1_N, VgridL2N→VgridL2_N",
             "Non-existent points: St, Hz1, VgridL1, V, Vac, VacL, VAC, VoutAC, VacN, BatCtrlDCh, etc.",
             "Only 19 points actually improved successfully",
-            "Version 2.0.6 contains comprehensive corrections"
+            "Version 2.0.6 contains comprehensive corrections",
         ],
-        "source": "Post-release audit revealed systematic mapping errors"
+        "source": "Post-release audit revealed systematic mapping errors",
     },
     {
         "date": "2024-11-02",
@@ -1429,9 +1941,9 @@ CHANGELOG_ENTRIES = [
             "KEY FIX: All dictionary keys now use SunSpec Normalized Names, not REST API names",
             "Fixed PhVphAB/BC/CA line-to-line voltages that were showing VoutRS/ST/TR descriptions",
             "Fixed VGnd (capital G) that was showing just 'Vgnd' as description",
-            "Corrected all display names to match improved descriptions"
+            "Corrected all display names to match improved descriptions",
         ],
-        "source": "User-requested audit and comprehensive correction of v2.0.5 failures"
+        "source": "User-requested audit and comprehensive correction of v2.0.5 failures",
     },
     {
         "date": "2024-11-02",
@@ -1447,9 +1959,9 @@ CHANGELOG_ENTRIES = [
             "Issues fixed: 172 repeats, 87 bad displays, 65 short descriptions, 26 tech prefixes, 14 spacing",
             "Post-audit success rate increased from 32% to expected ~90%+",
             "All 61 user-specified problematic points now have proper descriptions and display names",
-            "Moved DESCRIPTION_IMPROVEMENTS to Priority 1 to override feeds data with curated descriptions"
+            "Moved DESCRIPTION_IMPROVEMENTS to Priority 1 to override feeds data with curated descriptions",
         ],
-        "source": "User-requested comprehensive audit revealing 73% of points had issues"
+        "source": "User-requested comprehensive audit revealing 73% of points had issues",
     },
     {
         "date": "2024-11-02",
@@ -1465,9 +1977,9 @@ CHANGELOG_ENTRIES = [
             "Fixed 'D I Status' → 'DI Status'",
             "Fixed 'Day W H' → 'Day WH', 'Month W H' → 'Month WH', etc.",
             "Added acronym preprocessing in generate_label_from_name() to prevent letter-by-letter splitting",
-            "Acronyms now preserved: FRT, MPPT, QAC, SAC, PAC, DI, WH"
+            "Acronyms now preserved: FRT, MPPT, QAC, SAC, PAC, DI, WH",
         ],
-        "source": "User feedback on horrible single-letter spacing in labels"
+        "source": "User feedback on horrible single-letter spacing in labels",
     },
     {
         "date": "2024-11-03",
@@ -1482,18 +1994,20 @@ CHANGELOG_ENTRIES = [
             "Comprehensive HA Metadata (150+ points): Added device_class, state_class, and unit for energy, power, voltage, current, temperature, frequency, battery, etc.",
             "Created SUNSPEC_TO_HA_METADATA dictionary with proper Home Assistant metadata for all measurement types",
             "All corrections applied centrally in create_row_with_model_flags() for consistency across all points",
-            "Expected result: ~95% of points now have proper HA metadata, cleaner descriptions, consistent time periods"
+            "Expected result: ~95% of points now have proper HA metadata, cleaner descriptions, consistent time periods",
         ],
-        "source": "User request for systematic data quality improvements before manual review"
-    }
+        "source": "User request for systematic data quality improvements before manual review",
+    },
 ]
 
 # ==============================================================================
 # PART 2: HELPER FUNCTIONS
 # ==============================================================================
 
+
 def load_feeds_titles(vsn300_feeds_path, vsn700_feeds_path):
     """Load title and unit data from VSN300 and VSN700 feeds.json files."""
+
     def is_title_a_description(point_name, title):
         """Determine if a title is a description or just a point name reference."""
         if not title:
@@ -1512,7 +2026,7 @@ def load_feeds_titles(vsn300_feeds_path, vsn700_feeds_path):
             vsn300_feeds = json.load(f)
             # feeds is a dictionary, not a list!
             feeds_dict = vsn300_feeds.get("feeds", {})
-            for device_id, feed_data in feeds_dict.items():
+            for feed_data in feeds_dict.values():
                 datastreams = feed_data.get("datastreams", {})
                 for point_name, point_info in datastreams.items():
                     title = point_info.get("title", "")
@@ -1522,7 +2036,7 @@ def load_feeds_titles(vsn300_feeds_path, vsn700_feeds_path):
                         "title": title,
                         "units": units,
                         "is_description": is_description,
-                        "source": "VSN300 feeds"
+                        "source": "VSN300 feeds",
                     }
 
     # Process VSN700 feeds
@@ -1531,7 +2045,7 @@ def load_feeds_titles(vsn300_feeds_path, vsn700_feeds_path):
             vsn700_feeds = json.load(f)
             # feeds is a dictionary, not a list!
             feeds_dict = vsn700_feeds.get("feeds", {})
-            for device_id, feed_data in feeds_dict.items():
+            for feed_data in feeds_dict.values():
                 datastreams = feed_data.get("datastreams", {})
                 for point_name, point_info in datastreams.items():
                     title = point_info.get("title", "")
@@ -1542,10 +2056,11 @@ def load_feeds_titles(vsn300_feeds_path, vsn700_feeds_path):
                             "title": title,
                             "units": units,
                             "is_description": is_description,
-                            "source": "VSN700 feeds"
+                            "source": "VSN700 feeds",
                         }
 
     return feeds_titles
+
 
 def load_vsn_status(vsn300_status_path, vsn700_status_path):
     """Load status.json data from VSN300 and VSN700."""
@@ -1564,10 +2079,12 @@ def load_vsn_status(vsn300_status_path, vsn700_status_path):
 
                     status_points[point_name] = {
                         "source": "VSN300 status",
-                        "label": label if label else generate_label_from_name(point_name),
+                        "label": label
+                        if label
+                        else generate_label_from_name(point_name),
                         "value_example": value,
                         "vsn300": True,
-                        "vsn700": False
+                        "vsn700": False,
                     }
 
     # Process VSN700 status
@@ -1586,13 +2103,16 @@ def load_vsn_status(vsn300_status_path, vsn700_status_path):
                     else:
                         status_points[point_name] = {
                             "source": "VSN700 status",
-                            "label": label if label else generate_label_from_name(point_name),
+                            "label": label
+                            if label
+                            else generate_label_from_name(point_name),
                             "value_example": value,
                             "vsn300": False,
-                            "vsn700": True
+                            "vsn700": True,
                         }
 
     return status_points
+
 
 def load_m64061_from_abb_excel(excel_path):
     """Load M64061 model data from ABB_SunSpec_Modbus.xlsx."""
@@ -1636,17 +2156,26 @@ def load_m64061_from_abb_excel(excel_path):
                     access = ws.cell(row, 8).value  # Column H - Access (R/RW)
 
                     # Some known M64061 points from the original script
-                    if name in ["Alm1", "Alm2", "Alm3", "AlarmState", "FaultStatus",
-                               "BatteryMode", "BatteryStatus", "IsolResist"]:
+                    if name in [
+                        "Alm1",
+                        "Alm2",
+                        "Alm3",
+                        "AlarmState",
+                        "FaultStatus",
+                        "BatteryMode",
+                        "BatteryStatus",
+                        "IsolResist",
+                    ]:
                         m64061_points[name] = {
                             "size": size,
                             "access": access,
                             "label": generate_label_from_name(name),
-                            "description": f"M64061 proprietary point: {name}"
+                            "description": f"M64061 proprietary point: {name}",
                         }
 
     wb.close()
     return m64061_points
+
 
 def load_sunspec_models_metadata(workbook_path):
     """Load label and description from SunSpec models workbook."""
@@ -1673,9 +2202,9 @@ def load_sunspec_models_metadata(workbook_path):
         # Column C (3) = Name
         # Column M (13) = Label
         # Column N (14) = Description
-        name_col = 3    # Column C
+        name_col = 3  # Column C
         label_col = 13  # Column M
-        desc_col = 14   # Column N
+        desc_col = 14  # Column N
 
         # Row 1 contains headers, data starts at row 2
         for row_idx in range(2, ws.max_row + 1):
@@ -1688,11 +2217,12 @@ def load_sunspec_models_metadata(workbook_path):
 
             models_data[model_key][name] = {
                 "label": label or "",
-                "description": description or ""
+                "description": description or "",
             }
 
     wb.close()
     return models_data
+
 
 def clean_energy_prefix(text):
     """Remove 'E# -' and 'Ein -' prefixes from descriptions and display names (v2.0.9)."""
@@ -1701,10 +2231,9 @@ def clean_energy_prefix(text):
 
     # Pattern: E0 -, E1 -, E2 -, ..., E99 -, Ein -
     import re
-    text = re.sub(r'^E\d+ - ', '', text)
-    text = re.sub(r'^Ein - ', '', text)
 
-    return text
+    text = re.sub(r"^E\d+ - ", "", text)
+    return re.sub(r"^Ein - ", "", text)
 
 
 def standardize_time_periods(text):
@@ -1720,16 +2249,14 @@ def standardize_time_periods(text):
         return text
 
     # Replace variations of 30 days
-    text = text.replace('last 30 days', 'last month')
-    text = text.replace('- 30D', '- last month')
-    text = text.replace(' 30D', ' last month')
+    text = text.replace("last 30 days", "last month")
+    text = text.replace("- 30D", "- last month")
+    text = text.replace(" 30D", " last month")
 
     # Replace variations of 7 days
-    text = text.replace('last 7 days', 'last week')
-    text = text.replace('- 7D', '- last week')
-    text = text.replace(' 7D', ' last week')
-
-    return text
+    text = text.replace("last 7 days", "last week")
+    text = text.replace("- 7D", "- last week")
+    return text.replace(" 7D", " last week")
 
 
 def apply_label_corrections(label):
@@ -1753,20 +2280,28 @@ def generate_label_from_name(point_name):
 
     # Handle M64061 state codes
     state_codes = {
-        "Alm1": "Alarm 1", "Alm2": "Alarm 2", "Alm3": "Alarm 3",
-        "AlarmState": "Alarm State", "FaultStatus": "Fault Status",
-        "BatteryMode": "Battery Mode", "BatteryStatus": "Battery Status",
-        "IsolResist": "Isolation Resistance"
+        "Alm1": "Alarm 1",
+        "Alm2": "Alarm 2",
+        "Alm3": "Alarm 3",
+        "AlarmState": "Alarm State",
+        "FaultStatus": "Fault Status",
+        "BatteryMode": "Battery Mode",
+        "BatteryStatus": "Battery Status",
+        "IsolResist": "Isolation Resistance",
     }
     if point_name in state_codes:
         return state_codes[point_name]
 
     # Handle system monitoring points
     system_points = {
-        "flash_free": "Flash Memory Free", "free_ram": "Free RAM",
-        "fw_ver": "Firmware Version", "hw_ver": "Hardware Version",
-        "store_size": "Storage Size", "sys_load": "System Load",
-        "uptime": "System Uptime", "Sn": "Serial Number"
+        "flash_free": "Flash Memory Free",
+        "free_ram": "Free RAM",
+        "fw_ver": "Firmware Version",
+        "hw_ver": "Hardware Version",
+        "store_size": "Storage Size",
+        "sys_load": "System Load",
+        "uptime": "System Uptime",
+        "Sn": "Serial Number",
     }
     if point_name in system_points:
         return system_points[point_name]
@@ -1778,7 +2313,7 @@ def generate_label_from_name(point_name):
             "runtime": "Lifetime",
             "7D": "Last Week",  # v2.0.9: Changed from "7 Day"
             "30D": "Last Month",  # v2.0.9: Changed from "30 Day"
-            "1Y": "1 Year"
+            "1Y": "1 Year",
         }
         if suffix in period_map:
             base_label = generate_label_from_name(base)
@@ -1786,13 +2321,16 @@ def generate_label_from_name(point_name):
 
     # Handle common abbreviations
     abbreviations = {
-        "Soc": "State of Charge", "Soh": "State of Health",
-        "Tmp": "Temperature", "Vbat": "Battery Voltage",
-        "Ibat": "Battery Current", "Pbat": "Battery Power"
+        "Soc": "State of Charge",
+        "Soh": "State of Health",
+        "Tmp": "Temperature",
+        "Vbat": "Battery Voltage",
+        "Ibat": "Battery Current",
+        "Pbat": "Battery Power",
     }
     for abbr, full in abbreviations.items():
         if point_name.startswith(abbr):
-            return full + point_name[len(abbr):]
+            return full + point_name[len(abbr) :]
 
     # Handle multi-letter acronyms BEFORE splitting (v2.0.7 fix for spacing)
     # Replace acronyms with a placeholder to prevent letter-by-letter splitting
@@ -1821,9 +2359,8 @@ def generate_label_from_name(point_name):
     result = result.replace("Qac", "QAC")
     result = result.replace("Sac", "SAC")
     result = result.replace("Pac", "PAC")
-    result = result.replace("Digital Input", "DI")
+    return result.replace("Digital Input", "DI")
 
-    return result
 
 def generate_simplified_point_name(label, model):
     """Generate simplified HA entity name from label."""
@@ -1837,9 +2374,8 @@ def generate_simplified_point_name(label, model):
     name = re.sub(r"_+", "_", name)
 
     # Strip leading/trailing underscores
-    name = name.strip("_")
+    return name.strip("_")
 
-    return name
 
 def lookup_label_description(models_data, model, sunspec_point):
     """Lookup label and description from SunSpec metadata."""
@@ -1866,8 +2402,17 @@ def lookup_label_description(models_data, model, sunspec_point):
 
     return label, description
 
-def get_description_with_priority(vsn_name, sunspec_name, model, label, workbook_description,
-                                 feeds_info, vsn700_lookup=None, vsn300_name=None):
+
+def get_description_with_priority(
+    vsn_name,
+    sunspec_name,
+    model,
+    label,
+    workbook_description,
+    feeds_info,
+    vsn700_lookup=None,
+    vsn300_name=None,
+):
     """Get description using 5-tier priority system with data source tracking.
 
     Priority order (highest to lowest):
@@ -1881,7 +2426,11 @@ def get_description_with_priority(vsn_name, sunspec_name, model, label, workbook
     if vsn700_lookup and vsn300_name and vsn300_name == vsn_name:
         vsn700_equivalent = vsn700_lookup.get(vsn_name, {})
         if vsn700_equivalent.get("description"):
-            return vsn700_equivalent["description"], "VSN700 Cross-Reference", vsn700_equivalent.get("label")
+            return (
+                vsn700_equivalent["description"],
+                "VSN700 Cross-Reference",
+                vsn700_equivalent.get("label"),
+            )
 
     # Priority 1: DESCRIPTION_IMPROVEMENTS - our curated improvements take precedence
     if sunspec_name in DESCRIPTION_IMPROVEMENTS:
@@ -1894,7 +2443,11 @@ def get_description_with_priority(vsn_name, sunspec_name, model, label, workbook
 
     # Priority 3: Feeds title if it's a description
     if feeds_info and feeds_info.get("is_description"):
-        return feeds_info["title"], f"VSN Feeds ({feeds_info.get('source', 'Unknown')})", None
+        return (
+            feeds_info["title"],
+            f"VSN Feeds ({feeds_info.get('source', 'Unknown')})",
+            None,
+        )
 
     # Priority 4: Label fallback
     if label:
@@ -1902,13 +2455,19 @@ def get_description_with_priority(vsn_name, sunspec_name, model, label, workbook
 
     return "Unknown measurement", "Fallback", None
 
-def get_comprehensive_category(label, description, model_flags, vsn300_name, vsn700_name):
+
+def get_comprehensive_category(
+    label, description, model_flags, vsn300_name, vsn700_name
+):
     """Determine category with comprehensive logic."""
     label_lower = (label or "").lower()
     desc_lower = (description or "").lower()
 
     # Energy Counter (highest priority)
-    if any(pattern in label_lower for pattern in ["e0", "e1", "e2", "e3", "e4", "e5", "e6", "e7", "e8"]):
+    if any(
+        pattern in label_lower
+        for pattern in ["e0", "e1", "e2", "e3", "e4", "e5", "e6", "e7", "e8"]
+    ):
         if not any(x in label_lower for x in ["charge", "discharge"]):
             return "Energy Counter"
     if "energy" in label_lower or "energy" in desc_lower:
@@ -1922,7 +2481,17 @@ def get_comprehensive_category(label, description, model_flags, vsn300_name, vsn
         return "House Meter"
 
     # System Monitoring
-    system_keywords = ["flash", "ram", "uptime", "load", "sys_", "wlan", "ip", "essid", "mode"]
+    system_keywords = [
+        "flash",
+        "ram",
+        "uptime",
+        "load",
+        "sys_",
+        "wlan",
+        "ip",
+        "essid",
+        "mode",
+    ]
     if any(kw in label_lower for kw in system_keywords):
         return "System Monitoring"
 
@@ -1942,7 +2511,10 @@ def get_comprehensive_category(label, description, model_flags, vsn300_name, vsn
         return "Device Info"
 
     # Phase-based categorization
-    if any(phase in label_lower for phase in ["phase", "l1", "l2", "l3", "phv", "aph", "wph"]):
+    if any(
+        phase in label_lower
+        for phase in ["phase", "l1", "l2", "l3", "phv", "aph", "wph"]
+    ):
         if model_flags.get("M103") == "YES" or model_flags.get("M160") == "YES":
             return "Inverter"
         if model_flags.get("M203") == "YES":
@@ -1963,13 +2535,19 @@ def get_comprehensive_category(label, description, model_flags, vsn300_name, vsn
         return "Inverter"
     if model_flags.get("ABB_Proprietary") == "YES":
         return "System"
-    if model_flags.get("VSN300_Only") == "YES" or model_flags.get("VSN700_Only") == "YES":
+    if (
+        model_flags.get("VSN300_Only") == "YES"
+        or model_flags.get("VSN700_Only") == "YES"
+    ):
         return "Datalogger"
 
     return "Unknown"
+
+
 # ==============================================================================
 # PART 3: DEDUPLICATION AND PROCESSING LOGIC
 # ==============================================================================
+
 
 def detect_models_from_point(vsn300_name, vsn700_name, model_hint=None):
     """Detect which models a point belongs to based on its names and hints."""
@@ -2009,11 +2587,12 @@ def detect_models_from_point(vsn300_name, vsn700_name, model_hint=None):
 
     return models
 
+
 def merge_duplicate_rows(rows_by_sunspec):
     """Merge duplicate rows with the same SunSpec name."""
     merged_rows = []
 
-    for sunspec_name, group in rows_by_sunspec.items():
+    for group in rows_by_sunspec.values():
         if len(group) == 1:
             merged_rows.append(group[0])
             continue
@@ -2025,9 +2604,7 @@ def merge_duplicate_rows(rows_by_sunspec):
         all_models = set()
         for row in group:
             models = detect_models_from_point(
-                row.get("vsn300_name"),
-                row.get("vsn700_name"),
-                row.get("model")
+                row.get("vsn300_name"), row.get("vsn700_name"), row.get("model")
             )
             all_models.update(models)
 
@@ -2036,27 +2613,43 @@ def merge_duplicate_rows(rows_by_sunspec):
             merged[model_flag] = "YES" if model_flag in all_models else "NO"
 
         # Merge VSN names (keep both if different)
-        vsn700_names = [r.get("vsn700_name") for r in group if r.get("vsn700_name") and r.get("vsn700_name") != "N/A"]
-        vsn300_names = [r.get("vsn300_name") for r in group if r.get("vsn300_name") and r.get("vsn300_name") != "N/A"]
+        vsn700_names = [
+            r.get("vsn700_name")
+            for r in group
+            if r.get("vsn700_name") and r.get("vsn700_name") != "N/A"
+        ]
+        vsn300_names = [
+            r.get("vsn300_name")
+            for r in group
+            if r.get("vsn300_name") and r.get("vsn300_name") != "N/A"
+        ]
 
         merged["vsn700_name"] = vsn700_names[0] if vsn700_names else "N/A"
         merged["vsn300_name"] = vsn300_names[0] if vsn300_names else "N/A"
 
         # Choose best description
         descriptions = [(r.get("description"), r.get("data_source")) for r in group]
-        best_desc = sorted(descriptions, key=lambda x: (
-            0 if "SunSpec" in x[1] else
-            1 if "VSN" in x[1] else
-            2 if "Enhanced" in x[1] else
-            3 if "Cross-Reference" in x[1] else
-            4
-        ))[0]
+        best_desc = sorted(
+            descriptions,
+            key=lambda x: (
+                0
+                if "SunSpec" in x[1]
+                else 1
+                if "VSN" in x[1]
+                else 2
+                if "Enhanced" in x[1]
+                else 3
+                if "Cross-Reference" in x[1]
+                else 4
+            ),
+        )[0]
         merged["description"] = best_desc[0]
         merged["data_source"] = best_desc[1]
 
         merged_rows.append(merged)
 
     return merged_rows
+
 
 def apply_display_name_corrections(row):
     """Apply display name corrections and standardization to a row.
@@ -2078,6 +2671,7 @@ def apply_display_name_corrections(row):
 
     return row
 
+
 def apply_device_class_fixes(row):
     """Apply device class and unit fixes to a row."""
     label = row.get("label", "")
@@ -2093,11 +2687,27 @@ def apply_device_class_fixes(row):
 
     return row
 
-def create_row_with_model_flags(vsn700_name, vsn300_name, sunspec_name, ha_name,
-                               in_livedata, in_feeds, label, description,
-                               ha_display_name, category, units, state_class,
-                               device_class, entity_category, available_in_modbus,
-                               data_source, model_notes, models):
+
+def create_row_with_model_flags(
+    vsn700_name,
+    vsn300_name,
+    sunspec_name,
+    ha_name,
+    in_livedata,
+    in_feeds,
+    label,
+    description,
+    ha_display_name,
+    category,
+    units,
+    state_class,
+    device_class,
+    entity_category,
+    available_in_modbus,
+    data_source,
+    model_notes,
+    models,
+):
     """Create a complete row with model flags."""
     # Initialize model flags
     model_flags = dict.fromkeys(MODEL_FLAGS, "NO")
@@ -2125,7 +2735,7 @@ def create_row_with_model_flags(vsn700_name, vsn300_name, sunspec_name, ha_name,
         "available_in_modbus": available_in_modbus,
         "data_source": data_source,
         "model_notes": model_notes,
-        "icon": ""
+        "icon": "",
     }
 
     # Apply corrections
@@ -2176,11 +2786,7 @@ def create_row_with_model_flags(vsn700_name, vsn300_name, sunspec_name, ha_name,
     # Update category if needed
     if row["category"] in ["Unknown", "", None]:
         row["category"] = get_comprehensive_category(
-            row["label"],
-            row["description"],
-            model_flags,
-            vsn300_name,
-            vsn700_name
+            row["label"], row["description"], model_flags, vsn300_name, vsn700_name
         )
 
     # Set diagnostic icon for all diagnostic entities (unless already has an icon)
@@ -2189,9 +2795,11 @@ def create_row_with_model_flags(vsn700_name, vsn300_name, sunspec_name, ha_name,
 
     return row
 
+
 # ==============================================================================
 # PART 4: MAIN GENERATION FUNCTIONS
 # ==============================================================================
+
 
 def generate_changelog_sheet(wb):
     """Generate the Changelog sheet with all updates."""
@@ -2202,7 +2810,9 @@ def generate_changelog_sheet(wb):
     ws.append(headers)
 
     # Style headers
-    header_fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
+    header_fill = PatternFill(
+        start_color="366092", end_color="366092", fill_type="solid"
+    )
     header_font = Font(color="FFFFFF", bold=True)
 
     for col_idx in range(1, len(headers) + 1):
@@ -2214,14 +2824,16 @@ def generate_changelog_sheet(wb):
     # Add changelog entries
     for entry in CHANGELOG_ENTRIES:
         details_str = "\n".join(f"• {detail}" for detail in entry["details"])
-        ws.append([
-            entry["date"],
-            entry["version"],
-            entry["type"],
-            entry["description"],
-            details_str,
-            entry["source"]
-        ])
+        ws.append(
+            [
+                entry["date"],
+                entry["version"],
+                entry["type"],
+                entry["description"],
+                details_str,
+                entry["source"],
+            ]
+        )
 
     # Adjust column widths
     ws.column_dimensions["A"].width = 12  # Date
@@ -2235,6 +2847,7 @@ def generate_changelog_sheet(wb):
     for row in ws.iter_rows(min_row=2, max_row=ws.max_row, min_col=5, max_col=5):
         for cell in row:
             cell.alignment = Alignment(wrap_text=True, vertical="top")
+
 
 def generate_summary_sheet(wb, rows):
     """Generate the Summary sheet with statistics."""
@@ -2266,11 +2879,15 @@ def generate_summary_sheet(wb, rows):
     ws.append([])
 
     ws.append(["Category Distribution", ""])
-    for category, count in sorted(category_counts.items(), key=lambda x: x[1], reverse=True):
+    for category, count in sorted(
+        category_counts.items(), key=lambda x: x[1], reverse=True
+    ):
         ws.append([f"  {category}", count])
 
     # Style headers
-    header_fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
+    header_fill = PatternFill(
+        start_color="366092", end_color="366092", fill_type="solid"
+    )
     header_font = Font(color="FFFFFF", bold=True)
 
     for cell in [ws.cell(row=1, column=1), ws.cell(row=1, column=2)]:
@@ -2281,22 +2898,15 @@ def generate_summary_sheet(wb, rows):
     ws.column_dimensions["A"].width = 30
     ws.column_dimensions["B"].width = 15
 
-def generate_mapping_excel_complete():
-    """Generate complete mapping Excel with all customizations built-in."""
-    print(f"\n{'='*70}")
-    print(f"VSN-SunSpec Point Mapping Generator v{SCRIPT_VERSION}")
-    print(f"Generated: {SCRIPT_DATE}")
-    print(f"{'='*70}\n")
 
-    # Load data sources
+# ==============================================================================
+# HELPER FUNCTIONS FOR generate_mapping_excel_complete()
+# ==============================================================================
+
+
+def _load_data_sources(data_dir):
+    """Load all data sources including SunSpec metadata, M64061, feeds, and status."""
     print("Loading data sources...")
-
-    # Define paths relative to script location
-    data_dir = SCRIPT_DIR / "data"
-    output_dir = SCRIPT_DIR / "output"
-
-    # Ensure output directory exists
-    output_dir.mkdir(parents=True, exist_ok=True)
 
     # Load SunSpec metadata
     sunspec_path = data_dir / "sunspec" / "models_workbook.xlsx"
@@ -2313,24 +2923,28 @@ def generate_mapping_excel_complete():
     m64061_metadata = load_m64061_from_abb_excel(abb_excel_path)
     print(f"    Found {len(m64061_metadata)} M64061 points")
 
-    # Load VSN data paths
-    vsn300_livedata_path = data_dir / "vsn300" / "livedata.json"
-    vsn300_feeds_path = data_dir / "vsn300" / "feeds.json"
-    vsn300_status_path = data_dir / "vsn300" / "status.json"
-    vsn700_livedata_path = data_dir / "vsn700" / "livedata.json"
-    vsn700_feeds_path = data_dir / "vsn700" / "feeds.json"
-    vsn700_status_path = data_dir / "vsn700" / "status.json"
-
     # Load feeds titles
+    vsn300_feeds_path = data_dir / "vsn300" / "feeds.json"
+    vsn700_feeds_path = data_dir / "vsn700" / "feeds.json"
     print("  Loading VSN feeds data...")
     feeds_titles = load_feeds_titles(vsn300_feeds_path, vsn700_feeds_path)
 
     # Load status data
+    vsn300_status_path = data_dir / "vsn300" / "status.json"
+    vsn700_status_path = data_dir / "vsn700" / "status.json"
     print("  Loading VSN status data...")
     status_points = load_vsn_status(vsn300_status_path, vsn700_status_path)
     print(f"    Found {len(status_points)} status points")
 
-    # Load point presence from livedata
+    return sunspec_metadata, m64061_metadata, feeds_titles, status_points
+
+
+def _extract_point_sets(data_dir):
+    """Extract point sets from VSN300 and VSN700 livedata and feeds files."""
+    vsn700_livedata_path = data_dir / "vsn700" / "livedata.json"
+    vsn700_feeds_path = data_dir / "vsn700" / "feeds.json"
+    vsn300_livedata_path = data_dir / "vsn300" / "livedata.json"
+
     vsn700_livedata_points = set()
     vsn700_feeds_points = set()
     vsn300_livedata_points = set()
@@ -2338,8 +2952,7 @@ def generate_mapping_excel_complete():
     if vsn700_livedata_path.exists():
         with open(vsn700_livedata_path) as f:
             data = json.load(f)
-            # No "livedata" key at root - devices are directly at root
-            for device_id, device_data in data.items():
+            for device_data in data.values():
                 if isinstance(device_data, dict) and "points" in device_data:
                     for point in device_data["points"]:
                         vsn700_livedata_points.add(point["name"])
@@ -2347,17 +2960,15 @@ def generate_mapping_excel_complete():
     if vsn700_feeds_path.exists():
         with open(vsn700_feeds_path) as f:
             data = json.load(f)
-            # feeds is a dictionary, not a list!
             feeds_dict = data.get("feeds", {})
-            for device_id, feed_data in feeds_dict.items():
+            for feed_data in feeds_dict.values():
                 datastreams = feed_data.get("datastreams", {})
                 vsn700_feeds_points.update(datastreams.keys())
 
     if vsn300_livedata_path.exists():
         with open(vsn300_livedata_path) as f:
             data = json.load(f)
-            # No "livedata" key at root - devices are directly at root
-            for device_id, device_data in data.items():
+            for device_data in data.values():
                 if isinstance(device_data, dict) and "points" in device_data:
                     for point in device_data["points"]:
                         vsn300_livedata_points.add(point["name"])
@@ -2366,15 +2977,26 @@ def generate_mapping_excel_complete():
     print(f"  Found {len(vsn700_feeds_points)} VSN700 feeds points")
     print(f"  Found {len(vsn300_livedata_points)} VSN300 livedata points")
 
-    # Process all points
-    print("\nProcessing points...")
-    all_rows = []
-    processed_points = set()
+    return vsn700_livedata_points, vsn700_feeds_points, vsn300_livedata_points
 
-    # Process standard SunSpec points
+
+def _process_sunspec_points(
+    vsn700_livedata_points,
+    vsn700_feeds_points,
+    vsn300_livedata_points,
+    sunspec_metadata,
+    feeds_titles,
+    processed_points,
+):
+    """Process standard SunSpec points from VSN_TO_SUNSPEC_MAP."""
+    all_rows = []
+
     for vsn_name, mapping in VSN_TO_SUNSPEC_MAP.items():
-        if (vsn_name in vsn700_livedata_points or vsn_name in vsn700_feeds_points or
-            vsn_name in vsn300_livedata_points):
+        if (
+            vsn_name in vsn700_livedata_points
+            or vsn_name in vsn700_feeds_points
+            or vsn_name in vsn300_livedata_points
+        ):
             sunspec_name = mapping["sunspec"] if mapping["sunspec"] else vsn_name
             model = mapping["model"]
 
@@ -2391,12 +3013,10 @@ def generate_mapping_excel_complete():
             # Get description with priority
             feeds_info = feeds_titles.get(vsn_name)
             description, data_source, _ = get_description_with_priority(
-                vsn_name, sunspec_name, model, label,
-                workbook_description, feeds_info
+                vsn_name, sunspec_name, model, label, workbook_description, feeds_info
             )
 
             # Determine VSN300 name
-            # Check if this exact VSN name is in VSN300 livedata
             if vsn_name in vsn300_livedata_points:
                 vsn300_name = vsn_name
             elif mapping.get("modbus", "N/A") in vsn300_livedata_points:
@@ -2426,15 +3046,22 @@ def generate_mapping_excel_complete():
                 available_in_modbus=mapping["in_modbus"],
                 data_source=data_source,
                 model_notes="",
-                models=models
+                models=models,
             )
 
             all_rows.append(row)
             processed_points.add(vsn_name)
 
-    # Process M64061 points
+    return all_rows
+
+
+def _process_m64061_points(
+    vsn700_livedata_points, vsn700_feeds_points, feeds_titles, processed_points
+):
+    """Process M64061 proprietary points."""
+    all_rows = []
+
     for point_name in M64061_POINTS:
-        # Check if point exists in VSN700 livedata
         if point_name in vsn700_livedata_points and point_name not in processed_points:
             label = generate_label_from_name(point_name)
             ha_name = generate_simplified_point_name(label, "M64061")
@@ -2442,8 +3069,7 @@ def generate_mapping_excel_complete():
             # Get description
             feeds_info = feeds_titles.get(point_name)
             description, data_source, _ = get_description_with_priority(
-                point_name, point_name, "M64061", label,
-                "", feeds_info
+                point_name, point_name, "M64061", label, "", feeds_info
             )
 
             row = create_row_with_model_flags(
@@ -2456,7 +3082,7 @@ def generate_mapping_excel_complete():
                 label=label,
                 description=description,
                 ha_display_name=description if description != label else label,
-                category="Status",  # M64061 points are typically status/alarm points
+                category="Status",
                 units=feeds_info.get("units", "") if feeds_info else "",
                 state_class="",
                 device_class="",
@@ -2464,16 +3090,29 @@ def generate_mapping_excel_complete():
                 available_in_modbus="NO",
                 data_source=data_source,
                 model_notes="ABB/FIMER proprietary model 64061",
-                models={"M64061"}
+                models={"M64061"},
             )
 
             all_rows.append(row)
             processed_points.add(point_name)
 
-    # Process ABB Proprietary points
+    return all_rows
+
+
+def _process_abb_proprietary_points(
+    vsn700_livedata_points,
+    vsn700_feeds_points,
+    vsn300_livedata_points,
+    feeds_titles,
+    processed_points,
+):
+    """Process ABB proprietary points."""
+    all_rows = []
+
     for point_name in ABB_PROPRIETARY:
-        # Check in both VSN300 and VSN700
-        in_vsn700 = point_name in vsn700_livedata_points or point_name in vsn700_feeds_points
+        in_vsn700 = (
+            point_name in vsn700_livedata_points or point_name in vsn700_feeds_points
+        )
         in_vsn300 = point_name in vsn300_livedata_points
 
         if (in_vsn700 or in_vsn300) and point_name not in processed_points:
@@ -2483,8 +3122,7 @@ def generate_mapping_excel_complete():
             # Get description
             feeds_info = feeds_titles.get(point_name)
             description, data_source, _ = get_description_with_priority(
-                point_name, point_name, "ABB_Proprietary", label,
-                "", feeds_info
+                point_name, point_name, "ABB_Proprietary", label, "", feeds_info
             )
 
             # Determine category
@@ -2499,7 +3137,12 @@ def generate_mapping_excel_complete():
                 vsn300_name=point_name if in_vsn300 else "N/A",
                 sunspec_name=point_name,
                 ha_name=ha_name,
-                in_livedata="✓" if (point_name in vsn700_livedata_points or point_name in vsn300_livedata_points) else "",
+                in_livedata="✓"
+                if (
+                    point_name in vsn700_livedata_points
+                    or point_name in vsn300_livedata_points
+                )
+                else "",
                 in_feeds="✓" if point_name in vsn700_feeds_points else "",
                 label=label,
                 description=description,
@@ -2512,13 +3155,21 @@ def generate_mapping_excel_complete():
                 available_in_modbus="NO",
                 data_source=data_source,
                 model_notes="ABB/FIMER proprietary",
-                models={"ABB_Proprietary"}
+                models={"ABB_Proprietary"},
             )
 
             all_rows.append(row)
             processed_points.add(point_name)
 
-    # Process VSN300-only points (points in VSN300 livedata not yet processed)
+    return all_rows
+
+
+def _process_vsn300_only_points(
+    vsn300_livedata_points, sunspec_metadata, feeds_titles, processed_points
+):
+    """Process VSN300-only points not yet processed."""
+    all_rows = []
+
     for point_name in vsn300_livedata_points:
         if point_name not in processed_points:
             # Extract model from VSN300 naming pattern
@@ -2528,7 +3179,7 @@ def generate_mapping_excel_complete():
             # Special handling for C_ prefix (Common Model M1 points)
             if point_name.startswith("C_"):
                 model = "M1"
-                sunspec_name = point_name[2:]  # Strip "C_" prefix
+                sunspec_name = point_name[2:]
             elif point_name.startswith("m") and "_" in point_name:
                 # Standard pattern m{model}_{instance}_{point}
                 match = re.match(r"m(\d+)_(\d+)_(.+)", point_name)
@@ -2554,8 +3205,7 @@ def generate_mapping_excel_complete():
             # Get description
             feeds_info = feeds_titles.get(point_name)
             description, data_source, _ = get_description_with_priority(
-                point_name, sunspec_name, model, label,
-                workbook_description, feeds_info
+                point_name, sunspec_name, model, label, workbook_description, feeds_info
             )
 
             # Detect models
@@ -2564,7 +3214,9 @@ def generate_mapping_excel_complete():
                 models = {"VSN300_Only"}
 
             # Determine category
-            model_flags = {flag: "YES" if flag in models else "NO" for flag in MODEL_FLAGS}
+            model_flags = {
+                flag: "YES" if flag in models else "NO" for flag in MODEL_FLAGS
+            }
             category = get_comprehensive_category(
                 label, description, model_flags, point_name, None
             )
@@ -2587,14 +3239,22 @@ def generate_mapping_excel_complete():
                 available_in_modbus="YES" if model else "NO",
                 data_source=data_source,
                 model_notes="VSN300-specific point",
-                models=models
+                models=models,
             )
 
             all_rows.append(row)
             processed_points.add(point_name)
 
-    # Process VSN700-only points (points in VSN700 livedata/feeds not yet processed)
+    return all_rows
+
+
+def _process_vsn700_only_points(
+    vsn700_livedata_points, vsn700_feeds_points, feeds_titles, processed_points
+):
+    """Process VSN700-only points not yet processed."""
+    all_rows = []
     all_vsn700_points = vsn700_livedata_points.union(vsn700_feeds_points)
+
     for point_name in all_vsn700_points:
         if point_name not in processed_points:
             label = generate_label_from_name(point_name)
@@ -2603,8 +3263,7 @@ def generate_mapping_excel_complete():
             # Get description
             feeds_info = feeds_titles.get(point_name)
             description, data_source, _ = get_description_with_priority(
-                point_name, point_name, None, label,
-                "", feeds_info
+                point_name, point_name, None, label, "", feeds_info
             )
 
             # Determine category
@@ -2634,22 +3293,31 @@ def generate_mapping_excel_complete():
                 available_in_modbus="NO",
                 data_source=data_source,
                 model_notes="VSN700-specific point",
-                models={"VSN700_Only"}
+                models={"VSN700_Only"},
             )
 
             all_rows.append(row)
             processed_points.add(point_name)
 
-    # Process status points (from /status endpoint)
+    return all_rows
+
+
+def _process_status_points(status_points, processed_points):
+    """Process status points from /status endpoint."""
+    all_rows = []
+
     for point_name, status_info in status_points.items():
         if point_name not in processed_points:
-            label = status_info["label"] if status_info["label"] else generate_label_from_name(point_name)
+            label = (
+                status_info["label"]
+                if status_info["label"]
+                else generate_label_from_name(point_name)
+            )
             ha_name = generate_simplified_point_name(label, "Status")
 
-            # Get description with priority (v2.0.7: apply improvements to status points)
+            # Get description with priority
             description, data_source, _ = get_description_with_priority(
-                point_name, point_name, "Status", label,
-                "", None
+                point_name, point_name, "Status", label, "", None
             )
 
             # Get display name from improvements
@@ -2659,7 +3327,11 @@ def generate_mapping_excel_complete():
             category = "Device Info"
             if "fw" in point_name.lower() or "version" in point_name.lower():
                 category = "Device Info"
-            elif "wlan" in point_name.lower() or "ip" in point_name.lower() or "network" in point_name.lower():
+            elif (
+                "wlan" in point_name.lower()
+                or "ip" in point_name.lower()
+                or "network" in point_name.lower()
+            ):
                 category = "Network"
             elif "device" in point_name.lower():
                 category = "Device Info"
@@ -2697,25 +3369,60 @@ def generate_mapping_excel_complete():
                 available_in_modbus="NO",
                 data_source=status_info["source"],
                 model_notes="From /status endpoint",
-                models=models
+                models=models,
             )
 
             all_rows.append(row)
             processed_points.add(point_name)
 
-    print(f"  Processed {len(all_rows)} total points (including status endpoints)")
+    return all_rows
 
-    # Deduplication
-    print("\nDeduplicating points...")
-    rows_by_sunspec = defaultdict(list)
-    for row in all_rows:
-        sunspec_name = row.get("sunspec_name", "UNKNOWN")
-        rows_by_sunspec[sunspec_name].append(row)
 
-    deduplicated_rows = merge_duplicate_rows(rows_by_sunspec)
-    print(f"  Deduplicated from {len(all_rows)} to {len(deduplicated_rows)} unique points")
+def _get_cell_value_for_header(header, row_data):
+    """Get the cell value for a given header from row data."""
+    if header in MODEL_FLAGS:
+        return row_data.get(header, "NO")
+    if header == "REST Name (VSN700)":
+        return row_data.get("vsn700_name", "")
+    if header == "REST Name (VSN300)":
+        return row_data.get("vsn300_name", "")
+    if header == "SunSpec Normalized Name":
+        return row_data.get("sunspec_name", "")
+    if header == "HA Name":
+        return row_data.get("ha_name", "")
+    if header == "In /livedata":
+        return row_data.get("in_livedata", "")
+    if header == "In /feeds":
+        return row_data.get("in_feeds", "")
+    if header == "Label":
+        return row_data.get("label", "")
+    if header == "Description":
+        return row_data.get("description", "")
+    if header == "HA Display Name":
+        return row_data.get("ha_display_name", "")
+    if header == "Category":
+        return row_data.get("category", "")
+    if header == "HA Unit of Measurement":
+        return row_data.get("units", "")
+    if header == "HA State Class":
+        return row_data.get("state_class", "")
+    if header == "HA Device Class":
+        return row_data.get("device_class", "")
+    if header == "HA Icon":
+        return row_data.get("icon", "")
+    if header == "Entity Category":
+        return row_data.get("entity_category", "")
+    if header == "Available in Modbus":
+        return row_data.get("available_in_modbus", "")
+    if header == "Data Source":
+        return row_data.get("data_source", "")
+    if header == "Model_Notes":
+        return row_data.get("model_notes", "")
+    return ""
 
-    # Create Excel workbook
+
+def _create_excel_workbook(deduplicated_rows, output_dir):
+    """Create Excel workbook with data, formatting, and additional sheets."""
     print("\nCreating Excel workbook...")
     wb = openpyxl.Workbook()
     ws = wb.active
@@ -2726,13 +3433,15 @@ def generate_mapping_excel_complete():
         ws.cell(row=1, column=col_idx, value=header)
 
     # Style headers
-    header_fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
+    header_fill = PatternFill(
+        start_color="366092", end_color="366092", fill_type="solid"
+    )
     header_font = Font(color="FFFFFF", bold=True)
     thin_border = Border(
         left=Side(style="thin"),
         right=Side(style="thin"),
         top=Side(style="thin"),
-        bottom=Side(style="thin")
+        bottom=Side(style="thin"),
     )
 
     for col_idx in range(1, len(EXCEL_HEADERS) + 1):
@@ -2745,49 +3454,7 @@ def generate_mapping_excel_complete():
     # Add data rows
     for row_idx, row_data in enumerate(deduplicated_rows, 2):
         for col_idx, header in enumerate(EXCEL_HEADERS, 1):
-            # Map header to row key
-            header_key = header.lower().replace(" ", "_").replace("(", "").replace(")", "")
-            if header in MODEL_FLAGS:
-                value = row_data.get(header, "NO")
-            elif header == "REST Name (VSN700)":
-                value = row_data.get("vsn700_name", "")
-            elif header == "REST Name (VSN300)":
-                value = row_data.get("vsn300_name", "")
-            elif header == "SunSpec Normalized Name":
-                value = row_data.get("sunspec_name", "")
-            elif header == "HA Name":
-                value = row_data.get("ha_name", "")
-            elif header == "In /livedata":
-                value = row_data.get("in_livedata", "")
-            elif header == "In /feeds":
-                value = row_data.get("in_feeds", "")
-            elif header == "Label":
-                value = row_data.get("label", "")
-            elif header == "Description":
-                value = row_data.get("description", "")
-            elif header == "HA Display Name":
-                value = row_data.get("ha_display_name", "")
-            elif header == "Category":
-                value = row_data.get("category", "")
-            elif header == "HA Unit of Measurement":
-                value = row_data.get("units", "")
-            elif header == "HA State Class":
-                value = row_data.get("state_class", "")
-            elif header == "HA Device Class":
-                value = row_data.get("device_class", "")
-            elif header == "HA Icon":
-                value = row_data.get("icon", "")
-            elif header == "Entity Category":
-                value = row_data.get("entity_category", "")
-            elif header == "Available in Modbus":
-                value = row_data.get("available_in_modbus", "")
-            elif header == "Data Source":
-                value = row_data.get("data_source", "")
-            elif header == "Model_Notes":
-                value = row_data.get("model_notes", "")
-            else:
-                value = ""
-
+            value = _get_cell_value_for_header(header, row_data)
             ws.cell(row=row_idx, column=col_idx, value=value)
 
     # Adjust column widths
@@ -2814,13 +3481,105 @@ def generate_mapping_excel_complete():
     output_path = output_dir / "vsn-sunspec-point-mapping.xlsx"
     wb.save(output_path)
 
-    print(f"\n{'='*70}")
+    return output_path
+
+
+def generate_mapping_excel_complete():
+    """Generate complete mapping Excel with all customizations built-in."""
+    print(f"\n{'=' * 70}")
+    print(f"VSN-SunSpec Point Mapping Generator v{SCRIPT_VERSION}")
+    print(f"Generated: {SCRIPT_DATE}")
+    print(f"{'=' * 70}\n")
+
+    # Define paths relative to script location
+    data_dir = SCRIPT_DIR / "data"
+    output_dir = SCRIPT_DIR / "output"
+
+    # Ensure output directory exists
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    # Load all data sources
+    sunspec_metadata, m64061_metadata, feeds_titles, status_points = _load_data_sources(
+        data_dir
+    )
+
+    # Extract point sets from VSN data files
+    vsn700_livedata_points, vsn700_feeds_points, vsn300_livedata_points = (
+        _extract_point_sets(data_dir)
+    )
+
+    # Process all points
+    print("\nProcessing points...")
+    processed_points = set()
+    all_rows = []
+
+    # Process each point type
+    all_rows.extend(
+        _process_sunspec_points(
+            vsn700_livedata_points,
+            vsn700_feeds_points,
+            vsn300_livedata_points,
+            sunspec_metadata,
+            feeds_titles,
+            processed_points,
+        )
+    )
+
+    all_rows.extend(
+        _process_m64061_points(
+            vsn700_livedata_points, vsn700_feeds_points, feeds_titles, processed_points
+        )
+    )
+
+    all_rows.extend(
+        _process_abb_proprietary_points(
+            vsn700_livedata_points,
+            vsn700_feeds_points,
+            vsn300_livedata_points,
+            feeds_titles,
+            processed_points,
+        )
+    )
+
+    all_rows.extend(
+        _process_vsn300_only_points(
+            vsn300_livedata_points, sunspec_metadata, feeds_titles, processed_points
+        )
+    )
+
+    all_rows.extend(
+        _process_vsn700_only_points(
+            vsn700_livedata_points, vsn700_feeds_points, feeds_titles, processed_points
+        )
+    )
+
+    all_rows.extend(_process_status_points(status_points, processed_points))
+
+    print(f"  Processed {len(all_rows)} total points (including status endpoints)")
+
+    # Deduplication
+    print("\nDeduplicating points...")
+    rows_by_sunspec = defaultdict(list)
+    for row in all_rows:
+        sunspec_name = row.get("sunspec_name", "UNKNOWN")
+        rows_by_sunspec[sunspec_name].append(row)
+
+    deduplicated_rows = merge_duplicate_rows(rows_by_sunspec)
+    print(
+        f"  Deduplicated from {len(all_rows)} to {len(deduplicated_rows)} unique points"
+    )
+
+    # Create Excel workbook and save
+    output_path = _create_excel_workbook(deduplicated_rows, output_dir)
+
+    print(f"\n{'=' * 70}")
     print(f"✓ Excel file created: {output_path}")
     print(f"  Total rows: {len(deduplicated_rows)}")
     print("  Sheets: All Points, Summary, Changelog")
-    print(f"{'='*70}\n")
+    print(f"{'=' * 70}\n")
 
     return output_path
+
 
 if __name__ == "__main__":
     generate_mapping_excel_complete()
