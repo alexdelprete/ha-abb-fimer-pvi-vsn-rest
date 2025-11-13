@@ -288,6 +288,40 @@ def _extract_devices(
     """
     devices = []
 
+    # Create synthetic datalogger device from status.json
+    # The datalogger doesn't appear in livedata, only in feeds.json
+    keys = status_data.get("keys", {})
+    logger_sn = keys.get("logger.sn", {}).get("value", "Unknown")
+
+    # For VSN700, logger S/N might be in loggerId field (MAC address)
+    if logger_sn == "Unknown" and vsn_model == "VSN700":
+        logger_sn = keys.get("logger.loggerId", {}).get("value", "Unknown")
+
+    # Clean logger ID (remove colons if MAC)
+    logger_id = logger_sn.replace(":", "") if ":" in logger_sn else logger_sn
+
+    # Create datalogger device
+    datalogger_device = DiscoveredDevice(
+        device_id=logger_id,
+        raw_device_id=logger_sn,
+        device_type="datalogger",
+        device_model=vsn_model,  # "VSN300" or "VSN700"
+        manufacturer="ABB" if vsn_model == "VSN300" else "FIMER",
+        firmware_version=keys.get("fw.release_number", {}).get("value"),
+        hardware_version=None,
+        is_datalogger=True,
+    )
+    devices.append(datalogger_device)
+
+    _LOGGER.debug(
+        "Created synthetic datalogger device: %s (%s) - Model: %s, FW: %s",
+        logger_id,
+        vsn_model,
+        vsn_model,
+        datalogger_device.firmware_version or "Unknown",
+    )
+
+    # Process all devices from livedata (inverters, meters, batteries)
     for raw_device_id, device_data in livedata.items():
         # Determine if this is a datalogger (MAC address pattern with colons)
         is_datalogger = ":" in raw_device_id

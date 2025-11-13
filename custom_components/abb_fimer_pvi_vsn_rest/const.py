@@ -1,7 +1,7 @@
 """Constants for ABB FIMER PVI VSN REST integration."""
 
 DOMAIN = "abb_fimer_pvi_vsn_rest"
-VERSION = "1.0.0-beta.26"
+VERSION = "1.0.0-beta.27"
 
 # Configuration
 CONF_HOST = "host"
@@ -16,8 +16,8 @@ MIN_SCAN_INTERVAL = 30
 MAX_SCAN_INTERVAL = 600
 
 # VSN Models
-VSN_MODEL_300 = "vsn300"
-VSN_MODEL_700 = "vsn700"
+VSN_MODEL_300 = "VSN300"
+VSN_MODEL_700 = "VSN700"
 
 # REST API Endpoints
 ENDPOINT_STATUS = "/v1/status"
