@@ -359,6 +359,7 @@ def _extract_devices(
         if is_datalogger:
             # Datalogger: Use VSN model as device model
             device_model = vsn_model  # "VSN300" or "VSN700"
+            device_type = "datalogger"  # Override "unknown" from livedata
         elif vsn_model == "VSN700":
             # VSN700: Model in livedata at device level
             device_model = device_data.get("device_model")

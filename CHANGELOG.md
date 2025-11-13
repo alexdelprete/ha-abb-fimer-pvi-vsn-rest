@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta.29] - 2025-11-13
+
+### Fixed
+
+- **device_type Still "unknown"**: Fixed beta.28 regression - datalogger entities still showing "unknown" device_type
+  - Root cause: Discovery.py identified datalogger from livedata but didn't set `device_type = "datalogger"`
+  - Line 355 gets device_type from livedata: `device_type = device_data.get("device_type", "unknown")`
+  - Lines 359-361 check `if is_datalogger:` but only set device_model, not device_type
+  - Beta.28 injection logic tried to inject but was injecting "unknown" from discovered_device
+  - Solution: Add `device_type = "datalogger"` assignment in discovery.py line 362
+  - Result: Datalogger entities now properly show `device_type: "datalogger"` in attributes
+  - Location: discovery.py line 362
+
+- **sys_time Relative Time Display**: Fixed beta.28 regression - sys_time showing "32 seconds ago" instead of actual date
+  - Root cause: Home Assistant's timestamp device_class displays relative time BY DESIGN
+  - Beta.28 added `device_class: "timestamp"` to enable conversion, but this triggers relative time formatting
+  - Cannot have timestamp device_class AND formatted date display - it's a catch-22
+  - Solution: Remove device_class, modify conversion to check `point_name == "sys_time"` instead
+  - Return formatted string "2025-11-13 10:15:32" instead of datetime object
+  - Result: Shows actual date/time string, not relative time
+  - Locations: sensor.py lines 415-433; vsn-sunspec-point-mapping.json line 544
+
+### Technical Changes
+
+- abb_fimer_vsn_rest_client/discovery.py: Add device_type assignment for datalogger (line 362)
+- sensor.py: Modified timestamp conversion to check point_name instead of device_class (lines 415-433)
+- sensor.py: Return formatted string instead of datetime object (line 425)
+- data/vsn-sunspec-point-mapping.json: Remove device_class timestamp (line 544)
+- manifest.json: Version bump to 1.0.0-beta.29
+- const.py: Version bump to 1.0.0-beta.29
+
+**Full release notes**: [v1.0.0-beta.29](docs/releases/v1.0.0-beta.29.md)
+
 ## [1.0.0-beta.28] - 2025-11-13
 
 ### Fixed

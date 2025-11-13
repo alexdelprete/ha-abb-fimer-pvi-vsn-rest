@@ -412,19 +412,17 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
 
         value = point_data.get("value")
 
-        # Convert Aurora timestamps to datetime for timestamp device class
+        # Convert Aurora timestamps for sys_time sensor
         # Aurora protocol uses Jan 1, 2000 epoch instead of Unix epoch (Jan 1, 1970)
-        # Use Home Assistant's configured timezone
-        if (
-            getattr(self, "_attr_device_class", None) == SensorDeviceClass.TIMESTAMP
-            and isinstance(value, (int, float))
-            and value > 0
-        ):
+        # Return formatted string to show actual date/time instead of relative time ("X ago")
+        if self._point_name == "sys_time" and isinstance(value, (int, float)) and value > 0:
             try:
                 # Get HA's configured timezone
                 tz = ZoneInfo(self.hass.config.time_zone)
                 # Add Aurora epoch offset to convert to Unix timestamp, then to datetime
-                return datetime.fromtimestamp(value + AURORA_EPOCH_OFFSET, tz=tz)
+                dt = datetime.fromtimestamp(value + AURORA_EPOCH_OFFSET, tz=tz)
+                # Return as formatted string (not datetime object) to avoid relative time display
+                return dt.strftime("%Y-%m-%d %H:%M:%S")
             except (ValueError, OSError, KeyError) as err:
                 _LOGGER.warning(
                     "Failed to convert timestamp %s for %s: %s",
