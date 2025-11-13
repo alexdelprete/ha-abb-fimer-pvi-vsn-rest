@@ -541,7 +541,7 @@
     "Category": "System",
     "HA Unit of Measurement": "",
     "HA State Class": "",
-    "HA Device Class": "",
+    "HA Device Class": "timestamp",
     "HA Icon": "mdi:information-box-outline",
     "Entity Category": "diagnostic",
     "Available in Modbus": false,

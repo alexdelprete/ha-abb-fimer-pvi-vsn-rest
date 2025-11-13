@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta.28] - 2025-11-13
+
+### Fixed
+
+- **sys_time Timestamp Display**: Fixed sys_time showing raw number instead of formatted date/time
+  - Root cause: Mapping file had empty `device_class` field
+  - Timestamp conversion code requires `device_class: "timestamp"` to execute
+  - Solution: Set `"HA Device Class": "timestamp"` in mapping file
+  - Result: Now displays as formatted date/time with proper timezone
+  - Location: vsn-sunspec-point-mapping.json line 544
+
+- **Datalogger device_type Still Unknown**: Fixed datalogger entities still showing "unknown" device_type after beta.27
+  - Root cause: Synthetic datalogger device created in discovery but not propagated to normalized data
+  - Discovery creates device with `device_type="datalogger"` but normalizer reads from livedata (which doesn't have device_type)
+  - Solution: Inject device_type from discovered_devices into livedata before normalization
+  - Modified client to accept and store discovered_devices list
+  - In `get_normalized_data()`, inject device_type into raw data before normalization
+  - Result: Datalogger entities now show `device_type: "datalogger"` in attributes
+  - Locations: client.py lines 35, 56, 185-200; __init__.py line 116
+
+### Technical Changes
+
+- data/vsn-sunspec-point-mapping.json: Set device_class to "timestamp" for sys_time (line 544)
+- abb_fimer_vsn_rest_client/client.py: Added discovered_devices parameter to __init__ (line 35)
+- abb_fimer_vsn_rest_client/client.py: Store discovered_devices list (line 56)
+- abb_fimer_vsn_rest_client/client.py: Inject device_type from discovery before normalization (lines 185-200)
+- __init__.py: Pass discovered_devices to client initialization (line 116)
+- manifest.json: Version bump to 1.0.0-beta.28
+- const.py: Version bump to 1.0.0-beta.28
+
+**Full release notes**: [v1.0.0-beta.28](docs/releases/v1.0.0-beta.28.md)
+
 ## [1.0.0-beta.27] - 2025-11-13
 
 ### Fixed

@@ -105,7 +105,7 @@ async def async_setup_entry(
         _LOGGER.error("Discovery failed during setup: %s", err)
         raise ConfigEntryNotReady(f"Discovery failed: {err}") from err
 
-    # Initialize REST client with discovered VSN model
+    # Initialize REST client with discovered VSN model and devices
     client = ABBFimerVSNRestClient(
         session=session,
         base_url=base_url,
@@ -113,6 +113,7 @@ async def async_setup_entry(
         password=password,
         vsn_model=discovery_result.vsn_model,
         timeout=10,
+        discovered_devices=discovery_result.devices,
     )
 
     # Initialize coordinator with discovery result

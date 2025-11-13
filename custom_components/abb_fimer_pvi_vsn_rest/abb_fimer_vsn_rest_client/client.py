@@ -32,6 +32,7 @@ class ABBFimerVSNRestClient:
         password: str = "",
         vsn_model: str | None = None,
         timeout: int = 10,
+        discovered_devices: list[Any] | None = None,
     ):
         """Initialize the VSN client.
 
@@ -42,6 +43,7 @@ class ABBFimerVSNRestClient:
             password: Password for authentication (default: "")
             vsn_model: Optional VSN model ("VSN300" or "VSN700"). If None, will auto-detect.
             timeout: Request timeout in seconds
+            discovered_devices: Optional list of discovered devices from discovery phase
 
         """
         self.session = session
@@ -51,6 +53,7 @@ class ABBFimerVSNRestClient:
         self.vsn_model = vsn_model
         self.timeout = timeout
         self._normalizer: VSNDataNormalizer | None = None
+        self._discovered_devices = discovered_devices or []
 
     async def connect(self) -> str:
         """Connect and detect VSN model.
@@ -178,6 +181,24 @@ class ABBFimerVSNRestClient:
             raise VSNConnectionError("Normalizer not initialized after connect()")
 
         raw_data = await self.get_livedata()
+
+        # Inject device_type from discovered devices into raw_data before normalization
+        # This is needed because the datalogger doesn't appear in livedata with device_type
+        if self._discovered_devices:
+            for discovered_device in self._discovered_devices:
+                # Match by device_id (with or without formatting)
+                for device_id, device_data in raw_data.items():
+                    # Check both raw and cleaned versions of device IDs
+                    if device_id in (discovered_device.device_id, discovered_device.raw_device_id):
+                        # Inject device_type from discovery
+                        if discovered_device.device_type:
+                            device_data["device_type"] = discovered_device.device_type
+                            _LOGGER.debug(
+                                "Injected device_type '%s' for device %s from discovery",
+                                discovered_device.device_type,
+                                device_id,
+                            )
+
         normalized_data = self._normalizer.normalize(raw_data)
 
         # Log normalization statistics
