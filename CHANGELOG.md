@@ -7,6 +7,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta.27] - 2025-11-13
+
+### Fixed
+
+- **system_load Sensor Precision**: Fixed sensor showing too many decimals (e.g., 0.05419921875)
+  - Root cause: `suggested_display_precision = 2` not working for sensors without units
+  - Solution: Round value to 2 decimals in `native_value` property before returning
+  - Result: Now displays `0.05` instead of `0.05419921875`
+  - Location: sensor.py lines 446-448
+
+- **isolation_ohm1 Sensor Icon**: Added omega icon for insulation resistance sensor
+  - Changed from empty icon to `mdi:omega` (Ω symbol)
+  - Appropriate icon for resistance measurement in megaohms (MΩ)
+  - Location: vsn-sunspec-point-mapping.json line 1328
+
+- **model Sensor Value Cleanup**: Strip leading/trailing dashes from model identifier
+  - Issue: Model values showing with dashes like `-3G82-`
+  - Solution: Added `C_Md` to `STRING_STRIP_POINTS` registry in normalizer
+  - Result: Now displays `3G82` instead of `-3G82-`
+  - Location: normalizer.py lines 38-41
+
+### Technical Changes
+
+- sensor.py: Added value rounding for system_load (line 446-448)
+- data/vsn-sunspec-point-mapping.json: Set icon for isolation_ohm1 (line 1328)
+- abb_fimer_vsn_rest_client/normalizer.py: Added C_Md to STRING_STRIP_POINTS (line 40)
+- manifest.json: Version bump to 1.0.0-beta.27
+- const.py: Version bump to 1.0.0-beta.27
+
+**Full release notes**: [v1.0.0-beta.27](docs/releases/v1.0.0-beta.27.md)
+
 ## [1.0.0-beta.26] - 2025-11-12
 
 ### Fixed

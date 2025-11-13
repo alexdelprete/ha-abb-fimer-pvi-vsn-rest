@@ -1325,7 +1325,7 @@
     "HA Unit of Measurement": "MΩ",
     "HA State Class": "measurement",
     "HA Device Class": "",
-    "HA Icon": "",
+    "HA Icon": "mdi:omega",
     "Entity Category": "",
     "Available in Modbus": true,
     "Data Source": "Curated Improvement",

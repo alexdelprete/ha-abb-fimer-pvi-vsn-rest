@@ -443,6 +443,10 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
             # Unknown state code - return with code for debugging
             return f"Unknown ({value})"
 
+        # Round system_load to 2 decimals (suggested_display_precision not working without units)
+        if self._point_name == "system_load" and isinstance(value, (int, float)):
+            return round(value, 2)
+
         # Return raw numeric value (native_value must be numeric for sensors with state_class)
         # For system_uptime, the formatted version is available as an attribute
         return value
