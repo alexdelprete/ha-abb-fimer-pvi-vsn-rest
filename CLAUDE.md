@@ -396,7 +396,7 @@ All HA device info fields populated from discovery:
 **Code Changes**:
 
 ```python
-# sensor.py - Entity naming configuration (v1.0.0-beta.25+)
+# sensor.py - Entity naming configuration (v1.0.0-beta.26+)
 self._attr_has_entity_name = True  # Required for suggested_object_id to work
 
 # Device identifier (for unique_id)
@@ -412,11 +412,21 @@ self._attr_suggested_object_id = point_name
 # Entity name (friendly display on device page)
 self._attr_name = point_data.get("ha_display_name", point_data.get("label", point_name))
 
-# Device name (technical format for predictable entity IDs)
-device_name = f"{DOMAIN}_{self._device_type_simple}_{self._device_sn_compact}"
+# Device name (friendly format for beautiful UI - beta.26+)
+device_name = _format_device_name(
+    manufacturer=manufacturer,
+    device_type_simple=self._device_type_simple,
+    device_model=device_model,
+    device_sn_original=self._device_id,
+)
+# Result: "ABB Datalogger VSN300 (111033-3N16-1421)"
+# Entity ID: sensor.abb_datalogger_vsn300_111033_3n16_1421_firmware_version
+# Friendly Name: "ABB Datalogger VSN300 (111033-3N16-1421) Firmware Version"
 ```
 
-**Breaking Change**: All entity IDs changed, requires manual entity registry cleanup for existing users.
+**Breaking Change (beta.26)**: Switched to friendly device names for beautiful UI. Entity IDs changed to slugified friendly format.
+
+**Breaking Change (beta.25)**: All entity IDs changed, requires manual entity registry cleanup for existing users.
 
 ### Display Name Standardization (v1.0.0-beta.22)
 

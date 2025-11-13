@@ -443,11 +443,8 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
             # Unknown state code - return with code for debugging
             return f"Unknown ({value})"
 
-        # Format uptime to friendly human-readable display
-        # Converts seconds to "X months Y days Z hours W minutes"
-        if self._point_name == "system_uptime" and isinstance(value, (int, float)):
-            return self._format_uptime_seconds(value)
-
+        # Return raw numeric value (native_value must be numeric for sensors with state_class)
+        # For system_uptime, the formatted version is available as an attribute
         return value
 
     @property
@@ -511,6 +508,12 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
             if isinstance(raw_value, int):
                 attributes["raw_state_code"] = raw_value
 
+        # Add formatted uptime for system_uptime sensor (native_value is numeric seconds)
+        if self._point_name == "system_uptime":
+            raw_value = point_data.get("value")
+            if isinstance(raw_value, (int, float)):
+                attributes["formatted"] = self._format_uptime_seconds(raw_value)
+
         # Clean up empty strings to None for cleaner display
         return {k: (v if v != "" else None) for k, v in attributes.items()}
 
@@ -542,11 +545,16 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
                         configuration_url = f"http://{hostname}"
                 break
 
-        # Use technical device name for predictable entity IDs
-        # Format: {domain}_{device_type}_{serial_compact}
-        # Example: "abb_fimer_pvi_vsn_rest_datalogger_1110333n161421"
-        # With has_entity_name=True, this becomes the prefix for all entity_ids
-        device_name = f"{DOMAIN}_{self._device_type_simple}_{self._device_sn_compact}"
+        # Use friendly device name for beautiful UI display
+        # Format: "Manufacturer Type Model (Serial)"
+        # Example: "ABB Datalogger VSN300 (111033-3N16-1421)"
+        # With has_entity_name=True, this is slugified and becomes the entity_id prefix
+        device_name = _format_device_name(
+            manufacturer=manufacturer,
+            device_type_simple=self._device_type_simple,
+            device_model=device_model,
+            device_sn_original=self._device_id,
+        )
 
         # Build device info dictionary with all available fields
         device_info_dict = {

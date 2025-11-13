@@ -7,6 +7,55 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta.26] - 2025-11-12
+
+### Fixed
+
+- **system_uptime Sensor ValueError**: Fixed sensor failing to load due to value type mismatch
+  - Root cause: Sensor was configured with `device_class: duration`, `state_class: total_increasing`, and `unit: s` (numeric sensor)
+  - But code was returning formatted string "10 hours 9 minutes" instead of numeric seconds
+  - Home Assistant rejected the sensor: "ValueError: sensor has numeric indicators but non-numeric value"
+  - **Solution**: Return raw numeric value (seconds) as `native_value`, add `formatted` attribute for beautiful display
+  - Native value: `36600` (numeric seconds) → works with statistics and history
+  - Formatted attribute: `"10 hours 9 minutes"` → available for Lovelace UI via `attribute: formatted`
+  - Users can now display uptime beautifully in dashboards while preserving statistics
+
+- **Device Names and Entity Friendly Names**: Switched from technical to friendly device names for beautiful UI
+  - Beta.25 had ugly technical device names: `abb_fimer_pvi_vsn_rest_datalogger_1110333n161421`
+  - Beta.25 had ugly entity friendly names: `abb_fimer_pvi_vsn_rest_datalogger_1110333n161421 Firmware Version`
+  - Now uses friendly format: `ABB Datalogger VSN300 (111033-3N16-1421)`
+  - Entity friendly names now beautiful: `ABB Datalogger VSN300 (111033-3N16-1421) Firmware Version`
+  - Follows Home Assistant best practices for modern integrations
+
+### Technical Changes
+
+- sensor.py: Removed uptime formatting from `native_value` property (lines 446-449)
+- sensor.py: Added `formatted` attribute to `extra_state_attributes` for system_uptime (lines 511-515)
+- sensor.py: Changed device name generation to use `_format_device_name()` helper (line 552-557)
+- sensor.py: Device names now friendly format instead of technical
+
+### Breaking Changes
+
+⚠️ **IMPORTANT**: This release contains breaking changes requiring manual migration:
+
+1. **Entity IDs will change** (friendly device name is slugified by Home Assistant):
+   - FROM: `sensor.abb_fimer_pvi_vsn_rest_datalogger_1110333n161421_firmware_version`
+   - TO: `sensor.abb_datalogger_vsn300_111033_3n16_1421_firmware_version`
+   - FROM: `sensor.abb_fimer_pvi_vsn_rest_inverter_0779093g823112_power_peak_lifetime`
+   - TO: `sensor.power_one_inverter_pvi_10_0_outd_077909_3g82_3112_power_peak_lifetime`
+
+2. **Device names and friendly names now beautiful** in UI
+
+3. **Migration**: Remove integration via UI (auto-deletes entities) → Use "Recreate Entity IDs" feature on device page OR reinstall
+
+4. Update all dashboards and automations with new entity IDs
+
+**Why the change from Beta.25**: Technical device names produced ugly UI everywhere. The new entity IDs are still technical (contain manufacturer, model, serial) but slightly friendlier format. The beautiful device names make the integration much more pleasant to use.
+
+**This is the FINAL entity ID format.** We're now following HA best practices with `has_entity_name=True` + friendly device names.
+
+**Full release notes**: [v1.0.0-beta.26](docs/releases/v1.0.0-beta.26.md)
+
 ## [1.0.0-beta.25] - 2025-11-12
 
 ### Fixed
