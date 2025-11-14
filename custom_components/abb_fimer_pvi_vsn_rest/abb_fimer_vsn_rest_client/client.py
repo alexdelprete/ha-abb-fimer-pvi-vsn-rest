@@ -189,7 +189,10 @@ class ABBFimerVSNRestClient:
                 # Match by device_id (with or without formatting)
                 for device_id, device_data in raw_data.items():
                     # Check both raw and cleaned versions of device IDs
-                    if device_id in (discovered_device.device_id, discovered_device.raw_device_id):
+                    if device_id in (
+                        discovered_device.device_id,
+                        discovered_device.raw_device_id,
+                    ):
                         # Inject device_type from discovery
                         if discovered_device.device_type:
                             device_data["device_type"] = discovered_device.device_type
