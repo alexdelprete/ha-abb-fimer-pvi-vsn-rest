@@ -257,10 +257,11 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         self._device_sn_compact = device_sn_compact
 
         _LOGGER.debug(
-            "Created sensor: %s (device=%s, unique_id=%s)",
-            self._attr_name,
+            "Created sensor: %s (device=%s, unique_id=%s, translation_key=%s)",
+            self._point_name,
             device_identifier,
             unique_id,
+            self._attr_translation_key,
         )
 
         # Check if initial value is numeric - determines sensor type
@@ -345,13 +346,14 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
             _LOGGER.debug("Sensor %s using custom icon: %s", point_name, icon)
 
         _LOGGER.debug(
-            "Created sensor: %s (device_class=%s, state_class=%s, unit=%s, entity_category=%s, icon=%s)",
-            self._attr_name,
+            "Created sensor: %s (device_class=%s, state_class=%s, unit=%s, entity_category=%s, icon=%s, translation_key=%s)",
+            self._point_name,
             getattr(self, "_attr_device_class", None),
             getattr(self, "_attr_state_class", None),
             getattr(self, "_attr_native_unit_of_measurement", None),
             getattr(self, "_attr_entity_category", None),
             getattr(self, "_attr_icon", None),
+            self._attr_translation_key,
         )
 
     def _format_uptime_seconds(self, seconds: float) -> str:
