@@ -47,6 +47,10 @@ entity creation.
 
 ### HACS (Recommended)
 
+This integration is available in [HACS][hacs] as a custom repository. Click this button to open HA directly on the integration page so you can easily install it:
+
+[![Quick installation link](https://my.home-assistant.io/badges/hacs_repository.svg)][my-hacs]
+
 1. Open HACS in Home Assistant
 2. Go to "Integrations"
 3. Click the three dots menu → "Custom repositories"
@@ -514,7 +518,8 @@ SunSpec model definitions from [SunSpec Models Repository](https://github.com/su
 [releases-shield]: https://img.shields.io/github/v/release/alexdelprete/ha-abb-fimer-pvi-vsn-rest?style=for-the-badge&color=darkgreen
 [releases]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/releases
 [hacs-shield]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
-[hacs]: https://github.com/hacs/integration
+[hacs]: https://hacs.xyz
+[my-hacs]: https://my.home-assistant.io/redirect/hacs_repository/?owner=alexdelprete&repository=ha-abb-fimer-pvi-vsn-rest&category=integration
 [buymecoffee]: https://www.buymeacoffee.com/alexdelprete
 [buymecoffee-shield]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-white?style=for-the-badge
 [forum-shield]: https://img.shields.io/badge/community-forum-darkred?style=for-the-badge
