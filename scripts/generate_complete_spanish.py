@@ -244,12 +244,12 @@ def main():
 
     # Load English translations
     en_file = Path("custom_components/abb_fimer_pvi_vsn_rest/translations/en.json")
-    with open(en_file, 'r', encoding='utf-8') as f:
+    with open(en_file, encoding='utf-8') as f:
         en_data = json.load(f)
 
     # Load current Spanish (to preserve config/options sections which are already good)
     es_file = Path("custom_components/abb_fimer_pvi_vsn_rest/translations/es.json")
-    with open(es_file, 'r', encoding='utf-8') as f:
+    with open(es_file, encoding='utf-8') as f:
         es_data = json.load(f)
 
     # Translate all sensors from English

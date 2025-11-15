@@ -2,7 +2,6 @@
 """Generate complete Italian translations from English source."""
 
 import json
-import re
 from pathlib import Path
 
 # Complete Italian translation mappings
@@ -244,12 +243,12 @@ def main():
 
     # Load English translations
     en_file = Path("custom_components/abb_fimer_pvi_vsn_rest/translations/en.json")
-    with open(en_file, 'r', encoding='utf-8') as f:
+    with open(en_file, encoding='utf-8') as f:
         en_data = json.load(f)
 
     # Load current Italian (to preserve config/options sections which are already good)
     it_file = Path("custom_components/abb_fimer_pvi_vsn_rest/translations/it.json")
-    with open(it_file, 'r', encoding='utf-8') as f:
+    with open(it_file, encoding='utf-8') as f:
         it_data = json.load(f)
 
     # Translate all sensors from English
