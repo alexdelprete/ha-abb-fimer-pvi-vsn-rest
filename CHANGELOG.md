@@ -7,6 +7,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2025-11-13
+
+### 🎉 First Stable Release
+
+This is the **first official stable release** of the ABB/FIMER PVI VSN REST integration!
+
+After extensive testing through **29 beta releases**, the integration is now **production-ready** with:
+
+- ✅ **Comprehensive Device Support**: VSN300, VSN700, single-phase and three-phase inverters, meters, batteries
+- ✅ **258 Mapped Data Points**: Complete coverage of all VSN API endpoints with SunSpec normalization
+- ✅ **Aurora Protocol Integration**: Accurate timestamp handling and state translations for 195 operational states
+- ✅ **Stable Entity IDs**: Final entity naming pattern established (no more breaking changes)
+- ✅ **Rich Metadata**: 14+ attributes per sensor for debugging and automation
+- ✅ **Multi-Language Support**: English and Italian translations
+- ✅ **Production-Ready**: All critical bugs resolved through beta testing
+
+### Documentation
+
+- **README**: Updated with donation badge and current entity naming scheme
+- **Entity Naming**: Now documents the modern `has_entity_name=True` pattern with friendly device names
+- **Examples**: Comprehensive examples for device names, entity IDs, and friendly names
+
+### Technical Changes
+
+- manifest.json: Version bump to 1.0.0 (from 1.0.0-beta.29)
+- const.py: Version bump to 1.0.0
+- README.md: Add "Buy Me a Coffee" donation badge
+- README.md: Update Entity Naming section to reflect current implementation
+
+**Full release notes**: [v1.0.0](docs/releases/v1.0.0.md)
+
+### What's Next
+
+This stable release marks the completion of the beta testing phase. Future releases will follow semantic versioning:
+- **Patch releases** (1.0.x): Bug fixes and minor improvements
+- **Minor releases** (1.x.0): New features and enhancements
+- **Major releases** (x.0.0): Breaking changes (if needed)
+
+Thank you to all beta testers who helped make this release possible! 🙏
+
+---
+
 ## [1.0.0-beta.29] - 2025-11-13
 
 ### Fixed
