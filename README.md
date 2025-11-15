@@ -514,7 +514,7 @@ Developed by [Alessandro Del Prete](https://github.com/alexdelprete)
 
 SunSpec model definitions from [SunSpec Models Repository](https://github.com/sunspec/models) (Apache-2.0 license)
 
-# Coffee
+## Coffee
 
 If you like this integration, I'll gladly accept some quality coffee, but please don't feel obliged. :)
 
