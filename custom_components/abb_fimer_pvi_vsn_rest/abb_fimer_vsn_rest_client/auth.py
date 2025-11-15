@@ -362,10 +362,9 @@ async def detect_vsn_model(
                     return "VSN300"
 
                 # Not VSN300 - try preemptive Basic authentication
-                # This handles both VSN700 (with Basic challenge) and REACT2 (no challenge)
+                # VSN700 uses preemptive Basic auth (may or may not send WWW-Authenticate header)
                 _LOGGER.debug(
-                    "[VSN Detection] Not VSN300. Attempting preemptive Basic authentication "
-                    "(works for both VSN700 and REACT2)."
+                    "[VSN Detection] Not VSN300. Attempting preemptive Basic authentication for VSN700."
                 )
 
                 try:
@@ -390,15 +389,9 @@ async def detect_vsn_model(
 
                         # Check if preemptive Basic auth succeeded
                         if auth_response.status in (200, 204):
-                            # Determine device type based on presence of WWW-Authenticate header
-                            if www_authenticate and "basic" in www_authenticate:
-                                _LOGGER.info(
-                                    "[VSN Detection] Detected VSN700 (Basic challenge + preemptive auth succeeded)"
-                                )
-                            else:
-                                _LOGGER.info(
-                                    "[VSN Detection] Detected REACT2 (no challenge, preemptive Basic auth succeeded)"
-                                )
+                            _LOGGER.info(
+                                "[VSN Detection] Detected VSN700 (preemptive Basic authentication)"
+                            )
                             return "VSN700"
 
                         # Preemptive auth failed
@@ -409,7 +402,7 @@ async def detect_vsn_model(
                             repr(www_authenticate_raw) if www_authenticate_raw else "NOT PRESENT",
                         )
                         raise VSNDetectionError(
-                            f"Device authentication failed. Not VSN300/VSN700/REACT2 compatible. "
+                            f"Device authentication failed. Not VSN300/VSN700 compatible. "
                             f"Preemptive Basic auth returned {auth_response.status}. "
                             "Enable debug logging for details."
                         )
