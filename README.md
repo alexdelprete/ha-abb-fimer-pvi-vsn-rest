@@ -527,4 +527,4 @@ If you like this integration, I'll gladly accept some quality coffee, but please
 [buymecoffee]: https://www.buymeacoffee.com/alexdelprete
 [buymecoffee-shield]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-white?style=for-the-badge
 [forum-shield]: https://img.shields.io/badge/community-forum-darkred?style=for-the-badge
-[forum]: https://community.home-assistant.io/t/custom-component-abb-power-one-fimer-pv-inverters-sunspec-modbus-tcp/316363?u=alexdelprete
+[forum]: https://community.home-assistant.io/t/integration-for-abb-fimer-power-one-pvi-inverters-via-vsn300-vsn700-datalogger-rest-api/
