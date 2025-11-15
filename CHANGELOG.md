@@ -7,6 +7,85 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2025-11-15
+
+### 🐛 Bug Fixes
+
+**Fixed GitHub Actions CI Failure**:
+
+- Ruff was checking vendor directory containing third-party code
+- Added `extend-exclude` configuration to .ruff.toml
+- Excluded: vendor/, .vscode/, .devcontainer/, .github/
+- Applied automatic formatting fixes to 3 files
+- Commit: [5d0e292](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/5d0e292)
+
+**Fixed Home Assistant Runtime Error**:
+
+- AttributeError: 'VSNSensor' object has no attribute '_attr_name'
+- Removed references to undefined `_attr_name` in debug logs
+- Replaced with `self._point_name` and added translation_key to debug output
+- With `has_entity_name=True`, HA uses `_attr_translation_key`, not `_attr_name`
+- Commit: [dafba7d](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/dafba7d)
+
+### 📝 Version Corrections
+
+- Updated manifest.json version to 1.1.1 (was incorrectly 1.0.0 in v1.1.0)
+- Updated const.py VERSION to 1.1.1 (was incorrectly 1.0.0 in v1.1.0)
+
+**Full release notes**: [v1.1.1](docs/releases/v1.1.1.md)
+
+---
+
+## [1.1.0] - 2025-11-15
+
+### 🌍 Multi-Language Support
+
+**New Language Files (8 added)**:
+
+- German (de), Spanish (es), Estonian (et), Finnish (fi)
+- French (fr), Norwegian Bokmål (nb), Portuguese (pt), Swedish (sv)
+
+**Translation Coverage**:
+
+- 251 sensors per language with professional electrical/solar terminology
+- Consistent naming patterns across all languages
+- Complete file structure (config, options, entities)
+
+**Updated Translations**:
+
+- English (en.json): Updated with 251 sensor translations
+- Italian (it.json): Updated with 251 sensor translations
+
+### 🏗️ Architecture Improvements
+
+**Mapping File Relocation**:
+
+- Moved from: `data/vsn-sunspec-point-mapping.json`
+- Moved to: `abb_fimer_vsn_rest_client/data/vsn-sunspec-point-mapping.json`
+- Better organization with mapping file co-located with client library
+
+**Translation System**:
+
+- sensor.py: Added `_attr_translation_key = self._point_name` for native HA translation
+- mapping_loader.py: Updated path to new location in client library
+
+### 📚 Documentation
+
+**New Documentation**:
+
+- docs/TRANSLATION_REPORT.md: Comprehensive report on translation generation
+
+**Markdown Linting Fixes**:
+
+- Fixed MD032 violations (blank lines around lists) in 30+ markdown files
+- All release notes, README, CHANGELOG, and documentation files
+
+**Full release notes**: [v1.1.0](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/releases/tag/v1.1.0)
+
+**Note**: v1.1.0 was released with incorrect version strings in manifest.json and const.py (still showing "1.0.0"). This has been corrected in v1.1.1.
+
+---
+
 ## [1.0.0] - 2025-11-13
 
 ### 🎉 First Stable Release
