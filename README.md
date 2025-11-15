@@ -1,7 +1,6 @@
 # ABB/FIMER PVI VSN REST Integration
 
 [![GitHub Release][releases-shield]][releases]
-[![hacs][hacs-shield]][hacs]
 [![BuyMeCoffee][buymecoffee-shield]][buymecoffee]
 [![Community Forum][forum-shield]][forum]
 
@@ -517,7 +516,6 @@ SunSpec model definitions from [SunSpec Models Repository](https://github.com/su
 
 [releases-shield]: https://img.shields.io/github/v/release/alexdelprete/ha-abb-fimer-pvi-vsn-rest?style=for-the-badge&color=darkgreen
 [releases]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/releases
-[hacs-shield]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
 [hacs]: https://hacs.xyz
 [my-hacs]: https://my.home-assistant.io/redirect/hacs_repository/?owner=alexdelprete&repository=ha-abb-fimer-pvi-vsn-rest&category=integration
 [buymecoffee]: https://www.buymeacoffee.com/alexdelprete
