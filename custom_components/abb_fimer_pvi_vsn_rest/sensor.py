@@ -415,7 +415,11 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         # Convert Aurora timestamps for sys_time sensor
         # Aurora protocol uses Jan 1, 2000 epoch instead of Unix epoch (Jan 1, 1970)
         # Return formatted string to show actual date/time instead of relative time ("X ago")
-        if self._point_name == "sys_time" and isinstance(value, (int, float)) and value > 0:
+        if (
+            self._point_name == "sys_time"
+            and isinstance(value, (int, float))
+            and value > 0
+        ):
             try:
                 # Get HA's configured timezone
                 tz = ZoneInfo(self.hass.config.time_zone)

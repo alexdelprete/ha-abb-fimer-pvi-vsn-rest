@@ -36,7 +36,7 @@ TEMP_THRESHOLD_CELSIUS = 70  # Temperatures above this are abnormal and need cor
 
 # String cleanup registry: Points that need value cleanup
 STRING_STRIP_POINTS = {
-    "pn",    # Product number - strip leading/trailing dashes
+    "pn",  # Product number - strip leading/trailing dashes
     "C_Md",  # Model identifier - strip leading/trailing dashes
 }
 

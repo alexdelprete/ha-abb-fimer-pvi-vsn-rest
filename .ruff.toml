@@ -1,5 +1,13 @@
 # The contents of this file is based on https://github.com/home-assistant/core/blob/dev/pyproject.toml
 
+# Exclude third-party and non-code directories from formatting and linting
+extend-exclude = [
+    "vendor",           # Third-party vendored code (SunSpec models)
+    ".vscode",          # VSCode settings
+    ".devcontainer",    # DevContainer config
+    ".github",          # GitHub workflows/config
+]
+
 target-version = "py313"
 
 [lint]
