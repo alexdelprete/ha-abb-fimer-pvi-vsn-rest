@@ -27,7 +27,6 @@ TRANSLATIONS = {
     "Current": "Courant",
     "Temperature": "Température",
     "Frequency": "Fréquence",
-
     # Components
     "Phase A": "Phase A",
     "Phase B": "Phase B",
@@ -45,7 +44,6 @@ TRANSLATIONS = {
     "Input 2": "Entrée 2",
     "Fan 1": "Ventilateur 1",
     "Fan 2": "Ventilateur 2",
-
     # Locations/Device types
     "Cabinet": "Armoire",
     "Booster": "Booster",
@@ -61,7 +59,6 @@ TRANSLATIONS = {
     "Sensor 1": "Capteur 1",
     "Bus Midpoint": "Point Milieu Bus",
     "Bulk Capacitor": "Condensateur Bulk",
-
     # States/Status
     "Status": "État",
     "State": "État",
@@ -82,7 +79,6 @@ TRANSLATIONS = {
     "Battery Control State": "État Contrôle Batterie",
     "Grid External Control State": "État Contrôle Externe Réseau",
     "Fault Ride Through (FRT) status": "État Fault Ride Through (FRT)",
-
     # Modes
     "Mode": "Mode",
     "Battery Mode": "Mode Batterie",
@@ -90,7 +86,6 @@ TRANSLATIONS = {
     "Digital Input 0 Mode": "Mode Entrée Numérique 0",
     "Digital Input 1 Mode": "Mode Entrée Numérique 1",
     "Stand Alone Mode": "Mode Autonome",
-
     # Time periods
     "Lifetime": "Total",
     "Since Restart": "Depuis Redémarrage",
@@ -100,7 +95,6 @@ TRANSLATIONS = {
     "Last Month": "Mois Dernier",
     "Last Year": "Année Dernière",
     "Today": "Aujourd'hui",
-
     # Operations
     "Produced": "Produite",
     "Absorbed": "Absorbée",
@@ -110,7 +104,6 @@ TRANSLATIONS = {
     "Consumption": "Consommation",
     "Home PV": "PV Maison",
     "from": "depuis",
-
     # Battery terms
     "Battery Charge": "Charge Batterie",
     "Battery Discharge": "Décharge Batterie",
@@ -118,7 +111,6 @@ TRANSLATIONS = {
     "Battery Cycles": "Cycles Batterie",
     "Battery Cell Max": "Cellule Batterie Max",
     "Battery Cell Min": "Cellule Batterie Min",
-
     # Power terms
     "Peak": "Crête",
     "Rating": "Nominal",
@@ -128,12 +120,10 @@ TRANSLATIONS = {
     "AC Power Derating Flags": "Flags Réduction Puissance AC",
     "Reactive Power Derating": "Réduction Puissance Réactive",
     "Apparent Power Derating": "Réduction Puissance Apparente",
-
     # Energy terms
     "Self-consumed energy": "Énergie autoconsommée",
     "Total energy from direct transducer (DT)": "Énergie totale du transducteur direct (DT)",
     "Total energy from current transformer (CT)": "Énergie totale du transformateur de courant (CT)",
-
     # Measurements
     "Leakage DC-AC": "Fuite DC-AC",
     "Leakage DC-DC": "Fuite DC-DC",
@@ -143,7 +133,6 @@ TRANSLATIONS = {
     "Load": "Charge",
     "Input Total": "Total Entrée",
     "House Load Total": "Charge Maison Totale",
-
     # Device info
     "Manufacturer name": "Nom fabricant",
     "Model identifier": "Identifiant modèle",
@@ -164,7 +153,6 @@ TRANSLATIONS = {
     "Device 2 Name": "Nom Appareil 2",
     "Device 2 Type": "Type Appareil 2",
     "Type": "Type",
-
     # System
     "System Time": "Heure Système",
     "System Uptime": "Uptime Système",
@@ -174,7 +162,6 @@ TRANSLATIONS = {
     "Available RAM": "RAM disponible",
     "Detected Battery Number": "Numéro Batterie Détecté",
     "Number of battery cells or modules": "Nombre cellules ou modules batterie",
-
     # Settings
     "Country grid standard setting": "Paramètre standard réseau pays",
     "Split-phase configuration flag": "Flag configuration split-phase",
@@ -186,13 +173,11 @@ TRANSLATIONS = {
     "Model 126 Enabled": "Modèle 126 Activé",
     "Model 132 Enabled": "Modèle 132 Activé",
     "Enabled": "Activé",
-
     # Counters
     "Battery charge cycles counter": "Compteur cycles charge batterie",
     "Battery discharge cycles counter": "Compteur cycles décharge batterie",
     "Count": "Compte",
     "Channels": "Canaux",
-
     # WiFi
     "WiFi Mode": "Mode WiFi",
     "WiFi SSID": "SSID WiFi",
@@ -207,13 +192,11 @@ TRANSLATIONS = {
     "WiFi Broadcast": "Broadcast WiFi",
     "WiFi Gateway": "Passerelle WiFi",
     "WiFi DNS Server": "Serveur DNS WiFi",
-
     # Logger
     "Logger Serial Number": "Numéro de Série Logger",
     "Logger Board Model": "Modèle Carte Logger",
     "Logger Hostname": "Hostname Logger",
     "Logger ID": "ID Logger",
-
     # Other
     "Communication Protocol": "Protocole Communication",
     "Inverter ID": "ID Onduleur",
@@ -228,6 +211,7 @@ TRANSLATIONS = {
     "Connection": "Connexion",
 }
 
+
 def translate(text: str) -> str:
     """Translate English text to French using the translation map."""
     result = text
@@ -239,27 +223,28 @@ def translate(text: str) -> str:
 
     return result
 
+
 def main():
     """Generate complete French translations from English."""
 
     # Load English translations
     en_file = Path("custom_components/abb_fimer_pvi_vsn_rest/translations/en.json")
-    with open(en_file, encoding='utf-8') as f:
+    with open(en_file, encoding="utf-8") as f:
         en_data = json.load(f)
 
     # Load current French (to preserve config/options sections which are already good)
     fr_file = Path("custom_components/abb_fimer_pvi_vsn_rest/translations/fr.json")
-    with open(fr_file, encoding='utf-8') as f:
+    with open(fr_file, encoding="utf-8") as f:
         fr_data = json.load(f)
 
     # Translate all sensors from English
-    for key, value in en_data['entity']['sensor'].items():
-        english_name = value['name']
+    for key, value in en_data["entity"]["sensor"].items():
+        english_name = value["name"]
         french_name = translate(english_name)
-        fr_data['entity']['sensor'][key] = {"name": french_name}
+        fr_data["entity"]["sensor"][key] = {"name": french_name}
 
     # Save updated translations
-    with open(fr_file, 'w', encoding='utf-8') as f:
+    with open(fr_file, "w", encoding="utf-8") as f:
         json.dump(fr_data, f, ensure_ascii=False, indent=2)
 
     print("✓ French translations updated!")
@@ -267,13 +252,14 @@ def main():
 
     # Show sample translations
     print("\nSample translations:")
-    samples = list(en_data['entity']['sensor'].items())[:15]
+    samples = list(en_data["entity"]["sensor"].items())[:15]
     for key, value in samples:
-        en_name = value['name']
-        fr_name = fr_data['entity']['sensor'][key]['name']
+        en_name = value["name"]
+        fr_name = fr_data["entity"]["sensor"][key]["name"]
         print(f"  {key}:")
         print(f"    EN: {en_name}")
         print(f"    FR: {fr_name}")
+
 
 if __name__ == "__main__":
     main()

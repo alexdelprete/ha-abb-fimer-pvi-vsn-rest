@@ -27,7 +27,6 @@ TRANSLATIONS = {
     "Current": "Corrente",
     "Temperature": "Temperatura",
     "Frequency": "Frequência",
-
     # Components
     "Phase A": "Fase A",
     "Phase B": "Fase B",
@@ -45,7 +44,6 @@ TRANSLATIONS = {
     "Input 2": "Entrada 2",
     "Fan 1": "Ventilador 1",
     "Fan 2": "Ventilador 2",
-
     # Locations/Device types
     "Cabinet": "Gabinete",
     "Booster": "Booster",
@@ -61,7 +59,6 @@ TRANSLATIONS = {
     "Sensor 1": "Sensor 1",
     "Bus Midpoint": "Ponto Médio Bus",
     "Bulk Capacitor": "Condensador Bulk",
-
     # States/Status
     "Status": "Estado",
     "State": "Estado",
@@ -82,7 +79,6 @@ TRANSLATIONS = {
     "Battery Control State": "Estado Controle Bateria",
     "Grid External Control State": "Estado Controle Externo Rede",
     "Fault Ride Through (FRT) status": "Estado Fault Ride Through (FRT)",
-
     # Modes
     "Mode": "Modo",
     "Battery Mode": "Modo Bateria",
@@ -90,7 +86,6 @@ TRANSLATIONS = {
     "Digital Input 0 Mode": "Modo Entrada Digital 0",
     "Digital Input 1 Mode": "Modo Entrada Digital 1",
     "Stand Alone Mode": "Modo Autónomo",
-
     # Time periods
     "Lifetime": "Total",
     "Since Restart": "Desde Reinício",
@@ -100,7 +95,6 @@ TRANSLATIONS = {
     "Last Month": "Último Mês",
     "Last Year": "Último Ano",
     "Today": "Hoje",
-
     # Operations
     "Produced": "Produzida",
     "Absorbed": "Absorvida",
@@ -110,7 +104,6 @@ TRANSLATIONS = {
     "Consumption": "Consumo",
     "Home PV": "PV Casa",
     "from": "de",
-
     # Battery terms
     "Battery Charge": "Carga Bateria",
     "Battery Discharge": "Descarga Bateria",
@@ -118,7 +111,6 @@ TRANSLATIONS = {
     "Battery Cycles": "Ciclos Bateria",
     "Battery Cell Max": "Célula Bateria Max",
     "Battery Cell Min": "Célula Bateria Min",
-
     # Power terms
     "Peak": "Pico",
     "Rating": "Nominal",
@@ -128,12 +120,10 @@ TRANSLATIONS = {
     "AC Power Derating Flags": "Flags Redução Potência AC",
     "Reactive Power Derating": "Redução Potência Reativa",
     "Apparent Power Derating": "Redução Potência Aparente",
-
     # Energy terms
     "Self-consumed energy": "Energia autoconsumida",
     "Total energy from direct transducer (DT)": "Energia total do transdutor direto (DT)",
     "Total energy from current transformer (CT)": "Energia total do transformador de corrente (CT)",
-
     # Measurements
     "Leakage DC-AC": "Fuga DC-AC",
     "Leakage DC-DC": "Fuga DC-DC",
@@ -143,7 +133,6 @@ TRANSLATIONS = {
     "Load": "Carga",
     "Input Total": "Total Entrada",
     "House Load Total": "Carga Casa Total",
-
     # Device info
     "Manufacturer name": "Nome fabricante",
     "Model identifier": "Identificador modelo",
@@ -164,7 +153,6 @@ TRANSLATIONS = {
     "Device 2 Name": "Nome Dispositivo 2",
     "Device 2 Type": "Tipo Dispositivo 2",
     "Type": "Tipo",
-
     # System
     "System Time": "Hora Sistema",
     "System Uptime": "Uptime Sistema",
@@ -174,7 +162,6 @@ TRANSLATIONS = {
     "Available RAM": "RAM disponível",
     "Detected Battery Number": "Número Bateria Detectado",
     "Number of battery cells or modules": "Número células ou módulos bateria",
-
     # Settings
     "Country grid standard setting": "Configuração padrão rede país",
     "Split-phase configuration flag": "Flag configuração split-phase",
@@ -186,13 +173,11 @@ TRANSLATIONS = {
     "Model 126 Enabled": "Modelo 126 Ativado",
     "Model 132 Enabled": "Modelo 132 Ativado",
     "Enabled": "Ativado",
-
     # Counters
     "Battery charge cycles counter": "Contador ciclos carga bateria",
     "Battery discharge cycles counter": "Contador ciclos descarga bateria",
     "Count": "Contagem",
     "Channels": "Canais",
-
     # WiFi
     "WiFi Mode": "Modo WiFi",
     "WiFi SSID": "SSID WiFi",
@@ -207,13 +192,11 @@ TRANSLATIONS = {
     "WiFi Broadcast": "Broadcast WiFi",
     "WiFi Gateway": "Gateway WiFi",
     "WiFi DNS Server": "Servidor DNS WiFi",
-
     # Logger
     "Logger Serial Number": "Número de Série Logger",
     "Logger Board Model": "Modelo Placa Logger",
     "Logger Hostname": "Hostname Logger",
     "Logger ID": "ID Logger",
-
     # Other
     "Communication Protocol": "Protocolo Comunicação",
     "Inverter ID": "ID Inversor",
@@ -228,6 +211,7 @@ TRANSLATIONS = {
     "Connection": "Conexão",
 }
 
+
 def translate(text: str) -> str:
     """Translate English text to Portuguese using the translation map."""
     result = text
@@ -239,27 +223,28 @@ def translate(text: str) -> str:
 
     return result
 
+
 def main():
     """Generate complete Portuguese translations from English."""
 
     # Load English translations
     en_file = Path("custom_components/abb_fimer_pvi_vsn_rest/translations/en.json")
-    with open(en_file, encoding='utf-8') as f:
+    with open(en_file, encoding="utf-8") as f:
         en_data = json.load(f)
 
     # Load current Portuguese (to preserve config/options sections which are already good)
     pt_file = Path("custom_components/abb_fimer_pvi_vsn_rest/translations/pt.json")
-    with open(pt_file, encoding='utf-8') as f:
+    with open(pt_file, encoding="utf-8") as f:
         pt_data = json.load(f)
 
     # Translate all sensors from English
-    for key, value in en_data['entity']['sensor'].items():
-        english_name = value['name']
+    for key, value in en_data["entity"]["sensor"].items():
+        english_name = value["name"]
         portuguese_name = translate(english_name)
-        pt_data['entity']['sensor'][key] = {"name": portuguese_name}
+        pt_data["entity"]["sensor"][key] = {"name": portuguese_name}
 
     # Save updated translations
-    with open(pt_file, 'w', encoding='utf-8') as f:
+    with open(pt_file, "w", encoding="utf-8") as f:
         json.dump(pt_data, f, ensure_ascii=False, indent=2)
 
     print("✓ Portuguese translations updated!")
@@ -267,13 +252,14 @@ def main():
 
     # Show sample translations
     print("\nSample translations:")
-    samples = list(en_data['entity']['sensor'].items())[:15]
+    samples = list(en_data["entity"]["sensor"].items())[:15]
     for key, value in samples:
-        en_name = value['name']
-        pt_name = pt_data['entity']['sensor'][key]['name']
+        en_name = value["name"]
+        pt_name = pt_data["entity"]["sensor"][key]["name"]
         print(f"  {key}:")
         print(f"    EN: {en_name}")
         print(f"    PT: {pt_name}")
+
 
 if __name__ == "__main__":
     main()

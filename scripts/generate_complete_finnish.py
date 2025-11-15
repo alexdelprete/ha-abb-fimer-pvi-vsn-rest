@@ -27,7 +27,6 @@ TRANSLATIONS = {
     "Current": "Virta",
     "Temperature": "Lämpötila",
     "Frequency": "Taajuus",
-
     # Components
     "Phase A": "Vaihe A",
     "Phase B": "Vaihe B",
@@ -45,7 +44,6 @@ TRANSLATIONS = {
     "Input 2": "Tulo 2",
     "Fan 1": "Tuuletin 1",
     "Fan 2": "Tuuletin 2",
-
     # Locations/Device types
     "Cabinet": "Kaappi",
     "Booster": "Booster",
@@ -61,7 +59,6 @@ TRANSLATIONS = {
     "Sensor 1": "Anturi 1",
     "Bus Midpoint": "Väylän Keskipiste",
     "Bulk Capacitor": "Bulk Kondensaattori",
-
     # States/Status
     "Status": "Tila",
     "State": "Tila",
@@ -82,7 +79,6 @@ TRANSLATIONS = {
     "Battery Control State": "Akun Ohjaus Tila",
     "Grid External Control State": "Verkko Ulkoinen Ohjaus Tila",
     "Fault Ride Through (FRT) status": "Fault Ride Through (FRT) Tila",
-
     # Modes
     "Mode": "Tila",
     "Battery Mode": "Akkutila",
@@ -90,7 +86,6 @@ TRANSLATIONS = {
     "Digital Input 0 Mode": "Digitaalitulo 0 Tila",
     "Digital Input 1 Mode": "Digitaalitulo 1 Tila",
     "Stand Alone Mode": "Itsenäinen Tila",
-
     # Time periods
     "Lifetime": "Yhteensä",
     "Since Restart": "Uudelleenkäynnistyksestä",
@@ -100,7 +95,6 @@ TRANSLATIONS = {
     "Last Month": "Viime Kuukausi",
     "Last Year": "Viime Vuosi",
     "Today": "Tänään",
-
     # Operations
     "Produced": "Tuotettu",
     "Absorbed": "Absorboitu",
@@ -110,7 +104,6 @@ TRANSLATIONS = {
     "Consumption": "Kulutus",
     "Home PV": "PV Koti",
     "from": "invertteristä",
-
     # Battery terms
     "Battery Charge": "Akun Lataus",
     "Battery Discharge": "Akun Purkaus",
@@ -118,7 +111,6 @@ TRANSLATIONS = {
     "Battery Cycles": "Akkusyklit",
     "Battery Cell Max": "Akkukenno Max",
     "Battery Cell Min": "Akkukenno Min",
-
     # Power terms
     "Peak": "Huippu",
     "Rating": "Nimellis",
@@ -128,12 +120,10 @@ TRANSLATIONS = {
     "AC Power Derating Flags": "AC Teho Derating Liput",
     "Reactive Power Derating": "Loisteho Derating",
     "Apparent Power Derating": "Näennäinen Teho Derating",
-
     # Energy terms
     "Self-consumed energy": "Itsestään kulutettu energia",
     "Total energy from direct transducer (DT)": "Kokonaisenergia suorasta anturista (DT)",
     "Total energy from current transformer (CT)": "Kokonaisenergia virtamuuntajasta (CT)",
-
     # Measurements
     "Leakage DC-AC": "Vuoto DC-AC",
     "Leakage DC-DC": "Vuoto DC-DC",
@@ -143,7 +133,6 @@ TRANSLATIONS = {
     "Load": "Kuorma",
     "Input Total": "Tulo Yhteensä",
     "House Load Total": "Talokuorma Yhteensä",
-
     # Device info
     "Manufacturer name": "Valmistajan nimi",
     "Model identifier": "Mallin tunniste",
@@ -164,7 +153,6 @@ TRANSLATIONS = {
     "Device 2 Name": "Laite 2 Nimi",
     "Device 2 Type": "Laite 2 Tyyppi",
     "Type": "Tyyppi",
-
     # System
     "System Time": "Järjestelmäaika",
     "System Uptime": "Järjestelmän Käyntiaika",
@@ -174,7 +162,6 @@ TRANSLATIONS = {
     "Available RAM": "Käytettävissä oleva RAM",
     "Detected Battery Number": "Havaittu Akkunumero",
     "Number of battery cells or modules": "Akkukennojen tai moduulien määrä",
-
     # Settings
     "Country grid standard setting": "Maaverkon standardiasetus",
     "Split-phase configuration flag": "Split-phase konfiguraatiolippu",
@@ -186,13 +173,11 @@ TRANSLATIONS = {
     "Model 126 Enabled": "Malli 126 Käytössä",
     "Model 132 Enabled": "Malli 132 Käytössä",
     "Enabled": "Käytössä",
-
     # Counters
     "Battery charge cycles counter": "Akun lataussyklien laskuri",
     "Battery discharge cycles counter": "Akun purkaussyklien laskuri",
     "Count": "Lukumäärä",
     "Channels": "Kanavat",
-
     # WiFi
     "WiFi Mode": "WiFi Tila",
     "WiFi SSID": "WiFi SSID",
@@ -207,13 +192,11 @@ TRANSLATIONS = {
     "WiFi Broadcast": "WiFi Broadcast",
     "WiFi Gateway": "WiFi Yhdyskäytävä",
     "WiFi DNS Server": "WiFi DNS Palvelin",
-
     # Logger
     "Logger Serial Number": "Logger Sarjanumero",
     "Logger Board Model": "Logger Kortin Malli",
     "Logger Hostname": "Logger Hostname",
     "Logger ID": "Logger ID",
-
     # Other
     "Communication Protocol": "Viestintäprotokolla",
     "Inverter ID": "Invertteri ID",
@@ -228,6 +211,7 @@ TRANSLATIONS = {
     "Connection": "Yhteys",
 }
 
+
 def translate(text: str) -> str:
     """Translate English text to Finnish using the translation map."""
     result = text
@@ -239,27 +223,28 @@ def translate(text: str) -> str:
 
     return result
 
+
 def main():
     """Generate complete Finnish translations from English."""
 
     # Load English translations
     en_file = Path("custom_components/abb_fimer_pvi_vsn_rest/translations/en.json")
-    with open(en_file, encoding='utf-8') as f:
+    with open(en_file, encoding="utf-8") as f:
         en_data = json.load(f)
 
     # Load current Finnish (to preserve config/options sections which are already good)
     fi_file = Path("custom_components/abb_fimer_pvi_vsn_rest/translations/fi.json")
-    with open(fi_file, encoding='utf-8') as f:
+    with open(fi_file, encoding="utf-8") as f:
         fi_data = json.load(f)
 
     # Translate all sensors from English
-    for key, value in en_data['entity']['sensor'].items():
-        english_name = value['name']
+    for key, value in en_data["entity"]["sensor"].items():
+        english_name = value["name"]
         finnish_name = translate(english_name)
-        fi_data['entity']['sensor'][key] = {"name": finnish_name}
+        fi_data["entity"]["sensor"][key] = {"name": finnish_name}
 
     # Save updated translations
-    with open(fi_file, 'w', encoding='utf-8') as f:
+    with open(fi_file, "w", encoding="utf-8") as f:
         json.dump(fi_data, f, ensure_ascii=False, indent=2)
 
     print("✓ Finnish translations updated!")
@@ -267,13 +252,14 @@ def main():
 
     # Show sample translations
     print("\nSample translations:")
-    samples = list(en_data['entity']['sensor'].items())[:15]
+    samples = list(en_data["entity"]["sensor"].items())[:15]
     for key, value in samples:
-        en_name = value['name']
-        fi_name = fi_data['entity']['sensor'][key]['name']
+        en_name = value["name"]
+        fi_name = fi_data["entity"]["sensor"][key]["name"]
         print(f"  {key}:")
         print(f"    EN: {en_name}")
         print(f"    FI: {fi_name}")
+
 
 if __name__ == "__main__":
     main()

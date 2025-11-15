@@ -27,7 +27,6 @@ TRANSLATIONS = {
     "Current": "Vool",
     "Temperature": "Temperatuur",
     "Frequency": "Sagedus",
-
     # Components
     "Phase A": "Faas A",
     "Phase B": "Faas B",
@@ -45,7 +44,6 @@ TRANSLATIONS = {
     "Input 2": "Sisend 2",
     "Fan 1": "Ventilaator 1",
     "Fan 2": "Ventilaator 2",
-
     # Locations/Device types
     "Cabinet": "Kapp",
     "Booster": "Booster",
@@ -61,7 +59,6 @@ TRANSLATIONS = {
     "Sensor 1": "Andur 1",
     "Bus Midpoint": "Siini Keskpunkt",
     "Bulk Capacitor": "Bulk Kondensaator",
-
     # States/Status
     "Status": "Olek",
     "State": "Seisund",
@@ -82,7 +79,6 @@ TRANSLATIONS = {
     "Battery Control State": "Aku Juhtimine Seisund",
     "Grid External Control State": "Võrk Väline Juhtimine Seisund",
     "Fault Ride Through (FRT) status": "Fault Ride Through (FRT) Olek",
-
     # Modes
     "Mode": "Režiim",
     "Battery Mode": "Aku Režiim",
@@ -90,7 +86,6 @@ TRANSLATIONS = {
     "Digital Input 0 Mode": "Digitaalsisend 0 Režiim",
     "Digital Input 1 Mode": "Digitaalsisend 1 Režiim",
     "Stand Alone Mode": "Autonoomne Režiim",
-
     # Time periods
     "Lifetime": "Kokku",
     "Since Restart": "Alates Taaskäivitusest",
@@ -100,7 +95,6 @@ TRANSLATIONS = {
     "Last Month": "Viimane Kuu",
     "Last Year": "Viimane Aasta",
     "Today": "Täna",
-
     # Operations
     "Produced": "Toodetud",
     "Absorbed": "Neeldunud",
@@ -110,7 +104,6 @@ TRANSLATIONS = {
     "Consumption": "Tarbimine",
     "Home PV": "PV Kodu",
     "from": "inverterist",
-
     # Battery terms
     "Battery Charge": "Aku Laadimine",
     "Battery Discharge": "Aku Tühjendamine",
@@ -118,7 +111,6 @@ TRANSLATIONS = {
     "Battery Cycles": "Aku Tsüklid",
     "Battery Cell Max": "Aku Element Max",
     "Battery Cell Min": "Aku Element Min",
-
     # Power terms
     "Peak": "Tipp",
     "Rating": "Nimivõimsus",
@@ -128,12 +120,10 @@ TRANSLATIONS = {
     "AC Power Derating Flags": "AC Võimsus Derating Lipud",
     "Reactive Power Derating": "Reaktiivvõimsus Derating",
     "Apparent Power Derating": "Näiv Võimsus Derating",
-
     # Energy terms
     "Self-consumed energy": "Ise tarbitud energia",
     "Total energy from direct transducer (DT)": "Koguenergia otseandurist (DT)",
     "Total energy from current transformer (CT)": "Koguenergia voolumuundurist (CT)",
-
     # Measurements
     "Leakage DC-AC": "Leke DC-AC",
     "Leakage DC-DC": "Leke DC-DC",
@@ -143,7 +133,6 @@ TRANSLATIONS = {
     "Load": "Koormus",
     "Input Total": "Sisend Kokku",
     "House Load Total": "Maja Koormus Kokku",
-
     # Device info
     "Manufacturer name": "Tootja nimi",
     "Model identifier": "Mudeli identifikaator",
@@ -164,7 +153,6 @@ TRANSLATIONS = {
     "Device 2 Name": "Seade 2 Nimi",
     "Device 2 Type": "Seade 2 Tüüp",
     "Type": "Tüüp",
-
     # System
     "System Time": "Süsteemi Aeg",
     "System Uptime": "Süsteemi Töötamisaeg",
@@ -174,7 +162,6 @@ TRANSLATIONS = {
     "Available RAM": "Saadaval RAM",
     "Detected Battery Number": "Tuvastatud Aku Number",
     "Number of battery cells or modules": "Akuelementide või moodulite arv",
-
     # Settings
     "Country grid standard setting": "Riigi võrgu standardseade",
     "Split-phase configuration flag": "Split-phase konfiguratsioonilipp",
@@ -186,13 +173,11 @@ TRANSLATIONS = {
     "Model 126 Enabled": "Mudel 126 Lubatud",
     "Model 132 Enabled": "Mudel 132 Lubatud",
     "Enabled": "Lubatud",
-
     # Counters
     "Battery charge cycles counter": "Aku laadimistsüklite loendur",
     "Battery discharge cycles counter": "Aku tühjendamistsüklite loendur",
     "Count": "Arv",
     "Channels": "Kanalid",
-
     # WiFi
     "WiFi Mode": "WiFi Režiim",
     "WiFi SSID": "WiFi SSID",
@@ -207,13 +192,11 @@ TRANSLATIONS = {
     "WiFi Broadcast": "WiFi Broadcast",
     "WiFi Gateway": "WiFi Lüüs",
     "WiFi DNS Server": "WiFi DNS Server",
-
     # Logger
     "Logger Serial Number": "Logger Seerianumber",
     "Logger Board Model": "Logger Kaardi Mudel",
     "Logger Hostname": "Logger Hostname",
     "Logger ID": "Logger ID",
-
     # Other
     "Communication Protocol": "Kommunikatsiooniprotokoll",
     "Inverter ID": "Inverter ID",
@@ -228,6 +211,7 @@ TRANSLATIONS = {
     "Connection": "Ühendus",
 }
 
+
 def translate(text: str) -> str:
     """Translate English text to Estonian using the translation map."""
     result = text
@@ -239,27 +223,28 @@ def translate(text: str) -> str:
 
     return result
 
+
 def main():
     """Generate complete Estonian translations from English."""
 
     # Load English translations
     en_file = Path("custom_components/abb_fimer_pvi_vsn_rest/translations/en.json")
-    with open(en_file, encoding='utf-8') as f:
+    with open(en_file, encoding="utf-8") as f:
         en_data = json.load(f)
 
     # Load current Estonian (to preserve config/options sections which are already good)
     et_file = Path("custom_components/abb_fimer_pvi_vsn_rest/translations/et.json")
-    with open(et_file, encoding='utf-8') as f:
+    with open(et_file, encoding="utf-8") as f:
         et_data = json.load(f)
 
     # Translate all sensors from English
-    for key, value in en_data['entity']['sensor'].items():
-        english_name = value['name']
+    for key, value in en_data["entity"]["sensor"].items():
+        english_name = value["name"]
         estonian_name = translate(english_name)
-        et_data['entity']['sensor'][key] = {"name": estonian_name}
+        et_data["entity"]["sensor"][key] = {"name": estonian_name}
 
     # Save updated translations
-    with open(et_file, 'w', encoding='utf-8') as f:
+    with open(et_file, "w", encoding="utf-8") as f:
         json.dump(et_data, f, ensure_ascii=False, indent=2)
 
     print("✓ Estonian translations updated!")
@@ -267,13 +252,14 @@ def main():
 
     # Show sample translations
     print("\nSample translations:")
-    samples = list(en_data['entity']['sensor'].items())[:15]
+    samples = list(en_data["entity"]["sensor"].items())[:15]
     for key, value in samples:
-        en_name = value['name']
-        et_name = et_data['entity']['sensor'][key]['name']
+        en_name = value["name"]
+        et_name = et_data["entity"]["sensor"][key]["name"]
         print(f"  {key}:")
         print(f"    EN: {en_name}")
         print(f"    ET: {et_name}")
+
 
 if __name__ == "__main__":
     main()

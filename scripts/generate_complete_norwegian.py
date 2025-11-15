@@ -27,7 +27,6 @@ TRANSLATIONS = {
     "Current": "Strøm",
     "Temperature": "Temperatur",
     "Frequency": "Frekvens",
-
     # Components
     "Phase A": "Fase A",
     "Phase B": "Fase B",
@@ -45,7 +44,6 @@ TRANSLATIONS = {
     "Input 2": "Inngang 2",
     "Fan 1": "Vifte 1",
     "Fan 2": "Vifte 2",
-
     # Locations/Device types
     "Cabinet": "Skap",
     "Booster": "Booster",
@@ -61,7 +59,6 @@ TRANSLATIONS = {
     "Sensor 1": "Sensor 1",
     "Bus Midpoint": "Buss Midtpunkt",
     "Bulk Capacitor": "Bulk Kondensator",
-
     # States/Status
     "Status": "Status",
     "State": "Tilstand",
@@ -82,7 +79,6 @@ TRANSLATIONS = {
     "Battery Control State": "Batteristyring Tilstand",
     "Grid External Control State": "Nett Ekstern Styring Tilstand",
     "Fault Ride Through (FRT) status": "Fault Ride Through (FRT) Status",
-
     # Modes
     "Mode": "Modus",
     "Battery Mode": "Batterimodus",
@@ -90,7 +86,6 @@ TRANSLATIONS = {
     "Digital Input 0 Mode": "Digital Inngang 0 Modus",
     "Digital Input 1 Mode": "Digital Inngang 1 Modus",
     "Stand Alone Mode": "Frittstående Modus",
-
     # Time periods
     "Lifetime": "Total",
     "Since Restart": "Siden Omstart",
@@ -100,7 +95,6 @@ TRANSLATIONS = {
     "Last Month": "Siste Måned",
     "Last Year": "Siste År",
     "Today": "I dag",
-
     # Operations
     "Produced": "Produsert",
     "Absorbed": "Absorbert",
@@ -110,7 +104,6 @@ TRANSLATIONS = {
     "Consumption": "Forbruk",
     "Home PV": "PV Hjem",
     "from": "fra",
-
     # Battery terms
     "Battery Charge": "Batterilading",
     "Battery Discharge": "Batteriutlading",
@@ -118,7 +111,6 @@ TRANSLATIONS = {
     "Battery Cycles": "Batterisykluser",
     "Battery Cell Max": "Battericelle Max",
     "Battery Cell Min": "Battericelle Min",
-
     # Power terms
     "Peak": "Topp",
     "Rating": "Merkeverdi",
@@ -128,12 +120,10 @@ TRANSLATIONS = {
     "AC Power Derating Flags": "AC Effekt Derating Flagg",
     "Reactive Power Derating": "Reaktiv Effekt Derating",
     "Apparent Power Derating": "Tilsynelatende Effekt Derating",
-
     # Energy terms
     "Self-consumed energy": "Selvforbrukt energi",
     "Total energy from direct transducer (DT)": "Total energi fra direkte giver (DT)",
     "Total energy from current transformer (CT)": "Total energi fra strømtransformator (CT)",
-
     # Measurements
     "Leakage DC-AC": "Lekkasje DC-AC",
     "Leakage DC-DC": "Lekkasje DC-DC",
@@ -143,7 +133,6 @@ TRANSLATIONS = {
     "Load": "Last",
     "Input Total": "Inngang Total",
     "House Load Total": "Huslast Total",
-
     # Device info
     "Manufacturer name": "Produsentnavn",
     "Model identifier": "Modellidentifikator",
@@ -164,7 +153,6 @@ TRANSLATIONS = {
     "Device 2 Name": "Enhet 2 Navn",
     "Device 2 Type": "Enhet 2 Type",
     "Type": "Type",
-
     # System
     "System Time": "Systemtid",
     "System Uptime": "System Driftstid",
@@ -174,7 +162,6 @@ TRANSLATIONS = {
     "Available RAM": "Tilgjengelig RAM",
     "Detected Battery Number": "Detektert Batterinummer",
     "Number of battery cells or modules": "Antall battericeller eller moduler",
-
     # Settings
     "Country grid standard setting": "Landsnett standard innstilling",
     "Split-phase configuration flag": "Split-fase konfigurasjonsflagg",
@@ -186,13 +173,11 @@ TRANSLATIONS = {
     "Model 126 Enabled": "Modell 126 Aktivert",
     "Model 132 Enabled": "Modell 132 Aktivert",
     "Enabled": "Aktivert",
-
     # Counters
     "Battery charge cycles counter": "Batterilading syklusteller",
     "Battery discharge cycles counter": "Batteriutlading syklusteller",
     "Count": "Antall",
     "Channels": "Kanaler",
-
     # WiFi
     "WiFi Mode": "WiFi Modus",
     "WiFi SSID": "WiFi SSID",
@@ -207,13 +192,11 @@ TRANSLATIONS = {
     "WiFi Broadcast": "WiFi Broadcast",
     "WiFi Gateway": "WiFi Gateway",
     "WiFi DNS Server": "WiFi DNS Server",
-
     # Logger
     "Logger Serial Number": "Logger Serienummer",
     "Logger Board Model": "Logger Kort Modell",
     "Logger Hostname": "Logger Hostname",
     "Logger ID": "Logger ID",
-
     # Other
     "Communication Protocol": "Kommunikasjonsprotokoll",
     "Inverter ID": "Vekselretter ID",
@@ -228,6 +211,7 @@ TRANSLATIONS = {
     "Connection": "Tilkobling",
 }
 
+
 def translate(text: str) -> str:
     """Translate English text to Norwegian Bokmål using the translation map."""
     result = text
@@ -239,27 +223,28 @@ def translate(text: str) -> str:
 
     return result
 
+
 def main():
     """Generate complete Norwegian Bokmål translations from English."""
 
     # Load English translations
     en_file = Path("custom_components/abb_fimer_pvi_vsn_rest/translations/en.json")
-    with open(en_file, encoding='utf-8') as f:
+    with open(en_file, encoding="utf-8") as f:
         en_data = json.load(f)
 
     # Load current Norwegian (to preserve config/options sections which are already good)
     nb_file = Path("custom_components/abb_fimer_pvi_vsn_rest/translations/nb.json")
-    with open(nb_file, encoding='utf-8') as f:
+    with open(nb_file, encoding="utf-8") as f:
         nb_data = json.load(f)
 
     # Translate all sensors from English
-    for key, value in en_data['entity']['sensor'].items():
-        english_name = value['name']
+    for key, value in en_data["entity"]["sensor"].items():
+        english_name = value["name"]
         norwegian_name = translate(english_name)
-        nb_data['entity']['sensor'][key] = {"name": norwegian_name}
+        nb_data["entity"]["sensor"][key] = {"name": norwegian_name}
 
     # Save updated translations
-    with open(nb_file, 'w', encoding='utf-8') as f:
+    with open(nb_file, "w", encoding="utf-8") as f:
         json.dump(nb_data, f, ensure_ascii=False, indent=2)
 
     print("✓ Norwegian Bokmål translations updated!")
@@ -267,13 +252,14 @@ def main():
 
     # Show sample translations
     print("\nSample translations:")
-    samples = list(en_data['entity']['sensor'].items())[:15]
+    samples = list(en_data["entity"]["sensor"].items())[:15]
     for key, value in samples:
-        en_name = value['name']
-        nb_name = nb_data['entity']['sensor'][key]['name']
+        en_name = value["name"]
+        nb_name = nb_data["entity"]["sensor"][key]["name"]
         print(f"  {key}:")
         print(f"    EN: {en_name}")
         print(f"    NB: {nb_name}")
+
 
 if __name__ == "__main__":
     main()

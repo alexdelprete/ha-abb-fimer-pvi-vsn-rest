@@ -122,13 +122,16 @@ async def validate_connection(
         _LOGGER.error("Connection error: %s", err)
 
         # Check for SSL/TLS certificate errors
-        if any(keyword in err_str for keyword in [
-            "SSL",
-            "CERTIFICATE",
-            "certificate",
-            "self-signed",
-            "verify failed",
-        ]):
+        if any(
+            keyword in err_str
+            for keyword in [
+                "SSL",
+                "CERTIFICATE",
+                "certificate",
+                "self-signed",
+                "verify failed",
+            ]
+        ):
             _LOGGER.error(
                 "SSL/TLS certificate error detected. This device may be using a self-signed certificate. "
                 "Enable debug logging for detailed SSL error information. "

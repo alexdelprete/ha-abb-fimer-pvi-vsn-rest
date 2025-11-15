@@ -249,7 +249,9 @@ async def get_vsn300_digest_header(
                 _LOGGER.debug(
                     "[VSN300 Auth] Parsed challenge params: realm=%s, nonce=%s, qop=%s, algorithm=%s",
                     challenge_params.get("realm"),
-                    challenge_params.get("nonce", "")[:20] + "..." if challenge_params.get("nonce") else None,
+                    challenge_params.get("nonce", "")[:20] + "..."
+                    if challenge_params.get("nonce")
+                    else None,
                     challenge_params.get("qop"),
                     challenge_params.get("algorithm"),
                 )
@@ -348,7 +350,9 @@ async def detect_vsn_model(
                 # Log raw WWW-Authenticate header value
                 _LOGGER.debug(
                     "[VSN Detection] WWW-Authenticate header (raw): %s",
-                    repr(www_authenticate_raw) if www_authenticate_raw else "NOT PRESENT",
+                    repr(www_authenticate_raw)
+                    if www_authenticate_raw
+                    else "NOT PRESENT",
                 )
 
                 # Check for digest authentication (VSN300) - unique identifier
@@ -399,7 +403,9 @@ async def detect_vsn_model(
                             "[VSN Detection] Preemptive Basic auth failed with status %d. "
                             "WWW-Authenticate: %s. Device is not compatible.",
                             auth_response.status,
-                            repr(www_authenticate_raw) if www_authenticate_raw else "NOT PRESENT",
+                            repr(www_authenticate_raw)
+                            if www_authenticate_raw
+                            else "NOT PRESENT",
                         )
                         raise VSNDetectionError(
                             f"Device authentication failed. Not VSN300/VSN700 compatible. "
@@ -412,7 +418,9 @@ async def detect_vsn_model(
                         "[VSN Detection] Preemptive Basic auth connection error: %s. "
                         "WWW-Authenticate was: %s",
                         auth_err,
-                        repr(www_authenticate_raw) if www_authenticate_raw else "NOT PRESENT",
+                        repr(www_authenticate_raw)
+                        if www_authenticate_raw
+                        else "NOT PRESENT",
                     )
                     raise VSNDetectionError(
                         f"Device authentication connection failed: {auth_err}"
