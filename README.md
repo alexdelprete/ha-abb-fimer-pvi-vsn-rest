@@ -324,6 +324,65 @@ logger:
 
 Restart Home Assistant and check logs for detailed information.
 
+### Testing and Reporting Issues
+
+If you're experiencing connection or authentication issues, you can use the standalone test script to diagnose the problem and provide detailed logs when reporting issues.
+
+#### Using the VSN Test Script
+
+The repository includes a standalone diagnostic script that can test your VSN device without installing the integration:
+
+1. **Download the script**:
+   ```bash
+   wget https://raw.githubusercontent.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/master/scripts/vsn_client.py
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   pip install aiohttp
+   ```
+
+3. **Run the test**:
+   ```bash
+   python vsn_client.py 192.168.1.100
+   ```
+   (Replace `192.168.1.100` with your datalogger's IP address)
+
+4. **Review output**:
+
+   The script will:
+   - Auto-detect VSN300 vs VSN700
+   - Test all REST API endpoints
+   - Create JSON output files with raw and normalized data
+   - Display comprehensive debug information
+
+5. **When reporting issues**:
+   - Include the console output showing device detection and any errors
+   - Attach the generated JSON files (especially `vsn300_status.json` or `vsn700_status.json`)
+   - Specify your inverter model and VSN datalogger model
+
+#### Common Test Results
+
+**Successful VSN300 detection**:
+```
+[VSN Detection] Detected VSN300 (digest auth in WWW-Authenticate: X-Digest realm="...")
+✓ Device detected: VSN300
+```
+
+**Successful VSN700 detection**:
+```
+[VSN Detection] Not VSN300. Attempting preemptive Basic authentication for VSN700.
+[VSN Detection] Detected VSN700 (preemptive Basic authentication)
+✓ Device detected: VSN700
+```
+
+**Authentication failure**:
+```
+[VSN Detection] Preemptive Basic auth failed with status 401.
+Device authentication failed. Not VSN300/VSN700 compatible.
+```
+If you see this, verify your credentials and ensure the device is a VSN300/VSN700 datalogger.
+
 ## Data Mapping
 
 VSN data points are mapped to SunSpec-compatible schema using definitions in the `mapping/` directory.

@@ -213,7 +213,6 @@ async def detect_vsn_model(
     This approach supports:
     - VSN300 (digest authentication with WWW-Authenticate header)
     - VSN700 (preemptive Basic auth, may or may not send WWW-Authenticate)
-    - REACT2 (uses VSN700 internally, preemptive Basic auth without WWW-Authenticate)
 
     Args:
         session: aiohttp client session
@@ -272,7 +271,7 @@ async def detect_vsn_model(
                     return "VSN300"
 
                 # Not VSN300 - try preemptive Basic authentication
-                # VSN700/REACT2 use preemptive Basic auth (may or may not send WWW-Authenticate header)
+                # VSN700 uses preemptive Basic auth (may or may not send WWW-Authenticate header)
                 _LOGGER.debug(
                     "[VSN Detection] Not VSN300. Attempting preemptive Basic authentication for VSN700."
                 )
