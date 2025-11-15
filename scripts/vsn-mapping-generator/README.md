@@ -5,6 +5,7 @@ A self-contained tool for generating comprehensive point mappings between VSN300
 ## Overview
 
 This generator creates a complete mapping file that:
+
 - Maps VSN300/VSN700 REST API points to SunSpec normalized names
 - Includes metadata like labels, descriptions, units, and Home Assistant device classes
 - Tracks which SunSpec models each point belongs to (M1, M103, M160, M203, M802, M64061)
@@ -52,6 +53,7 @@ python generate_mapping.py
 ```
 
 This will:
+
 - Load all VSN data from the `data/` directory
 - Load SunSpec model definitions
 - Process status endpoint data
@@ -65,6 +67,7 @@ python convert_to_json.py
 ```
 
 This will:
+
 - Read the generated Excel file
 - Convert it to JSON format
 - Save to `output/vsn-sunspec-point-mapping.json`
@@ -120,12 +123,14 @@ This will:
 
 ### Status Endpoint Processing (v2.0.0+)
 The generator now processes `/status` endpoint data, extracting:
+
 - Device information (model, serial number, firmware versions)
 - Network configuration (IP addresses, WLAN status)
 - Logger information (board model, hostname)
 
 ### Automatic Categorization
 Points are automatically categorized into:
+
 - Inverter
 - Energy Counter
 - Battery
@@ -138,6 +143,7 @@ Points are automatically categorized into:
 
 ### Data Source Priority
 Descriptions are selected using a 4-tier priority system:
+
 1. SunSpec official descriptions
 2. VSN feeds titles (if descriptive)
 3. Enhanced generated descriptions
@@ -266,6 +272,7 @@ copy output\vsn-sunspec-point-mapping.xlsx output\vsn-sunspec-point-mapping-orig
 
 ### 2. Edit the Excel File
 Open `output/vsn-sunspec-point-mapping.xlsx` and edit:
+
 - **Label**: Human-readable label for the point
 - **Description**: Detailed description of what the point measures
 - **HA Display Name**: User-friendly name shown in Home Assistant
@@ -276,6 +283,7 @@ python extract_manual_changes.py
 ```
 
 This will:
+
 - Compare original vs edited files
 - Extract all differences
 - Generate Python code in `output/manual_changes_backport.txt`
@@ -359,6 +367,7 @@ grep '"Entity Category": "diagnostic"' custom_components/abb_fimer_pvi_vsn_rest/
 ## Integration
 
 The generated `vsn-sunspec-point-mapping.json` file is used by the Home Assistant integration to:
+
 - Map VSN REST API responses to standardized entities
 - Apply proper units and device classes
 - Normalize point names across VSN300 and VSN700
@@ -366,6 +375,7 @@ The generated `vsn-sunspec-point-mapping.json` file is used by the Home Assistan
 ## Contributing
 
 When adding new points or models:
+
 1. Update the appropriate data files
 2. Run both generator scripts
 3. Verify the output in the Excel file

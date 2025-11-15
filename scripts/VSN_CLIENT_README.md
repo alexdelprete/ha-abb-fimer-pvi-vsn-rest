@@ -88,6 +88,7 @@ Password: (empty)
 [TEST 2] /v1/status - System Information
 --------------------------------------------------------------------------------
 ✓ Status endpoint successful
+
   - logger.sn: 111033-3N16-1421
   - device.invID: 077909-3G82-3112
   - device.modelDesc: PVI-10.0-OUTD
@@ -97,6 +98,7 @@ Password: (empty)
 [TEST 3] /v1/livedata - Live Data
 --------------------------------------------------------------------------------
 ✓ Livedata endpoint successful
+
   - Number of devices: 2
   - Device IDs: ['077909-3G82-3112', 'a4:06:e9:7f:42:49']
   - Saved to: vsn300_livedata.json
@@ -104,12 +106,14 @@ Password: (empty)
 [TEST 3b] Data Normalization
 --------------------------------------------------------------------------------
 ✓ Data normalized successfully
+
   - Normalized points: 53
   - Saved to: vsn300_normalized.json
 
 [TEST 4] /v1/feeds - Feed Metadata
 --------------------------------------------------------------------------------
 ✓ Feeds endpoint successful
+
   - Number of feeds: 2
   - Saved to: vsn300_feeds.json
 
@@ -124,6 +128,7 @@ TEST SUMMARY
 ✓ /v1/feeds: OK
 
 Output files created:
+
   - vsn300_status.json
   - vsn300_livedata.json
   - vsn300_normalized.json

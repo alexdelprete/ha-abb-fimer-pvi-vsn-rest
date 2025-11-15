@@ -3,50 +3,50 @@
     "step": {
       "user": {
         "title": "ABB/FIMER PVI VSN REST",
-        "description": "Connettiti al tuo datalogger ABB/FIMER VSN300 o VSN700.\n\nCredenziali predefinite: username='guest', password=(vuota)",
+        "description": "Connect to your ABB/FIMER VSN300 or VSN700 datalogger.\n\nDefault credentials: username='guest', password=(empty)",
         "data": {
-          "host": "Host (IP o hostname)",
-          "username": "Nome utente (opzionale, predefinito: guest)",
-          "password": "Password (opzionale, predefinita: vuota)"
+          "host": "Host (IP or hostname)",
+          "username": "Username (optional, default: guest)",
+          "password": "Password (optional, default: empty)"
         },
         "data_description": {
-          "host": "Indirizzo IP o hostname del dispositivo VSN (es., 192.168.1.100 o abb-vsn300.local)",
-          "username": "Nome utente per l'autenticazione. Lasciare vuoto per usare l'account predefinito 'guest'.",
-          "password": "Password per l'autenticazione. Lasciare vuota per l'account guest (nessuna password)."
+          "host": "IP address or hostname of your VSN device (e.g., 192.168.1.100 or abb-vsn300.local)",
+          "username": "Authentication username. Leave empty to use default 'guest' account.",
+          "password": "Authentication password. Leave empty for guest account (no password)."
         }
       },
       "reconfigure": {
-        "title": "Riconfigura ABB/FIMER PVI VSN REST",
-        "description": "Aggiorna le impostazioni di connessione per il dispositivo VSN.\n\nHost corrente: {current_host}",
+        "title": "Reconfigure ABB/FIMER PVI VSN REST",
+        "description": "Update the connection settings for your VSN device.\n\nCurrent host: {current_host}",
         "data": {
-          "host": "Host (IP o hostname)",
-          "username": "Nome utente",
+          "host": "Host (IP or hostname)",
+          "username": "Username",
           "password": "Password"
         }
       }
     },
     "error": {
-      "cannot_connect": "Impossibile connettersi al dispositivo. Verificare:\n• Il dispositivo è acceso\n• L'indirizzo IP o hostname è corretto\n• Il dispositivo è accessibile sulla rete\n• La porta 80 non è bloccata dal firewall",
-      "invalid_auth": "Autenticazione fallita. Verificare nome utente e password.\n\nPer la maggior parte dei dispositivi VSN, usare:\n• Nome utente: guest\n• Password: (vuota)",
-      "timeout": "Timeout della connessione. Il dispositivo non risponde.\n\nVerificare:\n• Il dispositivo è acceso e avviato\n• La connessione di rete è stabile\n• Nessun firewall blocca l'accesso",
-      "unknown": "Si è verificato un errore imprevisto. Controllare i log per maggiori dettagli."
+      "cannot_connect": "Failed to connect to the device. Please check:\n• Device is powered on\n• IP address or hostname is correct\n• Device is accessible on your network\n• Port 80 is not blocked by firewall",
+      "invalid_auth": "Authentication failed. Please check your username and password.\n\nFor most VSN devices, use:\n• Username: guest\n• Password: (empty)",
+      "timeout": "Connection timeout. The device is not responding.\n\nPlease check:\n• Device is powered on and booted\n• Network connection is stable\n• No firewall is blocking access",
+      "unknown": "Unexpected error occurred. Please check the logs for more details."
     },
     "abort": {
-      "already_configured": "Questo dispositivo è già configurato",
-      "reconfigure_successful": "Riconfigurazione riuscita! L'integrazione verrà ora ricaricata.",
-      "reconfigure_failed": "Riconfigurazione fallita. Riprovare o rimuovere e aggiungere nuovamente l'integrazione."
+      "already_configured": "This device is already configured",
+      "reconfigure_successful": "Reconfiguration successful! The integration will now reload.",
+      "reconfigure_failed": "Reconfiguration failed. Please try again or remove and re-add the integration."
     }
   },
   "options": {
     "step": {
       "init": {
-        "title": "Opzioni ABB/FIMER PVI VSN REST",
-        "description": "Configura l'intervallo di aggiornamento per il polling dei dati.",
+        "title": "ABB/FIMER PVI VSN REST Options",
+        "description": "Configure update interval for data polling.",
         "data": {
-          "scan_interval": "Intervallo di scansione (secondi)"
+          "scan_interval": "Scan interval (seconds)"
         },
         "data_description": {
-          "scan_interval": "Frequenza di recupero dati dal dispositivo VSN. Intervallo: 30-600 secondi. Predefinito: 60 secondi."
+          "scan_interval": "How often to fetch data from the VSN device. Range: 30-600 seconds. Default: 60 seconds."
         }
       }
     }
@@ -54,25 +54,25 @@
   "entity": {
     "sensor": {
       "watts": {
-        "name": "Potenza AC"
+        "name": "AC võimsus"
       },
       "var": {
-        "name": "Potenza Reattiva - Rete Connection"
+        "name": "Reaktiivvõimsus - Võrk Connection"
       },
       "hz": {
-        "name": "Frequenza AC - Rete"
+        "name": "AC sagedus - Võrk"
       },
       "amps": {
-        "name": "Corrente AC"
+        "name": "AC vool"
       },
       "phase_voltage_an": {
-        "name": "Tensione AC - Fase A-N"
+        "name": "AC pinge - Faas A-N"
       },
       "manufacturer": {
-        "name": "Produttore name"
+        "name": "Tootja name"
       },
       "model": {
-        "name": "Modello identifier"
+        "name": "Mudel identifier"
       },
       "options": {
         "name": "Configuration options"
@@ -87,7 +87,7 @@
         "name": "Modbus address"
       },
       "e_charge": {
-        "name": "Energia - Battery Charge Totalee"
+        "name": "Energia - Battery Charge Kokku"
       },
       "battery_mode": {
         "name": "Battery Mode"
@@ -96,22 +96,22 @@
         "name": "Alarm State"
       },
       "e_discharge": {
-        "name": "Energia - Battery Discharge Totalee"
+        "name": "Energia - Battery Discharge Kokku"
       },
       "house_igrid_l2": {
-        "name": "Corrente AC - House Fase B"
+        "name": "AC vool - House Faas B"
       },
       "state_of_health": {
         "name": "State of Health"
       },
       "house_igrid_l3": {
-        "name": "Corrente AC - House Fase C"
+        "name": "AC vool - House Faas C"
       },
       "country_std": {
         "name": "Country grid standard setting"
       },
       "house_pgrid_l1": {
-        "name": "Potenza AC - House Fase A"
+        "name": "AC võimsus - House Faas A"
       },
       "split_phase": {
         "name": "Split-phase configuration flag"
@@ -126,103 +126,103 @@
         "name": "System Time"
       },
       "house_pgrid_l2": {
-        "name": "Potenza AC - House Fase B"
+        "name": "AC võimsus - House Faas B"
       },
       "state_of_charge": {
         "name": "State of Charge"
       },
       "house_igrid_l1": {
-        "name": "Corrente AC - House Fase A"
+        "name": "AC vool - House Faas A"
       },
       "house_pgrid_l3": {
-        "name": "Potenza AC - House Fase C"
+        "name": "AC võimsus - House Faas C"
       },
       "batt_num": {
         "name": "Number of battery cells or modules"
       },
       "amps_phaseb": {
-        "name": "Corrente AC - Fase B"
+        "name": "AC vool - Faas B"
       },
       "dc_voltage_2": {
-        "name": "Tensione DC - Stringa 2"
+        "name": "DC pinge - Ahel 2"
       },
       "day_wh": {
         "name": "Energia - Today"
       },
       "v_bulk_mid": {
-        "name": "Tensione DC - Bus Midpoint"
+        "name": "DC pinge - Bus Midpoint"
       },
       "wlan0_mode": {
         "name": "WiFi Mode"
       },
       "v_bulk": {
-        "name": "Tensione DC - Bulk Capacitor"
+        "name": "DC pinge - Bulk Capacitor"
       },
       "week_wh": {
         "name": "Energia - Last 7 Days"
       },
       "watthours": {
-        "name": "Energia AC - Totalee"
+        "name": "AC energia - Kokku"
       },
       "global_st": {
-        "name": "Global Stato"
+        "name": "Global Olek"
       },
       "dc_voltage_1": {
-        "name": "Tensione DC - Stringa 1"
+        "name": "DC pinge - Ahel 1"
       },
       "hz_c": {
-        "name": "Frequenza AC - Fase C"
+        "name": "AC sagedus - Faas C"
       },
       "amps_phasea": {
-        "name": "Corrente AC - Fase A"
+        "name": "AC vool - Faas A"
       },
       "power_peak_today": {
         "name": "Power - Peak Today"
       },
       "power_peak_abs": {
-        "name": "Power - Peak Totalee"
+        "name": "Power - Peak Kokku"
       },
       "cabinet_temperature": {
-        "name": "Temperatura - Armadio"
+        "name": "Temperatuur - Kapp"
       },
       "pn": {
         "name": "Product number"
       },
       "dc_st1": {
-        "name": "DC Input 1 Stato"
+        "name": "DC Input 1 Olek"
       },
       "phase_voltage_bn": {
-        "name": "Tensione AC - Fase B-N"
+        "name": "AC pinge - Faas B-N"
       },
       "wlan0_ipaddr_local": {
         "name": "WiFi Local IP"
       },
       "dc_st2": {
-        "name": "DC Input 2 Stato"
+        "name": "DC Input 2 Olek"
       },
       "firmware_version": {
-        "name": "Firmware Versione"
+        "name": "Firmware Versioon"
       },
       "month_wh": {
         "name": "Energia - Last 30 Days"
       },
       "dc_power_2": {
-        "name": "Potenza DC - Stringa 2"
+        "name": "DC võimsus - Ahel 2"
       },
       "pf": {
-        "name": "Fattore di Potenza"
+        "name": "Võimsustegur"
       },
       "hz_a": {
-        "name": "Frequenza AC - Fase A"
+        "name": "AC sagedus - Faas A"
       },
       "dc_power_1": {
-        "name": "Potenza DC - Stringa 1"
+        "name": "DC võimsus - Ahel 1"
       },
       "ph_vph_b_c": {
-        "name": "Tensione AC - Fase B-C"
+        "name": "AC pinge - Faas B-C"
       },
       "hz_b": {
-        "name": "Frequenza AC - Fase B"
+        "name": "AC sagedus - Faas B"
       },
       "isolation_ohm1": {
         "name": "Resistance - Insulation"
@@ -231,37 +231,37 @@
         "name": "Available flash storage"
       },
       "dc_watts": {
-        "name": "Potenza DC"
+        "name": "DC võimsus"
       },
       "phase_voltage_cn": {
-        "name": "Tensione AC - Fase C-N"
+        "name": "AC pinge - Faas C-N"
       },
       "alarm_st": {
-        "name": "Alarm Stato"
+        "name": "Alarm Olek"
       },
       "wlan0_link_quality": {
         "name": "WiFi link quality percentage"
       },
       "ph_vph_a_b": {
-        "name": "Tensione AC - Fase A-B"
+        "name": "AC pinge - Faas A-B"
       },
       "v_gnd": {
         "name": "Voltage - Ground"
       },
       "i_leak_dc_ac": {
-        "name": "Corrente DC - Leakage DC-AC"
+        "name": "DC vool - Leakage DC-AC"
       },
       "free_ram": {
         "name": "Available RAM"
       },
       "i_leak_dc_dc": {
-        "name": "Corrente DC - Leakage DC-DC"
+        "name": "DC vool - Leakage DC-DC"
       },
       "amps_phasec": {
-        "name": "Corrente AC - Fase C"
+        "name": "AC vool - Faas C"
       },
       "ph_vph_c_a": {
-        "name": "Tensione AC - Fase C-A"
+        "name": "AC pinge - Faas C-A"
       },
       "storage_size": {
         "name": "Flash storage used"
@@ -270,7 +270,7 @@
         "name": "Serial number"
       },
       "dc_current_1": {
-        "name": "Corrente DC - Stringa 1"
+        "name": "DC vool - Ahel 1"
       },
       "year_wh": {
         "name": "Energia - Last Year"
@@ -279,28 +279,28 @@
         "name": "WiFi SSID"
       },
       "dc_current_2": {
-        "name": "Corrente DC - Stringa 2"
+        "name": "DC vool - Ahel 2"
       },
       "booster_tmp": {
-        "name": "Temperatura - Booster"
+        "name": "Temperatuur - Booster"
       },
       "system_uptime": {
         "name": "System Uptime"
       },
       "other_temperature": {
-        "name": "Temperatura - Altro"
+        "name": "Temperatuur - Muu"
       },
       "inverter_st": {
-        "name": "Inverter Stato"
+        "name": "Inverter Olek"
       },
       "system_load": {
         "name": "System load average"
       },
       "type": {
-        "name": "Tipo"
+        "name": "Tüüp"
       },
       "e2_last_week": {
-        "name": "Energia AC Apparente - Last 7 Days"
+        "name": "AC energia Näiv - Last 7 Days"
       },
       "e5_last_month": {
         "name": "Energia - Battery Charge Last 30 Days"
@@ -309,28 +309,28 @@
         "name": "Energia - Battery Charge Last 7 Days"
       },
       "e15_lifetime": {
-        "name": "Energia AC - Backup Output Since Restart"
+        "name": "AC energia - Backup Output Since Restart"
       },
       "di0_mode": {
         "name": "Digital Input 0 Mode"
       },
       "tc_max": {
-        "name": "Temperatura - Armadio Max"
+        "name": "Temperatuur - Kapp Max"
       },
       "tba": {
-        "name": "Temperatura - Battery"
+        "name": "Temperatuur - Battery"
       },
       "batt_ext_ctrl_state": {
         "name": "Battery Control State"
       },
       "meter_vgrid_l3": {
-        "name": "Tensione AC - Contatore Fase C"
+        "name": "AC pinge - Arvestaja Faas C"
       },
       "pin1": {
-        "name": "Potenza DC - Stringa 1"
+        "name": "DC võimsus - Ahel 1"
       },
       "e_dt": {
-        "name": "Totale energy from direct transducer (DT)"
+        "name": "Kokku energy from direct transducer (DT)"
       },
       "pac_derating_flags": {
         "name": "AC Power Derating Flags"
@@ -342,85 +342,85 @@
         "name": "Energia - House from Inverter Last 30 Days"
       },
       "iin2": {
-        "name": "Corrente DC - Stringa 2"
+        "name": "DC vool - Ahel 2"
       },
       "e_total_apparent": {
-        "name": "Energia AC Apparente - Totalee"
+        "name": "AC energia Näiv - Kokku"
       },
       "ein2": {
-        "name": "DC energy (Stringa 2) - Totalee"
+        "name": "DC energy (Ahel 2) - Kokku"
       },
       "meter_qgrid_l3": {
-        "name": "Potenza Reattiva AC - Contatore Fase C"
+        "name": "Reaktiivvõimsus AC - Arvestaja Faas C"
       },
       "d_c2_state": {
         "name": "DC Input 2 State"
       },
       "ein1": {
-        "name": "DC energy (Stringa 1) - Totalee"
+        "name": "DC energy (Ahel 1) - Kokku"
       },
       "di_status": {
-        "name": "Digital Input Stato"
+        "name": "Digital Input Olek"
       },
       "glob_state": {
         "name": "Global operational state"
       },
       "meter_fgrid": {
-        "name": "Frequenza AC - Contatore"
+        "name": "AC sagedus - Arvestaja"
       },
       "e4_last_week": {
         "name": "Self-consumed energy - Last 7 Days"
       },
       "iin1": {
-        "name": "Corrente DC - Stringa 1"
+        "name": "DC vool - Ahel 1"
       },
       "e0_last_month": {
-        "name": "Energia AC - Produced Last 30 Days"
+        "name": "AC energia - Produced Last 30 Days"
       },
       "house_pgrid_tot": {
-        "name": "Potenza AC - House Load Totale"
+        "name": "AC võimsus - House Load Kokku"
       },
       "e15_last_week": {
-        "name": "Energia AC - Backup Output Last 7 Days"
+        "name": "AC energia - Backup Output Last 7 Days"
       },
       "input_mode": {
         "name": "Input Mode"
       },
       "pin": {
-        "name": "Potenza DC - Input Totale"
+        "name": "DC võimsus - Input Kokku"
       },
       "e5_lifetime": {
         "name": "Energia - Battery Charge Since Restart"
       },
       "meter_igrid_l1": {
-        "name": "Corrente AC - Contatore Fase A"
+        "name": "AC vool - Arvestaja Faas A"
       },
       "e6_total": {
-        "name": "Energia - House from Inverter Totalee"
+        "name": "Energia - House from Inverter Kokku"
       },
       "meter_pgrid_tot": {
-        "name": "Potenza AC - Contatore Totale"
+        "name": "AC võimsus - Arvestaja Kokku"
       },
       "cos_phi": {
-        "name": "Fattore di Potenza"
+        "name": "Võimsustegur"
       },
       "clock_state": {
         "name": "Clock State"
       },
       "e8_lifetime": {
-        "name": "Energia AC - Rete Importata Since Restart"
+        "name": "AC energia - Võrk Imporditud Since Restart"
       },
       "e_tot_discharge_last_week": {
-        "name": "Energia - Battery Discharge Totale Last 7 Days"
+        "name": "Energia - Battery Discharge Kokku Last 7 Days"
       },
       "meter_vgrid_l1": {
-        "name": "Tensione AC - Contatore Fase A"
+        "name": "AC pinge - Arvestaja Faas A"
       },
       "vgrid_l2_n": {
-        "name": "Tensione AC - Fase B-N"
+        "name": "AC pinge - Faas B-N"
       },
       "e2_lifetime": {
-        "name": "Energia AC Apparente - Since Restart"
+        "name": "AC energia Näiv - Since Restart"
       },
       "house_p_inverter": {
         "name": "Power - Home PV"
@@ -435,28 +435,28 @@
         "name": "Voltage - Shunt"
       },
       "ileak_d_c": {
-        "name": "Corrente DC - Leakage"
+        "name": "DC vool - Leakage"
       },
       "e15_last_month": {
-        "name": "Energia AC - Backup Output Last 30 Days"
+        "name": "AC energia - Backup Output Last 30 Days"
       },
       "p_ch": {
         "name": "Power - Battery Charge"
       },
       "e_ct": {
-        "name": "Totale energy from current transformer (CT)"
+        "name": "Kokku energy from current transformer (CT)"
       },
       "grid_ext_ctrl_state": {
-        "name": "Rete External Control State"
+        "name": "Võrk External Control State"
       },
       "m126_mod_ena": {
-        "name": "Modello 126 Enabled"
+        "name": "Mudel 126 Enabled"
       },
       "e5_last_week": {
         "name": "Energia - Battery Charge Last 7 Days"
       },
       "e_tot_discharge_last_month": {
-        "name": "Energia - Battery Discharge Totale Last 30 Days"
+        "name": "Energia - Battery Discharge Kokku Last 30 Days"
       },
       "e_charge_last_month": {
         "name": "Energia - Battery Charge Last 30 Days"
@@ -465,13 +465,13 @@
         "name": "Self-consumed energy - Since Restart"
       },
       "e7_total": {
-        "name": "Energia - House Consumption Totalee"
+        "name": "Energia - House Consumption Kokku"
       },
       "fan2rpm": {
         "name": "Speed - Fan 2"
       },
       "meter_qgrid_l1": {
-        "name": "Potenza Reattiva AC - Contatore Fase A"
+        "name": "Reaktiivvõimsus AC - Arvestaja Faas A"
       },
       "vgnd": {
         "name": "Voltage - Ground"
@@ -489,7 +489,7 @@
         "name": "Energia - Battery Discharge Last 7 Days"
       },
       "pin2": {
-        "name": "Potenza DC - Stringa 2"
+        "name": "DC võimsus - Ahel 2"
       },
       "e6_lifetime": {
         "name": "Energia - House from Inverter Since Restart"
@@ -498,79 +498,79 @@
         "name": "Energia - House Consumption Last 30 Days"
       },
       "temp_bst": {
-        "name": "Temperatura - Booster"
+        "name": "Temperatuur - Booster"
       },
       "e_charge_lifetime": {
         "name": "Energia - Battery Charge Since Restart"
       },
       "e3_last_week": {
-        "name": "Energia AC - Rete Esportata Last 7 Days"
+        "name": "AC energia - Võrk Eksporditud Last 7 Days"
       },
       "pac_stand_alone": {
-        "name": "Potenza AC - Stand Alone Mode"
+        "name": "AC võimsus - Stand Alone Mode"
       },
       "meter_pgrid_l3": {
-        "name": "Potenza AC - Contatore Fase C"
+        "name": "AC võimsus - Arvestaja Faas C"
       },
       "vin2": {
-        "name": "Tensione DC - Input 2"
+        "name": "DC pinge - Input 2"
       },
       "e8_last_month": {
-        "name": "Energia AC - Rete Importata Last 30 Days"
+        "name": "AC energia - Võrk Imporditud Last 30 Days"
       },
       "grid_ext_ctrl_ena": {
-        "name": "Rete External Control Enabled"
+        "name": "Võrk External Control Enabled"
       },
       "e0_last_week": {
-        "name": "Energia AC - Produced Last 7 Days"
+        "name": "AC energia - Produced Last 7 Days"
       },
       "e0_1_year": {
-        "name": "Energia AC - Produced Last Year"
+        "name": "AC energia - Produced Last Year"
       },
       "frt_state": {
         "name": "Fault Ride Through (FRT) status"
       },
       "qac_derating_flags": {
-        "name": "Potenza Reattiva Derating"
+        "name": "Reaktiivvõimsus Derating"
       },
       "meter_qgrid_tot": {
-        "name": "Potenza Reattiva AC - Contatore Totale"
+        "name": "Reaktiivvõimsus AC - Arvestaja Kokku"
       },
       "ileak_inv": {
         "name": "Current - Inverter Leakage"
       },
       "e2_last_month": {
-        "name": "Energia AC Apparente - Last 30 Days"
+        "name": "AC energia Näiv - Last 30 Days"
       },
       "energy_policy": {
         "name": "Energia Policy"
       },
       "sac_derating_flags": {
-        "name": "Potenza Apparentee Derating"
+        "name": "Näiv võimsus Derating"
       },
       "pba_t": {
-        "name": "Power - Battery Totale"
+        "name": "Power - Battery Kokku"
       },
       "e_tot_charge_last_week": {
-        "name": "Energia - Battery Charge Totale Last 7 Days"
+        "name": "Energia - Battery Charge Kokku Last 7 Days"
       },
       "meter_pgrid_l2": {
-        "name": "Potenza AC - Contatore Fase B"
+        "name": "AC võimsus - Arvestaja Faas B"
       },
       "meter_igrid_l2": {
-        "name": "Corrente AC - Contatore Fase B"
+        "name": "AC vool - Arvestaja Faas B"
       },
       "temp1": {
-        "name": "Temperatura - Sensor 1"
+        "name": "Temperatuur - Sensor 1"
       },
       "e_tot_charge": {
-        "name": "Energia - Battery Charge Totale Totalee"
+        "name": "Energia - Battery Charge Kokku Kokku"
       },
       "e_grid_import": {
-        "name": "Energia AC - Rete Importata Totalee"
+        "name": "AC energia - Võrk Imporditud Kokku"
       },
       "tc_min": {
-        "name": "Temperatura - Armadio Min"
+        "name": "Temperatuur - Kapp Min"
       },
       "iba": {
         "name": "Current - Battery"
@@ -591,28 +591,28 @@
         "name": "Count - Battery Cycles"
       },
       "w_rtg": {
-        "name": "Power - Potenza Nominale"
+        "name": "Power - Nimivõimsus"
       },
       "e_total_absorbed": {
-        "name": "Energia AC - Absorbed Totalee"
+        "name": "AC energia - Absorbed Kokku"
       },
       "di1_mode": {
         "name": "Digital Input 1 Mode"
       },
       "e1_last_month": {
-        "name": "Energia AC - Absorbed Last 30 Days"
+        "name": "AC energia - Absorbed Last 30 Days"
       },
       "e1_last_week": {
-        "name": "Energia AC - Absorbed Last 7 Days"
+        "name": "AC energia - Absorbed Last 7 Days"
       },
       "meter_vgrid_l2": {
-        "name": "Tensione AC - Contatore Fase B"
+        "name": "AC pinge - Arvestaja Faas B"
       },
       "meter_igrid_l3": {
-        "name": "Corrente AC - Contatore Fase C"
+        "name": "AC vool - Arvestaja Faas C"
       },
       "e_total": {
-        "name": "Energia AC - Produced Totalee"
+        "name": "AC energia - Produced Kokku"
       },
       "e6_last_week": {
         "name": "Energia - House from Inverter Last 7 Days"
@@ -621,22 +621,22 @@
         "name": "Inverter State"
       },
       "e0_lifetime": {
-        "name": "Energia AC - Produced Since Restart"
+        "name": "AC energia - Produced Since Restart"
       },
       "d_c1_state": {
         "name": "DC Input 1 State"
       },
       "ein": {
-        "name": "Energia DC - PV Input Totalee"
+        "name": "Energia DC - PV Input Kokku"
       },
       "ein_lifetime": {
         "name": "Energia DC - PV Input Since Restart"
       },
       "temp_inv": {
-        "name": "Temperatura - Inverter"
+        "name": "Temperatuur - Inverter"
       },
       "m132_mod_ena": {
-        "name": "Modello 132 Enabled"
+        "name": "Mudel 132 Enabled"
       },
       "detected_battery_number": {
         "name": "Detected Battery Number"
@@ -648,19 +648,19 @@
         "name": "Self-consumed energy - Last 30 Days"
       },
       "e_tot_discharge": {
-        "name": "Energia - Battery Discharge Totale Totalee"
+        "name": "Energia - Battery Discharge Kokku Kokku"
       },
       "e3_lifetime": {
-        "name": "Energia AC - Rete Esportata Since Restart"
+        "name": "AC energia - Võrk Eksporditud Since Restart"
       },
       "warning_flags": {
         "name": "Warning Flags"
       },
       "e_tot_charge_lifetime": {
-        "name": "Energia - Battery Charge Totale Since Restart"
+        "name": "Energia - Battery Charge Kokku Since Restart"
       },
       "pba": {
-        "name": "Power - Battery Totale"
+        "name": "Power - Battery Kokku"
       },
       "vc_min": {
         "name": "Voltage - Battery Cell Min"
@@ -669,7 +669,7 @@
         "name": "Power - Battery Discharge"
       },
       "e_backup": {
-        "name": "Energia AC - Backup Output Totalee"
+        "name": "AC energia - Backup Output Kokku"
       },
       "e7_last_week": {
         "name": "Energia - House Consumption Last 7 Days"
@@ -678,37 +678,37 @@
         "name": "Energia - Battery Discharge Last 30 Days"
       },
       "meter_qgrid_l2": {
-        "name": "Potenza Reattiva AC - Contatore Fase B"
+        "name": "Reaktiivvõimsus AC - Arvestaja Faas B"
       },
       "pac_togrid": {
-        "name": "Potenza AC - Esportata to Rete"
+        "name": "AC võimsus - Eksporditud to Võrk"
       },
       "e_tot_discharge_lifetime": {
-        "name": "Energia - Battery Discharge Totale Since Restart"
+        "name": "Energia - Battery Discharge Kokku Since Restart"
       },
       "e_tot_charge_last_month": {
-        "name": "Energia - Battery Charge Totale Last 30 Days"
+        "name": "Energia - Battery Charge Kokku Last 30 Days"
       },
       "e_grid_export": {
-        "name": "Energia AC - Rete Esportata Totalee"
+        "name": "AC energia - Võrk Eksporditud Kokku"
       },
       "num_of_mppt": {
         "name": "Count - MPPT Channels"
       },
       "vin1": {
-        "name": "Tensione DC - Input 1"
+        "name": "DC pinge - Input 1"
       },
       "e8_last_week": {
-        "name": "Energia AC - Rete Importata Last 7 Days"
+        "name": "AC energia - Võrk Imporditud Last 7 Days"
       },
       "e1_lifetime": {
-        "name": "Energia AC - Absorbed Since Restart"
+        "name": "AC energia - Absorbed Since Restart"
       },
       "t_soc": {
         "name": "Battery State of Charge"
       },
       "meter_pgrid_l1": {
-        "name": "Potenza AC - Contatore Fase A"
+        "name": "AC võimsus - Arvestaja Faas A"
       },
       "riso": {
         "name": "Resistance - Insulation"
@@ -717,28 +717,28 @@
         "name": "Energia DC - PV Input Last 30 Days"
       },
       "vgrid_l1_n": {
-        "name": "Tensione AC - Fase A-N"
+        "name": "AC pinge - Faas A-N"
       },
       "e3_last_month": {
-        "name": "Energia AC - Rete Esportata Last 30 Days"
+        "name": "AC energia - Võrk Eksporditud Last 30 Days"
       },
       "mfg_part_number": {
         "name": "Part Number"
       },
       "mfg_serial_number": {
-        "name": "Numero di Serie"
+        "name": "Seerianumber"
       },
       "mfg_week_year": {
         "name": "Manufacturing Week/Year"
       },
       "logger_sn": {
-        "name": "Logger Numero di Serie"
+        "name": "Logger Seerianumber"
       },
       "fw_build_date": {
         "name": "Firmware Build Date"
       },
       "fw_release_number": {
-        "name": "Firmware Versione"
+        "name": "Firmware Versioon"
       },
       "fw_build_number": {
         "name": "Firmware Build Hash"
@@ -747,22 +747,22 @@
         "name": "Firmware Revision"
       },
       "logger_board_model": {
-        "name": "Logger Board Modello"
+        "name": "Logger Board Mudel"
       },
       "device_name": {
-        "name": "Dispositivo 2 Name"
+        "name": "Seade 2 Name"
       },
       "device_type": {
-        "name": "Dispositivo 2 Tipo"
+        "name": "Seade 2 Tüüp"
       },
       "fw_version": {
-        "name": "Fw Versione"
+        "name": "Fw Versioon"
       },
       "logger_hostname": {
         "name": "Logger Hostname"
       },
       "model_type": {
-        "name": "Modello Tipo"
+        "name": "Mudel Tüüp"
       },
       "inverter_id": {
         "name": "Inverter ID"
@@ -771,19 +771,19 @@
         "name": "Communication Protocol"
       },
       "model_description": {
-        "name": "Modello Description"
+        "name": "Mudel Description"
       },
       "wlan_fsm_status": {
-        "name": "WiFi FSM Stato"
+        "name": "WiFi FSM Olek"
       },
       "wlan_0_status": {
-        "name": "WiFi Stato"
+        "name": "WiFi Olek"
       },
       "inverter_time": {
         "name": "Inverter Time"
       },
       "wlan_ap_status": {
-        "name": "WiFi AP Stato"
+        "name": "WiFi AP Olek"
       },
       "wlan_0_dhcp_state": {
         "name": "WiFi DHCP State"

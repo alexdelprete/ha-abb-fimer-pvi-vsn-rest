@@ -41,6 +41,7 @@ After extensive testing through **29 beta releases**, the integration is now **p
 ### What's Next
 
 This stable release marks the completion of the beta testing phase. Future releases will follow semantic versioning:
+
 - **Patch releases** (1.0.x): Bug fixes and minor improvements
 - **Minor releases** (1.x.0): New features and enhancements
 - **Major releases** (x.0.0): Breaking changes (if needed)
@@ -658,11 +659,13 @@ Attributes:
 ### Technical Details
 
 **Scripts Added:**
+
 - `scripts/analyze_and_deduplicate_mapping.py` - Mapping analysis and deduplication
 - `scripts/apply_mapping_fixes.py` - Automated description/category fixes
 - `scripts/convert_excel_to_json_v2.py` - Excel→JSON converter for new structure
 
 **Files Modified:**
+
 - `sensor.py` - Complete rewrite of entity naming logic
 - `mapping_loader.py` - Handle models array
 - `normalizer.py` - Join models for display

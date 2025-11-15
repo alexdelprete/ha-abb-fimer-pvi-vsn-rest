@@ -139,6 +139,34 @@ The integration uses Home Assistant's modern entity naming pattern (`has_entity_
 - Friendly names make entities easy to identify in the UI
 - Device page groups all entities by device for easy management
 
+### Supported Languages
+
+The integration includes native translations for entity names in 10 European languages:
+
+| Language | Code | Status |
+|----------|------|--------|
+| English | `en` | ✅ Complete (258 sensors) |
+| Italian | `it` | ✅ Complete (258 sensors) |
+| French | `fr` | ✅ Complete (258 sensors) |
+| Spanish | `es` | ✅ Complete (258 sensors) |
+| Portuguese | `pt` | ✅ Complete (258 sensors) |
+| German | `de` | ✅ Complete (258 sensors) |
+| Swedish | `sv` | ✅ Complete (258 sensors) |
+| Norwegian Bokmål | `nb` | ✅ Complete (258 sensors) |
+| Finnish | `fi` | ✅ Complete (258 sensors) |
+| Estonian | `et` | ✅ Complete (258 sensors) |
+
+**Automatic Language Selection**: Home Assistant automatically selects the appropriate language based on your system settings. No configuration needed!
+
+**Examples**:
+
+- **English**: `Power-One Inverter PVI-10.0-OUTD (077909-3G82-3112) Power AC`
+- **Italian**: `Power-One Inverter PVI-10.0-OUTD (077909-3G82-3112) Potenza AC`
+- **French**: `Power-One Inverter PVI-10.0-OUTD (077909-3G82-3112) Puissance AC`
+- **German**: `Power-One Inverter PVI-10.0-OUTD (077909-3G82-3112) AC-Leistung`
+
+**Note**: Device names (manufacturer, model, serial) remain in their original format. Only measurement names are translated.
+
 ### Device Information
 
 Each device includes complete metadata:
@@ -302,23 +330,53 @@ For details, see [MAPPING_NOTES.md](docs/MAPPING_NOTES.md).
 
 ## Translations
 
-The integration is available in multiple languages:
+The integration includes complete translations for entity names in **10 European languages**:
 
-- 🇬🇧 **English** (`en.json`) - Complete
-- 🇮🇹 **Italian** (`it.json`) - Complete
+- 🇬🇧 **English** (`en.json`) - 258 sensors
+- 🇮🇹 **Italian** (`it.json`) - 258 sensors
+- 🇫🇷 **French** (`fr.json`) - 258 sensors
+- 🇪🇸 **Spanish** (`es.json`) - 258 sensors
+- 🇵🇹 **Portuguese** (`pt.json`) - 258 sensors
+- 🇩🇪 **German** (`de.json`) - 258 sensors
+- 🇸🇪 **Swedish** (`sv.json`) - 258 sensors
+- 🇳🇴 **Norwegian** (`nb.json`) - 258 sensors
+- 🇫🇮 **Finnish** (`fi.json`) - 258 sensors
+- 🇪🇪 **Estonian** (`et.json`) - 258 sensors
 
-The integration automatically uses the language configured in your Home Assistant
-instance. All UI strings, error messages, and configuration flows are fully
-translated.
+The integration automatically uses the language configured in your Home Assistant instance. All UI strings, error messages, configuration flows, and **entity names** are fully translated.
 
 ### Contributing Translations
 
-To add a new language:
+Want to add a new language or improve existing translations? Here's how:
 
-1. Copy `translations/en.json` to `translations/[language_code].json`
-2. Translate all strings to the target language
-3. Maintain the JSON structure and placeholders (e.g., `{current_host}`)
-4. Submit a pull request
+**For Entity Names** (258 sensors in `entity.sensor` section):
+
+1. Fork the repository
+2. Copy `translations/en.json` to `translations/[language_code].json`
+   - Use [ISO 639-1 language codes](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) (e.g., `nl` for Dutch, `da` for Danish)
+3. Translate the `entity.sensor` section:
+   ```json
+   "entity": {
+     "sensor": {
+       "watts": { "name": "Your Translation Here" },
+       "dc_voltage_1": { "name": "Your Translation Here" },
+       ...
+     }
+   }
+   ```
+
+4. Keep the `config` and `options` sections from `en.json` (or translate those too!)
+5. Test with your Home Assistant instance (set HA language to your new language)
+6. Submit a pull request
+
+**Translation Tips**:
+
+- Maintain technical accuracy (e.g., "Power AC" should remain related to AC power)
+- Keep translations concise (they appear in entity names)
+- Preserve measurement context (e.g., distinguish "Voltage DC - String 1" from "Voltage AC")
+- Review existing languages for consistency
+
+**Questions?** Open a [GitHub Discussion](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/discussions) - the community is happy to help!
 
 See [translations/](custom_components/abb_fimer_pvi_vsn_rest/translations/) for existing translations.
 
@@ -334,25 +392,38 @@ custom_components/abb_fimer_pvi_vsn_rest/
 ├── config_flow.py           # UI configuration
 ├── coordinator.py           # Data update coordinator
 ├── sensor.py                # Sensor platform
-├── const.py                 # Constants
+├── const.py                 # Constants and state mappings
 ├── manifest.json            # Integration manifest
-├── strings.json             # UI strings
-├── translations/
-│   ├── en.json             # English translations
-│   └── it.json             # Italian translations
-└── abb_fimer_vsn_rest_client/
+├── translations/            # Entity name translations (10 languages)
+│   ├── de.json             # German
+│   ├── en.json             # English
+│   ├── es.json             # Spanish
+│   ├── et.json             # Estonian
+│   ├── fi.json             # Finnish
+│   ├── fr.json             # French
+│   ├── it.json             # Italian
+│   ├── nb.json             # Norwegian Bokmål
+│   ├── pt.json             # Portuguese
+│   └── sv.json             # Swedish
+└── abb_fimer_vsn_rest_client/  # Client library
+    ├── __init__.py         # Library exports
     ├── client.py           # REST API client
-    ├── auth.py             # Authentication handling
-    ├── discovery.py        # Device discovery
-    ├── normalizer.py       # Data normalization
+    ├── auth.py             # Authentication (VSN300/VSN700)
+    ├── discovery.py        # VSN model and device discovery
+    ├── normalizer.py       # VSN→SunSpec data normalization
+    ├── mapping_loader.py   # Mapping file loader
+    ├── models.py           # Data models
+    ├── utils.py            # Helper utilities
     ├── exceptions.py       # Custom exceptions
-    └── mapping/            # VSN→SunSpec mapping files
+    └── data/               # Client library resources
+        └── vsn-sunspec-point-mapping.json  # VSN→SunSpec mapping (258 points)
 ```
 
 ## Related Projects
 
 - **[ha-abb-fimer-pvi-sunspec](https://github.com/alexdelprete/ha-abb-fimer-pvi-sunspec)**
   Direct Modbus/TCP integration (no datalogger required)
+
 - **[ha-abb-powerone-pvi-sunspec](https://github.com/alexdelprete/ha-abb-powerone-pvi-sunspec)**
   Legacy v4.x integration (Modbus only)
 

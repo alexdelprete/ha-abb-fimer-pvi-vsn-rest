@@ -48,6 +48,7 @@ This raised the question: **Which source provides the correct, specification-com
 ### Points Analyzed (11 total)
 
 **Power Measurements (6 points)**:
+
 - `m103_1_DCW` - DC Power
 - `m103_1_W` - AC Power Output
 - `m103_1_PowerPeakAbs` - Absolute Peak Power
@@ -56,6 +57,7 @@ This raised the question: **Which source provides the correct, specification-com
 - `m160_1_DCW_2` - DC Power String 2
 
 **Energy Measurements (5 points)**:
+
 - `m103_1_WH` - Lifetime Energy
 - `m64061_1_DayWH` - Daily Energy
 - `m64061_1_WeekWH` - Weekly Energy
@@ -121,6 +123,7 @@ From `models_workbook.xlsx` Model 103 specifications:
 | 35 | DCW | int16 | **W** | DCW_SF | DC Power |
 
 **Key Observations**:
+
 - Power points explicitly specify **W** (Watts)
 - Energy points explicitly specify **Wh** (Watt-hours)
 - Scale factors (SF) allow for decimal precision, but units remain W/Wh
@@ -134,6 +137,7 @@ From `models_workbook.xlsx` Model 160 specifications:
 | 13 | DCW | uint16 | **W** | DCW_SF | DC Power per string |
 
 **Key Observations**:
+
 - DC power per string explicitly specified as **W**
 
 ### Model 64061 (ABB Proprietary)
@@ -150,6 +154,7 @@ From `ABB_SunSpec_Modbus.xlsx` Model 64061 specifications:
 | PowerPeakToday | Daily peak power | float32 | (not explicit) | Today's peak power |
 
 **Key Observations**:
+
 - Units not explicitly listed in ABB spec
 - However, SunSpec naming convention: **"WH" suffix = Wh units**
 - Power measurements follow convention: **W units**
@@ -176,6 +181,7 @@ The integration **correctly uses `/v1/livedata`** as its data source, which prov
 ### Feeds Endpoint Purpose
 
 The `/v1/feeds` endpoint appears to provide:
+
 - Historical time-series data
 - **Display-friendly unit conversions** (kW, kWh)
 - Metadata (titles, descriptions)
@@ -189,6 +195,7 @@ The `/v1/feeds` endpoint appears to provide:
 ### 1. Use Livedata as Source of Truth ✅
 
 **Rationale**:
+
 - Provides SunSpec specification-compliant values
 - Uses base SI units (W, Wh)
 - Ensures consistency with Modbus-based integrations
@@ -197,6 +204,7 @@ The `/v1/feeds` endpoint appears to provide:
 ### 2. Specify W/Wh in Mapping File ✅
 
 The mapping file must specify:
+
 - **Power measurements**: W (not kW)
 - **Energy measurements**: Wh (not kWh)
 
@@ -209,6 +217,7 @@ Home Assistant's Energy Dashboard **requires Wh units** for energy sensors to fu
 ### 4. Unit Display Preferences
 
 Users can configure unit display in Home Assistant UI:
+
 - W can be displayed as kW for high power values
 - Wh can be displayed as kWh for large energy values
 - This is handled by HA frontend, not the integration
@@ -216,6 +225,7 @@ Users can configure unit display in Home Assistant UI:
 ### 5. Ignore Feeds Units for Runtime Data
 
 **Do NOT use feeds endpoint units** for the following reasons:
+
 - They are display conversions, not specification-compliant
 - They lose precision through double conversion
 - They break Energy Dashboard integration
@@ -272,6 +282,7 @@ Users can configure unit display in Home Assistant UI:
 **The livedata endpoint provides SunSpec specification-compliant values in W and Wh base units.** The integration correctly uses this endpoint. The mapping generator must be verified to ensure it specifies W/Wh units (from SunSpec specs) and not kW/kWh units (from feeds display metadata).
 
 This ensures:
+
 - ✅ SunSpec standard compliance
 - ✅ Maximum precision (no double conversion)
 - ✅ Consistency with Modbus implementations

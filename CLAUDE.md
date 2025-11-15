@@ -1043,6 +1043,7 @@ More details here.
 ### Feature Description
 This feature provides data normalization.
 **Key Benefits:**
+
 - Benefit 1
 - Benefit 2
 **Implementation:**

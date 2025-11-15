@@ -243,13 +243,13 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         # Result: sensor.abb_fimer_pvi_vsn_rest_inverter_0779093g823112_wlan0_essid
         self._attr_suggested_object_id = point_name
 
-        # Set entity name to friendly display name (what users see on device page)
-        # With has_entity_name=True, this is displayed as the entity name in UI
-        # Full friendly_name will be: "{device_name} {entity_name}"
-        # Example: "abb_fimer_pvi_vsn_rest_datalogger_1110333n161421 WiFi SSID"
-        self._attr_name = point_data.get(
-            "ha_display_name", point_data.get("label", point_name)
-        )
+        # Use translation system for entity names
+        # With has_entity_name=True, HA looks up entity.sensor.{translation_key}.name
+        # The point_name is used as the translation key (e.g., "watts", "dc_voltage_1")
+        # HA automatically picks correct language from translations/{language}.json
+        # Full friendly_name will be: "{device_name} {translated_name}"
+        # Example: "Power-One Inverter PVI-10.0-OUTD (077909-3G82-3112) Power AC"
+        self._attr_translation_key = self._point_name
 
         # Store device identifier and components for device_info
         self._device_identifier = device_identifier

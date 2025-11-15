@@ -138,6 +138,7 @@ When implementing data normalization in `abb_fimer_vsn_rest_client/normalizer.py
 1. **Handle duplicates**: Use special mapping for `ETotal`/`Ein` to avoid entity name conflicts
 2. **VSN700 priority**: When a point exists in both VSN300 and VSN700, prefer VSN700
    data (more direct, less processing)
+
 3. **Cross-references**: Use VSN300→VSN700 mapping for protocol fallback scenarios
 4. **Missing data**: Some points exist in feeds but not livedata (historical aggregations)
 

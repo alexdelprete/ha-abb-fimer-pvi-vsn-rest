@@ -61,8 +61,8 @@ class VSNMappingLoader:
         self._loaded = False
 
         if mapping_file_path is None:
-            # Default location: data/vsn-sunspec-point-mapping.json (bundled with component)
-            module_dir = Path(__file__).parent.parent
+            # Default location: data/vsn-sunspec-point-mapping.json (bundled with client library)
+            module_dir = Path(__file__).parent
             mapping_file_path = module_dir / "data" / "vsn-sunspec-point-mapping.json"
 
         self._mapping_file_path = Path(mapping_file_path)

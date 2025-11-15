@@ -3,50 +3,50 @@
     "step": {
       "user": {
         "title": "ABB/FIMER PVI VSN REST",
-        "description": "Connettiti al tuo datalogger ABB/FIMER VSN300 o VSN700.\n\nCredenziali predefinite: username='guest', password=(vuota)",
+        "description": "Connect to your ABB/FIMER VSN300 or VSN700 datalogger.\n\nDefault credentials: username='guest', password=(empty)",
         "data": {
-          "host": "Host (IP o hostname)",
-          "username": "Nome utente (opzionale, predefinito: guest)",
-          "password": "Password (opzionale, predefinita: vuota)"
+          "host": "Host (IP or hostname)",
+          "username": "Username (optional, default: guest)",
+          "password": "Password (optional, default: empty)"
         },
         "data_description": {
-          "host": "Indirizzo IP o hostname del dispositivo VSN (es., 192.168.1.100 o abb-vsn300.local)",
-          "username": "Nome utente per l'autenticazione. Lasciare vuoto per usare l'account predefinito 'guest'.",
-          "password": "Password per l'autenticazione. Lasciare vuota per l'account guest (nessuna password)."
+          "host": "IP address or hostname of your VSN device (e.g., 192.168.1.100 or abb-vsn300.local)",
+          "username": "Authentication username. Leave empty to use default 'guest' account.",
+          "password": "Authentication password. Leave empty for guest account (no password)."
         }
       },
       "reconfigure": {
-        "title": "Riconfigura ABB/FIMER PVI VSN REST",
-        "description": "Aggiorna le impostazioni di connessione per il dispositivo VSN.\n\nHost corrente: {current_host}",
+        "title": "Reconfigure ABB/FIMER PVI VSN REST",
+        "description": "Update the connection settings for your VSN device.\n\nCurrent host: {current_host}",
         "data": {
-          "host": "Host (IP o hostname)",
-          "username": "Nome utente",
+          "host": "Host (IP or hostname)",
+          "username": "Username",
           "password": "Password"
         }
       }
     },
     "error": {
-      "cannot_connect": "Impossibile connettersi al dispositivo. Verificare:\n• Il dispositivo è acceso\n• L'indirizzo IP o hostname è corretto\n• Il dispositivo è accessibile sulla rete\n• La porta 80 non è bloccata dal firewall",
-      "invalid_auth": "Autenticazione fallita. Verificare nome utente e password.\n\nPer la maggior parte dei dispositivi VSN, usare:\n• Nome utente: guest\n• Password: (vuota)",
-      "timeout": "Timeout della connessione. Il dispositivo non risponde.\n\nVerificare:\n• Il dispositivo è acceso e avviato\n• La connessione di rete è stabile\n• Nessun firewall blocca l'accesso",
-      "unknown": "Si è verificato un errore imprevisto. Controllare i log per maggiori dettagli."
+      "cannot_connect": "Failed to connect to the device. Please check:\n• Device is powered on\n• IP address or hostname is correct\n• Device is accessible on your network\n• Port 80 is not blocked by firewall",
+      "invalid_auth": "Authentication failed. Please check your username and password.\n\nFor most VSN devices, use:\n• Username: guest\n• Password: (empty)",
+      "timeout": "Connection timeout. The device is not responding.\n\nPlease check:\n• Device is powered on and booted\n• Network connection is stable\n• No firewall is blocking access",
+      "unknown": "Unexpected error occurred. Please check the logs for more details."
     },
     "abort": {
-      "already_configured": "Questo dispositivo è già configurato",
-      "reconfigure_successful": "Riconfigurazione riuscita! L'integrazione verrà ora ricaricata.",
-      "reconfigure_failed": "Riconfigurazione fallita. Riprovare o rimuovere e aggiungere nuovamente l'integrazione."
+      "already_configured": "This device is already configured",
+      "reconfigure_successful": "Reconfiguration successful! The integration will now reload.",
+      "reconfigure_failed": "Reconfiguration failed. Please try again or remove and re-add the integration."
     }
   },
   "options": {
     "step": {
       "init": {
-        "title": "Opzioni ABB/FIMER PVI VSN REST",
-        "description": "Configura l'intervallo di aggiornamento per il polling dei dati.",
+        "title": "ABB/FIMER PVI VSN REST Options",
+        "description": "Configure update interval for data polling.",
         "data": {
-          "scan_interval": "Intervallo di scansione (secondi)"
+          "scan_interval": "Scan interval (seconds)"
         },
         "data_description": {
-          "scan_interval": "Frequenza di recupero dati dal dispositivo VSN. Intervallo: 30-600 secondi. Predefinito: 60 secondi."
+          "scan_interval": "How often to fetch data from the VSN device. Range: 30-600 seconds. Default: 60 seconds."
         }
       }
     }
@@ -54,25 +54,25 @@
   "entity": {
     "sensor": {
       "watts": {
-        "name": "Potenza AC"
+        "name": "AC-teho"
       },
       "var": {
-        "name": "Potenza Reattiva - Rete Connection"
+        "name": "Loisteho - Verkko Connection"
       },
       "hz": {
-        "name": "Frequenza AC - Rete"
+        "name": "AC-taajuus - Verkko"
       },
       "amps": {
-        "name": "Corrente AC"
+        "name": "AC-virta"
       },
       "phase_voltage_an": {
-        "name": "Tensione AC - Fase A-N"
+        "name": "AC-jännite - Vaihe A-N"
       },
       "manufacturer": {
-        "name": "Produttore name"
+        "name": "Valmistaja name"
       },
       "model": {
-        "name": "Modello identifier"
+        "name": "Malli identifier"
       },
       "options": {
         "name": "Configuration options"
@@ -87,7 +87,7 @@
         "name": "Modbus address"
       },
       "e_charge": {
-        "name": "Energia - Battery Charge Totalee"
+        "name": "Energia - Battery Charge Yhteensä"
       },
       "battery_mode": {
         "name": "Battery Mode"
@@ -96,22 +96,22 @@
         "name": "Alarm State"
       },
       "e_discharge": {
-        "name": "Energia - Battery Discharge Totalee"
+        "name": "Energia - Battery Discharge Yhteensä"
       },
       "house_igrid_l2": {
-        "name": "Corrente AC - House Fase B"
+        "name": "AC-virta - House Vaihe B"
       },
       "state_of_health": {
         "name": "State of Health"
       },
       "house_igrid_l3": {
-        "name": "Corrente AC - House Fase C"
+        "name": "AC-virta - House Vaihe C"
       },
       "country_std": {
         "name": "Country grid standard setting"
       },
       "house_pgrid_l1": {
-        "name": "Potenza AC - House Fase A"
+        "name": "AC-teho - House Vaihe A"
       },
       "split_phase": {
         "name": "Split-phase configuration flag"
@@ -126,103 +126,103 @@
         "name": "System Time"
       },
       "house_pgrid_l2": {
-        "name": "Potenza AC - House Fase B"
+        "name": "AC-teho - House Vaihe B"
       },
       "state_of_charge": {
         "name": "State of Charge"
       },
       "house_igrid_l1": {
-        "name": "Corrente AC - House Fase A"
+        "name": "AC-virta - House Vaihe A"
       },
       "house_pgrid_l3": {
-        "name": "Potenza AC - House Fase C"
+        "name": "AC-teho - House Vaihe C"
       },
       "batt_num": {
         "name": "Number of battery cells or modules"
       },
       "amps_phaseb": {
-        "name": "Corrente AC - Fase B"
+        "name": "AC-virta - Vaihe B"
       },
       "dc_voltage_2": {
-        "name": "Tensione DC - Stringa 2"
+        "name": "DC-jännite - Ketju 2"
       },
       "day_wh": {
         "name": "Energia - Today"
       },
       "v_bulk_mid": {
-        "name": "Tensione DC - Bus Midpoint"
+        "name": "DC-jännite - Bus Midpoint"
       },
       "wlan0_mode": {
         "name": "WiFi Mode"
       },
       "v_bulk": {
-        "name": "Tensione DC - Bulk Capacitor"
+        "name": "DC-jännite - Bulk Capacitor"
       },
       "week_wh": {
         "name": "Energia - Last 7 Days"
       },
       "watthours": {
-        "name": "Energia AC - Totalee"
+        "name": "AC-energia - Yhteensä"
       },
       "global_st": {
-        "name": "Global Stato"
+        "name": "Global Tila"
       },
       "dc_voltage_1": {
-        "name": "Tensione DC - Stringa 1"
+        "name": "DC-jännite - Ketju 1"
       },
       "hz_c": {
-        "name": "Frequenza AC - Fase C"
+        "name": "AC-taajuus - Vaihe C"
       },
       "amps_phasea": {
-        "name": "Corrente AC - Fase A"
+        "name": "AC-virta - Vaihe A"
       },
       "power_peak_today": {
         "name": "Power - Peak Today"
       },
       "power_peak_abs": {
-        "name": "Power - Peak Totalee"
+        "name": "Power - Peak Yhteensä"
       },
       "cabinet_temperature": {
-        "name": "Temperatura - Armadio"
+        "name": "Lämpötila - Kaappi"
       },
       "pn": {
         "name": "Product number"
       },
       "dc_st1": {
-        "name": "DC Input 1 Stato"
+        "name": "DC Input 1 Tila"
       },
       "phase_voltage_bn": {
-        "name": "Tensione AC - Fase B-N"
+        "name": "AC-jännite - Vaihe B-N"
       },
       "wlan0_ipaddr_local": {
         "name": "WiFi Local IP"
       },
       "dc_st2": {
-        "name": "DC Input 2 Stato"
+        "name": "DC Input 2 Tila"
       },
       "firmware_version": {
-        "name": "Firmware Versione"
+        "name": "Firmware Versio"
       },
       "month_wh": {
         "name": "Energia - Last 30 Days"
       },
       "dc_power_2": {
-        "name": "Potenza DC - Stringa 2"
+        "name": "DC-teho - Ketju 2"
       },
       "pf": {
-        "name": "Fattore di Potenza"
+        "name": "Tehokerroin"
       },
       "hz_a": {
-        "name": "Frequenza AC - Fase A"
+        "name": "AC-taajuus - Vaihe A"
       },
       "dc_power_1": {
-        "name": "Potenza DC - Stringa 1"
+        "name": "DC-teho - Ketju 1"
       },
       "ph_vph_b_c": {
-        "name": "Tensione AC - Fase B-C"
+        "name": "AC-jännite - Vaihe B-C"
       },
       "hz_b": {
-        "name": "Frequenza AC - Fase B"
+        "name": "AC-taajuus - Vaihe B"
       },
       "isolation_ohm1": {
         "name": "Resistance - Insulation"
@@ -231,37 +231,37 @@
         "name": "Available flash storage"
       },
       "dc_watts": {
-        "name": "Potenza DC"
+        "name": "DC-teho"
       },
       "phase_voltage_cn": {
-        "name": "Tensione AC - Fase C-N"
+        "name": "AC-jännite - Vaihe C-N"
       },
       "alarm_st": {
-        "name": "Alarm Stato"
+        "name": "Alarm Tila"
       },
       "wlan0_link_quality": {
         "name": "WiFi link quality percentage"
       },
       "ph_vph_a_b": {
-        "name": "Tensione AC - Fase A-B"
+        "name": "AC-jännite - Vaihe A-B"
       },
       "v_gnd": {
         "name": "Voltage - Ground"
       },
       "i_leak_dc_ac": {
-        "name": "Corrente DC - Leakage DC-AC"
+        "name": "DC-virta - Leakage DC-AC"
       },
       "free_ram": {
         "name": "Available RAM"
       },
       "i_leak_dc_dc": {
-        "name": "Corrente DC - Leakage DC-DC"
+        "name": "DC-virta - Leakage DC-DC"
       },
       "amps_phasec": {
-        "name": "Corrente AC - Fase C"
+        "name": "AC-virta - Vaihe C"
       },
       "ph_vph_c_a": {
-        "name": "Tensione AC - Fase C-A"
+        "name": "AC-jännite - Vaihe C-A"
       },
       "storage_size": {
         "name": "Flash storage used"
@@ -270,7 +270,7 @@
         "name": "Serial number"
       },
       "dc_current_1": {
-        "name": "Corrente DC - Stringa 1"
+        "name": "DC-virta - Ketju 1"
       },
       "year_wh": {
         "name": "Energia - Last Year"
@@ -279,28 +279,28 @@
         "name": "WiFi SSID"
       },
       "dc_current_2": {
-        "name": "Corrente DC - Stringa 2"
+        "name": "DC-virta - Ketju 2"
       },
       "booster_tmp": {
-        "name": "Temperatura - Booster"
+        "name": "Lämpötila - Booster"
       },
       "system_uptime": {
         "name": "System Uptime"
       },
       "other_temperature": {
-        "name": "Temperatura - Altro"
+        "name": "Lämpötila - Muu"
       },
       "inverter_st": {
-        "name": "Inverter Stato"
+        "name": "Invertteri Tila"
       },
       "system_load": {
         "name": "System load average"
       },
       "type": {
-        "name": "Tipo"
+        "name": "Tyyppi"
       },
       "e2_last_week": {
-        "name": "Energia AC Apparente - Last 7 Days"
+        "name": "AC-energia Näennäinen - Last 7 Days"
       },
       "e5_last_month": {
         "name": "Energia - Battery Charge Last 30 Days"
@@ -309,28 +309,28 @@
         "name": "Energia - Battery Charge Last 7 Days"
       },
       "e15_lifetime": {
-        "name": "Energia AC - Backup Output Since Restart"
+        "name": "AC-energia - Backup Output Since Restart"
       },
       "di0_mode": {
         "name": "Digital Input 0 Mode"
       },
       "tc_max": {
-        "name": "Temperatura - Armadio Max"
+        "name": "Lämpötila - Kaappi Max"
       },
       "tba": {
-        "name": "Temperatura - Battery"
+        "name": "Lämpötila - Battery"
       },
       "batt_ext_ctrl_state": {
         "name": "Battery Control State"
       },
       "meter_vgrid_l3": {
-        "name": "Tensione AC - Contatore Fase C"
+        "name": "AC-jännite - Mittari Vaihe C"
       },
       "pin1": {
-        "name": "Potenza DC - Stringa 1"
+        "name": "DC-teho - Ketju 1"
       },
       "e_dt": {
-        "name": "Totale energy from direct transducer (DT)"
+        "name": "Yhteensä energy from direct transducer (DT)"
       },
       "pac_derating_flags": {
         "name": "AC Power Derating Flags"
@@ -339,88 +339,88 @@
         "name": "Commissioning Freeze"
       },
       "e6_last_month": {
-        "name": "Energia - House from Inverter Last 30 Days"
+        "name": "Energia - House from Invertteri Last 30 Days"
       },
       "iin2": {
-        "name": "Corrente DC - Stringa 2"
+        "name": "DC-virta - Ketju 2"
       },
       "e_total_apparent": {
-        "name": "Energia AC Apparente - Totalee"
+        "name": "AC-energia Näennäinen - Yhteensä"
       },
       "ein2": {
-        "name": "DC energy (Stringa 2) - Totalee"
+        "name": "DC energy (Ketju 2) - Yhteensä"
       },
       "meter_qgrid_l3": {
-        "name": "Potenza Reattiva AC - Contatore Fase C"
+        "name": "Loisteho AC - Mittari Vaihe C"
       },
       "d_c2_state": {
         "name": "DC Input 2 State"
       },
       "ein1": {
-        "name": "DC energy (Stringa 1) - Totalee"
+        "name": "DC energy (Ketju 1) - Yhteensä"
       },
       "di_status": {
-        "name": "Digital Input Stato"
+        "name": "Digital Input Tila"
       },
       "glob_state": {
         "name": "Global operational state"
       },
       "meter_fgrid": {
-        "name": "Frequenza AC - Contatore"
+        "name": "AC-taajuus - Mittari"
       },
       "e4_last_week": {
         "name": "Self-consumed energy - Last 7 Days"
       },
       "iin1": {
-        "name": "Corrente DC - Stringa 1"
+        "name": "DC-virta - Ketju 1"
       },
       "e0_last_month": {
-        "name": "Energia AC - Produced Last 30 Days"
+        "name": "AC-energia - Produced Last 30 Days"
       },
       "house_pgrid_tot": {
-        "name": "Potenza AC - House Load Totale"
+        "name": "AC-teho - House Load Yhteensä"
       },
       "e15_last_week": {
-        "name": "Energia AC - Backup Output Last 7 Days"
+        "name": "AC-energia - Backup Output Last 7 Days"
       },
       "input_mode": {
         "name": "Input Mode"
       },
       "pin": {
-        "name": "Potenza DC - Input Totale"
+        "name": "DC-teho - Input Yhteensä"
       },
       "e5_lifetime": {
         "name": "Energia - Battery Charge Since Restart"
       },
       "meter_igrid_l1": {
-        "name": "Corrente AC - Contatore Fase A"
+        "name": "AC-virta - Mittari Vaihe A"
       },
       "e6_total": {
-        "name": "Energia - House from Inverter Totalee"
+        "name": "Energia - House from Invertteri Yhteensä"
       },
       "meter_pgrid_tot": {
-        "name": "Potenza AC - Contatore Totale"
+        "name": "AC-teho - Mittari Yhteensä"
       },
       "cos_phi": {
-        "name": "Fattore di Potenza"
+        "name": "Tehokerroin"
       },
       "clock_state": {
         "name": "Clock State"
       },
       "e8_lifetime": {
-        "name": "Energia AC - Rete Importata Since Restart"
+        "name": "AC-energia - Verkko Tuotu Since Restart"
       },
       "e_tot_discharge_last_week": {
-        "name": "Energia - Battery Discharge Totale Last 7 Days"
+        "name": "Energia - Battery Discharge Yhteensä Last 7 Days"
       },
       "meter_vgrid_l1": {
-        "name": "Tensione AC - Contatore Fase A"
+        "name": "AC-jännite - Mittari Vaihe A"
       },
       "vgrid_l2_n": {
-        "name": "Tensione AC - Fase B-N"
+        "name": "AC-jännite - Vaihe B-N"
       },
       "e2_lifetime": {
-        "name": "Energia AC Apparente - Since Restart"
+        "name": "AC-energia Näennäinen - Since Restart"
       },
       "house_p_inverter": {
         "name": "Power - Home PV"
@@ -435,28 +435,28 @@
         "name": "Voltage - Shunt"
       },
       "ileak_d_c": {
-        "name": "Corrente DC - Leakage"
+        "name": "DC-virta - Leakage"
       },
       "e15_last_month": {
-        "name": "Energia AC - Backup Output Last 30 Days"
+        "name": "AC-energia - Backup Output Last 30 Days"
       },
       "p_ch": {
         "name": "Power - Battery Charge"
       },
       "e_ct": {
-        "name": "Totale energy from current transformer (CT)"
+        "name": "Yhteensä energy from current transformer (CT)"
       },
       "grid_ext_ctrl_state": {
-        "name": "Rete External Control State"
+        "name": "Verkko External Control State"
       },
       "m126_mod_ena": {
-        "name": "Modello 126 Enabled"
+        "name": "Malli 126 Enabled"
       },
       "e5_last_week": {
         "name": "Energia - Battery Charge Last 7 Days"
       },
       "e_tot_discharge_last_month": {
-        "name": "Energia - Battery Discharge Totale Last 30 Days"
+        "name": "Energia - Battery Discharge Yhteensä Last 30 Days"
       },
       "e_charge_last_month": {
         "name": "Energia - Battery Charge Last 30 Days"
@@ -465,13 +465,13 @@
         "name": "Self-consumed energy - Since Restart"
       },
       "e7_total": {
-        "name": "Energia - House Consumption Totalee"
+        "name": "Energia - House Consumption Yhteensä"
       },
       "fan2rpm": {
         "name": "Speed - Fan 2"
       },
       "meter_qgrid_l1": {
-        "name": "Potenza Reattiva AC - Contatore Fase A"
+        "name": "Loisteho AC - Mittari Vaihe A"
       },
       "vgnd": {
         "name": "Voltage - Ground"
@@ -489,88 +489,88 @@
         "name": "Energia - Battery Discharge Last 7 Days"
       },
       "pin2": {
-        "name": "Potenza DC - Stringa 2"
+        "name": "DC-teho - Ketju 2"
       },
       "e6_lifetime": {
-        "name": "Energia - House from Inverter Since Restart"
+        "name": "Energia - House from Invertteri Since Restart"
       },
       "e7_last_month": {
         "name": "Energia - House Consumption Last 30 Days"
       },
       "temp_bst": {
-        "name": "Temperatura - Booster"
+        "name": "Lämpötila - Booster"
       },
       "e_charge_lifetime": {
         "name": "Energia - Battery Charge Since Restart"
       },
       "e3_last_week": {
-        "name": "Energia AC - Rete Esportata Last 7 Days"
+        "name": "AC-energia - Verkko Viety Last 7 Days"
       },
       "pac_stand_alone": {
-        "name": "Potenza AC - Stand Alone Mode"
+        "name": "AC-teho - Stand Alone Mode"
       },
       "meter_pgrid_l3": {
-        "name": "Potenza AC - Contatore Fase C"
+        "name": "AC-teho - Mittari Vaihe C"
       },
       "vin2": {
-        "name": "Tensione DC - Input 2"
+        "name": "DC-jännite - Input 2"
       },
       "e8_last_month": {
-        "name": "Energia AC - Rete Importata Last 30 Days"
+        "name": "AC-energia - Verkko Tuotu Last 30 Days"
       },
       "grid_ext_ctrl_ena": {
-        "name": "Rete External Control Enabled"
+        "name": "Verkko External Control Enabled"
       },
       "e0_last_week": {
-        "name": "Energia AC - Produced Last 7 Days"
+        "name": "AC-energia - Produced Last 7 Days"
       },
       "e0_1_year": {
-        "name": "Energia AC - Produced Last Year"
+        "name": "AC-energia - Produced Last Year"
       },
       "frt_state": {
         "name": "Fault Ride Through (FRT) status"
       },
       "qac_derating_flags": {
-        "name": "Potenza Reattiva Derating"
+        "name": "Loisteho Derating"
       },
       "meter_qgrid_tot": {
-        "name": "Potenza Reattiva AC - Contatore Totale"
+        "name": "Loisteho AC - Mittari Yhteensä"
       },
       "ileak_inv": {
-        "name": "Current - Inverter Leakage"
+        "name": "Current - Invertteri Leakage"
       },
       "e2_last_month": {
-        "name": "Energia AC Apparente - Last 30 Days"
+        "name": "AC-energia Näennäinen - Last 30 Days"
       },
       "energy_policy": {
         "name": "Energia Policy"
       },
       "sac_derating_flags": {
-        "name": "Potenza Apparentee Derating"
+        "name": "Näennäisteho Derating"
       },
       "pba_t": {
-        "name": "Power - Battery Totale"
+        "name": "Power - Battery Yhteensä"
       },
       "e_tot_charge_last_week": {
-        "name": "Energia - Battery Charge Totale Last 7 Days"
+        "name": "Energia - Battery Charge Yhteensä Last 7 Days"
       },
       "meter_pgrid_l2": {
-        "name": "Potenza AC - Contatore Fase B"
+        "name": "AC-teho - Mittari Vaihe B"
       },
       "meter_igrid_l2": {
-        "name": "Corrente AC - Contatore Fase B"
+        "name": "AC-virta - Mittari Vaihe B"
       },
       "temp1": {
-        "name": "Temperatura - Sensor 1"
+        "name": "Lämpötila - Sensor 1"
       },
       "e_tot_charge": {
-        "name": "Energia - Battery Charge Totale Totalee"
+        "name": "Energia - Battery Charge Yhteensä Yhteensä"
       },
       "e_grid_import": {
-        "name": "Energia AC - Rete Importata Totalee"
+        "name": "AC-energia - Verkko Tuotu Yhteensä"
       },
       "tc_min": {
-        "name": "Temperatura - Armadio Min"
+        "name": "Lämpötila - Kaappi Min"
       },
       "iba": {
         "name": "Current - Battery"
@@ -591,52 +591,52 @@
         "name": "Count - Battery Cycles"
       },
       "w_rtg": {
-        "name": "Power - Potenza Nominale"
+        "name": "Power - Nimellisteho"
       },
       "e_total_absorbed": {
-        "name": "Energia AC - Absorbed Totalee"
+        "name": "AC-energia - Absorbed Yhteensä"
       },
       "di1_mode": {
         "name": "Digital Input 1 Mode"
       },
       "e1_last_month": {
-        "name": "Energia AC - Absorbed Last 30 Days"
+        "name": "AC-energia - Absorbed Last 30 Days"
       },
       "e1_last_week": {
-        "name": "Energia AC - Absorbed Last 7 Days"
+        "name": "AC-energia - Absorbed Last 7 Days"
       },
       "meter_vgrid_l2": {
-        "name": "Tensione AC - Contatore Fase B"
+        "name": "AC-jännite - Mittari Vaihe B"
       },
       "meter_igrid_l3": {
-        "name": "Corrente AC - Contatore Fase C"
+        "name": "AC-virta - Mittari Vaihe C"
       },
       "e_total": {
-        "name": "Energia AC - Produced Totalee"
+        "name": "AC-energia - Produced Yhteensä"
       },
       "e6_last_week": {
-        "name": "Energia - House from Inverter Last 7 Days"
+        "name": "Energia - House from Invertteri Last 7 Days"
       },
       "inv_state": {
-        "name": "Inverter State"
+        "name": "Invertteri State"
       },
       "e0_lifetime": {
-        "name": "Energia AC - Produced Since Restart"
+        "name": "AC-energia - Produced Since Restart"
       },
       "d_c1_state": {
         "name": "DC Input 1 State"
       },
       "ein": {
-        "name": "Energia DC - PV Input Totalee"
+        "name": "Energia DC - PV Input Yhteensä"
       },
       "ein_lifetime": {
         "name": "Energia DC - PV Input Since Restart"
       },
       "temp_inv": {
-        "name": "Temperatura - Inverter"
+        "name": "Lämpötila - Invertteri"
       },
       "m132_mod_ena": {
-        "name": "Modello 132 Enabled"
+        "name": "Malli 132 Enabled"
       },
       "detected_battery_number": {
         "name": "Detected Battery Number"
@@ -648,19 +648,19 @@
         "name": "Self-consumed energy - Last 30 Days"
       },
       "e_tot_discharge": {
-        "name": "Energia - Battery Discharge Totale Totalee"
+        "name": "Energia - Battery Discharge Yhteensä Yhteensä"
       },
       "e3_lifetime": {
-        "name": "Energia AC - Rete Esportata Since Restart"
+        "name": "AC-energia - Verkko Viety Since Restart"
       },
       "warning_flags": {
         "name": "Warning Flags"
       },
       "e_tot_charge_lifetime": {
-        "name": "Energia - Battery Charge Totale Since Restart"
+        "name": "Energia - Battery Charge Yhteensä Since Restart"
       },
       "pba": {
-        "name": "Power - Battery Totale"
+        "name": "Power - Battery Yhteensä"
       },
       "vc_min": {
         "name": "Voltage - Battery Cell Min"
@@ -669,7 +669,7 @@
         "name": "Power - Battery Discharge"
       },
       "e_backup": {
-        "name": "Energia AC - Backup Output Totalee"
+        "name": "AC-energia - Backup Output Yhteensä"
       },
       "e7_last_week": {
         "name": "Energia - House Consumption Last 7 Days"
@@ -678,37 +678,37 @@
         "name": "Energia - Battery Discharge Last 30 Days"
       },
       "meter_qgrid_l2": {
-        "name": "Potenza Reattiva AC - Contatore Fase B"
+        "name": "Loisteho AC - Mittari Vaihe B"
       },
       "pac_togrid": {
-        "name": "Potenza AC - Esportata to Rete"
+        "name": "AC-teho - Viety to Verkko"
       },
       "e_tot_discharge_lifetime": {
-        "name": "Energia - Battery Discharge Totale Since Restart"
+        "name": "Energia - Battery Discharge Yhteensä Since Restart"
       },
       "e_tot_charge_last_month": {
-        "name": "Energia - Battery Charge Totale Last 30 Days"
+        "name": "Energia - Battery Charge Yhteensä Last 30 Days"
       },
       "e_grid_export": {
-        "name": "Energia AC - Rete Esportata Totalee"
+        "name": "AC-energia - Verkko Viety Yhteensä"
       },
       "num_of_mppt": {
         "name": "Count - MPPT Channels"
       },
       "vin1": {
-        "name": "Tensione DC - Input 1"
+        "name": "DC-jännite - Input 1"
       },
       "e8_last_week": {
-        "name": "Energia AC - Rete Importata Last 7 Days"
+        "name": "AC-energia - Verkko Tuotu Last 7 Days"
       },
       "e1_lifetime": {
-        "name": "Energia AC - Absorbed Since Restart"
+        "name": "AC-energia - Absorbed Since Restart"
       },
       "t_soc": {
         "name": "Battery State of Charge"
       },
       "meter_pgrid_l1": {
-        "name": "Potenza AC - Contatore Fase A"
+        "name": "AC-teho - Mittari Vaihe A"
       },
       "riso": {
         "name": "Resistance - Insulation"
@@ -717,28 +717,28 @@
         "name": "Energia DC - PV Input Last 30 Days"
       },
       "vgrid_l1_n": {
-        "name": "Tensione AC - Fase A-N"
+        "name": "AC-jännite - Vaihe A-N"
       },
       "e3_last_month": {
-        "name": "Energia AC - Rete Esportata Last 30 Days"
+        "name": "AC-energia - Verkko Viety Last 30 Days"
       },
       "mfg_part_number": {
         "name": "Part Number"
       },
       "mfg_serial_number": {
-        "name": "Numero di Serie"
+        "name": "Sarjanumero"
       },
       "mfg_week_year": {
         "name": "Manufacturing Week/Year"
       },
       "logger_sn": {
-        "name": "Logger Numero di Serie"
+        "name": "Logger Sarjanumero"
       },
       "fw_build_date": {
         "name": "Firmware Build Date"
       },
       "fw_release_number": {
-        "name": "Firmware Versione"
+        "name": "Firmware Versio"
       },
       "fw_build_number": {
         "name": "Firmware Build Hash"
@@ -747,43 +747,43 @@
         "name": "Firmware Revision"
       },
       "logger_board_model": {
-        "name": "Logger Board Modello"
+        "name": "Logger Board Malli"
       },
       "device_name": {
-        "name": "Dispositivo 2 Name"
+        "name": "Laite 2 Name"
       },
       "device_type": {
-        "name": "Dispositivo 2 Tipo"
+        "name": "Laite 2 Tyyppi"
       },
       "fw_version": {
-        "name": "Fw Versione"
+        "name": "Fw Versio"
       },
       "logger_hostname": {
         "name": "Logger Hostname"
       },
       "model_type": {
-        "name": "Modello Tipo"
+        "name": "Malli Tyyppi"
       },
       "inverter_id": {
-        "name": "Inverter ID"
+        "name": "Invertteri ID"
       },
       "communication_protocol": {
         "name": "Communication Protocol"
       },
       "model_description": {
-        "name": "Modello Description"
+        "name": "Malli Description"
       },
       "wlan_fsm_status": {
-        "name": "WiFi FSM Stato"
+        "name": "WiFi FSM Tila"
       },
       "wlan_0_status": {
-        "name": "WiFi Stato"
+        "name": "WiFi Tila"
       },
       "inverter_time": {
-        "name": "Inverter Time"
+        "name": "Invertteri Time"
       },
       "wlan_ap_status": {
-        "name": "WiFi AP Stato"
+        "name": "WiFi AP Tila"
       },
       "wlan_0_dhcp_state": {
         "name": "WiFi DHCP State"
