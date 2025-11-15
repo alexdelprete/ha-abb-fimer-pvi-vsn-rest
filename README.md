@@ -1,7 +1,7 @@
 # ABB/FIMER PVI VSN REST Integration
 
 [![GitHub Release](https://img.shields.io/github/release/alexdelprete/ha-abb-fimer-pvi-vsn-rest.svg?style=flat-square)](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/releases)
-[![License](https://img.shields.io/github/license/alexdelprete/ha-abb-fimer-pvi-vsn-rest.svg?style=flat-square)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
 [![hacs](https://img.shields.io/badge/HACS-Custom-orange.svg?style=flat-square)](https://github.com/hacs/integration)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-donate-yellow.svg?style=flat-square)](https://www.buymeacoffee.com/alexdelprete)
 
