@@ -1,8 +1,6 @@
 # ABB/FIMER PVI VSN REST Integration
 
-[![GitHub Release][releases-shield]][releases]
-[![BuyMeCoffee][buymecoffee-shield]][buymecoffee]
-[![Community Forum][forum-shield]][forum]
+[![GitHub Release][releases-shield]][releases][![BuyMeCoffee][buymecoffee-shield]][buymecoffee][![Community Forum][forum-shield]][forum]
 
 Home Assistant custom integration for ABB/FIMER/Power-One PVI inverters via **VSN300/VSN700 datalogger REST API**.
 
