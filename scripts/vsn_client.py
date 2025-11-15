@@ -200,31 +200,130 @@ async def detect_vsn_model(
     password: str,
     timeout: int = 10,
 ) -> str:
-    """Detect VSN model by examining WWW-Authenticate header."""
+    """Detect VSN model by examining WWW-Authenticate header and trying preemptive auth.
+
+    Detection Process:
+    1. Make unauthenticated request to /v1/status
+    2. Examine 401 response's WWW-Authenticate header:
+       - If contains "x-digest" or "digest" → VSN300
+       - Otherwise → Try preemptive Basic authentication
+    3. If preemptive Basic auth succeeds (200/204) → VSN700
+    4. Otherwise → Error (device not compatible)
+
+    This approach supports:
+    - VSN300 (digest authentication with WWW-Authenticate header)
+    - VSN700 (preemptive Basic auth, may or may not send WWW-Authenticate)
+    - REACT2 (uses VSN700 internally, preemptive Basic auth without WWW-Authenticate)
+
+    Args:
+        session: aiohttp client session
+        base_url: Base URL of VSN device
+        username: Username for authentication
+        password: Password for authentication
+        timeout: Request timeout in seconds
+
+    Returns:
+        "VSN300" or "VSN700"
+
+    Raises:
+        Exception: If detection fails or device is not compatible
+
+    """
     base_url = base_url.rstrip("/")
+    detection_url = f"{base_url}/v1/status"
+
+    _LOGGER.debug(
+        "[VSN Detection] Making unauthenticated request to %s (timeout=%ds)",
+        detection_url,
+        timeout,
+    )
 
     try:
+        # Make unauthenticated request to /v1/status to trigger 401
         async with session.get(
-            f"{base_url}/v1/status",
+            detection_url,
             timeout=aiohttp.ClientTimeout(total=timeout),
         ) as response:
+            _LOGGER.debug(
+                "[VSN Detection] Response: status=%d, headers=%s",
+                response.status,
+                dict(response.headers),
+            )
+
             if response.status == 401:
                 www_authenticate = response.headers.get("WWW-Authenticate", "").lower()
+                www_authenticate_raw = response.headers.get("WWW-Authenticate", "")
 
-                if not www_authenticate:
-                    raise Exception(
-                        "Device returned 401 but no WWW-Authenticate header found"
+                _LOGGER.debug(
+                    "[VSN Detection] WWW-Authenticate: %s",
+                    repr(www_authenticate_raw)
+                    if www_authenticate_raw
+                    else "NOT PRESENT",
+                )
+
+                # Check for digest authentication (VSN300) - unique identifier
+                if www_authenticate and (
+                    "x-digest" in www_authenticate or "digest" in www_authenticate
+                ):
+                    _LOGGER.info(
+                        "Detected VSN300 (digest auth in WWW-Authenticate: %s)",
+                        www_authenticate_raw,
                     )
-
-                if "x-digest" in www_authenticate or "digest" in www_authenticate:
-                    _LOGGER.info("Detected VSN300 (digest auth)")
                     return "VSN300"
 
-                if "basic" in www_authenticate:
-                    _LOGGER.info("Detected VSN700 (basic auth)")
-                    return "VSN700"
+                # Not VSN300 - try preemptive Basic authentication
+                # VSN700/REACT2 use preemptive Basic auth (may or may not send WWW-Authenticate header)
+                _LOGGER.debug(
+                    "[VSN Detection] Not VSN300. Attempting preemptive Basic authentication for VSN700."
+                )
 
-                raise Exception(f"Unknown authentication scheme: {www_authenticate}")
+                try:
+                    basic_auth = get_vsn700_basic_auth(username, password)
+                    auth_headers = {"Authorization": f"Basic {basic_auth}"}
+
+                    _LOGGER.debug(
+                        "[VSN Detection] Sending preemptive Basic auth to %s",
+                        detection_url,
+                    )
+
+                    async with session.get(
+                        detection_url,
+                        headers=auth_headers,
+                        timeout=aiohttp.ClientTimeout(total=timeout),
+                    ) as auth_response:
+                        _LOGGER.debug(
+                            "[VSN Detection] Preemptive auth response: status=%d",
+                            auth_response.status,
+                        )
+
+                        # Check if preemptive Basic auth succeeded
+                        if auth_response.status in (200, 204):
+                            _LOGGER.info(
+                                "Detected VSN700 (preemptive Basic authentication)"
+                            )
+                            return "VSN700"
+
+                        # Preemptive auth failed
+                        _LOGGER.error(
+                            "[VSN Detection] Preemptive Basic auth failed with status %d. "
+                            "Device is not compatible.",
+                            auth_response.status,
+                        )
+                        raise Exception(
+                            f"Device authentication failed. Not VSN300/VSN700 compatible. "
+                            f"Preemptive Basic auth returned {auth_response.status}."
+                        )
+
+                except aiohttp.ClientError as auth_err:
+                    _LOGGER.error(
+                        "[VSN Detection] Preemptive Basic auth connection error: %s",
+                        auth_err,
+                    )
+                    raise Exception(
+                        f"Device authentication connection failed: {auth_err}"
+                    ) from auth_err
+
+            # Got non-401 response
             raise Exception(
                 f"Expected 401 response for detection, got {response.status}"
             )
