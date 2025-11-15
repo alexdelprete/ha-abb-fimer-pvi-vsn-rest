@@ -514,6 +514,12 @@ Developed by [Alessandro Del Prete](https://github.com/alexdelprete)
 
 SunSpec model definitions from [SunSpec Models Repository](https://github.com/sunspec/models) (Apache-2.0 license)
 
+# Coffee
+
+If you like this integration, I'll gladly accept some quality coffee, but please don't feel obliged. :)
+
+<a href="https://www.buymeacoffee.com/alexdelprete"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=alexdelprete&button_colour=746363&font_colour=ffffff&font_family=Bree&outline_colour=ffffff&coffee_colour=FFDD00" /></a>
+
 [releases-shield]: https://img.shields.io/github/v/release/alexdelprete/ha-abb-fimer-pvi-vsn-rest?style=for-the-badge&color=darkgreen
 [releases]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/releases
 [hacs]: https://hacs.xyz
