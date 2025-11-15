@@ -54,688 +54,688 @@
   "entity": {
     "sensor": {
       "watts": {
-        "name": "AC-effekt"
+        "name": "Effekt AC"
       },
       "var": {
-        "name": "Reaktiv effekt - Nett Connection"
+        "name": "Reaktiv effekt - Netttilkobling"
       },
       "hz": {
-        "name": "AC-frekvens - Nett"
+        "name": "Frekvens AC - Nett"
       },
       "amps": {
-        "name": "AC-strøm"
+        "name": "Strøm AC"
       },
       "phase_voltage_an": {
-        "name": "AC-spenning - Fase A-N"
+        "name": "Spenning AC - Fase A-N"
       },
       "manufacturer": {
-        "name": "Produsent name"
+        "name": "Produsentnavn"
       },
       "model": {
-        "name": "Modell identifier"
+        "name": "Modellidentifikator"
       },
       "options": {
-        "name": "Configuration options"
+        "name": "Konfigurasjonsalternativer"
       },
       "version": {
-        "name": "Firmware version"
+        "name": "Firmware versjon"
       },
       "serial_number": {
-        "name": "Serial number"
+        "name": "Serienummer"
       },
       "device_address": {
-        "name": "Modbus address"
+        "name": "Modbus adresse"
       },
       "e_charge": {
-        "name": "Energi - Battery Charge Total"
+        "name": "Energi - Batterilading Total"
       },
       "battery_mode": {
-        "name": "Battery Mode"
+        "name": "Batterimodus"
       },
       "alarm_state": {
-        "name": "Alarm State"
+        "name": "Alarm Tilstand"
       },
       "e_discharge": {
-        "name": "Energi - Battery Discharge Total"
+        "name": "Energi - Batteriutlading Total"
       },
       "house_igrid_l2": {
-        "name": "AC-strøm - House Fase B"
+        "name": "Strøm AC - Hus Fase B"
       },
       "state_of_health": {
-        "name": "State of Health"
+        "name": "Helsetilstand"
       },
       "house_igrid_l3": {
-        "name": "AC-strøm - House Fase C"
+        "name": "Strøm AC - Hus Fase C"
       },
       "country_std": {
-        "name": "Country grid standard setting"
+        "name": "Landsnett standard innstilling"
       },
       "house_pgrid_l1": {
-        "name": "AC-effekt - House Fase A"
+        "name": "Effekt AC - Hus Fase A"
       },
       "split_phase": {
-        "name": "Split-phase configuration flag"
+        "name": "Split-fase konfigurasjonsflagg"
       },
       "chc": {
-        "name": "Battery charge cycles counter"
+        "name": "Batterilading syklusteller"
       },
       "dhc": {
-        "name": "Battery discharge cycles counter"
+        "name": "Batteriutlading syklusteller"
       },
       "sys_time": {
-        "name": "System Time"
+        "name": "Systemtid"
       },
       "house_pgrid_l2": {
-        "name": "AC-effekt - House Fase B"
+        "name": "Effekt AC - Hus Fase B"
       },
       "state_of_charge": {
-        "name": "State of Charge"
+        "name": "Ladetilstand"
       },
       "house_igrid_l1": {
-        "name": "AC-strøm - House Fase A"
+        "name": "Strøm AC - Hus Fase A"
       },
       "house_pgrid_l3": {
-        "name": "AC-effekt - House Fase C"
+        "name": "Effekt AC - Hus Fase C"
       },
       "batt_num": {
-        "name": "Number of battery cells or modules"
+        "name": "Antall battericeller eller moduler"
       },
       "amps_phaseb": {
-        "name": "AC-strøm - Fase B"
+        "name": "Strøm AC - Fase B"
       },
       "dc_voltage_2": {
-        "name": "DC-spenning - Streng 2"
+        "name": "Spenning DC - Streng 2"
       },
       "day_wh": {
-        "name": "Energi - Today"
+        "name": "Energi - I dag"
       },
       "v_bulk_mid": {
-        "name": "DC-spenning - Bus Midpoint"
+        "name": "Spenning DC - Buss Midtpunkt"
       },
       "wlan0_mode": {
-        "name": "WiFi Mode"
+        "name": "WiFi Modus"
       },
       "v_bulk": {
-        "name": "DC-spenning - Bulk Capacitor"
+        "name": "Spenning DC - Bulk Kondensator"
       },
       "week_wh": {
-        "name": "Energi - Last 7 Days"
+        "name": "Energi - Siste 7 Dager"
       },
       "watthours": {
-        "name": "AC-energi - Total"
+        "name": "Energi AC - Total"
       },
       "global_st": {
         "name": "Global Status"
       },
       "dc_voltage_1": {
-        "name": "DC-spenning - Streng 1"
+        "name": "Spenning DC - Streng 1"
       },
       "hz_c": {
-        "name": "AC-frekvens - Fase C"
+        "name": "Frekvens AC - Fase C"
       },
       "amps_phasea": {
-        "name": "AC-strøm - Fase A"
+        "name": "Strøm AC - Fase A"
       },
       "power_peak_today": {
-        "name": "Power - Peak Today"
+        "name": "Effekt - Topp I dag"
       },
       "power_peak_abs": {
-        "name": "Power - Peak Total"
+        "name": "Effekt - Topp Total"
       },
       "cabinet_temperature": {
         "name": "Temperatur - Skap"
       },
       "pn": {
-        "name": "Product number"
+        "name": "Produktnummer"
       },
       "dc_st1": {
-        "name": "DC Input 1 Status"
+        "name": "DC Inngang 1 Status"
       },
       "phase_voltage_bn": {
-        "name": "AC-spenning - Fase B-N"
+        "name": "Spenning AC - Fase B-N"
       },
       "wlan0_ipaddr_local": {
-        "name": "WiFi Local IP"
+        "name": "WiFi Lokal IP"
       },
       "dc_st2": {
-        "name": "DC Input 2 Status"
+        "name": "DC Inngang 2 Status"
       },
       "firmware_version": {
         "name": "Firmware Versjon"
       },
       "month_wh": {
-        "name": "Energi - Last 30 Days"
+        "name": "Energi - Siste 30 Dager"
       },
       "dc_power_2": {
-        "name": "DC-effekt - Streng 2"
+        "name": "Effekt DC - Streng 2"
       },
       "pf": {
         "name": "Effektfaktor"
       },
       "hz_a": {
-        "name": "AC-frekvens - Fase A"
+        "name": "Frekvens AC - Fase A"
       },
       "dc_power_1": {
-        "name": "DC-effekt - Streng 1"
+        "name": "Effekt DC - Streng 1"
       },
       "ph_vph_b_c": {
-        "name": "AC-spenning - Fase B-C"
+        "name": "Spenning AC - Fase B-C"
       },
       "hz_b": {
-        "name": "AC-frekvens - Fase B"
+        "name": "Frekvens AC - Fase B"
       },
       "isolation_ohm1": {
-        "name": "Resistance - Insulation"
+        "name": "Motstand - Isolasjon"
       },
       "flash_memory_free": {
-        "name": "Available flash storage"
+        "name": "Tilgjengelig flash-lagring"
       },
       "dc_watts": {
-        "name": "DC-effekt"
+        "name": "Effekt DC"
       },
       "phase_voltage_cn": {
-        "name": "AC-spenning - Fase C-N"
+        "name": "Spenning AC - Fase C-N"
       },
       "alarm_st": {
         "name": "Alarm Status"
       },
       "wlan0_link_quality": {
-        "name": "WiFi link quality percentage"
+        "name": "WiFi link kvalitet prosent"
       },
       "ph_vph_a_b": {
-        "name": "AC-spenning - Fase A-B"
+        "name": "Spenning AC - Fase A-B"
       },
       "v_gnd": {
-        "name": "Voltage - Ground"
+        "name": "Spenning - Jord"
       },
       "i_leak_dc_ac": {
-        "name": "DC-strøm - Leakage DC-AC"
+        "name": "Strøm DC - Lekkasje DC-AC"
       },
       "free_ram": {
-        "name": "Available RAM"
+        "name": "Tilgjengelig RAM"
       },
       "i_leak_dc_dc": {
-        "name": "DC-strøm - Leakage DC-DC"
+        "name": "Strøm DC - Lekkasje DC-DC"
       },
       "amps_phasec": {
-        "name": "AC-strøm - Fase C"
+        "name": "Strøm AC - Fase C"
       },
       "ph_vph_c_a": {
-        "name": "AC-spenning - Fase C-A"
+        "name": "Spenning AC - Fase C-A"
       },
       "storage_size": {
-        "name": "Flash storage used"
+        "name": "Brukt flash-lagring"
       },
       "sn": {
-        "name": "Serial number"
+        "name": "Serienummer"
       },
       "dc_current_1": {
-        "name": "DC-strøm - Streng 1"
+        "name": "Strøm DC - Streng 1"
       },
       "year_wh": {
-        "name": "Energi - Last Year"
+        "name": "Energi - Siste År"
       },
       "wlan0_essid": {
         "name": "WiFi SSID"
       },
       "dc_current_2": {
-        "name": "DC-strøm - Streng 2"
+        "name": "Strøm DC - Streng 2"
       },
       "booster_tmp": {
         "name": "Temperatur - Booster"
       },
       "system_uptime": {
-        "name": "System Uptime"
+        "name": "System Driftstid"
       },
       "other_temperature": {
-        "name": "Temperatur - Annet"
+        "name": "Temperatur - Annen"
       },
       "inverter_st": {
         "name": "Vekselretter Status"
       },
       "system_load": {
-        "name": "System load average"
+        "name": "System gjennomsnittlig last"
       },
       "type": {
         "name": "Type"
       },
       "e2_last_week": {
-        "name": "AC-energi Tilsynelatende - Last 7 Days"
+        "name": "Energi AC Tilsynelatende - Siste 7 Dager"
       },
       "e5_last_month": {
-        "name": "Energi - Battery Charge Last 30 Days"
+        "name": "Energi - Batterilading Siste 30 Dager"
       },
       "e_charge_last_week": {
-        "name": "Energi - Battery Charge Last 7 Days"
+        "name": "Energi - Batterilading Siste 7 Dager"
       },
       "e15_lifetime": {
-        "name": "AC-energi - Backup Output Since Restart"
+        "name": "Energi AC - Backup Utgang Siden Omstart"
       },
       "di0_mode": {
-        "name": "Digital Input 0 Mode"
+        "name": "Digital Inngang 0 Modus"
       },
       "tc_max": {
         "name": "Temperatur - Skap Max"
       },
       "tba": {
-        "name": "Temperatur - Battery"
+        "name": "Temperatur - Batteri"
       },
       "batt_ext_ctrl_state": {
-        "name": "Battery Control State"
+        "name": "Batteristyring Tilstand"
       },
       "meter_vgrid_l3": {
-        "name": "AC-spenning - Måler Fase C"
+        "name": "Spenning AC - Måler Fase C"
       },
       "pin1": {
-        "name": "DC-effekt - Streng 1"
+        "name": "Effekt DC - Streng 1"
       },
       "e_dt": {
-        "name": "Total energy from direct transducer (DT)"
+        "name": "Total energi fra direkte giver (DT)"
       },
       "pac_derating_flags": {
-        "name": "AC Power Derating Flags"
+        "name": "AC Effekt Derating Flagg"
       },
       "commissioning_freeze": {
-        "name": "Commissioning Freeze"
+        "name": "Idriftsetting Frys"
       },
       "e6_last_month": {
-        "name": "Energi - House from Vekselretter Last 30 Days"
+        "name": "Energi - Hus fra Vekselretter Siste 30 Dager"
       },
       "iin2": {
-        "name": "DC-strøm - Streng 2"
+        "name": "Strøm DC - Streng 2"
       },
       "e_total_apparent": {
-        "name": "AC-energi Tilsynelatende - Total"
+        "name": "Energi AC Tilsynelatende - Total"
       },
       "ein2": {
-        "name": "DC energy (Streng 2) - Total"
+        "name": "Energi DC (Streng 2) - Total"
       },
       "meter_qgrid_l3": {
-        "name": "Reaktiv effekt AC - Måler Fase C"
+        "name": "Reaktiv Effekt AC - Måler Fase C"
       },
       "d_c2_state": {
-        "name": "DC Input 2 State"
+        "name": "DC Inngang 2 Tilstand"
       },
       "ein1": {
-        "name": "DC energy (Streng 1) - Total"
+        "name": "Energi DC (Streng 1) - Total"
       },
       "di_status": {
-        "name": "Digital Input Status"
+        "name": "Digital Inngang Status"
       },
       "glob_state": {
-        "name": "Global operational state"
+        "name": "Global driftstilstand"
       },
       "meter_fgrid": {
-        "name": "AC-frekvens - Måler"
+        "name": "Frekvens AC - Måler"
       },
       "e4_last_week": {
-        "name": "Self-consumed energy - Last 7 Days"
+        "name": "Selvforbrukt energi - Siste 7 Dager"
       },
       "iin1": {
-        "name": "DC-strøm - Streng 1"
+        "name": "Strøm DC - Streng 1"
       },
       "e0_last_month": {
-        "name": "AC-energi - Produced Last 30 Days"
+        "name": "Energi AC - Produsert Siste 30 Dager"
       },
       "house_pgrid_tot": {
-        "name": "AC-effekt - House Load Total"
+        "name": "Effekt AC - Huslast Total"
       },
       "e15_last_week": {
-        "name": "AC-energi - Backup Output Last 7 Days"
+        "name": "Energi AC - Backup Utgang Siste 7 Dager"
       },
       "input_mode": {
-        "name": "Input Mode"
+        "name": "Inngangsmodus"
       },
       "pin": {
-        "name": "DC-effekt - Input Total"
+        "name": "Effekt DC - Inngang Total"
       },
       "e5_lifetime": {
-        "name": "Energi - Battery Charge Since Restart"
+        "name": "Energi - Batterilading Siden Omstart"
       },
       "meter_igrid_l1": {
-        "name": "AC-strøm - Måler Fase A"
+        "name": "Strøm AC - Måler Fase A"
       },
       "e6_total": {
-        "name": "Energi - House from Vekselretter Total"
+        "name": "Energi - Hus fra Vekselretter Total"
       },
       "meter_pgrid_tot": {
-        "name": "AC-effekt - Måler Total"
+        "name": "Effekt AC - Måler Total"
       },
       "cos_phi": {
         "name": "Effektfaktor"
       },
       "clock_state": {
-        "name": "Clock State"
+        "name": "Klokke Tilstand"
       },
       "e8_lifetime": {
-        "name": "AC-energi - Nett Importert Since Restart"
+        "name": "Energi AC - Nett Import Siden Omstart"
       },
       "e_tot_discharge_last_week": {
-        "name": "Energi - Battery Discharge Total Last 7 Days"
+        "name": "Energi - Batteriutlading Total Siste 7 Dager"
       },
       "meter_vgrid_l1": {
-        "name": "AC-spenning - Måler Fase A"
+        "name": "Spenning AC - Måler Fase A"
       },
       "vgrid_l2_n": {
-        "name": "AC-spenning - Fase B-N"
+        "name": "Spenning AC - Fase B-N"
       },
       "e2_lifetime": {
-        "name": "AC-energi Tilsynelatende - Since Restart"
+        "name": "Energi AC Tilsynelatende - Siden Omstart"
       },
       "house_p_inverter": {
-        "name": "Power - Home PV"
+        "name": "Effekt - PV Hjem"
       },
       "vba": {
-        "name": "Voltage - Battery"
+        "name": "Spenning - Batteri"
       },
       "e7_lifetime": {
-        "name": "Energi - House Consumption Since Restart"
+        "name": "Energi - Hus Forbruk Siden Omstart"
       },
       "sh_u": {
-        "name": "Voltage - Shunt"
+        "name": "Spenning - Shunt"
       },
       "ileak_d_c": {
-        "name": "DC-strøm - Leakage"
+        "name": "Strøm DC - Lekkasje"
       },
       "e15_last_month": {
-        "name": "AC-energi - Backup Output Last 30 Days"
+        "name": "Energi AC - Backup Utgang Siste 30 Dager"
       },
       "p_ch": {
-        "name": "Power - Battery Charge"
+        "name": "Effekt - Batterilading"
       },
       "e_ct": {
-        "name": "Total energy from current transformer (CT)"
+        "name": "Total energi fra strømtransformator (CT)"
       },
       "grid_ext_ctrl_state": {
-        "name": "Nett External Control State"
+        "name": "Nett Ekstern Styring Tilstand"
       },
       "m126_mod_ena": {
-        "name": "Modell 126 Enabled"
+        "name": "Modusll 126 Aktivert"
       },
       "e5_last_week": {
-        "name": "Energi - Battery Charge Last 7 Days"
+        "name": "Energi - Batterilading Siste 7 Dager"
       },
       "e_tot_discharge_last_month": {
-        "name": "Energi - Battery Discharge Total Last 30 Days"
+        "name": "Energi - Batteriutlading Total Siste 30 Dager"
       },
       "e_charge_last_month": {
-        "name": "Energi - Battery Charge Last 30 Days"
+        "name": "Energi - Batterilading Siste 30 Dager"
       },
       "e4_lifetime": {
-        "name": "Self-consumed energy - Since Restart"
+        "name": "Selvforbrukt energi - Siden Omstart"
       },
       "e7_total": {
-        "name": "Energi - House Consumption Total"
+        "name": "Energi - Hus Forbruk Total"
       },
       "fan2rpm": {
-        "name": "Speed - Fan 2"
+        "name": "Hastighet - Vifte 2"
       },
       "meter_qgrid_l1": {
-        "name": "Reaktiv effekt AC - Måler Fase A"
+        "name": "Reaktiv Effekt AC - Måler Fase A"
       },
       "vgnd": {
-        "name": "Voltage - Ground"
+        "name": "Spenning - Jord"
       },
       "e_discharge_lifetime": {
-        "name": "Energi - Battery Discharge Since Restart"
+        "name": "Energi - Batteriutlading Siden Omstart"
       },
       "dynamic_feed_in_ctrl": {
-        "name": "Dynamic Feed In Ctrl"
+        "name": "Dynamisk Innmating Styring"
       },
       "fan1rpm": {
-        "name": "Speed - Fan 1"
+        "name": "Hastighet - Vifte 1"
       },
       "e_discharge_last_week": {
-        "name": "Energi - Battery Discharge Last 7 Days"
+        "name": "Energi - Batteriutlading Siste 7 Dager"
       },
       "pin2": {
-        "name": "DC-effekt - Streng 2"
+        "name": "Effekt DC - Streng 2"
       },
       "e6_lifetime": {
-        "name": "Energi - House from Vekselretter Since Restart"
+        "name": "Energi - Hus fra Vekselretter Siden Omstart"
       },
       "e7_last_month": {
-        "name": "Energi - House Consumption Last 30 Days"
+        "name": "Energi - Hus Forbruk Siste 30 Dager"
       },
       "temp_bst": {
         "name": "Temperatur - Booster"
       },
       "e_charge_lifetime": {
-        "name": "Energi - Battery Charge Since Restart"
+        "name": "Energi - Batterilading Siden Omstart"
       },
       "e3_last_week": {
-        "name": "AC-energi - Nett Eksportert Last 7 Days"
+        "name": "Energi AC - Nett Eksport Siste 7 Dager"
       },
       "pac_stand_alone": {
-        "name": "AC-effekt - Stand Alone Mode"
+        "name": "Effekt AC - Frittstående Modus"
       },
       "meter_pgrid_l3": {
-        "name": "AC-effekt - Måler Fase C"
+        "name": "Effekt AC - Måler Fase C"
       },
       "vin2": {
-        "name": "DC-spenning - Input 2"
+        "name": "Spenning DC - Inngang 2"
       },
       "e8_last_month": {
-        "name": "AC-energi - Nett Importert Last 30 Days"
+        "name": "Energi AC - Nett Import Siste 30 Dager"
       },
       "grid_ext_ctrl_ena": {
-        "name": "Nett External Control Enabled"
+        "name": "Nett Ekstern Styring Aktivert"
       },
       "e0_last_week": {
-        "name": "AC-energi - Produced Last 7 Days"
+        "name": "Energi AC - Produsert Siste 7 Dager"
       },
       "e0_1_year": {
-        "name": "AC-energi - Produced Last Year"
+        "name": "Energi AC - Produsert Siste År"
       },
       "frt_state": {
-        "name": "Fault Ride Through (FRT) status"
+        "name": "Fault Ride Through (FRT) Status"
       },
       "qac_derating_flags": {
-        "name": "Reaktiv effekt Derating"
+        "name": "Reaktiv Effekt Derating"
       },
       "meter_qgrid_tot": {
-        "name": "Reaktiv effekt AC - Måler Total"
+        "name": "Reaktiv Effekt AC - Måler Total"
       },
       "ileak_inv": {
-        "name": "Current - Vekselretter Leakage"
+        "name": "Strøm - Vekselretter Lekkasje"
       },
       "e2_last_month": {
-        "name": "AC-energi Tilsynelatende - Last 30 Days"
+        "name": "Energi AC Tilsynelatende - Siste 30 Dager"
       },
       "energy_policy": {
-        "name": "Energi Policy"
+        "name": "Energipolitikk"
       },
       "sac_derating_flags": {
-        "name": "Tilsynelatende effekt Derating"
+        "name": "Tilsynelatende Effekt Derating"
       },
       "pba_t": {
-        "name": "Power - Battery Total"
+        "name": "Effekt - Batteri Total"
       },
       "e_tot_charge_last_week": {
-        "name": "Energi - Battery Charge Total Last 7 Days"
+        "name": "Energi - Batterilading Total Siste 7 Dager"
       },
       "meter_pgrid_l2": {
-        "name": "AC-effekt - Måler Fase B"
+        "name": "Effekt AC - Måler Fase B"
       },
       "meter_igrid_l2": {
-        "name": "AC-strøm - Måler Fase B"
+        "name": "Strøm AC - Måler Fase B"
       },
       "temp1": {
         "name": "Temperatur - Sensor 1"
       },
       "e_tot_charge": {
-        "name": "Energi - Battery Charge Total Total"
+        "name": "Energi - Batterilading Total Total"
       },
       "e_grid_import": {
-        "name": "AC-energi - Nett Importert Total"
+        "name": "Energi AC - Nett Import Total"
       },
       "tc_min": {
         "name": "Temperatur - Skap Min"
       },
       "iba": {
-        "name": "Current - Battery"
+        "name": "Strøm - Batteri"
       },
       "batt_ext_ctrl_ena": {
-        "name": "Battery Control Enabled"
+        "name": "Batteristyring Aktivert"
       },
       "ein_last_week": {
-        "name": "Energi DC - PV Input Last 7 Days"
+        "name": "Energi DC - PV Siste 7 Dager"
       },
       "fcc": {
-        "name": "Central controller frequency"
+        "name": "Sentral styreenhet frekvens"
       },
       "vc_max": {
-        "name": "Voltage - Battery Cell Max"
+        "name": "Spenning - Battericelle Max"
       },
       "cycle_num": {
-        "name": "Count - Battery Cycles"
+        "name": "Antall - Batterisykluser"
       },
       "w_rtg": {
-        "name": "Power - Merkeeffekt"
+        "name": "Effekt - Merkeverdi"
       },
       "e_total_absorbed": {
-        "name": "AC-energi - Absorbed Total"
+        "name": "Energi AC - Absorbert Total"
       },
       "di1_mode": {
-        "name": "Digital Input 1 Mode"
+        "name": "Digital Inngang 1 Modus"
       },
       "e1_last_month": {
-        "name": "AC-energi - Absorbed Last 30 Days"
+        "name": "Energi AC - Absorbert Siste 30 Dager"
       },
       "e1_last_week": {
-        "name": "AC-energi - Absorbed Last 7 Days"
+        "name": "Energi AC - Absorbert Siste 7 Dager"
       },
       "meter_vgrid_l2": {
-        "name": "AC-spenning - Måler Fase B"
+        "name": "Spenning AC - Måler Fase B"
       },
       "meter_igrid_l3": {
-        "name": "AC-strøm - Måler Fase C"
+        "name": "Strøm AC - Måler Fase C"
       },
       "e_total": {
-        "name": "AC-energi - Produced Total"
+        "name": "Energi AC - Produsert Total"
       },
       "e6_last_week": {
-        "name": "Energi - House from Vekselretter Last 7 Days"
+        "name": "Energi - Hus fra Vekselretter Siste 7 Dager"
       },
       "inv_state": {
-        "name": "Vekselretter State"
+        "name": "Vekselretter Tilstand"
       },
       "e0_lifetime": {
-        "name": "AC-energi - Produced Since Restart"
+        "name": "Energi AC - Produsert Siden Omstart"
       },
       "d_c1_state": {
-        "name": "DC Input 1 State"
+        "name": "DC Inngang 1 Tilstand"
       },
       "ein": {
-        "name": "Energi DC - PV Input Total"
+        "name": "Energi DC - PV Total"
       },
       "ein_lifetime": {
-        "name": "Energi DC - PV Input Since Restart"
+        "name": "Energi DC - PV Siden Omstart"
       },
       "temp_inv": {
         "name": "Temperatur - Vekselretter"
       },
       "m132_mod_ena": {
-        "name": "Modell 132 Enabled"
+        "name": "Modusll 132 Aktivert"
       },
       "detected_battery_number": {
-        "name": "Detected Battery Number"
+        "name": "Detektert Batterinummer"
       },
       "ppeak": {
-        "name": "Power - Peak"
+        "name": "Effekt - Topp"
       },
       "e4_last_month": {
-        "name": "Self-consumed energy - Last 30 Days"
+        "name": "Selvforbrukt energi - Siste 30 Dager"
       },
       "e_tot_discharge": {
-        "name": "Energi - Battery Discharge Total Total"
+        "name": "Energi - Batteriutlading Total Total"
       },
       "e3_lifetime": {
-        "name": "AC-energi - Nett Eksportert Since Restart"
+        "name": "Energi AC - Nett Eksport Siden Omstart"
       },
       "warning_flags": {
-        "name": "Warning Flags"
+        "name": "Advarselsflagg"
       },
       "e_tot_charge_lifetime": {
-        "name": "Energi - Battery Charge Total Since Restart"
+        "name": "Energi - Batterilading Total Siden Omstart"
       },
       "pba": {
-        "name": "Power - Battery Total"
+        "name": "Effekt - Batteri Total"
       },
       "vc_min": {
-        "name": "Voltage - Battery Cell Min"
+        "name": "Spenning - Battericelle Min"
       },
       "p_dh": {
-        "name": "Power - Battery Discharge"
+        "name": "Effekt - Batteriutlading"
       },
       "e_backup": {
-        "name": "AC-energi - Backup Output Total"
+        "name": "Energi AC - Backup Utgang Total"
       },
       "e7_last_week": {
-        "name": "Energi - House Consumption Last 7 Days"
+        "name": "Energi - Hus Forbruk Siste 7 Dager"
       },
       "e_discharge_last_month": {
-        "name": "Energi - Battery Discharge Last 30 Days"
+        "name": "Energi - Batteriutlading Siste 30 Dager"
       },
       "meter_qgrid_l2": {
-        "name": "Reaktiv effekt AC - Måler Fase B"
+        "name": "Reaktiv Effekt AC - Måler Fase B"
       },
       "pac_togrid": {
-        "name": "AC-effekt - Eksportert to Nett"
+        "name": "Effekt AC - Eksport to Nett"
       },
       "e_tot_discharge_lifetime": {
-        "name": "Energi - Battery Discharge Total Since Restart"
+        "name": "Energi - Batteriutlading Total Siden Omstart"
       },
       "e_tot_charge_last_month": {
-        "name": "Energi - Battery Charge Total Last 30 Days"
+        "name": "Energi - Batterilading Total Siste 30 Dager"
       },
       "e_grid_export": {
-        "name": "AC-energi - Nett Eksportert Total"
+        "name": "Energi AC - Nett Eksport Total"
       },
       "num_of_mppt": {
-        "name": "Count - MPPT Channels"
+        "name": "Antall - MPPT Kanaler"
       },
       "vin1": {
-        "name": "DC-spenning - Input 1"
+        "name": "Spenning DC - Inngang 1"
       },
       "e8_last_week": {
-        "name": "AC-energi - Nett Importert Last 7 Days"
+        "name": "Energi AC - Nett Import Siste 7 Dager"
       },
       "e1_lifetime": {
-        "name": "AC-energi - Absorbed Since Restart"
+        "name": "Energi AC - Absorbert Siden Omstart"
       },
       "t_soc": {
-        "name": "Battery State of Charge"
+        "name": "Batteri Ladetilstand"
       },
       "meter_pgrid_l1": {
-        "name": "AC-effekt - Måler Fase A"
+        "name": "Effekt AC - Måler Fase A"
       },
       "riso": {
-        "name": "Resistance - Insulation"
+        "name": "Motstand - Isolasjon"
       },
       "ein_last_month": {
-        "name": "Energi DC - PV Input Last 30 Days"
+        "name": "Energi DC - PV Siste 30 Dager"
       },
       "vgrid_l1_n": {
-        "name": "AC-spenning - Fase A-N"
+        "name": "Spenning AC - Fase A-N"
       },
       "e3_last_month": {
-        "name": "AC-energi - Nett Eksportert Last 30 Days"
+        "name": "Energi AC - Nett Eksport Siste 30 Dager"
       },
       "mfg_part_number": {
-        "name": "Part Number"
+        "name": "Delenummer"
       },
       "mfg_serial_number": {
         "name": "Serienummer"
       },
       "mfg_week_year": {
-        "name": "Manufacturing Week/Year"
+        "name": "Produksjonsuke/År"
       },
       "logger_sn": {
         "name": "Logger Serienummer"
       },
       "fw_build_date": {
-        "name": "Firmware Build Date"
+        "name": "Firmware Build Dato"
       },
       "fw_release_number": {
         "name": "Firmware Versjon"
@@ -744,13 +744,13 @@
         "name": "Firmware Build Hash"
       },
       "fw_revision": {
-        "name": "Firmware Revision"
+        "name": "Firmware Revisjon"
       },
       "logger_board_model": {
-        "name": "Logger Board Modell"
+        "name": "Logger Kort Modusll"
       },
       "device_name": {
-        "name": "Enhet 2 Name"
+        "name": "Enhet 2 Navn"
       },
       "device_type": {
         "name": "Enhet 2 Type"
@@ -762,16 +762,16 @@
         "name": "Logger Hostname"
       },
       "model_type": {
-        "name": "Modell Type"
+        "name": "Moduslltype"
       },
       "inverter_id": {
         "name": "Vekselretter ID"
       },
       "communication_protocol": {
-        "name": "Communication Protocol"
+        "name": "Kommunikasjonsprotokoll"
       },
       "model_description": {
-        "name": "Modell Description"
+        "name": "Modusllbeskrivelse"
       },
       "wlan_fsm_status": {
         "name": "WiFi FSM Status"
@@ -780,19 +780,19 @@
         "name": "WiFi Status"
       },
       "inverter_time": {
-        "name": "Vekselretter Time"
+        "name": "Vekselretter Tid"
       },
       "wlan_ap_status": {
         "name": "WiFi AP Status"
       },
       "wlan_0_dhcp_state": {
-        "name": "WiFi DHCP State"
+        "name": "WiFi DHCP Tilstand"
       },
       "wlan_0_ipaddr": {
-        "name": "WiFi IP Address"
+        "name": "WiFi IP Adresse"
       },
       "wlan_0_netmask": {
-        "name": "WiFi Netmask"
+        "name": "WiFi Nettmaske"
       },
       "wlan_0_broadcast": {
         "name": "WiFi Broadcast"

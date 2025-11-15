@@ -1,0 +1,279 @@
+#!/usr/bin/env python3
+"""Generate complete Estonian translations from English source."""
+
+import json
+from pathlib import Path
+
+# Complete Estonian translation mappings
+# Preserving technical terms where appropriate (AC, DC, WiFi, MPPT, etc.)
+
+TRANSLATIONS = {
+    # Exact phrases (highest priority - complete sensor names)
+    "Power AC": "Võimsus AC",
+    "Reactive Power - Grid Connection": "Reaktiivvõimsus - Võrguühendus",
+    "Frequency AC - Grid": "Sagedus AC - Võrk",
+    "Current AC": "Vool AC",
+    "Power DC": "Võimsus DC",
+    "Voltage DC": "Pinge DC",
+    "Voltage AC": "Pinge AC",
+    "Current DC": "Vool DC",
+    "DC energy": "Energia DC",
+    "Energy AC": "Energia AC",
+    "Energy DC": "Energia DC",
+    "Energy": "Energia",
+    "energy": "energia",
+    "Power": "Võimsus",
+    "Voltage": "Pinge",
+    "Current": "Vool",
+    "Temperature": "Temperatuur",
+    "Frequency": "Sagedus",
+
+    # Components
+    "Phase A": "Faas A",
+    "Phase B": "Faas B",
+    "Phase C": "Faas C",
+    "Phase A-N": "Faas A-N",
+    "Phase B-N": "Faas B-N",
+    "Phase C-N": "Faas C-N",
+    "Phase A-B": "Faas A-B",
+    "Phase B-C": "Faas B-C",
+    "Phase C-A": "Faas C-A",
+    "String 1": "Ahel 1",
+    "String 2": "Ahel 2",
+    "PV Input": "PV",
+    "Input 1": "Sisend 1",
+    "Input 2": "Sisend 2",
+    "Fan 1": "Ventilaator 1",
+    "Fan 2": "Ventilaator 2",
+
+    # Locations/Device types
+    "Cabinet": "Kapp",
+    "Booster": "Booster",
+    "Inverter": "Inverter",
+    "Meter": "Arvesti",
+    "House": "Maja",
+    "Grid": "Võrk",
+    "Ground": "Maandus",
+    "Battery": "Aku",
+    "Heatsink": "Jahutusriba",
+    "Other": "Muu",
+    "Shunt": "Shunt",
+    "Sensor 1": "Andur 1",
+    "Bus Midpoint": "Siini Keskpunkt",
+    "Bulk Capacitor": "Bulk Kondensaator",
+
+    # States/Status
+    "Status": "Olek",
+    "State": "Seisund",
+    "Alarm Status": "Häire Olek",
+    "Alarm State": "Häire Seisund",
+    "Global Status": "Globaalne Olek",
+    "Inverter Status": "Inverter Olek",
+    "Inverter State": "Inverter Seisund",
+    "Clock State": "Kell Seisund",
+    "Digital Input Status": "Digitaalsisend Olek",
+    "DC Input 1 Status": "DC Sisend 1 Olek",
+    "DC Input 2 Status": "DC Sisend 2 Olek",
+    "DC Input 1 State": "DC Sisend 1 Seisund",
+    "DC Input 2 State": "DC Sisend 2 Seisund",
+    "Global operational state": "Globaalne tööseisund",
+    "State of Health": "Terviseseisund",
+    "State of Charge": "Laadimisseisund",
+    "Battery Control State": "Aku Juhtimine Seisund",
+    "Grid External Control State": "Võrk Väline Juhtimine Seisund",
+    "Fault Ride Through (FRT) status": "Fault Ride Through (FRT) Olek",
+
+    # Modes
+    "Mode": "Režiim",
+    "Battery Mode": "Aku Režiim",
+    "Input Mode": "Sisendi Režiim",
+    "Digital Input 0 Mode": "Digitaalsisend 0 Režiim",
+    "Digital Input 1 Mode": "Digitaalsisend 1 Režiim",
+    "Stand Alone Mode": "Autonoomne Režiim",
+
+    # Time periods
+    "Lifetime": "Kokku",
+    "Since Restart": "Alates Taaskäivitusest",
+    "Last 7 Days": "Viimased 7 Päeva",
+    "Last 30 Days": "Viimased 30 Päeva",
+    "Last Week": "Viimane Nädal",
+    "Last Month": "Viimane Kuu",
+    "Last Year": "Viimane Aasta",
+    "Today": "Täna",
+
+    # Operations
+    "Produced": "Toodetud",
+    "Absorbed": "Neeldunud",
+    "Import": "Import",
+    "Export": "Eksport",
+    "Backup Output": "Varundus Väljund",
+    "Consumption": "Tarbimine",
+    "Home PV": "PV Kodu",
+    "from": "inverterist",
+
+    # Battery terms
+    "Battery Charge": "Aku Laadimine",
+    "Battery Discharge": "Aku Tühjendamine",
+    "Battery Total": "Aku Kokku",
+    "Battery Cycles": "Aku Tsüklid",
+    "Battery Cell Max": "Aku Element Max",
+    "Battery Cell Min": "Aku Element Min",
+
+    # Power terms
+    "Peak": "Tipp",
+    "Rating": "Nimivõimsus",
+    "Power Factor": "Võimsustegur",
+    "Apparent": "Näiv",
+    "Reactive": "Reaktiivne",
+    "AC Power Derating Flags": "AC Võimsus Derating Lipud",
+    "Reactive Power Derating": "Reaktiivvõimsus Derating",
+    "Apparent Power Derating": "Näiv Võimsus Derating",
+
+    # Energy terms
+    "Self-consumed energy": "Ise tarbitud energia",
+    "Total energy from direct transducer (DT)": "Koguenergia otseandurist (DT)",
+    "Total energy from current transformer (CT)": "Koguenergia voolumuundurist (CT)",
+
+    # Measurements
+    "Leakage DC-AC": "Leke DC-AC",
+    "Leakage DC-DC": "Leke DC-DC",
+    "Leakage": "Leke",
+    "Insulation": "Isolatsioon",
+    "Resistance": "Takistus",
+    "Load": "Koormus",
+    "Input Total": "Sisend Kokku",
+    "House Load Total": "Maja Koormus Kokku",
+
+    # Device info
+    "Manufacturer name": "Tootja nimi",
+    "Model identifier": "Mudeli identifikaator",
+    "Configuration options": "Konfiguratsioonivalikud",
+    "Firmware version": "Firmware versioon",
+    "Firmware Version": "Firmware Versioon",
+    "Firmware Build Date": "Firmware Build Kuupäev",
+    "Firmware Build Hash": "Firmware Build Hash",
+    "Firmware Revision": "Firmware Revisioon",
+    "Serial number": "Seerianumber",
+    "Serial Number": "Seerianumber",
+    "Modbus address": "Modbus aadress",
+    "Product number": "Tootenumber",
+    "Part Number": "Osa Number",
+    "Manufacturing Week/Year": "Tootmisnädal/Aasta",
+    "Model Type": "Mudeli Tüüp",
+    "Model Description": "Mudeli Kirjeldus",
+    "Device 2 Name": "Seade 2 Nimi",
+    "Device 2 Type": "Seade 2 Tüüp",
+    "Type": "Tüüp",
+
+    # System
+    "System Time": "Süsteemi Aeg",
+    "System Uptime": "Süsteemi Töötamisaeg",
+    "System load average": "Süsteemi keskmine koormus",
+    "Available flash storage": "Saadaval flash-mälu",
+    "Flash storage used": "Kasutatud flash-mälu",
+    "Available RAM": "Saadaval RAM",
+    "Detected Battery Number": "Tuvastatud Aku Number",
+    "Number of battery cells or modules": "Akuelementide või moodulite arv",
+
+    # Settings
+    "Country grid standard setting": "Riigi võrgu standardseade",
+    "Split-phase configuration flag": "Split-phase konfiguratsioonilipp",
+    "Commissioning Freeze": "Kasutuselevõtu Külmutamine",
+    "Dynamic Feed In Ctrl": "Dünaamiline Sisestus Juhtimine",
+    "Energy Policy": "Energiapoliitika",
+    "Battery Control Enabled": "Aku Juhtimine Lubatud",
+    "Grid External Control Enabled": "Võrk Väline Juhtimine Lubatud",
+    "Model 126 Enabled": "Mudel 126 Lubatud",
+    "Model 132 Enabled": "Mudel 132 Lubatud",
+    "Enabled": "Lubatud",
+
+    # Counters
+    "Battery charge cycles counter": "Aku laadimistsüklite loendur",
+    "Battery discharge cycles counter": "Aku tühjendamistsüklite loendur",
+    "Count": "Arv",
+    "Channels": "Kanalid",
+
+    # WiFi
+    "WiFi Mode": "WiFi Režiim",
+    "WiFi SSID": "WiFi SSID",
+    "WiFi Local IP": "WiFi Kohalik IP",
+    "WiFi link quality percentage": "WiFi lingi kvaliteedi protsent",
+    "WiFi FSM Status": "WiFi FSM Olek",
+    "WiFi Status": "WiFi Olek",
+    "WiFi AP Status": "WiFi AP Olek",
+    "WiFi DHCP State": "WiFi DHCP Seisund",
+    "WiFi IP Address": "WiFi IP Aadress",
+    "WiFi Netmask": "WiFi Võrgumask",
+    "WiFi Broadcast": "WiFi Broadcast",
+    "WiFi Gateway": "WiFi Lüüs",
+    "WiFi DNS Server": "WiFi DNS Server",
+
+    # Logger
+    "Logger Serial Number": "Logger Seerianumber",
+    "Logger Board Model": "Logger Kaardi Mudel",
+    "Logger Hostname": "Logger Hostname",
+    "Logger ID": "Logger ID",
+
+    # Other
+    "Communication Protocol": "Kommunikatsiooniprotokoll",
+    "Inverter ID": "Inverter ID",
+    "Inverter Time": "Inverter Aeg",
+    "Central controller frequency": "Keskkontroller sagedus",
+    "Warning Flags": "Hoiatuslipud",
+    "Flags": "Lipud",
+    "Speed": "Kiirus",
+    "Max": "Max",
+    "Min": "Min",
+    "Fw Version": "Fw Versioon",
+    "Connection": "Ühendus",
+}
+
+def translate(text: str) -> str:
+    """Translate English text to Estonian using the translation map."""
+    result = text
+
+    # Sort by length (longest first) to avoid partial replacements
+    for english in sorted(TRANSLATIONS.keys(), key=len, reverse=True):
+        estonian = TRANSLATIONS[english]
+        result = result.replace(english, estonian)
+
+    return result
+
+def main():
+    """Generate complete Estonian translations from English."""
+
+    # Load English translations
+    en_file = Path("custom_components/abb_fimer_pvi_vsn_rest/translations/en.json")
+    with open(en_file, 'r', encoding='utf-8') as f:
+        en_data = json.load(f)
+
+    # Load current Estonian (to preserve config/options sections which are already good)
+    et_file = Path("custom_components/abb_fimer_pvi_vsn_rest/translations/et.json")
+    with open(et_file, 'r', encoding='utf-8') as f:
+        et_data = json.load(f)
+
+    # Translate all sensors from English
+    for key, value in en_data['entity']['sensor'].items():
+        english_name = value['name']
+        estonian_name = translate(english_name)
+        et_data['entity']['sensor'][key] = {"name": estonian_name}
+
+    # Save updated translations
+    with open(et_file, 'w', encoding='utf-8') as f:
+        json.dump(et_data, f, ensure_ascii=False, indent=2)
+
+    print("✓ Estonian translations updated!")
+    print(f"  Translated {len(en_data['entity']['sensor'])} sensors")
+
+    # Show sample translations
+    print("\nSample translations:")
+    samples = list(en_data['entity']['sensor'].items())[:15]
+    for key, value in samples:
+        en_name = value['name']
+        et_name = et_data['entity']['sensor'][key]['name']
+        print(f"  {key}:")
+        print(f"    EN: {en_name}")
+        print(f"    ET: {et_name}")
+
+if __name__ == "__main__":
+    main()

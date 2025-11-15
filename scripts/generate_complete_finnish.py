@@ -1,0 +1,279 @@
+#!/usr/bin/env python3
+"""Generate complete Finnish translations from English source."""
+
+import json
+from pathlib import Path
+
+# Complete Finnish translation mappings
+# Preserving technical terms where appropriate (AC, DC, WiFi, MPPT, etc.)
+
+TRANSLATIONS = {
+    # Exact phrases (highest priority - complete sensor names)
+    "Power AC": "Teho AC",
+    "Reactive Power - Grid Connection": "Loisteho - Verkkoyhteys",
+    "Frequency AC - Grid": "Taajuus AC - Verkko",
+    "Current AC": "Virta AC",
+    "Power DC": "Teho DC",
+    "Voltage DC": "Jännite DC",
+    "Voltage AC": "Jännite AC",
+    "Current DC": "Virta DC",
+    "DC energy": "Energia DC",
+    "Energy AC": "Energia AC",
+    "Energy DC": "Energia DC",
+    "Energy": "Energia",
+    "energy": "energia",
+    "Power": "Teho",
+    "Voltage": "Jännite",
+    "Current": "Virta",
+    "Temperature": "Lämpötila",
+    "Frequency": "Taajuus",
+
+    # Components
+    "Phase A": "Vaihe A",
+    "Phase B": "Vaihe B",
+    "Phase C": "Vaihe C",
+    "Phase A-N": "Vaihe A-N",
+    "Phase B-N": "Vaihe B-N",
+    "Phase C-N": "Vaihe C-N",
+    "Phase A-B": "Vaihe A-B",
+    "Phase B-C": "Vaihe B-C",
+    "Phase C-A": "Vaihe C-A",
+    "String 1": "Ketju 1",
+    "String 2": "Ketju 2",
+    "PV Input": "PV",
+    "Input 1": "Tulo 1",
+    "Input 2": "Tulo 2",
+    "Fan 1": "Tuuletin 1",
+    "Fan 2": "Tuuletin 2",
+
+    # Locations/Device types
+    "Cabinet": "Kaappi",
+    "Booster": "Booster",
+    "Inverter": "Invertteri",
+    "Meter": "Mittari",
+    "House": "Talo",
+    "Grid": "Verkko",
+    "Ground": "Maa",
+    "Battery": "Akku",
+    "Heatsink": "Jäähdytyslevy",
+    "Other": "Muu",
+    "Shunt": "Shunt",
+    "Sensor 1": "Anturi 1",
+    "Bus Midpoint": "Väylän Keskipiste",
+    "Bulk Capacitor": "Bulk Kondensaattori",
+
+    # States/Status
+    "Status": "Tila",
+    "State": "Tila",
+    "Alarm Status": "Hälytystila",
+    "Alarm State": "Hälytystila",
+    "Global Status": "Globaali Tila",
+    "Inverter Status": "Invertteri Tila",
+    "Inverter State": "Invertteri Tila",
+    "Clock State": "Kello Tila",
+    "Digital Input Status": "Digitaalitulo Tila",
+    "DC Input 1 Status": "DC Tulo 1 Tila",
+    "DC Input 2 Status": "DC Tulo 2 Tila",
+    "DC Input 1 State": "DC Tulo 1 Tila",
+    "DC Input 2 State": "DC Tulo 2 Tila",
+    "Global operational state": "Globaali toimintatila",
+    "State of Health": "Terveystila",
+    "State of Charge": "Lataustila",
+    "Battery Control State": "Akun Ohjaus Tila",
+    "Grid External Control State": "Verkko Ulkoinen Ohjaus Tila",
+    "Fault Ride Through (FRT) status": "Fault Ride Through (FRT) Tila",
+
+    # Modes
+    "Mode": "Tila",
+    "Battery Mode": "Akkutila",
+    "Input Mode": "Tulotila",
+    "Digital Input 0 Mode": "Digitaalitulo 0 Tila",
+    "Digital Input 1 Mode": "Digitaalitulo 1 Tila",
+    "Stand Alone Mode": "Itsenäinen Tila",
+
+    # Time periods
+    "Lifetime": "Yhteensä",
+    "Since Restart": "Uudelleenkäynnistyksestä",
+    "Last 7 Days": "Viimeiset 7 Päivää",
+    "Last 30 Days": "Viimeiset 30 Päivää",
+    "Last Week": "Viime Viikko",
+    "Last Month": "Viime Kuukausi",
+    "Last Year": "Viime Vuosi",
+    "Today": "Tänään",
+
+    # Operations
+    "Produced": "Tuotettu",
+    "Absorbed": "Absorboitu",
+    "Import": "Tuonti",
+    "Export": "Vienti",
+    "Backup Output": "Varmuuskopiointi Lähtö",
+    "Consumption": "Kulutus",
+    "Home PV": "PV Koti",
+    "from": "invertteristä",
+
+    # Battery terms
+    "Battery Charge": "Akun Lataus",
+    "Battery Discharge": "Akun Purkaus",
+    "Battery Total": "Akku Yhteensä",
+    "Battery Cycles": "Akkusyklit",
+    "Battery Cell Max": "Akkukenno Max",
+    "Battery Cell Min": "Akkukenno Min",
+
+    # Power terms
+    "Peak": "Huippu",
+    "Rating": "Nimellis",
+    "Power Factor": "Tehokerroin",
+    "Apparent": "Näennäinen",
+    "Reactive": "Loisteho",
+    "AC Power Derating Flags": "AC Teho Derating Liput",
+    "Reactive Power Derating": "Loisteho Derating",
+    "Apparent Power Derating": "Näennäinen Teho Derating",
+
+    # Energy terms
+    "Self-consumed energy": "Itsestään kulutettu energia",
+    "Total energy from direct transducer (DT)": "Kokonaisenergia suorasta anturista (DT)",
+    "Total energy from current transformer (CT)": "Kokonaisenergia virtamuuntajasta (CT)",
+
+    # Measurements
+    "Leakage DC-AC": "Vuoto DC-AC",
+    "Leakage DC-DC": "Vuoto DC-DC",
+    "Leakage": "Vuoto",
+    "Insulation": "Eristys",
+    "Resistance": "Vastus",
+    "Load": "Kuorma",
+    "Input Total": "Tulo Yhteensä",
+    "House Load Total": "Talokuorma Yhteensä",
+
+    # Device info
+    "Manufacturer name": "Valmistajan nimi",
+    "Model identifier": "Mallin tunniste",
+    "Configuration options": "Konfigurointivaihtoehdot",
+    "Firmware version": "Firmware versio",
+    "Firmware Version": "Firmware Versio",
+    "Firmware Build Date": "Firmware Build Päivämäärä",
+    "Firmware Build Hash": "Firmware Build Hash",
+    "Firmware Revision": "Firmware Revisio",
+    "Serial number": "Sarjanumero",
+    "Serial Number": "Sarjanumero",
+    "Modbus address": "Modbus osoite",
+    "Product number": "Tuotenumero",
+    "Part Number": "Osanumero",
+    "Manufacturing Week/Year": "Valmistusviikko/Vuosi",
+    "Model Type": "Mallityyppi",
+    "Model Description": "Mallin Kuvaus",
+    "Device 2 Name": "Laite 2 Nimi",
+    "Device 2 Type": "Laite 2 Tyyppi",
+    "Type": "Tyyppi",
+
+    # System
+    "System Time": "Järjestelmäaika",
+    "System Uptime": "Järjestelmän Käyntiaika",
+    "System load average": "Järjestelmän keskimääräinen kuorma",
+    "Available flash storage": "Käytettävissä oleva flash-muisti",
+    "Flash storage used": "Käytetty flash-muisti",
+    "Available RAM": "Käytettävissä oleva RAM",
+    "Detected Battery Number": "Havaittu Akkunumero",
+    "Number of battery cells or modules": "Akkukennojen tai moduulien määrä",
+
+    # Settings
+    "Country grid standard setting": "Maaverkon standardiasetus",
+    "Split-phase configuration flag": "Split-phase konfiguraatiolippu",
+    "Commissioning Freeze": "Käyttöönoton Jäädytys",
+    "Dynamic Feed In Ctrl": "Dynaaminen Syöttö Ohjaus",
+    "Energy Policy": "Energiapolitiikka",
+    "Battery Control Enabled": "Akun Ohjaus Käytössä",
+    "Grid External Control Enabled": "Verkko Ulkoinen Ohjaus Käytössä",
+    "Model 126 Enabled": "Malli 126 Käytössä",
+    "Model 132 Enabled": "Malli 132 Käytössä",
+    "Enabled": "Käytössä",
+
+    # Counters
+    "Battery charge cycles counter": "Akun lataussyklien laskuri",
+    "Battery discharge cycles counter": "Akun purkaussyklien laskuri",
+    "Count": "Lukumäärä",
+    "Channels": "Kanavat",
+
+    # WiFi
+    "WiFi Mode": "WiFi Tila",
+    "WiFi SSID": "WiFi SSID",
+    "WiFi Local IP": "WiFi Paikallinen IP",
+    "WiFi link quality percentage": "WiFi linkin laatu prosentti",
+    "WiFi FSM Status": "WiFi FSM Tila",
+    "WiFi Status": "WiFi Tila",
+    "WiFi AP Status": "WiFi AP Tila",
+    "WiFi DHCP State": "WiFi DHCP Tila",
+    "WiFi IP Address": "WiFi IP Osoite",
+    "WiFi Netmask": "WiFi Verkkopeite",
+    "WiFi Broadcast": "WiFi Broadcast",
+    "WiFi Gateway": "WiFi Yhdyskäytävä",
+    "WiFi DNS Server": "WiFi DNS Palvelin",
+
+    # Logger
+    "Logger Serial Number": "Logger Sarjanumero",
+    "Logger Board Model": "Logger Kortin Malli",
+    "Logger Hostname": "Logger Hostname",
+    "Logger ID": "Logger ID",
+
+    # Other
+    "Communication Protocol": "Viestintäprotokolla",
+    "Inverter ID": "Invertteri ID",
+    "Inverter Time": "Invertteri Aika",
+    "Central controller frequency": "Keskusohjain taajuus",
+    "Warning Flags": "Varoitusliput",
+    "Flags": "Liput",
+    "Speed": "Nopeus",
+    "Max": "Max",
+    "Min": "Min",
+    "Fw Version": "Fw Versio",
+    "Connection": "Yhteys",
+}
+
+def translate(text: str) -> str:
+    """Translate English text to Finnish using the translation map."""
+    result = text
+
+    # Sort by length (longest first) to avoid partial replacements
+    for english in sorted(TRANSLATIONS.keys(), key=len, reverse=True):
+        finnish = TRANSLATIONS[english]
+        result = result.replace(english, finnish)
+
+    return result
+
+def main():
+    """Generate complete Finnish translations from English."""
+
+    # Load English translations
+    en_file = Path("custom_components/abb_fimer_pvi_vsn_rest/translations/en.json")
+    with open(en_file, 'r', encoding='utf-8') as f:
+        en_data = json.load(f)
+
+    # Load current Finnish (to preserve config/options sections which are already good)
+    fi_file = Path("custom_components/abb_fimer_pvi_vsn_rest/translations/fi.json")
+    with open(fi_file, 'r', encoding='utf-8') as f:
+        fi_data = json.load(f)
+
+    # Translate all sensors from English
+    for key, value in en_data['entity']['sensor'].items():
+        english_name = value['name']
+        finnish_name = translate(english_name)
+        fi_data['entity']['sensor'][key] = {"name": finnish_name}
+
+    # Save updated translations
+    with open(fi_file, 'w', encoding='utf-8') as f:
+        json.dump(fi_data, f, ensure_ascii=False, indent=2)
+
+    print("✓ Finnish translations updated!")
+    print(f"  Translated {len(en_data['entity']['sensor'])} sensors")
+
+    # Show sample translations
+    print("\nSample translations:")
+    samples = list(en_data['entity']['sensor'].items())[:15]
+    for key, value in samples:
+        en_name = value['name']
+        fi_name = fi_data['entity']['sensor'][key]['name']
+        print(f"  {key}:")
+        print(f"    EN: {en_name}")
+        print(f"    FI: {fi_name}")
+
+if __name__ == "__main__":
+    main()

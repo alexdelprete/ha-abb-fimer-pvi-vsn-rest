@@ -1,0 +1,279 @@
+#!/usr/bin/env python3
+"""Generate complete Norwegian Bokmål translations from English source."""
+
+import json
+from pathlib import Path
+
+# Complete Norwegian Bokmål translation mappings
+# Preserving technical terms where appropriate (AC, DC, WiFi, MPPT, etc.)
+
+TRANSLATIONS = {
+    # Exact phrases (highest priority - complete sensor names)
+    "Power AC": "Effekt AC",
+    "Reactive Power - Grid Connection": "Reaktiv effekt - Netttilkobling",
+    "Frequency AC - Grid": "Frekvens AC - Nett",
+    "Current AC": "Strøm AC",
+    "Power DC": "Effekt DC",
+    "Voltage DC": "Spenning DC",
+    "Voltage AC": "Spenning AC",
+    "Current DC": "Strøm DC",
+    "DC energy": "Energi DC",
+    "Energy AC": "Energi AC",
+    "Energy DC": "Energi DC",
+    "Energy": "Energi",
+    "energy": "energi",
+    "Power": "Effekt",
+    "Voltage": "Spenning",
+    "Current": "Strøm",
+    "Temperature": "Temperatur",
+    "Frequency": "Frekvens",
+
+    # Components
+    "Phase A": "Fase A",
+    "Phase B": "Fase B",
+    "Phase C": "Fase C",
+    "Phase A-N": "Fase A-N",
+    "Phase B-N": "Fase B-N",
+    "Phase C-N": "Fase C-N",
+    "Phase A-B": "Fase A-B",
+    "Phase B-C": "Fase B-C",
+    "Phase C-A": "Fase C-A",
+    "String 1": "Streng 1",
+    "String 2": "Streng 2",
+    "PV Input": "PV",
+    "Input 1": "Inngang 1",
+    "Input 2": "Inngang 2",
+    "Fan 1": "Vifte 1",
+    "Fan 2": "Vifte 2",
+
+    # Locations/Device types
+    "Cabinet": "Skap",
+    "Booster": "Booster",
+    "Inverter": "Vekselretter",
+    "Meter": "Måler",
+    "House": "Hus",
+    "Grid": "Nett",
+    "Ground": "Jord",
+    "Battery": "Batteri",
+    "Heatsink": "Kjøleribbe",
+    "Other": "Annen",
+    "Shunt": "Shunt",
+    "Sensor 1": "Sensor 1",
+    "Bus Midpoint": "Buss Midtpunkt",
+    "Bulk Capacitor": "Bulk Kondensator",
+
+    # States/Status
+    "Status": "Status",
+    "State": "Tilstand",
+    "Alarm Status": "Alarm Status",
+    "Alarm State": "Alarm Tilstand",
+    "Global Status": "Global Status",
+    "Inverter Status": "Vekselretter Status",
+    "Inverter State": "Vekselretter Tilstand",
+    "Clock State": "Klokke Tilstand",
+    "Digital Input Status": "Digital Inngang Status",
+    "DC Input 1 Status": "DC Inngang 1 Status",
+    "DC Input 2 Status": "DC Inngang 2 Status",
+    "DC Input 1 State": "DC Inngang 1 Tilstand",
+    "DC Input 2 State": "DC Inngang 2 Tilstand",
+    "Global operational state": "Global driftstilstand",
+    "State of Health": "Helsetilstand",
+    "State of Charge": "Ladetilstand",
+    "Battery Control State": "Batteristyring Tilstand",
+    "Grid External Control State": "Nett Ekstern Styring Tilstand",
+    "Fault Ride Through (FRT) status": "Fault Ride Through (FRT) Status",
+
+    # Modes
+    "Mode": "Modus",
+    "Battery Mode": "Batterimodus",
+    "Input Mode": "Inngangsmodus",
+    "Digital Input 0 Mode": "Digital Inngang 0 Modus",
+    "Digital Input 1 Mode": "Digital Inngang 1 Modus",
+    "Stand Alone Mode": "Frittstående Modus",
+
+    # Time periods
+    "Lifetime": "Total",
+    "Since Restart": "Siden Omstart",
+    "Last 7 Days": "Siste 7 Dager",
+    "Last 30 Days": "Siste 30 Dager",
+    "Last Week": "Siste Uke",
+    "Last Month": "Siste Måned",
+    "Last Year": "Siste År",
+    "Today": "I dag",
+
+    # Operations
+    "Produced": "Produsert",
+    "Absorbed": "Absorbert",
+    "Import": "Import",
+    "Export": "Eksport",
+    "Backup Output": "Backup Utgang",
+    "Consumption": "Forbruk",
+    "Home PV": "PV Hjem",
+    "from": "fra",
+
+    # Battery terms
+    "Battery Charge": "Batterilading",
+    "Battery Discharge": "Batteriutlading",
+    "Battery Total": "Batteri Total",
+    "Battery Cycles": "Batterisykluser",
+    "Battery Cell Max": "Battericelle Max",
+    "Battery Cell Min": "Battericelle Min",
+
+    # Power terms
+    "Peak": "Topp",
+    "Rating": "Merkeverdi",
+    "Power Factor": "Effektfaktor",
+    "Apparent": "Tilsynelatende",
+    "Reactive": "Reaktiv",
+    "AC Power Derating Flags": "AC Effekt Derating Flagg",
+    "Reactive Power Derating": "Reaktiv Effekt Derating",
+    "Apparent Power Derating": "Tilsynelatende Effekt Derating",
+
+    # Energy terms
+    "Self-consumed energy": "Selvforbrukt energi",
+    "Total energy from direct transducer (DT)": "Total energi fra direkte giver (DT)",
+    "Total energy from current transformer (CT)": "Total energi fra strømtransformator (CT)",
+
+    # Measurements
+    "Leakage DC-AC": "Lekkasje DC-AC",
+    "Leakage DC-DC": "Lekkasje DC-DC",
+    "Leakage": "Lekkasje",
+    "Insulation": "Isolasjon",
+    "Resistance": "Motstand",
+    "Load": "Last",
+    "Input Total": "Inngang Total",
+    "House Load Total": "Huslast Total",
+
+    # Device info
+    "Manufacturer name": "Produsentnavn",
+    "Model identifier": "Modellidentifikator",
+    "Configuration options": "Konfigurasjonsalternativer",
+    "Firmware version": "Firmware versjon",
+    "Firmware Version": "Firmware Versjon",
+    "Firmware Build Date": "Firmware Build Dato",
+    "Firmware Build Hash": "Firmware Build Hash",
+    "Firmware Revision": "Firmware Revisjon",
+    "Serial number": "Serienummer",
+    "Serial Number": "Serienummer",
+    "Modbus address": "Modbus adresse",
+    "Product number": "Produktnummer",
+    "Part Number": "Delenummer",
+    "Manufacturing Week/Year": "Produksjonsuke/År",
+    "Model Type": "Modelltype",
+    "Model Description": "Modellbeskrivelse",
+    "Device 2 Name": "Enhet 2 Navn",
+    "Device 2 Type": "Enhet 2 Type",
+    "Type": "Type",
+
+    # System
+    "System Time": "Systemtid",
+    "System Uptime": "System Driftstid",
+    "System load average": "System gjennomsnittlig last",
+    "Available flash storage": "Tilgjengelig flash-lagring",
+    "Flash storage used": "Brukt flash-lagring",
+    "Available RAM": "Tilgjengelig RAM",
+    "Detected Battery Number": "Detektert Batterinummer",
+    "Number of battery cells or modules": "Antall battericeller eller moduler",
+
+    # Settings
+    "Country grid standard setting": "Landsnett standard innstilling",
+    "Split-phase configuration flag": "Split-fase konfigurasjonsflagg",
+    "Commissioning Freeze": "Idriftsetting Frys",
+    "Dynamic Feed In Ctrl": "Dynamisk Innmating Styring",
+    "Energy Policy": "Energipolitikk",
+    "Battery Control Enabled": "Batteristyring Aktivert",
+    "Grid External Control Enabled": "Nett Ekstern Styring Aktivert",
+    "Model 126 Enabled": "Modell 126 Aktivert",
+    "Model 132 Enabled": "Modell 132 Aktivert",
+    "Enabled": "Aktivert",
+
+    # Counters
+    "Battery charge cycles counter": "Batterilading syklusteller",
+    "Battery discharge cycles counter": "Batteriutlading syklusteller",
+    "Count": "Antall",
+    "Channels": "Kanaler",
+
+    # WiFi
+    "WiFi Mode": "WiFi Modus",
+    "WiFi SSID": "WiFi SSID",
+    "WiFi Local IP": "WiFi Lokal IP",
+    "WiFi link quality percentage": "WiFi link kvalitet prosent",
+    "WiFi FSM Status": "WiFi FSM Status",
+    "WiFi Status": "WiFi Status",
+    "WiFi AP Status": "WiFi AP Status",
+    "WiFi DHCP State": "WiFi DHCP Tilstand",
+    "WiFi IP Address": "WiFi IP Adresse",
+    "WiFi Netmask": "WiFi Nettmaske",
+    "WiFi Broadcast": "WiFi Broadcast",
+    "WiFi Gateway": "WiFi Gateway",
+    "WiFi DNS Server": "WiFi DNS Server",
+
+    # Logger
+    "Logger Serial Number": "Logger Serienummer",
+    "Logger Board Model": "Logger Kort Modell",
+    "Logger Hostname": "Logger Hostname",
+    "Logger ID": "Logger ID",
+
+    # Other
+    "Communication Protocol": "Kommunikasjonsprotokoll",
+    "Inverter ID": "Vekselretter ID",
+    "Inverter Time": "Vekselretter Tid",
+    "Central controller frequency": "Sentral styreenhet frekvens",
+    "Warning Flags": "Advarselsflagg",
+    "Flags": "Flagg",
+    "Speed": "Hastighet",
+    "Max": "Max",
+    "Min": "Min",
+    "Fw Version": "Fw Versjon",
+    "Connection": "Tilkobling",
+}
+
+def translate(text: str) -> str:
+    """Translate English text to Norwegian Bokmål using the translation map."""
+    result = text
+
+    # Sort by length (longest first) to avoid partial replacements
+    for english in sorted(TRANSLATIONS.keys(), key=len, reverse=True):
+        norwegian = TRANSLATIONS[english]
+        result = result.replace(english, norwegian)
+
+    return result
+
+def main():
+    """Generate complete Norwegian Bokmål translations from English."""
+
+    # Load English translations
+    en_file = Path("custom_components/abb_fimer_pvi_vsn_rest/translations/en.json")
+    with open(en_file, 'r', encoding='utf-8') as f:
+        en_data = json.load(f)
+
+    # Load current Norwegian (to preserve config/options sections which are already good)
+    nb_file = Path("custom_components/abb_fimer_pvi_vsn_rest/translations/nb.json")
+    with open(nb_file, 'r', encoding='utf-8') as f:
+        nb_data = json.load(f)
+
+    # Translate all sensors from English
+    for key, value in en_data['entity']['sensor'].items():
+        english_name = value['name']
+        norwegian_name = translate(english_name)
+        nb_data['entity']['sensor'][key] = {"name": norwegian_name}
+
+    # Save updated translations
+    with open(nb_file, 'w', encoding='utf-8') as f:
+        json.dump(nb_data, f, ensure_ascii=False, indent=2)
+
+    print("✓ Norwegian Bokmål translations updated!")
+    print(f"  Translated {len(en_data['entity']['sensor'])} sensors")
+
+    # Show sample translations
+    print("\nSample translations:")
+    samples = list(en_data['entity']['sensor'].items())[:15]
+    for key, value in samples:
+        en_name = value['name']
+        nb_name = nb_data['entity']['sensor'][key]['name']
+        print(f"  {key}:")
+        print(f"    EN: {en_name}")
+        print(f"    NB: {nb_name}")
+
+if __name__ == "__main__":
+    main()
