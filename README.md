@@ -1,9 +1,9 @@
 # ABB/FIMER PVI VSN REST Integration
 
-[![GitHub Release](https://img.shields.io/github/release/alexdelprete/ha-abb-fimer-pvi-vsn-rest.svg?style=flat-square)](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/releases)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
-[![hacs](https://img.shields.io/badge/HACS-Custom-orange.svg?style=flat-square)](https://github.com/hacs/integration)
-[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-donate-yellow.svg?style=flat-square)](https://www.buymeacoffee.com/alexdelprete)
+[![GitHub Release][releases-shield]][releases]
+[![hacs][hacs-shield]][hacs]
+[![BuyMeCoffee][buymecoffee-shield]][buymecoffee]
+[![Community Forum][forum-shield]][forum]
 
 Home Assistant custom integration for ABB/FIMER/Power-One PVI inverters via **VSN300/VSN700 datalogger REST API**.
 
@@ -510,3 +510,12 @@ This project is licensed under the MIT License - see [LICENSE](LICENSE) file for
 Developed by [Alessandro Del Prete](https://github.com/alexdelprete)
 
 SunSpec model definitions from [SunSpec Models Repository](https://github.com/sunspec/models) (Apache-2.0 license)
+
+[releases-shield]: https://img.shields.io/github/v/release/alexdelprete/ha-abb-fimer-pvi-vsn-rest?style=for-the-badge&color=darkgreen
+[releases]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/releases
+[hacs-shield]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
+[hacs]: https://github.com/hacs/integration
+[buymecoffee]: https://www.buymeacoffee.com/alexdelprete
+[buymecoffee-shield]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-white?style=for-the-badge
+[forum-shield]: https://img.shields.io/badge/community-forum-darkred?style=for-the-badge
+[forum]: https://community.home-assistant.io/t/custom-component-abb-power-one-fimer-pv-inverters-sunspec-modbus-tcp/316363?u=alexdelprete
