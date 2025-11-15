@@ -252,20 +252,30 @@ Home Assistant Entities
 
 ## VSN Authentication
 
+The integration automatically detects which VSN model you have and uses the appropriate authentication method.
+
+### Detection Process
+
+1. **Send unauthenticated request** to `/v1/status`
+2. **Examine 401 response**:
+   - If `WWW-Authenticate` contains `x-digest` or `digest` → **VSN300**
+   - Otherwise → Try preemptive Basic authentication → **VSN700**
+
 ### VSN300
 
 - **Scheme**: Custom HTTP Digest (X-Digest header)
 - **Process**:
-  1. Request challenge from `/v1/dgst`
-  2. Compute SHA-256 digest
-  3. Add `Authorization: X-Digest {digest}` header
+  1. Request challenge from endpoint
+  2. Compute MD5 digest response: `MD5(MD5(username:realm:password):nonce:MD5(method:uri))`
+  3. Send request with `Authorization: X-Digest username="...", realm="...", nonce="...", response="..."`
 
 ### VSN700
 
-- **Scheme**: HTTP Basic Authentication
-- **Process**: Standard Basic Auth with base64-encoded credentials
+- **Scheme**: Preemptive HTTP Basic Authentication
+- **Process**: Send `Authorization: Basic {base64(username:password)}` with every request
+- **Note**: VSN700 accepts credentials immediately without requiring a challenge-response flow
 
-Both schemes are handled automatically by the integration.
+Both authentication methods are handled automatically by the integration - no configuration needed!
 
 ## Troubleshooting
 

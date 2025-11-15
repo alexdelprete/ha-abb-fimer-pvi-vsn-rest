@@ -7,6 +7,56 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.2] - 2025-11-15
+
+### ✨ Features
+
+**REACT2 Inverter Support**:
+
+- Added support for REACT2 inverters (e.g., REACT2-5.0-TL)
+- REACT2 devices use VSN700 dataloggers with preemptive Basic authentication
+- No configuration changes needed - automatic detection
+- Commit: [ae4d617](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/ae4d617)
+
+**Authentication Debug Logging**:
+
+- Added comprehensive debug logging throughout authentication flow
+- VSN detection, VSN300 digest auth, and client request logging
+- Helps users diagnose connection and authentication issues
+- Enable with: `logger: custom_components.abb_fimer_pvi_vsn_rest: debug`
+- Commit: [e2bd91c](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/e2bd91c)
+
+### 🔧 Improvements
+
+**Simplified Authentication Detection**:
+
+- Refactored detection logic: check for VSN300 (x-digest), else try preemptive Basic auth
+- VSN700 and REACT2 now use unified code path
+- Removed 21 lines of redundant code while maintaining functionality
+- Same request count, simpler logic, better maintainability
+- Commit: [dd6661d](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/dd6661d)
+
+**Translation Quality**:
+
+- Fixed translation quality issues in all 9 non-English languages
+- 2,259 sensor translations (251 × 9 languages) now complete and professional
+- No more mixed English/native language text
+- All technical terms properly translated
+- Commit: [e3001df](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/e3001df)
+
+### 📚 Documentation
+
+**Updated README**:
+
+- Added detailed "VSN Authentication" section
+- Explained detection process step-by-step
+- VSN300 digest authentication details
+- VSN700 preemptive Basic authentication details
+
+**Full release notes**: [v1.1.2](docs/releases/v1.1.2.md)
+
+---
+
 ## [1.1.1] - 2025-11-15
 
 ### 🐛 Bug Fixes
