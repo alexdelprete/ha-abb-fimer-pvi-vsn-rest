@@ -108,16 +108,54 @@ async def validate_connection(
         }
 
     except VSNAuthenticationError as err:
+        err_str = str(err)
         _LOGGER.error("Authentication failed: %s", err)
+        # Check if error suggests enabling debug logging
+        if "Enable debug logging" not in err_str:
+            _LOGGER.info(
+                "Enable debug logging (logger: custom_components.abb_fimer_pvi_vsn_rest) "
+                "for detailed authentication flow information"
+            )
         raise
     except VSNConnectionError as err:
+        err_str = str(err)
         _LOGGER.error("Connection error: %s", err)
+
+        # Check for SSL/TLS certificate errors
+        if any(keyword in err_str for keyword in [
+            "SSL",
+            "CERTIFICATE",
+            "certificate",
+            "self-signed",
+            "verify failed",
+        ]):
+            _LOGGER.error(
+                "SSL/TLS certificate error detected. This device may be using a self-signed certificate. "
+                "Enable debug logging for detailed SSL error information. "
+                "Logger: custom_components.abb_fimer_pvi_vsn_rest"
+            )
+        else:
+            _LOGGER.info(
+                "Enable debug logging (logger: custom_components.abb_fimer_pvi_vsn_rest) "
+                "for detailed connection diagnostics"
+            )
         raise
     except VSNClientError as err:
+        err_str = str(err)
         _LOGGER.error("Client error: %s", err)
+        # Check if error suggests enabling debug logging
+        if "Enable debug logging" not in err_str:
+            _LOGGER.info(
+                "Enable debug logging (logger: custom_components.abb_fimer_pvi_vsn_rest) "
+                "for detailed error information"
+            )
         raise
     except Exception as err:
         _LOGGER.exception("Unexpected error during validation")
+        _LOGGER.info(
+            "Enable debug logging (logger: custom_components.abb_fimer_pvi_vsn_rest) "
+            "for detailed diagnostics"
+        )
         raise VSNClientError(f"Unexpected error: {err}") from err
 
 

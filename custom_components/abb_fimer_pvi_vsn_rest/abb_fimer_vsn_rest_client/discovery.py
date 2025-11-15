@@ -166,24 +166,56 @@ async def _fetch_status(
 
     # Build authentication headers based on model
     if vsn_model == "VSN300":
+        _LOGGER.debug("[Discovery Status] Using VSN300 digest authentication")
         digest_value = await get_vsn300_digest_header(
             session, base_url, username, password, uri, "GET", timeout
         )
         headers = {"Authorization": f"X-Digest {digest_value}"}
+        auth_type = "X-Digest"
     else:  # VSN700
+        _LOGGER.debug("[Discovery Status] Using VSN700 basic authentication")
         basic_auth = get_vsn700_basic_auth(username, password)
         headers = {"Authorization": f"Basic {basic_auth}"}
+        auth_type = "Basic"
+
+    _LOGGER.debug(
+        "[Discovery Status] Fetching status: url=%s, auth=%s, timeout=%ds",
+        status_url,
+        auth_type,
+        timeout,
+    )
 
     try:
         async with session.get(
             status_url, headers=headers, timeout=aiohttp.ClientTimeout(total=timeout)
         ) as response:
+            _LOGGER.debug(
+                "[Discovery Status] Response: status=%d, headers=%s",
+                response.status,
+                dict(response.headers),
+            )
+
             if response.status == 200:
                 data = await response.json()
-                _LOGGER.debug("Status data fetched successfully")
+                _LOGGER.debug(
+                    "[Discovery Status] Successfully fetched status data (%d bytes)",
+                    len(str(data)),
+                )
                 return data
+
+            # Log error response details
+            _LOGGER.error(
+                "[Discovery Status] HTTP %d error. Headers: %s",
+                response.status,
+                dict(response.headers),
+            )
             raise VSNConnectionError(f"Failed to fetch status: HTTP {response.status}")
     except aiohttp.ClientError as err:
+        _LOGGER.debug(
+            "[Discovery Status] Connection error: %s (type=%s)",
+            err,
+            type(err).__name__,
+        )
         raise VSNConnectionError(f"Failed to fetch status: {err}") from err
 
 
@@ -220,26 +252,59 @@ async def _fetch_livedata(
 
     # Build authentication headers based on model
     if vsn_model == "VSN300":
+        _LOGGER.debug("[Discovery Livedata] Using VSN300 digest authentication")
         digest_value = await get_vsn300_digest_header(
             session, base_url, username, password, uri, "GET", timeout
         )
         headers = {"Authorization": f"X-Digest {digest_value}"}
+        auth_type = "X-Digest"
     else:  # VSN700
+        _LOGGER.debug("[Discovery Livedata] Using VSN700 basic authentication")
         basic_auth = get_vsn700_basic_auth(username, password)
         headers = {"Authorization": f"Basic {basic_auth}"}
+        auth_type = "Basic"
+
+    _LOGGER.debug(
+        "[Discovery Livedata] Fetching livedata: url=%s, auth=%s, timeout=%ds",
+        livedata_url,
+        auth_type,
+        timeout,
+    )
 
     try:
         async with session.get(
             livedata_url, headers=headers, timeout=aiohttp.ClientTimeout(total=timeout)
         ) as response:
+            _LOGGER.debug(
+                "[Discovery Livedata] Response: status=%d, headers=%s",
+                response.status,
+                dict(response.headers),
+            )
+
             if response.status == 200:
                 data = await response.json()
-                _LOGGER.debug("Livedata fetched successfully: %d devices", len(data))
+                _LOGGER.debug(
+                    "[Discovery Livedata] Successfully fetched livedata: %d devices, %d bytes",
+                    len(data),
+                    len(str(data)),
+                )
                 return data
+
+            # Log error response details
+            _LOGGER.error(
+                "[Discovery Livedata] HTTP %d error. Headers: %s",
+                response.status,
+                dict(response.headers),
+            )
             raise VSNConnectionError(
                 f"Failed to fetch livedata: HTTP {response.status}"
             )
     except aiohttp.ClientError as err:
+        _LOGGER.debug(
+            "[Discovery Livedata] Connection error: %s (type=%s)",
+            err,
+            type(err).__name__,
+        )
         raise VSNConnectionError(f"Failed to fetch livedata: {err}") from err
 
 

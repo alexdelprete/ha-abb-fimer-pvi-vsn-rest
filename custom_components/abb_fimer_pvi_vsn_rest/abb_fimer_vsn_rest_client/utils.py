@@ -39,11 +39,17 @@ async def check_socket_connection(
     parsed = urlparse(base_url)
     hostname = parsed.hostname or parsed.netloc.split(":")[0]
     port = parsed.port or (443 if parsed.scheme == "https" else 80)
+    is_https = parsed.scheme == "https"
 
     # Remove any trailing path/query components
     hostname = hostname.replace("http://", "").replace("https://", "").split("/")[0]
 
-    _LOGGER.debug("Checking socket connection to %s:%d", hostname, port)
+    _LOGGER.debug(
+        "[Socket Check] Testing connection to %s:%d (protocol=%s)",
+        hostname,
+        port,
+        "HTTPS" if is_https else "HTTP",
+    )
 
     try:
         # Run socket connection in executor (blocking operation)
@@ -55,14 +61,22 @@ async def check_socket_connection(
             timeout=timeout,
         )
         sock.close()
-        _LOGGER.debug("Socket connection to %s:%d successful", hostname, port)
+        _LOGGER.debug(
+            "[Socket Check] Connection to %s:%d successful",
+            hostname,
+            port,
+        )
+        if is_https:
+            _LOGGER.debug(
+                "[Socket Check] Note: SSL/TLS certificate verification happens during HTTP request, not socket check"
+            )
 
     except TimeoutError as err:
         msg = f"Timeout connecting to {hostname}:{port}"
-        _LOGGER.info("%s - device may be offline", msg)
+        _LOGGER.debug("[Socket Check] %s - device may be offline", msg)
         raise VSNConnectionError(msg) from err
 
     except (OSError, ConnectionRefusedError, ConnectionError) as err:
         msg = f"Cannot connect to {hostname}:{port}"
-        _LOGGER.info("%s - %s", msg, err)
+        _LOGGER.debug("[Socket Check] %s - %s (error type=%s)", msg, err, type(err).__name__)
         raise VSNConnectionError(f"{msg}: {err}") from err

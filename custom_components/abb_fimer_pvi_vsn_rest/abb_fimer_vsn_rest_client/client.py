@@ -108,6 +108,7 @@ class ABBFimerVSNRestClient:
         if self.vsn_model == "VSN300":
             # VSN300: Digest auth with X-Digest scheme
             # Format: Authorization: X-Digest username="...", realm="...", nonce="...", ...
+            _LOGGER.debug("[Client] Using VSN300 digest authentication")
             digest_value = await get_vsn300_digest_header(
                 self.session,
                 self.base_url,
@@ -118,10 +119,20 @@ class ABBFimerVSNRestClient:
                 self.timeout,
             )
             headers = {"Authorization": f"X-Digest {digest_value}"}
+            auth_type = "X-Digest"
         else:  # VSN700
             # VSN700: Preemptive HTTP Basic auth
+            _LOGGER.debug("[Client] Using VSN700 basic authentication")
             basic_auth = get_vsn700_basic_auth(self.username, self.password)
             headers = {"Authorization": f"Basic {basic_auth}"}
+            auth_type = "Basic"
+
+        _LOGGER.debug(
+            "[Client] Fetching livedata: url=%s, auth=%s, timeout=%ds",
+            url,
+            auth_type,
+            self.timeout,
+        )
 
         try:
             async with self.session.get(
@@ -129,6 +140,12 @@ class ABBFimerVSNRestClient:
                 headers=headers,
                 timeout=aiohttp.ClientTimeout(total=self.timeout),
             ) as response:
+                _LOGGER.debug(
+                    "[Client] Response: status=%d, headers=%s",
+                    response.status,
+                    dict(response.headers),
+                )
+
                 if response.status == 200:
                     data = await response.json()
                     # Count total points across all devices
@@ -137,7 +154,7 @@ class ABBFimerVSNRestClient:
                         for device_data in data.values()
                     )
                     _LOGGER.debug(
-                        "%s livedata fetched: %d devices, %d total points",
+                        "[Client] %s livedata fetched successfully: %d devices, %d total points",
                         self.vsn_model,
                         len(data),
                         total_points,
@@ -147,20 +164,39 @@ class ABBFimerVSNRestClient:
                         for device_id, device_data in data.items():
                             point_count = len(device_data.get("points", []))
                             _LOGGER.debug(
-                                "  Device %s: %d points",
+                                "[Client]   Device %s: %d points",
                                 device_id,
                                 point_count,
                             )
                     return data
+
                 if response.status == 401:
+                    _LOGGER.error(
+                        "[Client] Authentication failed (HTTP 401). "
+                        "Headers: %s. Check username/password for %s authentication.",
+                        dict(response.headers),
+                        self.vsn_model,
+                    )
                     raise VSNAuthenticationError(
                         f"Authentication failed: HTTP {response.status}. "
-                        "Check username and password."
+                        "Check username and password. Enable debug logging for details."
                     )
+
+                # Log error response details
+                _LOGGER.error(
+                    "[Client] Livedata request failed: HTTP %d. Headers: %s",
+                    response.status,
+                    dict(response.headers),
+                )
                 raise VSNConnectionError(
                     f"Livedata request failed: HTTP {response.status}"
                 )
         except aiohttp.ClientError as err:
+            _LOGGER.debug(
+                "[Client] Connection error: %s (type=%s)",
+                err,
+                type(err).__name__,
+            )
             raise VSNConnectionError(f"Livedata request error: {err}") from err
 
     async def get_normalized_data(self) -> dict[str, Any]:

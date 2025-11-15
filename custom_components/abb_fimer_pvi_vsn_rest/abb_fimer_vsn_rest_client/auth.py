@@ -203,6 +203,13 @@ async def get_vsn300_digest_header(
 
     url = f"{base_url.rstrip('/')}{uri}"
 
+    _LOGGER.debug(
+        "[VSN300 Auth] Requesting digest challenge: method=%s, url=%s, timeout=%ds",
+        method,
+        url,
+        timeout,
+    )
+
     try:
         # Make unauthenticated request to get challenge
         async with session.request(
@@ -210,29 +217,71 @@ async def get_vsn300_digest_header(
             url,
             timeout=aiohttp.ClientTimeout(total=timeout),
         ) as response:
+            # Log response details
+            _LOGGER.debug(
+                "[VSN300 Auth] Challenge response: status=%d, headers=%s",
+                response.status,
+                dict(response.headers),
+            )
+
             if response.status == 401:
                 www_authenticate = response.headers.get("WWW-Authenticate", "")
 
+                # Log raw challenge header
+                _LOGGER.debug(
+                    "[VSN300 Auth] WWW-Authenticate header (raw): %s",
+                    repr(www_authenticate) if www_authenticate else "NOT PRESENT",
+                )
+
                 if not www_authenticate or "digest" not in www_authenticate.lower():
+                    _LOGGER.error(
+                        "[VSN300 Auth] Invalid or missing digest challenge. "
+                        "WWW-Authenticate: %s, All headers: %s",
+                        repr(www_authenticate),
+                        dict(response.headers),
+                    )
                     raise VSNAuthenticationError(
-                        "VSN300 challenge missing or not digest-based"
+                        "VSN300 challenge missing or not digest-based. Enable debug logging for details."
                     )
 
                 # Parse challenge
                 challenge_params = parse_digest_challenge(www_authenticate)
-                _LOGGER.debug("Challenge params: %s", challenge_params)
+                _LOGGER.debug(
+                    "[VSN300 Auth] Parsed challenge params: realm=%s, nonce=%s, qop=%s, algorithm=%s",
+                    challenge_params.get("realm"),
+                    challenge_params.get("nonce", "")[:20] + "..." if challenge_params.get("nonce") else None,
+                    challenge_params.get("qop"),
+                    challenge_params.get("algorithm"),
+                )
 
                 # Build digest header
                 digest_value = build_digest_header(
                     username, password, challenge_params, method, uri
                 )
 
-                _LOGGER.debug("VSN300 X-Digest header generated: %s", digest_value)
+                # Log digest generation (sanitized - don't log the full digest or password)
+                _LOGGER.debug(
+                    "[VSN300 Auth] Generated X-Digest header for username=%s (length=%d chars)",
+                    username,
+                    len(digest_value) if digest_value else 0,
+                )
                 return digest_value
+
+            # Got non-401 response
+            _LOGGER.error(
+                "[VSN300 Auth] Expected 401 challenge response, got %d. Headers: %s",
+                response.status,
+                dict(response.headers),
+            )
             raise VSNAuthenticationError(
                 f"Expected 401 challenge, got {response.status}"
             )
     except aiohttp.ClientError as err:
+        _LOGGER.debug(
+            "[VSN300 Auth] Connection error during challenge: %s (type=%s)",
+            err,
+            type(err).__name__,
+        )
         raise VSNConnectionError(f"VSN300 challenge request failed: {err}") from err
 
 
@@ -270,37 +319,101 @@ async def detect_vsn_model(
     # Check socket connection before HTTP request
     await check_socket_connection(base_url, timeout=5)
 
+    detection_url = f"{base_url}/v1/status"
+    protocol = "HTTPS" if base_url.startswith("https") else "HTTP"
+    _LOGGER.debug(
+        "[VSN Detection] Making unauthenticated request to %s (protocol=%s, timeout=%ds)",
+        detection_url,
+        protocol,
+        timeout,
+    )
+
     try:
         # Make unauthenticated request to /v1/status to trigger 401 with WWW-Authenticate
         async with session.get(
-            f"{base_url}/v1/status",
+            detection_url,
             timeout=aiohttp.ClientTimeout(total=timeout),
         ) as response:
+            # Log complete response details for debugging
+            _LOGGER.debug(
+                "[VSN Detection] Response received: status=%d, headers=%s",
+                response.status,
+                dict(response.headers),
+            )
+
             if response.status == 401:
                 www_authenticate = response.headers.get("WWW-Authenticate", "").lower()
+                www_authenticate_raw = response.headers.get("WWW-Authenticate", "")
+
+                # Log raw WWW-Authenticate header value
+                _LOGGER.debug(
+                    "[VSN Detection] WWW-Authenticate header (raw): %s",
+                    repr(www_authenticate_raw) if www_authenticate_raw else "NOT PRESENT",
+                )
 
                 if not www_authenticate:
+                    # Try to read response body for additional context
+                    try:
+                        body = await response.text()
+                        body_preview = body[:500] if body else "(empty)"
+                        _LOGGER.debug(
+                            "[VSN Detection] Response body preview: %s",
+                            body_preview,
+                        )
+                    except Exception:  # noqa: BLE001
+                        _LOGGER.debug("[VSN Detection] Could not read response body")
+
+                    # Log all response headers to help diagnose the issue
+                    _LOGGER.error(
+                        "[VSN Detection] Device returned 401 but WWW-Authenticate header is missing. "
+                        "All response headers: %s",
+                        dict(response.headers),
+                    )
+
                     raise VSNDetectionError(
-                        "Device returned 401 but no WWW-Authenticate header found"
+                        "Device returned 401 but no WWW-Authenticate header found. "
+                        "Enable debug logging for details."
                     )
 
                 # Check for digest authentication (VSN300)
                 if "x-digest" in www_authenticate or "digest" in www_authenticate:
-                    _LOGGER.info("Detected VSN300 (digest auth in WWW-Authenticate)")
+                    _LOGGER.info(
+                        "Detected VSN300 (digest auth in WWW-Authenticate: %s)",
+                        www_authenticate_raw,
+                    )
                     return "VSN300"
 
                 # Check for basic authentication (VSN700)
                 if "basic" in www_authenticate:
-                    _LOGGER.info("Detected VSN700 (basic auth in WWW-Authenticate)")
+                    _LOGGER.info(
+                        "Detected VSN700 (basic auth in WWW-Authenticate: %s)",
+                        www_authenticate_raw,
+                    )
                     return "VSN700"
 
+                _LOGGER.error(
+                    "[VSN Detection] Unknown authentication scheme. WWW-Authenticate: %s",
+                    www_authenticate_raw,
+                )
                 raise VSNDetectionError(
                     f"Unknown authentication scheme in WWW-Authenticate: {www_authenticate}"
                 )
+
+            # Got non-401 response
+            _LOGGER.error(
+                "[VSN Detection] Expected 401 response for detection, got %d. Headers: %s",
+                response.status,
+                dict(response.headers),
+            )
             raise VSNDetectionError(
                 f"Expected 401 response for detection, got {response.status}"
             )
     except aiohttp.ClientError as err:
+        _LOGGER.debug(
+            "[VSN Detection] Connection error: %s (type=%s)",
+            err,
+            type(err).__name__,
+        )
         raise VSNConnectionError(f"Device detection connection error: {err}") from err
 
 
