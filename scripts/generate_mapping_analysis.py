@@ -22,7 +22,7 @@ def create_mapping_analysis_xlsx(mapping_path: Path, output_path: Path):
     """Create an XLSX file analyzing the mapping."""
 
     print(f"Reading mapping file: {mapping_path}")
-    with open(mapping_path, encoding='utf-8') as f:
+    with open(mapping_path, encoding="utf-8") as f:
         mapping = json.load(f)
 
     print(f"Total entries in mapping: {len(mapping)}")
@@ -57,7 +57,9 @@ def create_mapping_analysis_xlsx(mapping_path: Path, output_path: Path):
     for col_idx, header in enumerate(headers, start=1):
         cell = ws.cell(row=1, column=col_idx, value=header)
         cell.font = Font(bold=True)
-        cell.fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
+        cell.fill = PatternFill(
+            start_color="366092", end_color="366092", fill_type="solid"
+        )
         cell.font = Font(bold=True, color="FFFFFF")
         cell.alignment = Alignment(horizontal="center", vertical="center")
 
@@ -72,7 +74,9 @@ def create_mapping_analysis_xlsx(mapping_path: Path, output_path: Path):
         ws.cell(row=row_idx, column=7, value=entry.get("HA Device Class", ""))
         ws.cell(row=row_idx, column=8, value=entry.get("HA Unit of Measurement", ""))
         ws.cell(row=row_idx, column=9, value=entry.get("HA State Class", ""))
-        ws.cell(row=row_idx, column=10, value=entry.get("Suggested Display Precision", ""))
+        ws.cell(
+            row=row_idx, column=10, value=entry.get("Suggested Display Precision", "")
+        )
         ws.cell(row=row_idx, column=11, value=entry.get("In /livedata", ""))
         ws.cell(row=row_idx, column=12, value=entry.get("In /feeds", ""))
         ws.cell(row=row_idx, column=13, value=entry.get("Available in Modbus", ""))
@@ -111,7 +115,9 @@ def create_mapping_analysis_xlsx(mapping_path: Path, output_path: Path):
         category_counts[cat] = category_counts.get(cat, 0) + 1
 
     # Write summary
-    ws2.cell(row=1, column=1, value="Mapping Summary Statistics").font = Font(bold=True, size=14)
+    ws2.cell(row=1, column=1, value="Mapping Summary Statistics").font = Font(
+        bold=True, size=14
+    )
 
     row = 3
     ws2.cell(row=row, column=1, value="Total Entries").font = Font(bold=True)
@@ -120,26 +126,28 @@ def create_mapping_analysis_xlsx(mapping_path: Path, output_path: Path):
 
     ws2.cell(row=row, column=1, value="With Device Class").font = Font(bold=True)
     ws2.cell(row=row, column=2, value=with_device_class)
-    ws2.cell(row=row, column=3, value=f"{with_device_class/total*100:.1f}%")
+    ws2.cell(row=row, column=3, value=f"{with_device_class / total * 100:.1f}%")
     row += 1
 
     ws2.cell(row=row, column=1, value="With Unit").font = Font(bold=True)
     ws2.cell(row=row, column=2, value=with_unit)
-    ws2.cell(row=row, column=3, value=f"{with_unit/total*100:.1f}%")
+    ws2.cell(row=row, column=3, value=f"{with_unit / total * 100:.1f}%")
     row += 1
 
     ws2.cell(row=row, column=1, value="With State Class").font = Font(bold=True)
     ws2.cell(row=row, column=2, value=with_state_class)
-    ws2.cell(row=row, column=3, value=f"{with_state_class/total*100:.1f}%")
+    ws2.cell(row=row, column=3, value=f"{with_state_class / total * 100:.1f}%")
     row += 1
 
     ws2.cell(row=row, column=1, value="With Precision").font = Font(bold=True)
     ws2.cell(row=row, column=2, value=with_precision)
-    ws2.cell(row=row, column=3, value=f"{with_precision/total*100:.1f}%")
+    ws2.cell(row=row, column=3, value=f"{with_precision / total * 100:.1f}%")
     row += 2
 
     # Device class breakdown
-    ws2.cell(row=row, column=1, value="Device Class Breakdown").font = Font(bold=True, size=12)
+    ws2.cell(row=row, column=1, value="Device Class Breakdown").font = Font(
+        bold=True, size=12
+    )
     row += 1
     ws2.cell(row=row, column=1, value="Device Class").font = Font(bold=True)
     ws2.cell(row=row, column=2, value="Count").font = Font(bold=True)
@@ -153,7 +161,9 @@ def create_mapping_analysis_xlsx(mapping_path: Path, output_path: Path):
     row += 1
 
     # Category breakdown
-    ws2.cell(row=row, column=1, value="Category Breakdown").font = Font(bold=True, size=12)
+    ws2.cell(row=row, column=1, value="Category Breakdown").font = Font(
+        bold=True, size=12
+    )
     row += 1
     ws2.cell(row=row, column=1, value="Category").font = Font(bold=True)
     ws2.cell(row=row, column=2, value="Count").font = Font(bold=True)
@@ -173,22 +183,33 @@ def create_mapping_analysis_xlsx(mapping_path: Path, output_path: Path):
     print(f"\nSaving analysis to: {output_path}")
     wb.save(output_path)
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("MAPPING ANALYSIS SUMMARY")
-    print("="*60)
+    print("=" * 60)
     print(f"Total entries: {total}")
-    print(f"With device_class: {with_device_class} ({with_device_class/total*100:.1f}%)")
-    print(f"With unit: {with_unit} ({with_unit/total*100:.1f}%)")
-    print(f"With state_class: {with_state_class} ({with_state_class/total*100:.1f}%)")
-    print(f"With precision: {with_precision} ({with_precision/total*100:.1f}%)")
-    print("="*60)
+    print(
+        f"With device_class: {with_device_class} ({with_device_class / total * 100:.1f}%)"
+    )
+    print(f"With unit: {with_unit} ({with_unit / total * 100:.1f}%)")
+    print(
+        f"With state_class: {with_state_class} ({with_state_class / total * 100:.1f}%)"
+    )
+    print(f"With precision: {with_precision} ({with_precision / total * 100:.1f}%)")
+    print("=" * 60)
 
 
 def main():
     """Main entry point."""
     # Get repository root
     repo_root = Path(__file__).parent.parent
-    mapping_path = repo_root / "custom_components" / "abb_fimer_pvi_vsn_rest" / "abb_fimer_vsn_rest_client" / "data" / "vsn-sunspec-point-mapping.json"
+    mapping_path = (
+        repo_root
+        / "custom_components"
+        / "abb_fimer_pvi_vsn_rest"
+        / "abb_fimer_vsn_rest_client"
+        / "data"
+        / "vsn-sunspec-point-mapping.json"
+    )
     output_path = repo_root / "docs" / "vsn-data" / "vsn-sunspec-mapping-updated.xlsx"
 
     if not mapping_path.exists():

@@ -11,55 +11,212 @@ from pathlib import Path
 # Define mapping fixes based on analysis
 DEVICE_CLASS_FIXES = {
     # Current sensors
-    "Iba": {"device_class": "current", "unit": "A", "state_class": "measurement", "precision": 2},
-    "Iin1": {"device_class": "current", "unit": "A", "state_class": "measurement", "precision": 2},
-    "Iin2": {"device_class": "current", "unit": "A", "state_class": "measurement", "precision": 2},
-    "IleakInv": {"device_class": "current", "unit": "A", "state_class": "measurement", "precision": 2},
-    "IleakDC": {"device_class": "current", "unit": "A", "state_class": "measurement", "precision": 2},
-
+    "Iba": {
+        "device_class": "current",
+        "unit": "A",
+        "state_class": "measurement",
+        "precision": 2,
+    },
+    "Iin1": {
+        "device_class": "current",
+        "unit": "A",
+        "state_class": "measurement",
+        "precision": 2,
+    },
+    "Iin2": {
+        "device_class": "current",
+        "unit": "A",
+        "state_class": "measurement",
+        "precision": 2,
+    },
+    "IleakInv": {
+        "device_class": "current",
+        "unit": "A",
+        "state_class": "measurement",
+        "precision": 2,
+    },
+    "IleakDC": {
+        "device_class": "current",
+        "unit": "A",
+        "state_class": "measurement",
+        "precision": 2,
+    },
     # Voltage sensors
-    "Vba": {"device_class": "voltage", "unit": "V", "state_class": "measurement", "precision": 1},
-    "ShU": {"device_class": "voltage", "unit": "V", "state_class": "measurement", "precision": 1},
-    "Vin1": {"device_class": "voltage", "unit": "V", "state_class": "measurement", "precision": 1},
-    "Vin2": {"device_class": "voltage", "unit": "V", "state_class": "measurement", "precision": 1},
-
+    "Vba": {
+        "device_class": "voltage",
+        "unit": "V",
+        "state_class": "measurement",
+        "precision": 1,
+    },
+    "ShU": {
+        "device_class": "voltage",
+        "unit": "V",
+        "state_class": "measurement",
+        "precision": 1,
+    },
+    "Vin1": {
+        "device_class": "voltage",
+        "unit": "V",
+        "state_class": "measurement",
+        "precision": 1,
+    },
+    "Vin2": {
+        "device_class": "voltage",
+        "unit": "V",
+        "state_class": "measurement",
+        "precision": 1,
+    },
     # Power sensors
-    "Pba": {"device_class": "power", "unit": "W", "state_class": "measurement", "precision": 0},
-    "MeterPgrid_L1": {"device_class": "power", "unit": "W", "state_class": "measurement", "precision": 0},
-    "MeterPgrid_L2": {"device_class": "power", "unit": "W", "state_class": "measurement", "precision": 0},
-    "MeterPgrid_L3": {"device_class": "power", "unit": "W", "state_class": "measurement", "precision": 0},
-
+    "Pba": {
+        "device_class": "power",
+        "unit": "W",
+        "state_class": "measurement",
+        "precision": 0,
+    },
+    "MeterPgrid_L1": {
+        "device_class": "power",
+        "unit": "W",
+        "state_class": "measurement",
+        "precision": 0,
+    },
+    "MeterPgrid_L2": {
+        "device_class": "power",
+        "unit": "W",
+        "state_class": "measurement",
+        "precision": 0,
+    },
+    "MeterPgrid_L3": {
+        "device_class": "power",
+        "unit": "W",
+        "state_class": "measurement",
+        "precision": 0,
+    },
     # Temperature sensors
-    "Tba": {"device_class": "temperature", "unit": "°C", "state_class": "measurement", "precision": 1},
-    "TcMax": {"device_class": "temperature", "unit": "°C", "state_class": "measurement", "precision": 1},
-    "TcMin": {"device_class": "temperature", "unit": "°C", "state_class": "measurement", "precision": 1},
-
+    "Tba": {
+        "device_class": "temperature",
+        "unit": "°C",
+        "state_class": "measurement",
+        "precision": 1,
+    },
+    "TcMax": {
+        "device_class": "temperature",
+        "unit": "°C",
+        "state_class": "measurement",
+        "precision": 1,
+    },
+    "TcMin": {
+        "device_class": "temperature",
+        "unit": "°C",
+        "state_class": "measurement",
+        "precision": 1,
+    },
     # Energy sensors (total_increasing)
-    "ECt": {"device_class": "energy", "unit": "Wh", "state_class": "total_increasing", "precision": 2},
-    "EDt": {"device_class": "energy", "unit": "Wh", "state_class": "total_increasing", "precision": 2},
-    "E4_runtime": {"device_class": "energy", "unit": "Wh", "state_class": "total_increasing", "precision": 2},
-    "E4_7D": {"device_class": "energy", "unit": "Wh", "state_class": "total_increasing", "precision": 2},
-    "E4_30D": {"device_class": "energy", "unit": "Wh", "state_class": "total_increasing", "precision": 2},
-    "E5_runtime": {"device_class": "energy", "unit": "Wh", "state_class": "total_increasing", "precision": 2},
-    "E5_7D": {"device_class": "energy", "unit": "Wh", "state_class": "total_increasing", "precision": 2},
-    "E5_30D": {"device_class": "energy", "unit": "Wh", "state_class": "total_increasing", "precision": 2},
-    "Ein1": {"device_class": "energy", "unit": "Wh", "state_class": "total_increasing", "precision": 2},
-    "Ein2": {"device_class": "energy", "unit": "Wh", "state_class": "total_increasing", "precision": 2},
-    "EBackup": {"device_class": "energy", "unit": "Wh", "state_class": "total_increasing", "precision": 2},
-
+    "ECt": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "state_class": "total_increasing",
+        "precision": 2,
+    },
+    "EDt": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "state_class": "total_increasing",
+        "precision": 2,
+    },
+    "E4_runtime": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "state_class": "total_increasing",
+        "precision": 2,
+    },
+    "E4_7D": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "state_class": "total_increasing",
+        "precision": 2,
+    },
+    "E4_30D": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "state_class": "total_increasing",
+        "precision": 2,
+    },
+    "E5_runtime": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "state_class": "total_increasing",
+        "precision": 2,
+    },
+    "E5_7D": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "state_class": "total_increasing",
+        "precision": 2,
+    },
+    "E5_30D": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "state_class": "total_increasing",
+        "precision": 2,
+    },
+    "Ein1": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "state_class": "total_increasing",
+        "precision": 2,
+    },
+    "Ein2": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "state_class": "total_increasing",
+        "precision": 2,
+    },
+    "EBackup": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "state_class": "total_increasing",
+        "precision": 2,
+    },
     # Apparent power (VAh energy)
-    "E2_runtime": {"device_class": "apparent_power", "unit": "VAh", "state_class": "total_increasing", "precision": 2},
-    "E2_7D": {"device_class": "apparent_power", "unit": "VAh", "state_class": "total_increasing", "precision": 2},
-    "E2_30D": {"device_class": "apparent_power", "unit": "VAh", "state_class": "total_increasing", "precision": 2},
-
+    "E2_runtime": {
+        "device_class": "apparent_power",
+        "unit": "VAh",
+        "state_class": "total_increasing",
+        "precision": 2,
+    },
+    "E2_7D": {
+        "device_class": "apparent_power",
+        "unit": "VAh",
+        "state_class": "total_increasing",
+        "precision": 2,
+    },
+    "E2_30D": {
+        "device_class": "apparent_power",
+        "unit": "VAh",
+        "state_class": "total_increasing",
+        "precision": 2,
+    },
     # Frequency
-    "Fcc": {"device_class": "frequency", "unit": "Hz", "state_class": "measurement", "precision": 2},
-
+    "Fcc": {
+        "device_class": "frequency",
+        "unit": "Hz",
+        "state_class": "measurement",
+        "precision": 2,
+    },
     # Battery State of Charge
-    "TSoc": {"device_class": "battery", "unit": "%", "state_class": "measurement", "precision": 0},
-
+    "TSoc": {
+        "device_class": "battery",
+        "unit": "%",
+        "state_class": "measurement",
+        "precision": 0,
+    },
     # Timestamp
-    "SysTime": {"device_class": "timestamp", "unit": "", "state_class": "", "precision": 0},
+    "SysTime": {
+        "device_class": "timestamp",
+        "unit": "",
+        "state_class": "",
+        "precision": 0,
+    },
 }
 
 # Default precision by device_class for sensors that already have device_class
@@ -83,7 +240,7 @@ def update_mapping_file(mapping_path: Path):
     """Update the mapping file with missing metadata."""
 
     print(f"Reading mapping file: {mapping_path}")
-    with open(mapping_path, encoding='utf-8') as f:
+    with open(mapping_path, encoding="utf-8") as f:
         mapping = json.load(f)
 
     print(f"Total entries in mapping: {len(mapping)}")
@@ -139,20 +296,20 @@ def update_mapping_file(mapping_path: Path):
 
     # Write updated mapping
     print(f"\nWriting updated mapping to: {mapping_path}")
-    with open(mapping_path, 'w', encoding='utf-8') as f:
+    with open(mapping_path, "w", encoding="utf-8") as f:
         json.dump(mapping, f, indent=2, ensure_ascii=False)
 
     # Print statistics
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("UPDATE STATISTICS")
-    print("="*60)
+    print("=" * 60)
     print(f"Total entries: {stats['total']}")
     print(f"Updated device_class: {stats['updated_device_class']}")
     print(f"Updated unit: {stats['updated_unit']}")
     print(f"Updated state_class: {stats['updated_state_class']}")
     print(f"Added precision field: {stats['added_precision']}")
     print(f"Already complete: {stats['already_complete']}")
-    print("="*60)
+    print("=" * 60)
 
     return mapping, stats
 
@@ -161,7 +318,14 @@ def main():
     """Main entry point."""
     # Get repository root
     repo_root = Path(__file__).parent.parent
-    mapping_path = repo_root / "custom_components" / "abb_fimer_pvi_vsn_rest" / "abb_fimer_vsn_rest_client" / "data" / "vsn-sunspec-point-mapping.json"
+    mapping_path = (
+        repo_root
+        / "custom_components"
+        / "abb_fimer_pvi_vsn_rest"
+        / "abb_fimer_vsn_rest_client"
+        / "data"
+        / "vsn-sunspec-point-mapping.json"
+    )
 
     if not mapping_path.exists():
         print(f"Error: Mapping file not found at {mapping_path}")
