@@ -20,7 +20,8 @@
     "Model_Notes": "",
     "models": [
       "M103"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "Qgrid",
@@ -43,7 +44,8 @@
     "Model_Notes": "",
     "models": [
       "M103"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "Fgrid",
@@ -66,7 +68,8 @@
     "Model_Notes": "",
     "models": [
       "M103"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "Igrid",
@@ -89,7 +92,8 @@
     "Model_Notes": "",
     "models": [
       "M103"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "Vgrid",
@@ -112,7 +116,8 @@
     "Model_Notes": "",
     "models": [
       "M103"
-    ]
+    ],
+    "Suggested Display Precision": 1
   },
   {
     "REST Name (VSN700)": "C_Mn",
@@ -135,7 +140,8 @@
     "Model_Notes": "",
     "models": [
       "M1"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "C_Md",
@@ -158,7 +164,8 @@
     "Model_Notes": "",
     "models": [
       "M1"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "C_Opt",
@@ -181,7 +188,8 @@
     "Model_Notes": "",
     "models": [
       "M1"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "C_Vr",
@@ -204,7 +212,8 @@
     "Model_Notes": "",
     "models": [
       "M1"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "C_SN",
@@ -227,7 +236,8 @@
     "Model_Notes": "",
     "models": [
       "M1"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "C_DA",
@@ -250,7 +260,8 @@
     "Model_Notes": "",
     "models": [
       "M1"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "ECharge",
@@ -273,7 +284,8 @@
     "Model_Notes": "ABB/FIMER proprietary model 64061",
     "models": [
       "M64061"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "BatteryMode",
@@ -296,7 +308,8 @@
     "Model_Notes": "ABB/FIMER proprietary model 64061",
     "models": [
       "M64061"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "AlarmState",
@@ -319,7 +332,8 @@
     "Model_Notes": "ABB/FIMER proprietary model 64061",
     "models": [
       "M64061"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "EDischarge",
@@ -342,7 +356,8 @@
     "Model_Notes": "ABB/FIMER proprietary model 64061",
     "models": [
       "M64061"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "HouseIgrid_L2",
@@ -365,7 +380,8 @@
     "Model_Notes": "ABB/FIMER proprietary",
     "models": [
       "ABB Proprietary"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "Soh",
@@ -388,7 +404,8 @@
     "Model_Notes": "ABB/FIMER proprietary",
     "models": [
       "ABB Proprietary"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "HouseIgrid_L3",
@@ -411,7 +428,8 @@
     "Model_Notes": "ABB/FIMER proprietary",
     "models": [
       "ABB Proprietary"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "CountryStd",
@@ -434,7 +452,8 @@
     "Model_Notes": "ABB/FIMER proprietary",
     "models": [
       "ABB Proprietary"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "HousePgrid_L1",
@@ -457,7 +476,8 @@
     "Model_Notes": "ABB/FIMER proprietary",
     "models": [
       "ABB Proprietary"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "SplitPhase",
@@ -480,7 +500,8 @@
     "Model_Notes": "ABB/FIMER proprietary",
     "models": [
       "ABB Proprietary"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "Chc",
@@ -503,7 +524,8 @@
     "Model_Notes": "ABB/FIMER proprietary",
     "models": [
       "ABB Proprietary"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "Dhc",
@@ -526,7 +548,8 @@
     "Model_Notes": "ABB/FIMER proprietary",
     "models": [
       "ABB Proprietary"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "SysTime",
@@ -541,7 +564,7 @@
     "Category": "System",
     "HA Unit of Measurement": "",
     "HA State Class": "",
-    "HA Device Class": "",
+    "HA Device Class": "timestamp",
     "HA Icon": "mdi:information-box-outline",
     "Entity Category": "diagnostic",
     "Available in Modbus": false,
@@ -550,7 +573,8 @@
     "models": [
       "M64061",
       "ABB Proprietary"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "HousePgrid_L2",
@@ -573,7 +597,8 @@
     "Model_Notes": "ABB/FIMER proprietary",
     "models": [
       "ABB Proprietary"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "Soc",
@@ -596,7 +621,8 @@
     "Model_Notes": "ABB/FIMER proprietary",
     "models": [
       "ABB Proprietary"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "HouseIgrid_L1",
@@ -619,7 +645,8 @@
     "Model_Notes": "ABB/FIMER proprietary",
     "models": [
       "ABB Proprietary"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "HousePgrid_L3",
@@ -642,7 +669,8 @@
     "Model_Notes": "ABB/FIMER proprietary",
     "models": [
       "ABB Proprietary"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "BattNum",
@@ -665,7 +693,8 @@
     "Model_Notes": "ABB/FIMER proprietary",
     "models": [
       "ABB Proprietary"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -688,7 +717,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M103"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -711,7 +741,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M160"
-    ]
+    ],
+    "Suggested Display Precision": 1
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -734,7 +765,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M64061"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "VBulkMid",
@@ -757,7 +789,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M64061"
-    ]
+    ],
+    "Suggested Display Precision": 1
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -780,7 +813,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "VBulk",
@@ -803,7 +837,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M64061"
-    ]
+    ],
+    "Suggested Display Precision": 1
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -826,7 +861,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M64061"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -849,7 +885,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M103"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -872,7 +909,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M64061"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -895,7 +933,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M160"
-    ]
+    ],
+    "Suggested Display Precision": 1
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -918,7 +957,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M103"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -941,7 +981,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M103"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -964,7 +1005,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M103"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -987,7 +1029,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M103"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1010,7 +1053,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M103"
-    ]
+    ],
+    "Suggested Display Precision": 1
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1033,7 +1077,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1056,7 +1101,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M64061"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1079,7 +1125,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M103"
-    ]
+    ],
+    "Suggested Display Precision": 1
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1102,7 +1149,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1125,7 +1173,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M64061"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1148,7 +1197,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1171,7 +1221,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M64061"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1194,7 +1245,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M160"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1217,7 +1269,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M103"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1240,7 +1293,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M103"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1263,7 +1317,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M160"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1286,7 +1341,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M103"
-    ]
+    ],
+    "Suggested Display Precision": 1
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1309,7 +1365,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M103"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1332,7 +1389,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M64061"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1355,7 +1413,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1378,7 +1437,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M103"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1401,7 +1461,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M103"
-    ]
+    ],
+    "Suggested Display Precision": 1
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1424,7 +1485,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M64061"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1447,7 +1509,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1470,7 +1533,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M103"
-    ]
+    ],
+    "Suggested Display Precision": 1
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1493,7 +1557,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M64061"
-    ]
+    ],
+    "Suggested Display Precision": 1
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1516,7 +1581,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M64061"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1539,7 +1605,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1562,7 +1629,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M64061"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1585,7 +1653,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M103"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1608,7 +1677,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M103"
-    ]
+    ],
+    "Suggested Display Precision": 1
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1631,7 +1701,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1654,7 +1725,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1677,7 +1749,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M160"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1700,7 +1773,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M64061"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1723,7 +1797,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1746,7 +1821,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M160"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1769,7 +1845,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M64061"
-    ]
+    ],
+    "Suggested Display Precision": 1
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1792,7 +1869,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1815,7 +1893,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M103"
-    ]
+    ],
+    "Suggested Display Precision": 1
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1838,7 +1917,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "M64061"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1861,7 +1941,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -1884,7 +1965,8 @@
     "Model_Notes": "VSN300-specific point",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "E2_7D",
@@ -1899,7 +1981,7 @@
     "Category": "Energy Counter",
     "HA Unit of Measurement": "VAh",
     "HA State Class": "total",
-    "HA Device Class": "",
+    "HA Device Class": "apparent_power",
     "HA Icon": "mdi:lightning-bolt",
     "Entity Category": "",
     "Available in Modbus": false,
@@ -1907,7 +1989,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "E5_30D",
@@ -1920,9 +2003,9 @@
     "Description": "Battery charge energy - Last 30 Days",
     "HA Display Name": "Energy - Battery Charge Last 30 Days",
     "Category": "Energy Counter",
-    "HA Unit of Measurement": "",
-    "HA State Class": "",
-    "HA Device Class": "",
+    "HA Unit of Measurement": "Wh",
+    "HA State Class": "total_increasing",
+    "HA Device Class": "energy",
     "HA Icon": "",
     "Entity Category": "",
     "Available in Modbus": false,
@@ -1930,7 +2013,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "ECharge_7D",
@@ -1953,7 +2037,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "E15_runtime",
@@ -1976,7 +2061,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "DI0_mode",
@@ -1999,7 +2085,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "TcMax",
@@ -2012,9 +2099,9 @@
     "Description": "Maximum cabinet temperature recorded",
     "HA Display Name": "Temperature - Cabinet Max",
     "Category": "Datalogger",
-    "HA Unit of Measurement": "",
-    "HA State Class": "",
-    "HA Device Class": "",
+    "HA Unit of Measurement": "°C",
+    "HA State Class": "measurement",
+    "HA Device Class": "temperature",
     "HA Icon": "",
     "Entity Category": "",
     "Available in Modbus": false,
@@ -2022,7 +2109,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 1
   },
   {
     "REST Name (VSN700)": "Tba",
@@ -2035,9 +2123,9 @@
     "Description": "Battery pack temperature",
     "HA Display Name": "Temperature - Battery",
     "Category": "Datalogger",
-    "HA Unit of Measurement": "",
-    "HA State Class": "",
-    "HA Device Class": "",
+    "HA Unit of Measurement": "°C",
+    "HA State Class": "measurement",
+    "HA Device Class": "temperature",
     "HA Icon": "",
     "Entity Category": "",
     "Available in Modbus": false,
@@ -2045,7 +2133,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 1
   },
   {
     "REST Name (VSN700)": "BattExtCtrlState",
@@ -2068,7 +2157,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "MeterVgrid_L3",
@@ -2091,7 +2181,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 1
   },
   {
     "REST Name (VSN700)": "Pin1",
@@ -2114,7 +2205,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "EDt",
@@ -2127,9 +2219,9 @@
     "Description": "Total energy from direct transducer (DT)",
     "HA Display Name": "Total energy from direct transducer (DT)",
     "Category": "Energy Counter",
-    "HA Unit of Measurement": "",
-    "HA State Class": "",
-    "HA Device Class": "",
+    "HA Unit of Measurement": "Wh",
+    "HA State Class": "total_increasing",
+    "HA Device Class": "energy",
     "HA Icon": "",
     "Entity Category": "",
     "Available in Modbus": false,
@@ -2137,7 +2229,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "PACDeratingFlags",
@@ -2160,7 +2253,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "CommissioningFreeze",
@@ -2183,7 +2277,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "E6_30D",
@@ -2206,7 +2301,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "Iin2",
@@ -2219,9 +2315,9 @@
     "Description": "DC Current (String 2)",
     "HA Display Name": "Current DC - String 2",
     "Category": "Datalogger",
-    "HA Unit of Measurement": "",
-    "HA State Class": "",
-    "HA Device Class": "",
+    "HA Unit of Measurement": "A",
+    "HA State Class": "measurement",
+    "HA Device Class": "current",
     "HA Icon": "",
     "Entity Category": "",
     "Available in Modbus": false,
@@ -2229,7 +2325,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "ETotalApparent",
@@ -2252,7 +2349,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "Ein2",
@@ -2265,9 +2363,9 @@
     "Description": "DC energy (String 2) - Lifetime",
     "HA Display Name": "DC energy (String 2) - Lifetime",
     "Category": "Energy Counter",
-    "HA Unit of Measurement": "",
-    "HA State Class": "",
-    "HA Device Class": "",
+    "HA Unit of Measurement": "Wh",
+    "HA State Class": "total_increasing",
+    "HA Device Class": "energy",
     "HA Icon": "",
     "Entity Category": "",
     "Available in Modbus": false,
@@ -2275,7 +2373,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "MeterQgrid_L3",
@@ -2298,7 +2397,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "DC2State",
@@ -2321,7 +2421,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "Ein1",
@@ -2334,9 +2435,9 @@
     "Description": "DC energy (String 1) - Lifetime",
     "HA Display Name": "DC energy (String 1) - Lifetime",
     "Category": "Energy Counter",
-    "HA Unit of Measurement": "",
-    "HA State Class": "",
-    "HA Device Class": "",
+    "HA Unit of Measurement": "Wh",
+    "HA State Class": "total_increasing",
+    "HA Device Class": "energy",
     "HA Icon": "",
     "Entity Category": "",
     "Available in Modbus": false,
@@ -2344,7 +2445,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "DI_status",
@@ -2367,7 +2469,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "GlobState",
@@ -2390,7 +2493,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "MeterFgrid",
@@ -2413,7 +2517,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "E4_7D",
@@ -2426,9 +2531,9 @@
     "Description": "Self-consumed energy - Last 7 Days",
     "HA Display Name": "Self-consumed energy - Last 7 Days",
     "Category": "Energy Counter",
-    "HA Unit of Measurement": "",
-    "HA State Class": "",
-    "HA Device Class": "",
+    "HA Unit of Measurement": "Wh",
+    "HA State Class": "total_increasing",
+    "HA Device Class": "energy",
     "HA Icon": "",
     "Entity Category": "",
     "Available in Modbus": false,
@@ -2436,7 +2541,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "Iin1",
@@ -2449,9 +2555,9 @@
     "Description": "DC Current (String 1)",
     "HA Display Name": "Current DC - String 1",
     "Category": "Datalogger",
-    "HA Unit of Measurement": "",
-    "HA State Class": "",
-    "HA Device Class": "",
+    "HA Unit of Measurement": "A",
+    "HA State Class": "measurement",
+    "HA Device Class": "current",
     "HA Icon": "",
     "Entity Category": "",
     "Available in Modbus": false,
@@ -2459,7 +2565,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "E0_30D",
@@ -2482,7 +2589,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "HousePgrid_Tot",
@@ -2505,7 +2613,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "E15_7D",
@@ -2528,7 +2637,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "InputMode",
@@ -2551,7 +2661,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "Pin",
@@ -2574,7 +2685,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "E5_runtime",
@@ -2587,9 +2699,9 @@
     "Description": "Battery charge energy - Since Restart",
     "HA Display Name": "Energy - Battery Charge Since Restart",
     "Category": "Energy Counter",
-    "HA Unit of Measurement": "",
-    "HA State Class": "",
-    "HA Device Class": "",
+    "HA Unit of Measurement": "Wh",
+    "HA State Class": "total_increasing",
+    "HA Device Class": "energy",
     "HA Icon": "",
     "Entity Category": "",
     "Available in Modbus": false,
@@ -2597,7 +2709,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "MeterIgrid_L1",
@@ -2620,7 +2733,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "E6_total",
@@ -2643,7 +2757,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "MeterPgrid_Tot",
@@ -2666,7 +2781,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "cosPhi",
@@ -2689,7 +2805,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "ClockState",
@@ -2712,7 +2829,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "E8_runtime",
@@ -2735,7 +2853,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "ETotDischarge_7D",
@@ -2758,7 +2877,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "MeterVgrid_L1",
@@ -2781,7 +2901,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 1
   },
   {
     "REST Name (VSN700)": "VgridL2_N",
@@ -2804,7 +2925,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 1
   },
   {
     "REST Name (VSN700)": "E2_runtime",
@@ -2819,7 +2941,7 @@
     "Category": "Energy Counter",
     "HA Unit of Measurement": "VAh",
     "HA State Class": "total_increasing",
-    "HA Device Class": "",
+    "HA Device Class": "apparent_power",
     "HA Icon": "mdi:lightning-bolt",
     "Entity Category": "",
     "Available in Modbus": false,
@@ -2827,7 +2949,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "HousePInverter",
@@ -2850,7 +2973,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "Vba",
@@ -2863,9 +2987,9 @@
     "Description": "Battery pack voltage",
     "HA Display Name": "Voltage - Battery",
     "Category": "Datalogger",
-    "HA Unit of Measurement": "",
-    "HA State Class": "",
-    "HA Device Class": "",
+    "HA Unit of Measurement": "V",
+    "HA State Class": "measurement",
+    "HA Device Class": "voltage",
     "HA Icon": "",
     "Entity Category": "",
     "Available in Modbus": false,
@@ -2873,7 +2997,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 1
   },
   {
     "REST Name (VSN700)": "E7_runtime",
@@ -2896,7 +3021,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "ShU",
@@ -2909,9 +3035,9 @@
     "Description": "Current shunt voltage",
     "HA Display Name": "Voltage - Shunt",
     "Category": "Datalogger",
-    "HA Unit of Measurement": "",
-    "HA State Class": "",
-    "HA Device Class": "",
+    "HA Unit of Measurement": "V",
+    "HA State Class": "measurement",
+    "HA Device Class": "voltage",
     "HA Icon": "",
     "Entity Category": "",
     "Available in Modbus": false,
@@ -2919,7 +3045,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 1
   },
   {
     "REST Name (VSN700)": "IleakDC",
@@ -2932,9 +3059,9 @@
     "Description": "DC side ground fault leakage current",
     "HA Display Name": "Current DC - Leakage",
     "Category": "Datalogger",
-    "HA Unit of Measurement": "",
-    "HA State Class": "",
-    "HA Device Class": "",
+    "HA Unit of Measurement": "A",
+    "HA State Class": "measurement",
+    "HA Device Class": "current",
     "HA Icon": "",
     "Entity Category": "",
     "Available in Modbus": false,
@@ -2942,7 +3069,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "E15_30D",
@@ -2965,7 +3093,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "PCh",
@@ -2988,7 +3117,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "ECt",
@@ -3001,9 +3131,9 @@
     "Description": "Total energy from current transformer (CT)",
     "HA Display Name": "Total energy from current transformer (CT)",
     "Category": "Energy Counter",
-    "HA Unit of Measurement": "",
-    "HA State Class": "",
-    "HA Device Class": "",
+    "HA Unit of Measurement": "Wh",
+    "HA State Class": "total_increasing",
+    "HA Device Class": "energy",
     "HA Icon": "",
     "Entity Category": "",
     "Available in Modbus": false,
@@ -3011,7 +3141,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "gridExtCtrlState",
@@ -3034,7 +3165,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "m126Mod_Ena",
@@ -3057,7 +3189,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "E5_7D",
@@ -3070,9 +3203,9 @@
     "Description": "Battery charge energy - Last 7 Days",
     "HA Display Name": "Energy - Battery Charge Last 7 Days",
     "Category": "Energy Counter",
-    "HA Unit of Measurement": "",
-    "HA State Class": "",
-    "HA Device Class": "",
+    "HA Unit of Measurement": "Wh",
+    "HA State Class": "total_increasing",
+    "HA Device Class": "energy",
     "HA Icon": "",
     "Entity Category": "",
     "Available in Modbus": false,
@@ -3080,7 +3213,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "ETotDischarge_30D",
@@ -3103,7 +3237,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "ECharge_30D",
@@ -3126,7 +3261,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "E4_runtime",
@@ -3139,9 +3275,9 @@
     "Description": "Self-consumed energy - Since Restart",
     "HA Display Name": "Self-consumed energy - Since Restart",
     "Category": "Energy Counter",
-    "HA Unit of Measurement": "",
-    "HA State Class": "",
-    "HA Device Class": "",
+    "HA Unit of Measurement": "Wh",
+    "HA State Class": "total_increasing",
+    "HA Device Class": "energy",
     "HA Icon": "",
     "Entity Category": "",
     "Available in Modbus": false,
@@ -3149,7 +3285,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "E7_total",
@@ -3172,7 +3309,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "Fan2rpm",
@@ -3195,7 +3333,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "MeterQgrid_L1",
@@ -3218,7 +3357,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "Vgnd",
@@ -3241,7 +3381,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 1
   },
   {
     "REST Name (VSN700)": "EDischarge_runtime",
@@ -3264,7 +3405,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "DynamicFeedInCtrl",
@@ -3287,7 +3429,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "Fan1rpm",
@@ -3310,7 +3453,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "EDischarge_7D",
@@ -3333,7 +3477,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "Pin2",
@@ -3356,7 +3501,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "E6_runtime",
@@ -3379,7 +3525,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "E7_30D",
@@ -3402,7 +3549,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "TempBst",
@@ -3425,7 +3573,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 1
   },
   {
     "REST Name (VSN700)": "ECharge_runtime",
@@ -3448,7 +3597,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "E3_7D",
@@ -3471,7 +3621,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "PacStandAlone",
@@ -3494,7 +3645,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "MeterPgrid_L3",
@@ -3507,9 +3659,9 @@
     "Description": "Meter Power Phase C",
     "HA Display Name": "Power AC - Meter Phase C",
     "Category": "Datalogger",
-    "HA Unit of Measurement": "",
-    "HA State Class": "",
-    "HA Device Class": "",
+    "HA Unit of Measurement": "W",
+    "HA State Class": "measurement",
+    "HA Device Class": "power",
     "HA Icon": "",
     "Entity Category": "",
     "Available in Modbus": false,
@@ -3517,7 +3669,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "Vin2",
@@ -3530,9 +3683,9 @@
     "Description": "DC string 2 input voltage",
     "HA Display Name": "Voltage DC - Input 2",
     "Category": "Datalogger",
-    "HA Unit of Measurement": "",
-    "HA State Class": "",
-    "HA Device Class": "",
+    "HA Unit of Measurement": "V",
+    "HA State Class": "measurement",
+    "HA Device Class": "voltage",
     "HA Icon": "",
     "Entity Category": "",
     "Available in Modbus": false,
@@ -3540,7 +3693,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 1
   },
   {
     "REST Name (VSN700)": "E8_30D",
@@ -3563,7 +3717,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "gridExtCtrlEna",
@@ -3586,7 +3741,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "E0_7D",
@@ -3609,7 +3765,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "E0_1Y",
@@ -3632,7 +3789,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "FRT_state",
@@ -3655,7 +3813,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "QACDeratingFlags",
@@ -3678,7 +3837,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "MeterQgrid_Tot",
@@ -3701,7 +3861,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "IleakInv",
@@ -3714,9 +3875,9 @@
     "Description": "Inverter ground fault leakage current",
     "HA Display Name": "Current - Inverter Leakage",
     "Category": "Datalogger",
-    "HA Unit of Measurement": "",
-    "HA State Class": "",
-    "HA Device Class": "",
+    "HA Unit of Measurement": "A",
+    "HA State Class": "measurement",
+    "HA Device Class": "current",
     "HA Icon": "",
     "Entity Category": "",
     "Available in Modbus": false,
@@ -3724,7 +3885,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "E2_30D",
@@ -3739,7 +3901,7 @@
     "Category": "Energy Counter",
     "HA Unit of Measurement": "VAh",
     "HA State Class": "total",
-    "HA Device Class": "",
+    "HA Device Class": "apparent_power",
     "HA Icon": "mdi:lightning-bolt",
     "Entity Category": "",
     "Available in Modbus": false,
@@ -3747,7 +3909,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "EnergyPolicy",
@@ -3770,7 +3933,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "SACDeratingFlags",
@@ -3793,7 +3957,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "PbaT",
@@ -3816,7 +3981,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "ETotCharge_7D",
@@ -3839,7 +4005,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "MeterPgrid_L2",
@@ -3852,9 +4019,9 @@
     "Description": "Meter Power Phase B",
     "HA Display Name": "Power AC - Meter Phase B",
     "Category": "Datalogger",
-    "HA Unit of Measurement": "",
-    "HA State Class": "",
-    "HA Device Class": "",
+    "HA Unit of Measurement": "W",
+    "HA State Class": "measurement",
+    "HA Device Class": "power",
     "HA Icon": "",
     "Entity Category": "",
     "Available in Modbus": false,
@@ -3862,7 +4029,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "MeterIgrid_L2",
@@ -3885,7 +4053,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "Temp1",
@@ -3908,7 +4077,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 1
   },
   {
     "REST Name (VSN700)": "ETotCharge",
@@ -3931,7 +4101,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "EGridImport",
@@ -3954,7 +4125,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "TcMin",
@@ -3967,9 +4139,9 @@
     "Description": "Minimum cabinet temperature recorded",
     "HA Display Name": "Temperature - Cabinet Min",
     "Category": "Datalogger",
-    "HA Unit of Measurement": "",
-    "HA State Class": "",
-    "HA Device Class": "",
+    "HA Unit of Measurement": "°C",
+    "HA State Class": "measurement",
+    "HA Device Class": "temperature",
     "HA Icon": "",
     "Entity Category": "",
     "Available in Modbus": false,
@@ -3977,7 +4149,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 1
   },
   {
     "REST Name (VSN700)": "Iba",
@@ -3990,9 +4163,9 @@
     "Description": "Battery DC current flow",
     "HA Display Name": "Current - Battery",
     "Category": "Datalogger",
-    "HA Unit of Measurement": "",
-    "HA State Class": "",
-    "HA Device Class": "",
+    "HA Unit of Measurement": "A",
+    "HA State Class": "measurement",
+    "HA Device Class": "current",
     "HA Icon": "",
     "Entity Category": "",
     "Available in Modbus": false,
@@ -4000,7 +4173,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "BattExtCtrlEna",
@@ -4023,7 +4197,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "Ein_7D",
@@ -4046,7 +4221,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "Fcc",
@@ -4059,9 +4235,9 @@
     "Description": "Central controller frequency",
     "HA Display Name": "Central controller frequency",
     "Category": "Datalogger",
-    "HA Unit of Measurement": "",
-    "HA State Class": "",
-    "HA Device Class": "",
+    "HA Unit of Measurement": "Hz",
+    "HA State Class": "measurement",
+    "HA Device Class": "frequency",
     "HA Icon": "",
     "Entity Category": "",
     "Available in Modbus": false,
@@ -4069,7 +4245,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "VcMax",
@@ -4092,7 +4269,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 1
   },
   {
     "REST Name (VSN700)": "CycleNum",
@@ -4115,7 +4293,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "WRtg",
@@ -4138,7 +4317,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "ETotalAbsorbed",
@@ -4161,7 +4341,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "DI1_mode",
@@ -4184,7 +4365,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "E1_30D",
@@ -4207,7 +4389,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "E1_7D",
@@ -4230,7 +4413,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "MeterVgrid_L2",
@@ -4253,7 +4437,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 1
   },
   {
     "REST Name (VSN700)": "MeterIgrid_L3",
@@ -4276,7 +4461,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "ETotal",
@@ -4299,7 +4485,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "E6_7D",
@@ -4322,7 +4509,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "InvState",
@@ -4345,7 +4533,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "E0_runtime",
@@ -4368,7 +4557,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "DC1State",
@@ -4391,7 +4581,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "Ein",
@@ -4414,7 +4605,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "Ein_runtime",
@@ -4437,7 +4629,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "TempInv",
@@ -4460,7 +4653,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 1
   },
   {
     "REST Name (VSN700)": "m132Mod_Ena",
@@ -4483,7 +4677,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "DetectedBatteryNumber",
@@ -4506,7 +4701,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "Ppeak",
@@ -4529,7 +4725,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "E4_30D",
@@ -4542,9 +4739,9 @@
     "Description": "Self-consumed energy - Last 30 Days",
     "HA Display Name": "Self-consumed energy - Last 30 Days",
     "Category": "Energy Counter",
-    "HA Unit of Measurement": "",
-    "HA State Class": "",
-    "HA Device Class": "",
+    "HA Unit of Measurement": "Wh",
+    "HA State Class": "total_increasing",
+    "HA Device Class": "energy",
     "HA Icon": "",
     "Entity Category": "",
     "Available in Modbus": false,
@@ -4552,7 +4749,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "ETotDischarge",
@@ -4575,7 +4773,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "E3_runtime",
@@ -4598,7 +4797,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "WarningFlags",
@@ -4621,7 +4821,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "ETotCharge_runtime",
@@ -4644,7 +4845,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "Pba",
@@ -4657,9 +4859,9 @@
     "Description": "Battery charge/discharge power",
     "HA Display Name": "Power - Battery Total",
     "Category": "Datalogger",
-    "HA Unit of Measurement": "",
-    "HA State Class": "",
-    "HA Device Class": "",
+    "HA Unit of Measurement": "W",
+    "HA State Class": "measurement",
+    "HA Device Class": "power",
     "HA Icon": "",
     "Entity Category": "",
     "Available in Modbus": false,
@@ -4667,7 +4869,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "VcMin",
@@ -4690,7 +4893,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 1
   },
   {
     "REST Name (VSN700)": "PDh",
@@ -4713,7 +4917,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "EBackup",
@@ -4726,9 +4931,9 @@
     "Description": "Inverter backup output energy - Lifetime",
     "HA Display Name": "Energy AC - Backup Output Lifetime",
     "Category": "Energy Counter",
-    "HA Unit of Measurement": "",
-    "HA State Class": "",
-    "HA Device Class": "",
+    "HA Unit of Measurement": "Wh",
+    "HA State Class": "total_increasing",
+    "HA Device Class": "energy",
     "HA Icon": "",
     "Entity Category": "",
     "Available in Modbus": false,
@@ -4736,7 +4941,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "E7_7D",
@@ -4759,7 +4965,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "EDischarge_30D",
@@ -4782,7 +4989,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "MeterQgrid_L2",
@@ -4805,7 +5013,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "PacTogrid",
@@ -4828,7 +5037,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "ETotDischarge_runtime",
@@ -4851,7 +5061,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "ETotCharge_30D",
@@ -4874,7 +5085,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "EGridExport",
@@ -4897,7 +5109,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "NumOfMPPT",
@@ -4920,7 +5133,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "Vin1",
@@ -4933,9 +5147,9 @@
     "Description": "DC string 1 input voltage",
     "HA Display Name": "Voltage DC - Input 1",
     "Category": "Datalogger",
-    "HA Unit of Measurement": "",
-    "HA State Class": "",
-    "HA Device Class": "",
+    "HA Unit of Measurement": "V",
+    "HA State Class": "measurement",
+    "HA Device Class": "voltage",
     "HA Icon": "",
     "Entity Category": "",
     "Available in Modbus": false,
@@ -4943,7 +5157,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 1
   },
   {
     "REST Name (VSN700)": "E8_7D",
@@ -4966,7 +5181,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "E1_runtime",
@@ -4989,7 +5205,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "TSoc",
@@ -5002,9 +5219,9 @@
     "Description": "Battery state of charge percentage",
     "HA Display Name": "Battery State of Charge",
     "Category": "Battery",
-    "HA Unit of Measurement": "",
-    "HA State Class": "",
-    "HA Device Class": "",
+    "HA Unit of Measurement": "%",
+    "HA State Class": "measurement",
+    "HA Device Class": "battery",
     "HA Icon": "",
     "Entity Category": "",
     "Available in Modbus": false,
@@ -5012,7 +5229,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "MeterPgrid_L1",
@@ -5025,9 +5243,9 @@
     "Description": "Meter Power Phase A",
     "HA Display Name": "Power AC - Meter Phase A",
     "Category": "Datalogger",
-    "HA Unit of Measurement": "",
-    "HA State Class": "",
-    "HA Device Class": "",
+    "HA Unit of Measurement": "W",
+    "HA State Class": "measurement",
+    "HA Device Class": "power",
     "HA Icon": "",
     "Entity Category": "",
     "Available in Modbus": false,
@@ -5035,7 +5253,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "Riso",
@@ -5058,7 +5277,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "Ein_30D",
@@ -5081,7 +5301,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "VgridL1_N",
@@ -5104,7 +5325,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 1
   },
   {
     "REST Name (VSN700)": "E3_30D",
@@ -5127,7 +5349,8 @@
     "Model_Notes": "VSN700-specific point",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 2
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5150,7 +5373,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5173,7 +5397,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5196,7 +5421,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5219,7 +5445,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5242,7 +5469,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5265,7 +5493,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5288,7 +5517,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5311,7 +5541,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5334,7 +5565,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5357,7 +5589,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5380,7 +5613,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5403,7 +5637,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5426,7 +5661,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5449,7 +5685,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5472,7 +5709,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5495,7 +5733,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5518,7 +5757,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5541,7 +5781,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5564,7 +5805,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5587,7 +5829,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5610,7 +5853,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5633,7 +5877,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5656,7 +5901,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5679,7 +5925,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5702,7 +5949,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5725,7 +5973,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5748,7 +5997,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5771,7 +6021,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5794,7 +6045,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5817,7 +6069,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5840,7 +6093,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5863,7 +6117,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5886,7 +6141,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "N/A",
@@ -5909,7 +6165,8 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN300-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   },
   {
     "REST Name (VSN700)": "logger_loggerId",
@@ -5932,6 +6189,7 @@
     "Model_Notes": "From /status endpoint",
     "models": [
       "VSN700-only"
-    ]
+    ],
+    "Suggested Display Precision": 0
   }
 ]
