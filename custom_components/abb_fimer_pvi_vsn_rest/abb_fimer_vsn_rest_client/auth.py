@@ -21,6 +21,7 @@ import time
 import aiohttp
 
 try:
+    from .constants import ENDPOINT_LIVEDATA, ENDPOINT_STATUS
     from .exceptions import (
         VSNAuthenticationError,
         VSNConnectionError,
@@ -28,6 +29,7 @@ try:
     )
     from .utils import check_socket_connection
 except ImportError:
+    from constants import ENDPOINT_LIVEDATA, ENDPOINT_STATUS
     from exceptions import VSNAuthenticationError, VSNConnectionError, VSNDetectionError
     from utils import check_socket_connection
 
@@ -176,7 +178,7 @@ async def get_vsn300_digest_header(
     base_url: str,
     username: str,
     password: str,
-    uri: str = "/v1/livedata",
+    uri: str = ENDPOINT_LIVEDATA,
     method: str = "GET",
     timeout: int = 10,
 ) -> str:
@@ -187,7 +189,7 @@ async def get_vsn300_digest_header(
         base_url: Base URL of VSN300
         username: Username
         password: Password
-        uri: Request URI (default: /v1/livedata)
+        uri: Request URI (default: ENDPOINT_LIVEDATA)
         method: HTTP method (default: GET)
         timeout: Request timeout in seconds
 
@@ -321,7 +323,7 @@ async def detect_vsn_model(
     # Check socket connection before HTTP request
     await check_socket_connection(base_url, timeout=5)
 
-    detection_url = f"{base_url}/v1/status"
+    detection_url = f"{base_url}{ENDPOINT_STATUS}"
     protocol = "HTTPS" if base_url.startswith("https") else "HTTP"
     _LOGGER.debug(
         "[VSN Detection] Making unauthenticated request to %s (protocol=%s, timeout=%ds)",
@@ -331,7 +333,7 @@ async def detect_vsn_model(
     )
 
     try:
-        # Make unauthenticated request to /v1/status to trigger 401 with WWW-Authenticate
+        # Make unauthenticated request to ENDPOINT_STATUS to trigger 401 with WWW-Authenticate
         async with session.get(
             detection_url,
             timeout=aiohttp.ClientTimeout(total=timeout),

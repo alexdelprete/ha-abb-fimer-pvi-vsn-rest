@@ -15,10 +15,12 @@ import aiohttp
 
 try:
     from .auth import detect_vsn_model, get_vsn300_digest_header, get_vsn700_basic_auth
+    from .constants import ENDPOINT_LIVEDATA, ENDPOINT_STATUS
     from .exceptions import VSNConnectionError
     from .utils import check_socket_connection
 except ImportError:
     from auth import detect_vsn_model, get_vsn300_digest_header, get_vsn700_basic_auth
+    from constants import ENDPOINT_LIVEDATA, ENDPOINT_STATUS
     from exceptions import VSNConnectionError
     from utils import check_socket_connection
 
@@ -161,8 +163,8 @@ async def _fetch_status(
     # Check socket connection before HTTP request
     await check_socket_connection(base_url, timeout=5)
 
-    status_url = f"{base_url}/v1/status"
-    uri = "/v1/status"
+    status_url = f"{base_url}{ENDPOINT_STATUS}"
+    uri = ENDPOINT_STATUS
 
     # Build authentication headers based on model
     if vsn_model == "VSN300":
@@ -247,8 +249,8 @@ async def _fetch_livedata(
     # Check socket connection before HTTP request
     await check_socket_connection(base_url, timeout=5)
 
-    livedata_url = f"{base_url}/v1/livedata"
-    uri = "/v1/livedata"
+    livedata_url = f"{base_url}{ENDPOINT_LIVEDATA}"
+    uri = ENDPOINT_LIVEDATA
 
     # Build authentication headers based on model
     if vsn_model == "VSN300":

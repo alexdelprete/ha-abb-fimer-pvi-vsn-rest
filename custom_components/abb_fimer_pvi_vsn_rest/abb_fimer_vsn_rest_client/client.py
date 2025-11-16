@@ -9,11 +9,13 @@ import aiohttp
 
 try:
     from .auth import detect_vsn_model, get_vsn300_digest_header, get_vsn700_basic_auth
+    from .constants import ENDPOINT_LIVEDATA
     from .exceptions import VSNAuthenticationError, VSNConnectionError
     from .normalizer import VSNDataNormalizer
     from .utils import check_socket_connection
 except ImportError:
     from auth import detect_vsn_model, get_vsn300_digest_header, get_vsn700_basic_auth
+    from constants import ENDPOINT_LIVEDATA
     from exceptions import VSNAuthenticationError, VSNConnectionError
     from normalizer import VSNDataNormalizer
     from utils import check_socket_connection
@@ -101,8 +103,8 @@ class ABBFimerVSNRestClient:
         await check_socket_connection(self.base_url, timeout=5)
 
         # Both models use the same endpoint
-        url = f"{self.base_url}/v1/livedata"
-        uri = "/v1/livedata"
+        url = f"{self.base_url}{ENDPOINT_LIVEDATA}"
+        uri = ENDPOINT_LIVEDATA
 
         # Build authentication headers based on model
         if self.vsn_model == "VSN300":
