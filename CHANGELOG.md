@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.6] - 2025-11-17
+
+### 🏗️ Architecture
+
+**Refactor: Move Protocol Constants to Client Library**:
+
+- Moved protocol-level constants from integration layer to client library for proper architectural separation
+- Created new `abb_fimer_vsn_rest_client/constants.py` with REST endpoints, Aurora epoch offset, and state mappings
+- Updated client library files to use constants instead of hardcoded strings (10+ replacements)
+- Integration `const.py` now imports and re-exports from client library (backward compatible)
+- Benefits: Clean separation of concerns, DRY principle, client library now self-contained and reusable
+- Commit: [ee5a66e](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/ee5a66e)
+
+**No Breaking Changes**: Pure refactoring with full backward compatibility via re-exports.
+
+**Full release notes**: [v1.1.6](docs/releases/v1.1.6.md)
+
+---
+
 ## [1.1.5] - 2025-11-16
 
 ### 🐛 Bug Fixes
