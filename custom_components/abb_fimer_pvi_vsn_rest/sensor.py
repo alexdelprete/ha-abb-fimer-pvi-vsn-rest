@@ -293,9 +293,28 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
             if units:
                 self._attr_native_unit_of_measurement = units
 
-                # Set suggested display precision based on units
-                if units in ("W", "Wh", "kW", "kWh", "var", "VAR", "VAh", "s", "B"):
-                    # Power, energy, reactive power, apparent energy, duration, bytes: no decimals
+            # Set suggested display precision
+            # Priority: 1) mapping file, 2) unit-based defaults, 3) entity-specific overrides
+            precision = point_data.get("suggested_display_precision")
+            if precision is not None:
+                # Use precision from mapping file if specified
+                self._attr_suggested_display_precision = precision
+            elif units:
+                # Fall back to unit-based precision defaults
+                if units in (
+                    "W",
+                    "Wh",
+                    "kW",
+                    "kWh",
+                    "var",
+                    "VAR",
+                    "VAh",
+                    "s",
+                    "B",
+                    "cycles",
+                    "channels",
+                ):
+                    # Power, energy, reactive power, apparent energy, duration, bytes, cycles, counts: no decimals
                     self._attr_suggested_display_precision = 0
                 elif units in ("V", "A", "mA", "%", "Ah", "°C", "°F"):
                     # Voltage, current, percentage, capacity, temperature: 1 decimal
