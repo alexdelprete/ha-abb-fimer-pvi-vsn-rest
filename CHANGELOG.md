@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.4] - 2025-11-16
+
+### 🐛 Bug Fixes
+
+**Honor Suggested Display Precision from Mapping File**:
+
+- Fixed cycle/counter sensors displaying decimals despite precision=0 in mapping file
+- Root cause: Integration was ignoring "Suggested Display Precision" field from mapping
+- Updated mapping_loader.py to read and pass precision field to sensors
+- Updated sensor.py to prioritize mapping file precision over unit-based defaults
+- Precision priority: 1) Mapping file, 2) Unit-based defaults, 3) Entity-specific overrides
+- Commit: [12d0ea6](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/12d0ea6)
+
+**Affected Sensors** (now display correctly with 0 decimals):
+- Chc (Battery charge cycles counter)
+- Dhc (Battery discharge cycles counter)
+- CycleNum (Count - Battery Cycles)
+- NumOfMPPT (Count - MPPT Channels)
+- BattNum (Number of battery cells)
+- DetectedBatteryNumber (Detected Battery Number)
+
+**Riso Sensor Missing Unit**:
+
+- Fixed Riso sensor (DC insulation resistance - VSN700) missing unit of measurement
+- Added "MOhm" unit, "measurement" state_class, omega icon
+- Precision automatically set to 2 decimals (from MOhm unit fallback rule)
+- Matches Isolation_Ohm1 sensor configuration (VSN300 equivalent)
+- Commit: [12d0ea6](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/12d0ea6)
+
+**Full release notes**: [v1.1.4](docs/releases/v1.1.4.md)
+
+---
+
 ## [1.1.3] - 2025-11-16
 
 ### 🐛 Bug Fixes
