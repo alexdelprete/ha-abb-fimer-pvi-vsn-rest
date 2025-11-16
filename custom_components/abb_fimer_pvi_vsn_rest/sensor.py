@@ -470,6 +470,24 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         if self._point_name == "system_load" and isinstance(value, (int, float)):
             return round(value, 2)
 
+        # Round cycle counters to integers (suggested_display_precision not working without units)
+        if self._point_name in ("chc", "dhc", "cycle_num") and isinstance(
+            value, (int, float)
+        ):
+            return int(value)
+
+        # Round state/flag sensors to integers (suggested_display_precision not working without units)
+        if self._point_name in (
+            "battery_mode",
+            "alarm_state",
+            "batt_ext_ctrl_state",
+            "batt_ext_ctrl_ena",
+            "pac_derating_flags",
+            "sac_derating_flags",
+            "clock_state",
+        ) and isinstance(value, (int, float)):
+            return int(value)
+
         # Return raw numeric value (native_value must be numeric for sensors with state_class)
         # For system_uptime, the formatted version is available as an attribute
         return value

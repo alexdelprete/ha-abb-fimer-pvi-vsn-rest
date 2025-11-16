@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.5] - 2025-11-16
+
+### 🐛 Bug Fixes
+
+**Cycle Counter Decimal Display Fix**:
+
+- Fixed cycle counters still showing decimals despite v1.1.4 precision fix
+- Root cause: HA's suggested_display_precision doesn't work for sensors without units
+- Applied manual int() rounding in native_value property (same as system_load workaround)
+- Removed "cycles" unit from CycleNum (user feedback: unit shouldn't be displayed)
+- Changed state_class to "total_increasing" for Chc, Dhc, CycleNum
+- Commit: [df7557f](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/df7557f)
+
+**Affected Sensors** (now display correctly without decimals):
+- Chc → 82277504 (no decimals, no unit)
+- Dhc → 183048368 (no decimals, no unit)
+- CycleNum → 707 (no decimals, no unit)
+
+**Technical Note**: Manual rounding required because Home Assistant ignores suggested_display_precision for unitless sensors. This is a known limitation already documented in sensor.py for system_load.
+
+**Full release notes**: [v1.1.5](docs/releases/v1.1.5.md)
+
+---
+
 ## [1.1.4] - 2025-11-16
 
 ### 🐛 Bug Fixes

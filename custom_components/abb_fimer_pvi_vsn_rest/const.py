@@ -1,7 +1,7 @@
 """Constants for ABB FIMER PVI VSN REST integration."""
 
 DOMAIN = "abb_fimer_pvi_vsn_rest"
-VERSION = "1.1.4"
+VERSION = "1.1.5"
 
 # Configuration
 CONF_HOST = "host"
