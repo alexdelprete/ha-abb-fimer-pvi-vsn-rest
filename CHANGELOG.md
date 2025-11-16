@@ -7,6 +7,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.3] - 2025-11-16
+
+### 🐛 Bug Fixes
+
+**Complete Mapping Metadata for 83 Sensors**:
+
+- Fixed 83 sensors (43.7%) missing device_class
+- Fixed 76 sensors (40%) missing unit_of_measurement
+- Added Suggested Display Precision field to all 258 mapping entries
+- Based on user feedback: REACT2-5.0 + 2 batteries + meter configuration
+- Sensors now display with proper units, device_class, and decimal precision in Home Assistant
+- Commit: [86c47dc](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/86c47dc)
+
+**Sensors Fixed by Type**:
+- Current (5): Iba, Iin1, Iin2, IleakInv, IleakDC → device_class=current, unit=A, precision=2
+- Voltage (4): Vba, ShU, Vin1, Vin2 → device_class=voltage, unit=V, precision=1
+- Power (5): Pba, MeterPgrid_L1/L2/L3 → device_class=power, unit=W, precision=0
+- Energy (11): ECt, EDt, E4/E5 counters, Ein1/2, EBackup → device_class=energy, unit=Wh, precision=2
+- Temperature (3): Tba, TcMax, TcMin → device_class=temperature, unit=°C, precision=1
+- Battery SoC (1): TSoc → device_class=battery, unit=%, precision=0
+- Plus: Frequency, Apparent Power, Timestamp sensors
+
+### 🛠️ Tools Added
+
+**Mapping Maintenance Scripts**:
+- `scripts/update_mapping_metadata.py` - Systematic metadata updates
+- `scripts/generate_mapping_analysis.py` - Generate XLSX analysis files
+
+### 📚 Documentation
+
+**README Improvements**:
+- Updated shields/badges to match legacy integration style (reference-style, for-the-badge)
+- Added HACS quick installation badge
+- Added Coffee section
+- Updated Community Forum link
+
+**Full release notes**: [v1.1.3](docs/releases/v1.1.3.md)
+
+---
+
 ## [1.1.2] - 2025-11-15
 
 ### ✨ Features
