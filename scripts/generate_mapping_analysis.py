@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Generate an XLSX analysis file from the updated VSN-to-SunSpec mapping.
+"""Generate an XLSX analysis file from the updated VSN-to-SunSpec mapping.
 
 This creates a spreadsheet showing all mapping entries with their metadata
 for easy review and analysis.
@@ -12,7 +11,7 @@ from pathlib import Path
 
 try:
     import openpyxl
-    from openpyxl.styles import Font, PatternFill, Alignment
+    from openpyxl.styles import Alignment, Font, PatternFill
     from openpyxl.utils import get_column_letter
 except ImportError:
     print("Error: openpyxl not installed. Install with: pip install openpyxl")
@@ -23,7 +22,7 @@ def create_mapping_analysis_xlsx(mapping_path: Path, output_path: Path):
     """Create an XLSX file analyzing the mapping."""
 
     print(f"Reading mapping file: {mapping_path}")
-    with open(mapping_path, 'r', encoding='utf-8') as f:
+    with open(mapping_path, encoding='utf-8') as f:
         mapping = json.load(f)
 
     print(f"Total entries in mapping: {len(mapping)}")

@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Update VSN-to-SunSpec mapping file with missing device_class, units, state_class, and precision.
+"""Update VSN-to-SunSpec mapping file with missing device_class, units, state_class, and precision.
 
 This script fixes the incomplete mapping entries identified from user feedback.
 """
@@ -84,7 +83,7 @@ def update_mapping_file(mapping_path: Path):
     """Update the mapping file with missing metadata."""
 
     print(f"Reading mapping file: {mapping_path}")
-    with open(mapping_path, 'r', encoding='utf-8') as f:
+    with open(mapping_path, encoding='utf-8') as f:
         mapping = json.load(f)
 
     print(f"Total entries in mapping: {len(mapping)}")
