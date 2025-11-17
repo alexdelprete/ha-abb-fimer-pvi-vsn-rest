@@ -97,6 +97,7 @@ def convert_excel_to_json():
         repo_root
         / "custom_components"
         / "abb_fimer_pvi_vsn_rest"
+        / "abb_fimer_vsn_rest_client"
         / "data"
         / "vsn-sunspec-point-mapping.json"
     )

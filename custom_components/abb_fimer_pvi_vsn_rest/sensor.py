@@ -470,10 +470,15 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         if self._point_name == "system_load" and isinstance(value, (int, float)):
             return round(value, 2)
 
-        # Round cycle counters to integers (suggested_display_precision not working without units)
-        if self._point_name in ("chc", "dhc", "cycle_num") and isinstance(
-            value, (int, float)
-        ):
+        # Round cycle counters and count sensors to integers (suggested_display_precision not working without units)
+        if self._point_name in (
+            "chc",  # Battery charge cycles
+            "dhc",  # Battery discharge cycles
+            "cycle_num",  # Cycle number
+            "batt_num",  # Number of battery cells or modules
+            "num_of_mppt",  # Count of MPPT channels
+            "country_std",  # Country grid standard code
+        ) and isinstance(value, (int, float)):
             return int(value)
 
         # Round state/flag sensors to integers (suggested_display_precision not working without units)

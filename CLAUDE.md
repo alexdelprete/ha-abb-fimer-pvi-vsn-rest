@@ -1,12 +1,26 @@
 # Claude Code Development Guidelines
 
+## ⚠️ CRITICAL: Read This First
+
+**MANDATORY: At the beginning of EVERY session, you MUST:**
+
+1. **Read this entire CLAUDE.md file** - This contains critical project context, architecture decisions, and workflow requirements
+2. **Review recent git commits** - Understand what changed since last session
+3. **Check the current state** - Run `git status` to see uncommitted changes
+
+**Failure to read project documentation first leads to:**
+- Violating mandatory workflows (e.g., editing JSON files directly instead of using the generator)
+- Duplicating work that was already done
+- Making architectural decisions that contradict established patterns
+- Breaking the single source of truth principle
+
 ## Project Overview
 
 This is the **ha-abb-fimer-pvi-vsn-rest** integration for Home Assistant.
 It provides monitoring of ABB/FIMER/Power-One PVI inverters through VSN300
 or VSN700 dataloggers via their REST API.
 
-**Current Status**: v1.0.0-beta.22 - Active development
+**Current Status**: v1.1.7 - Active development
 
 **Key Features**:
 
@@ -731,33 +745,145 @@ Use this data to verify mapping and normalization.
 
 ## Common Tasks
 
-### Adding New Mapping Points
+## ⚠️ MANDATORY: Sensor Mapping Workflow
 
-1. Open Excel file: `docs/vsn-sunspec-point-mapping.xlsx`
-2. Add new row with all required columns:
-   - VSN REST names (VSN300 and VSN700)
-   - SunSpec Normalized Name
-   - HA Name (internal entity name)
-   - Label and Description
-   - HA Display Name (user-facing)
-   - Category
-   - HA Unit of Measurement
-   - HA State Class
-   - HA Device Class
-   - Entity Category (if diagnostic)
-   - Model flags (M1, M103, M160, etc.)
-3. Save Excel file
-4. Convert to JSON: `python scripts/convert_excel_to_json.py`
-5. Test with real VSN device or test data
-6. Commit all files: Excel + both JSON copies
+**🚨 CRITICAL DIRECTIVE - READ CAREFULLY:**
+
+### The ONLY Way to Modify Sensor Attributes
+
+**You MUST use the generator script for ALL sensor attribute changes. Period.**
+
+There is **ONE AND ONLY ONE** source of truth for sensor mappings:
+
+```
+scripts/vsn-mapping-generator/generate_mapping.py
+```
+
+**NEVER, EVER:**
+- ❌ Edit JSON mapping files directly (docs/ or custom_components/ folders)
+- ❌ Edit Excel files directly
+- ❌ Add sensor attribute logic to runtime code (normalizer.py, sensor.py)
+- ❌ Create temporary fixes in the codebase
+
+**Why This Rule Exists:**
+
+1. **Single Source of Truth**: The generator script (`generate_mapping.py`) contains ALL sensor metadata in the `SUNSPEC_TO_HA_METADATA` dictionary
+2. **Regeneration Safety**: When files are regenerated, manual edits to JSON/Excel are LOST
+3. **Consistency**: All 258 sensors follow the same rules and patterns
+4. **Version Control**: Changes to `generate_mapping.py` are tracked, reviewed, and documented
+
+### The CORRECT Workflow for Sensor Changes
+
+**Adding New Sensor or Modifying Existing Sensor:**
+
+1. **Update the generator script ONLY:**
+   ```bash
+   # Edit: scripts/vsn-mapping-generator/generate_mapping.py
+   # Add/modify entry in SUNSPEC_TO_HA_METADATA dictionary
+   ```
+
+2. **Regenerate ALL files:**
+   ```bash
+   # Step 1: Generate Excel from source data
+   python scripts/vsn-mapping-generator/generate_mapping.py
+
+   # Step 2: Convert Excel to JSON (creates all 3 JSON copies)
+   python scripts/vsn-mapping-generator/convert_to_json.py
+   ```
+
+3. **Verify changes:**
+   ```bash
+   # Check that the sensor has correct attributes
+   # Test with real VSN device or test data
+   ```
+
+4. **Commit generator + generated files:**
+   ```bash
+   git add scripts/vsn-mapping-generator/generate_mapping.py
+   git add scripts/vsn-mapping-generator/output/
+   git add docs/vsn-sunspec-point-mapping.*
+   git add custom_components/.../data/vsn-sunspec-point-mapping.json
+   git commit -m "feat: add/update sensor X with attributes Y"
+   ```
+
+### Example: Adding Precision to a Sensor
+
+**❌ WRONG (manual edit):**
+```json
+// Editing custom_components/.../data/vsn-sunspec-point-mapping.json
+{
+  "SunSpec Normalized Name": "MyNewSensor",
+  "Suggested Display Precision": 2  // ← This will be LOST on next regeneration!
+}
+```
+
+**✅ CORRECT (update generator):**
+```python
+# Edit: scripts/vsn-mapping-generator/generate_mapping.py
+# Add to SUNSPEC_TO_HA_METADATA dictionary:
+
+SUNSPEC_TO_HA_METADATA = {
+    # ... existing entries ...
+
+    "MyNewSensor": {
+        "device_class": "current",
+        "state_class": "measurement",
+        "unit": "A",
+        "precision": 2,  # ← Source of truth!
+    },
+}
+```
+
+Then regenerate files.
+
+### Where Sensor Attributes Are Defined
+
+All sensor attributes live in `generate_mapping.py`:
+
+| Attribute Type | Location in Generator |
+|----------------|----------------------|
+| Units, device_class, state_class | `SUNSPEC_TO_HA_METADATA` dictionary |
+| Precision values | `SUNSPEC_TO_HA_METADATA` or auto-calculated by `_get_suggested_precision()` |
+| Icons | `SUNSPEC_TO_HA_METADATA` (custom icons like `mdi:omega`) |
+| Entity categories | `SUNSPEC_TO_HA_METADATA` or `DEVICE_CLASS_FIXES` |
+| Display names | `DISPLAY_NAME_STANDARDIZATION` dictionary |
+| Descriptions | `DESCRIPTION_IMPROVEMENTS` dictionary |
+
+### Runtime Code Guidelines
+
+**Runtime code (normalizer.py, sensor.py) should ONLY:**
+- ✅ Apply transformations based on mapping metadata (e.g., state maps, timestamp conversion)
+- ✅ Handle defensive edge cases (e.g., Wh→kWh conversion as safety net)
+- ✅ Apply runtime rounding for specific sensors (documented exceptions only)
+
+**Runtime code should NEVER:**
+- ❌ Define sensor attributes (units, device_class, state_class, precision)
+- ❌ Override mapping file metadata
+- ❌ Contain hardcoded sensor lists for attribute assignment
+
+**Exception**: Manual rounding in `sensor.py` is allowed for sensors that require `int()` conversion due to Home Assistant limitations, but this should be documented as a workaround, not the primary solution.
+
+### Adding New Mapping Points (DEPRECATED - Use Generator Instead)
+
+**⚠️ This workflow is DEPRECATED as of v1.1.7+**
+
+The old workflow of manually editing Excel files is NO LONGER SUPPORTED. All changes must go through the generator script.
+
+If you need to add raw data sources:
+1. Add VSN API data to `scripts/vsn-mapping-generator/data/`
+2. Update the generator script to process the new data
+3. Regenerate all files
 
 ### Updating Existing Mappings
 
-1. Edit Excel file: `docs/vsn-sunspec-point-mapping.xlsx`
-2. Modify descriptions, labels, device classes, etc.
-3. Convert to JSON: `python scripts/convert_excel_to_json.py`
-4. Test changes
-5. Commit all files
+**Use the generator script ONLY:**
+
+1. Edit `scripts/vsn-mapping-generator/generate_mapping.py`
+2. Add/modify entry in appropriate dictionary (`SUNSPEC_TO_HA_METADATA`, `DISPLAY_NAME_STANDARDIZATION`, etc.)
+3. Regenerate: `python scripts/vsn-mapping-generator/generate_mapping.py`
+4. Convert: `python scripts/vsn-mapping-generator/convert_to_json.py`
+5. Test changes
+6. Commit generator + all generated files
 
 ### Mapping Quality Standards
 
@@ -952,6 +1078,14 @@ No external libraries for Modbus or SunSpec - we implement what we need.
 
 ## Don't Do
 
+**🚨 CRITICAL - SENSOR MAPPING:**
+- ❌ **NEVER edit JSON mapping files directly** (docs/ or custom_components/ folders)
+- ❌ **NEVER edit Excel mapping files directly**
+- ❌ **NEVER add sensor attributes to runtime code** (normalizer.py, sensor.py)
+- ❌ **NEVER create temporary fixes for sensor metadata**
+- ❌ **ALWAYS use the generator script** for ALL sensor changes
+
+**Code Quality:**
 - ❌ Use `hass.data[DOMAIN]` - Use `config_entry.runtime_data`
 - ❌ Use f-strings in logging - Use `%s` formatting
 - ❌ Shadow built-ins - Check with ruff
@@ -963,6 +1097,15 @@ No external libraries for Modbus or SunSpec - we implement what we need.
 
 ## Do
 
+**🚨 CRITICAL - SENSOR MAPPING:**
+- ✅ **READ CLAUDE.md at the start of EVERY session**
+- ✅ **ALWAYS use generator script** for sensor attribute changes
+- ✅ **Edit `scripts/vsn-mapping-generator/generate_mapping.py`** to modify sensors
+- ✅ **Regenerate files** after generator changes: `generate_mapping.py` then `convert_to_json.py`
+- ✅ **Commit generator + generated files together**
+- ✅ **Add sensor metadata to `SUNSPEC_TO_HA_METADATA` dictionary** in generator
+
+**Best Practices:**
 - ✅ Use discovery module for device information
 - ✅ Include firmware version in device_info (not VSN model!)
 - ✅ Link devices with `via_device` to create hierarchy
@@ -974,12 +1117,8 @@ No external libraries for Modbus or SunSpec - we implement what we need.
 - ✅ Test with both VSN300 and VSN700 data
 - ✅ Follow Home Assistant best practices
 - ✅ Update documentation when changing architecture
-- ✅ Use HA-prefixed column names in mapping ("HA Unit of Measurement", etc.)
 - ✅ Use `has_entity_name=True` with technical device names and `suggested_object_id` for predictable entity IDs
 - ✅ Populate comprehensive sensor attributes (14+ fields)
-- ✅ Regenerate JSON after editing Excel mapping
-- ✅ Commit both Excel and JSON files when updating mappings
-- ✅ Use model flags in Excel (not duplicate rows)
 - ✅ Follow mapping quality standards (descriptions, categories, device classes)
 
 ## Markdown Documentation Standards

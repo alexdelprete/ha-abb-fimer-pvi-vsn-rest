@@ -47,7 +47,7 @@ MODEL_FLAGS = [
     "ABB_Proprietary",
 ]
 
-# Full Excel headers (27 columns total)
+# Full Excel headers (28 columns total - added "Suggested Display Precision" in v1.1.7+)
 EXCEL_HEADERS = [
     *MODEL_FLAGS,
     "REST Name (VSN700)",
@@ -65,6 +65,7 @@ EXCEL_HEADERS = [
     "HA Device Class",
     "HA Icon",
     "Entity Category",
+    "Suggested Display Precision",
     "Available in Modbus",
     "Data Source",
     "Model_Notes",
@@ -1444,6 +1445,360 @@ SUNSPEC_TO_HA_METADATA = {
         "unit": "W",
     },
     "Ppeak": {"device_class": "power", "state_class": "measurement", "unit": "W"},
+    # ===========================================================================
+    # CYCLE COUNTERS (v1.1.5+) - No unit, state_class=total_increasing, precision=0
+    # ===========================================================================
+    "Chc": {
+        "device_class": None,
+        "state_class": "total_increasing",
+        "unit": "",
+        "precision": 0,
+    },
+    "Dhc": {
+        "device_class": None,
+        "state_class": "total_increasing",
+        "unit": "",
+        "precision": 0,
+    },
+    "CycleNum": {
+        "device_class": None,
+        "state_class": "total_increasing",
+        "unit": "",
+        "precision": 0,
+    },
+    # ===========================================================================
+    # STATE SENSORS (v1.1.6+) - Diagnostic, no unit, empty precision (display text)
+    # ===========================================================================
+    "GlobalSt": {
+        "device_class": None,
+        "state_class": None,
+        "unit": "",
+        "entity_category": "diagnostic",
+        "icon": "mdi:information-box-outline",
+        "precision": "",
+    },
+    "DcSt1": {
+        "device_class": None,
+        "state_class": None,
+        "unit": "",
+        "entity_category": "diagnostic",
+        "icon": "mdi:information-box-outline",
+        "precision": "",
+    },
+    "DcSt2": {
+        "device_class": None,
+        "state_class": None,
+        "unit": "",
+        "entity_category": "diagnostic",
+        "icon": "mdi:information-box-outline",
+        "precision": "",
+    },
+    "InverterSt": {
+        "device_class": None,
+        "state_class": None,
+        "unit": "",
+        "entity_category": "diagnostic",
+        "icon": "mdi:information-box-outline",
+        "precision": "",
+    },
+    "AlarmSt": {
+        "device_class": None,
+        "state_class": None,
+        "unit": "",
+        "entity_category": "diagnostic",
+        "icon": "mdi:information-box-outline",
+        "precision": "",
+    },
+    "AlarmState": {
+        "device_class": None,
+        "state_class": None,
+        "unit": "",
+        "entity_category": "diagnostic",
+        "icon": "mdi:information-box-outline",
+        "precision": "",
+    },
+    # ===========================================================================
+    # INTEGER COUNT SENSORS (v1.1.7+) - Precision=0
+    # ===========================================================================
+    "BattNum": {
+        "device_class": None,
+        "state_class": None,
+        "unit": "",
+        "precision": 0,
+    },
+    "NumOfMPPT": {
+        "device_class": None,
+        "state_class": "measurement",
+        "unit": "channels",
+        "precision": 0,
+    },
+    "CountryStd": {
+        "device_class": None,
+        "state_class": None,
+        "unit": "",
+        "entity_category": "diagnostic",
+        "icon": "mdi:information-box-outline",
+        "precision": 0,
+    },
+    # ===========================================================================
+    # STATE/FLAG SENSORS (v1.1.5+) - Diagnostic, precision=0
+    # ===========================================================================
+    "BatteryMode": {
+        "device_class": None,
+        "state_class": None,
+        "unit": "",
+        "entity_category": "diagnostic",
+        "precision": 0,
+    },
+    "BattExtCtrlState": {
+        "device_class": None,
+        "state_class": None,
+        "unit": "",
+        "entity_category": "diagnostic",
+        "precision": 0,
+    },
+    "BattExtCtrlEna": {
+        "device_class": None,
+        "state_class": None,
+        "unit": "",
+        "entity_category": "diagnostic",
+        "precision": 0,
+    },
+    "PacDeratingFlags": {
+        "device_class": None,
+        "state_class": None,
+        "unit": "",
+        "entity_category": "diagnostic",
+        "precision": 0,
+    },
+    "SacDeratingFlags": {
+        "device_class": None,
+        "state_class": None,
+        "unit": "",
+        "entity_category": "diagnostic",
+        "precision": 0,
+    },
+    "ClockState": {
+        "device_class": None,
+        "state_class": None,
+        "unit": "",
+        "entity_category": "diagnostic",
+        "precision": 0,
+    },
+    # ===========================================================================
+    # RESISTANCE SENSORS (v1.1.4+) - Omega icon, precision=2
+    # ===========================================================================
+    "Riso": {
+        "device_class": "current",
+        "state_class": "measurement",
+        "unit": "MOhm",
+        "icon": "mdi:omega",
+        "precision": 2,
+    },
+    # ===========================================================================
+    # CURRENT SENSORS (v1.1.3+) - Precision=2 for Ampere measurements
+    # ===========================================================================
+    "Iba": {
+        "device_class": "current",
+        "unit": "A",
+        "state_class": "measurement",
+        "precision": 2,
+    },
+    "Iin1": {
+        "device_class": "current",
+        "unit": "A",
+        "state_class": "measurement",
+        "precision": 2,
+    },
+    "Iin2": {
+        "device_class": "current",
+        "unit": "A",
+        "state_class": "measurement",
+        "precision": 2,
+    },
+    "IleakInv": {
+        "device_class": "current",
+        "unit": "A",
+        "state_class": "measurement",
+        "precision": 2,
+    },
+    "IleakDC": {
+        "device_class": "current",
+        "unit": "A",
+        "state_class": "measurement",
+        "precision": 2,
+    },
+    # ===========================================================================
+    # VOLTAGE SENSORS (v1.1.3+) - Precision=1 for Volt measurements
+    # ===========================================================================
+    "Vba": {
+        "device_class": "voltage",
+        "unit": "V",
+        "state_class": "measurement",
+        "precision": 1,
+    },
+    "ShU": {
+        "device_class": "voltage",
+        "unit": "V",
+        "state_class": "measurement",
+        "precision": 1,
+    },
+    "Vin1": {
+        "device_class": "voltage",
+        "unit": "V",
+        "state_class": "measurement",
+        "precision": 1,
+    },
+    "Vin2": {
+        "device_class": "voltage",
+        "unit": "V",
+        "state_class": "measurement",
+        "precision": 1,
+    },
+    # ===========================================================================
+    # POWER SENSORS (v1.1.3+) - Precision=0 for Watt measurements
+    # ===========================================================================
+    "Pba": {
+        "device_class": "power",
+        "unit": "W",
+        "state_class": "measurement",
+        "precision": 0,
+    },
+    "MeterPgrid_L1": {
+        "device_class": "power",
+        "unit": "W",
+        "state_class": "measurement",
+        "precision": 0,
+    },
+    "MeterPgrid_L2": {
+        "device_class": "power",
+        "unit": "W",
+        "state_class": "measurement",
+        "precision": 0,
+    },
+    "MeterPgrid_L3": {
+        "device_class": "power",
+        "unit": "W",
+        "state_class": "measurement",
+        "precision": 0,
+    },
+    # ===========================================================================
+    # TEMPERATURE SENSORS (v1.1.3+) - Precision=1 for Celsius measurements
+    # ===========================================================================
+    "Tba": {
+        "device_class": "temperature",
+        "unit": "°C",
+        "state_class": "measurement",
+        "precision": 1,
+    },
+    "TcMax": {
+        "device_class": "temperature",
+        "unit": "°C",
+        "state_class": "measurement",
+        "precision": 1,
+    },
+    "TcMin": {
+        "device_class": "temperature",
+        "unit": "°C",
+        "state_class": "measurement",
+        "precision": 1,
+    },
+    # ===========================================================================
+    # ENERGY SENSORS (v1.1.3+) - Precision=2 for Wh measurements with decimals
+    # ===========================================================================
+    "ECt": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "state_class": "total_increasing",
+        "precision": 2,
+    },
+    "EDt": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "state_class": "total_increasing",
+        "precision": 2,
+    },
+    "E4_runtime": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "state_class": "total_increasing",
+        "precision": 2,
+    },
+    "E4_7D": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "state_class": "total_increasing",
+        "precision": 2,
+    },
+    "E4_30D": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "state_class": "total_increasing",
+        "precision": 2,
+    },
+    "E5_runtime": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "state_class": "total_increasing",
+        "precision": 2,
+    },
+    "E5_7D": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "state_class": "total_increasing",
+        "precision": 2,
+    },
+    "E5_30D": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "state_class": "total_increasing",
+        "precision": 2,
+    },
+    "Ein1": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "state_class": "total_increasing",
+        "precision": 2,
+    },
+    "Ein2": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "state_class": "total_increasing",
+        "precision": 2,
+    },
+    "EBackup": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "state_class": "total_increasing",
+        "precision": 2,
+    },
+    # ===========================================================================
+    # FREQUENCY SENSORS (v1.1.3+) - Precision=2 for Hz measurements
+    # ===========================================================================
+    "Fcc": {
+        "device_class": "frequency",
+        "unit": "Hz",
+        "state_class": "measurement",
+        "precision": 2,
+    },
+    # ===========================================================================
+    # BATTERY SOC (v1.1.3+) - Precision=0 for percentage
+    # ===========================================================================
+    "TSoc": {
+        "device_class": "battery",
+        "unit": "%",
+        "state_class": "measurement",
+        "precision": 0,
+    },
+    # ===========================================================================
+    # TIMESTAMP (v1.1.3+) - Precision=0 (no decimals for timestamps)
+    # ===========================================================================
+    "SysTime": {
+        "device_class": "timestamp",
+        "unit": "",
+        "state_class": "",
+        "precision": 0,
+    },
 }
 
 # ==============================================================================
@@ -2688,6 +3043,60 @@ def apply_device_class_fixes(row):
     return row
 
 
+def _get_suggested_precision(sunspec_name, device_class, units, state_class, entity_category):
+    """Determine suggested display precision for a sensor.
+
+    Args:
+        sunspec_name: SunSpec normalized name of the sensor
+        device_class: Home Assistant device class
+        units: Unit of measurement
+        state_class: Home Assistant state class
+        entity_category: Entity category (diagnostic, config, etc.)
+
+    Returns:
+        int or str: Precision value (0-2) or empty string for state sensors
+    """
+    # State sensors with state mappings get empty string (they display text, not numbers)
+    # These sensors have integer state codes mapped to human-readable strings in const.py
+    STATE_SENSORS = {"GlobalSt", "DcSt1", "DcSt2", "InverterSt", "AlarmState", "AlarmSt"}
+    if sunspec_name in STATE_SENSORS:
+        return ""  # Empty string, not 0 - these display text values
+
+    # Special case: system_load gets 2 decimals despite no unit (float value 0.00-100.00)
+    if sunspec_name == "sys_load":
+        return 2
+
+    # Unit-based precision (highest priority)
+    if units:
+        # Power, energy counters, apparent energy, duration, data: 0 decimals
+        if units in ("W", "kW", "Wh", "kWh", "var", "VAR", "VAh", "kVAh", "s", "B"):
+            return 0
+        # Voltage, low current (mA), temperature, battery %, capacity, storage: 1 decimal
+        elif units in ("V", "mA", "%", "Ah", "°C", "°F", "MB", "GB"):
+            return 1
+        # High current (A), frequency, large resistance: 2 decimals
+        elif units in ("A", "Hz", "MOhm", "MΩ", "kΩ"):
+            return 2
+        # Small resistance, cycles, channels: 0 decimals
+        elif units in ("Ω", "Ohm", "cycles", "channels"):
+            return 0
+
+    # Device class fallback for sensors with empty units
+    if device_class:
+        # Power-related, duration, timestamps, battery percentage: 0 decimals
+        if device_class in ("power", "reactive_power", "apparent_power", "duration", "timestamp", "battery"):
+            return 0
+        # Voltage and temperature: 1 decimal
+        elif device_class in ("voltage", "temperature"):
+            return 1
+        # Current, frequency, energy: 2 decimals
+        elif device_class in ("current", "frequency", "energy"):
+            return 2
+
+    # Default: 0 for unitless numeric sensors
+    return 0
+
+
 def create_row_with_model_flags(
     vsn700_name,
     vsn300_name,
@@ -2782,6 +3191,9 @@ def create_row_with_model_flags(
             row["units"] = metadata.get("unit")
         if not row["icon"] or row["icon"] == "":
             row["icon"] = metadata.get("icon") or ""
+        # Apply entity_category if specified in metadata
+        if not row["entity_category"] and metadata.get("entity_category"):
+            row["entity_category"] = metadata.get("entity_category")
 
     # Update category if needed
     if row["category"] in ["Unknown", "", None]:
@@ -2792,6 +3204,20 @@ def create_row_with_model_flags(
     # Set diagnostic icon for all diagnostic entities (unless already has an icon)
     if row["entity_category"] == "diagnostic" and not row.get("icon"):
         row["icon"] = "mdi:information-box-outline"
+
+    # 8. Set Suggested Display Precision based on metadata or auto-calculated
+    # Check if precision was specified in SUNSPEC_TO_HA_METADATA first (takes priority)
+    if sunspec_name in SUNSPEC_TO_HA_METADATA and "precision" in SUNSPEC_TO_HA_METADATA[sunspec_name]:
+        row["precision"] = SUNSPEC_TO_HA_METADATA[sunspec_name]["precision"]
+    else:
+        # Auto-calculate precision based on units, device_class, etc.
+        row["precision"] = _get_suggested_precision(
+            sunspec_name=sunspec_name,
+            device_class=row["device_class"],
+            units=row["units"],
+            state_class=row["state_class"],
+            entity_category=row["entity_category"]
+        )
 
     return row
 
@@ -3412,6 +3838,8 @@ def _get_cell_value_for_header(header, row_data):
         return row_data.get("icon", "")
     if header == "Entity Category":
         return row_data.get("entity_category", "")
+    if header == "Suggested Display Precision":
+        return row_data.get("precision", "")
     if header == "Available in Modbus":
         return row_data.get("available_in_modbus", "")
     if header == "Data Source":
