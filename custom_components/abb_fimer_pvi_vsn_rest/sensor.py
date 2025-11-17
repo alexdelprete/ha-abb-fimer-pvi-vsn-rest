@@ -23,6 +23,22 @@ from .coordinator import ABBFimerPVIVSNRestCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
+# Device class to valid units mapping (for validation)
+# Used to validate mapping file data before applying to entities
+DEVICE_CLASS_VALID_UNITS = {
+    "energy": ["kWh", "kVAh"],  # kWh for active energy, kVAh for apparent energy
+    "power": ["W", "kW"],
+    "voltage": ["V"],
+    "current": ["A", "mA", "MOhm"],  # MOhm for insulation resistance
+    "frequency": ["Hz"],
+    "temperature": ["°C", "°F"],
+    "battery": ["%"],
+    "reactive_power": ["var", "kvar"],
+    "data_size": ["MB", "GB"],
+    "duration": ["s", "min", "h"],
+    "power_factor": [""],  # Unitless
+}
+
 
 def _compact_serial_number(serial: str) -> str:
     """Compact serial number by removing separators and converting to lowercase.
@@ -289,25 +305,62 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
                         "Unknown state_class '%s' for %s", state_class_str, point_name
                     )
 
+            # Validate and apply unit of measurement
+            # Mapping file is the source of truth, but we validate it's correct for HA
             units = point_data.get("units")
             if units:
+                # Validate unit matches device_class (if device_class is set)
+                if device_class_str and device_class_str in DEVICE_CLASS_VALID_UNITS:
+                    valid_units = DEVICE_CLASS_VALID_UNITS[device_class_str]
+                    if units not in valid_units:
+                        _LOGGER.error(
+                            "Invalid unit '%s' for device_class '%s' on sensor %s (device: %s). "
+                            "Expected one of: %s. This is a mapping file bug that needs to be fixed.",
+                            units,
+                            device_class_str,
+                            point_name,
+                            device_id,
+                            valid_units,
+                        )
+                        # Defensive fix: use first valid unit for this device_class
+                        if valid_units and valid_units[0]:
+                            units = valid_units[0]
+                            _LOGGER.warning(
+                                "Applying defensive fix: using '%s' instead of '%s' for %s",
+                                units,
+                                point_data.get("units"),
+                                point_name,
+                            )
+
+                # Apply validated unit
                 self._attr_native_unit_of_measurement = units
 
-            # Set suggested display precision
+            # Validate and apply suggested display precision
             # Priority: 1) mapping file, 2) unit-based defaults, 3) entity-specific overrides
             precision = point_data.get("suggested_display_precision")
             # Only apply if precision is a valid value (not None or empty string)
             # Empty string would make HA think this is a numeric sensor when it's actually text-based
             if precision is not None and precision != "":
-                # Use precision from mapping file if specified
-                self._attr_suggested_display_precision = precision
-            elif units:
-                # Fall back to unit-based precision defaults
+                # Validate precision is an integer
+                if isinstance(precision, int) and precision >= 0:
+                    self._attr_suggested_display_precision = precision
+                else:
+                    _LOGGER.warning(
+                        "Invalid precision value '%s' for sensor %s (device: %s). "
+                        "Expected non-negative integer. Falling back to unit-based default.",
+                        precision,
+                        point_name,
+                        device_id,
+                    )
+
+            # Fall back to unit-based precision defaults if not set by mapping
+            if not hasattr(self, "_attr_suggested_display_precision") and units:
                 if units in (
                     "W",
                     "Wh",
                     "kW",
                     "kWh",
+                    "kVAh",  # Apparent energy (validated above)
                     "var",
                     "VAR",
                     "VAh",
