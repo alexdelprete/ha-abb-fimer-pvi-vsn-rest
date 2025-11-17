@@ -7,6 +7,58 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.11] - 2025-01-17
+
+### 🔍 Features: Attribute Validation + 🐛 Bug Fixes
+
+**This release adds comprehensive attribute validation to catch mapping file bugs at runtime, and fixes bugs in the standalone test script.**
+
+**Feature #1: Attribute Validation in sensor.py**:
+
+- Added validation logic to ensure mapping file attributes are correct for Home Assistant
+- `DEVICE_CLASS_VALID_UNITS` constant: Maps device_class to valid units per official HA documentation
+- `DEVICE_CLASS_EXCEPTIONS` constant: Defines units without valid HA device_class (MOhm, kVAh)
+- Validation checks unit matches device_class before applying to entities
+- Logs ERROR if invalid unit detected (indicates mapping file bug)
+- Applies defensive fix: uses first valid unit for device_class
+- Handles exceptions: removes incorrect device_class for MOhm/kVAh sensors
+- Result: Catches mapping file bugs at runtime with detailed error logs
+
+**Bug #1: Insulation Resistance Icon Not Displaying (Fixed)**:
+
+- Fixed insulation resistance (MOhm) sensors showing generic icon instead of mdi:omega
+- Root cause: Mapping file had `device_class="current"` for MOhm sensors (invalid - current only supports A, mA)
+- HA was overriding custom icon when device_class is set
+- Fix: Exception handling removes incorrect device_class with WARNING log
+- Result: ✅ Insulation resistance sensors now display `mdi:omega` icon correctly
+
+**Bug #2: vsn_client.py Mapping URL Wrong (Fixed)**:
+
+- Fixed test script couldn't load mapping file (404 error)
+- Root cause: URL missing `abb_fimer_vsn_rest_client` directory in path
+- Fix: Corrected URL path in line 53
+- Result: ✅ Users can now successfully load mapping file
+
+**Bug #3: vsn_client.py Missing Energy Conversion (Fixed)**:
+
+- Fixed normalized JSON output showing energy values in Wh instead of kWh
+- Root cause: `normalize_livedata()` function didn't apply Wh→kWh conversion
+- Fix: Added energy conversion logic matching normalizer.py (lines 481-485)
+- Result: ✅ Normalized JSON now shows correct kWh values
+
+**Files Modified**:
+- `custom_components/.../sensor.py` (attribute validation + exception handling)
+- `scripts/vsn_client.py` (mapping URL + energy conversion)
+- Version bump to v1.1.11
+
+**Impact**: Better error detection for mapping file bugs, insulation resistance icon displays correctly, test script works properly.
+
+**Upgrade Priority**: 🔧 **RECOMMENDED** - Upgrade when convenient for improved validation and bug fixes.
+
+**Full release notes**: [v1.1.11](docs/releases/v1.1.11.md)
+
+---
+
 ## [1.1.10] - 2025-11-17
 
 ### 🐛 Critical Bug Fix (v1.1.9 Hotfix)
@@ -1720,7 +1772,8 @@ After updating:
 
 ---
 
-[Unreleased]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.1.10...HEAD
+[Unreleased]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.1.11...HEAD
+[1.1.11]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.1.10...v1.1.11
 [1.1.10]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.1.9...v1.1.10
 [1.1.9]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.1.8...v1.1.9
 [1.1.8]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.1.7...v1.1.8
