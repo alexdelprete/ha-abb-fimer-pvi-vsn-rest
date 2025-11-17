@@ -973,10 +973,11 @@ SUNSPEC_TO_HA_METADATA = {
         "unit": "kVAh",
     },
     # Energy counters by period (total)
-    "DayWH": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
-    "WeekWH": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
-    "MonthWH": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
-    "YearWH": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    # Note: Values come as Wh from API, normalizer converts to kWh, so unit must be kWh
+    "DayWH": {"device_class": "energy", "state_class": "total", "unit": "kWh"},
+    "WeekWH": {"device_class": "energy", "state_class": "total", "unit": "kWh"},
+    "MonthWH": {"device_class": "energy", "state_class": "total", "unit": "kWh"},
+    "YearWH": {"device_class": "energy", "state_class": "total", "unit": "kWh"},
     # Energy counters - E series (Wh, total)
     "E0_runtime": {
         "device_class": "energy",
@@ -1791,7 +1792,7 @@ SUNSPEC_TO_HA_METADATA = {
         "device_class": None,  # Not "timestamp" - we want formatted string, not relative time
         "unit": "",
         "state_class": "",
-        "precision": 0,
+        # No precision - returns formatted date string, not numeric value (v1.1.9)
     },
 }
 
@@ -3056,6 +3057,14 @@ def _get_suggested_precision(sunspec_name, device_class, units, state_class, ent
     STATE_SENSORS = {"GlobalSt", "DcSt1", "DcSt2", "InverterSt", "AlarmState", "AlarmSt"}
     if sunspec_name in STATE_SENSORS:
         return None  # No precision field - these are text-based sensors
+
+    # Timestamp sensors that return formatted strings should NOT have precision
+    # Raw values from API are integers (Aurora epoch timestamps), but sensor.py converts
+    # them to formatted datetime strings (e.g., "2025-11-17 14:30:13")
+    # Having precision makes HA think it's numeric, causing ValueError
+    TIMESTAMP_SENSORS = {"SysTime"}
+    if sunspec_name in TIMESTAMP_SENSORS:
+        return None  # No precision field - these return formatted date strings
 
     # Special case: system_load gets 2 decimals despite no unit (float value 0.00-100.00)
     if sunspec_name == "sys_load":

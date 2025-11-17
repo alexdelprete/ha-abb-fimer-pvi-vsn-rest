@@ -7,6 +7,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.9] - 2025-11-17
+
+### 🐛 Critical Bug Fixes (v1.1.8 Hotfix)
+
+**This is a critical hotfix release addressing 2 remaining bugs from v1.1.8.**
+
+**Bug #1: Energy Sensors Showing Wh Instead of kWh (Critical)**:
+
+- Fixed 4 energy sensors displaying wrong unit labels (DayWH, WeekWH, MonthWH, YearWH)
+- Examples: "Energia - Oggi: 7.262.065 Wh" should be "7.262 kWh"
+- Root cause: v1.1.8 fixed normalizer conversion (Wh→kWh) but generator still had `unit="Wh"` for these 4 sensors
+- Normalizer converted values correctly (`7262065 / 1000 = 7262.065`) but unit label was wrong
+- Generator fix: Changed 4 energy sensors from `unit="Wh"` to `unit="kWh"` (lines 976-980)
+- Result: Energy sensors now display with correct kWh unit labels
+
+**Bug #2: SysTime Sensor Precision Error (Critical)**:
+
+- Fixed SysTime sensor unavailable with ValueError about numeric vs string value
+- Error: "has suggested precision '0' thus indicating it has a numeric value; however, it has the non-numeric value: '2025-11-17 14:30:13'"
+- Root cause: v1.1.8 removed `device_class="timestamp"` but forgot to remove `precision=0`
+- Same issue as state sensors - precision makes HA expect numeric value but sensor returns formatted string
+- Generator fix #1: Added TIMESTAMP_SENSORS check in `_get_suggested_precision()` (lines 3061-3067)
+- Generator fix #2: Removed `precision: 0` from SysTime metadata (lines 1791-1796)
+- Result: SysTime loads without errors and displays formatted date/time string
+
+**Files Modified**:
+- `scripts/vsn-mapping-generator/generate_mapping.py` (3 changes: energy units, TIMESTAMP_SENSORS, SysTime precision)
+- Regenerated all mapping files (Excel + 3 JSON copies)
+- Version bump to v1.1.9
+
+**Impact**: v1.1.8 users had 4 energy sensors with confusing unit labels and 1 unavailable timestamp sensor.
+
+**Upgrade Priority**: 🚨 **CRITICAL** - All v1.1.8 users should upgrade immediately.
+
+**Full release notes**: [v1.1.9](docs/releases/v1.1.9.md)
+
+---
+
 ## [1.1.8] - 2025-11-17
 
 ### 🐛 Critical Bug Fixes (v1.1.7 Hotfix)
@@ -1652,7 +1690,8 @@ After updating:
 
 ---
 
-[Unreleased]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.1.8...HEAD
+[Unreleased]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.1.9...HEAD
+[1.1.9]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.1.8...v1.1.9
 [1.1.8]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.1.7...v1.1.8
 [1.1.7]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.1.6...v1.1.7
 [1.1.6]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.1.5...v1.1.6

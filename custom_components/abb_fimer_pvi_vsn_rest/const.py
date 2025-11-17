@@ -11,7 +11,7 @@ from .abb_fimer_vsn_rest_client import (  # noqa: F401
 )
 
 DOMAIN = "abb_fimer_pvi_vsn_rest"
-VERSION = "1.1.8"
+VERSION = "1.1.9"
 
 # Configuration
 CONF_HOST = "host"
