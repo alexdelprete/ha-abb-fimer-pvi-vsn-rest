@@ -7,6 +7,50 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.12] - 2025-01-17
+
+### 🐛 Bug Fixes: Duplicate Sensor Resolution
+
+**This release resolves duplicate sensor entries by implementing VSN name normalization that prioritizes VSN300 (SunSpec-based) names as canonical.**
+
+**Bug #1: Duplicate Sensor Entries with Inconsistent Metadata (Fixed)**:
+
+- Merged 5 duplicate sensor pairs (265 points → 253 unique points)
+- Insulation Resistance: `Isolation_Ohm1` (VSN300) + `Riso` (VSN700) → Single sensor with omega icon
+- Leakage Current Inverter: `ILeakDcAc` (VSN300, mA) + `IleakInv` (VSN700, A) → Standardized to mA
+- Leakage Current DC: `ILeakDcDc` (VSN300, mA) + `IleakDC` (VSN700, A) → Standardized to mA
+- Ground Voltage: `VGnd` (VSN300) + `Vgnd` (VSN700) → Single sensor
+- Battery SoC: `Soc` (VSN300) + `TSoc` (VSN700) → Single sensor
+
+**Bug #2: Leakage Current Unit Mismatch (CRITICAL - Fixed)**:
+
+- VSN700 leakage current sensors had 1000x incorrect values (A instead of mA)
+- Added runtime value conversion: A→mA for VSN700 `IleakInv` and `IleakDC` sensors
+- Result: ✅ Consistent mA units across both VSN300 and VSN700 models
+
+**Bug #3: Insulation Resistance Icon Regression (Fixed)**:
+
+- Insulation resistance icon not displaying after duplicate entries
+- Merged entries preserve omega icon from VSN700 entry
+- Result: ✅ mdi:omega icon displays correctly
+
+**Implementation**:
+
+- Added `VSN_NAME_NORMALIZATION` dictionary in generator script (VSN700→VSN300 mapping)
+- Added `A_TO_MA_POINTS` registry in normalizer for runtime conversion
+- VSN300 (SunSpec) names are canonical, VSN700 names normalize to them
+- All merged sensors have both VSN300 and VSN700 REST names
+
+**Files Modified**:
+
+- `scripts/vsn-mapping-generator/generate_mapping.py` (VSN name normalization)
+- `custom_components/.../normalizer.py` (A→mA conversion for VSN700)
+- `custom_components/.../sensor.py` (MΩ Unicode variant added to exceptions)
+- All mapping files regenerated (JSON, Excel - 3 copies)
+- `CLAUDE.md` (architecture documentation)
+
+**See**: [v1.1.12 Release Notes](docs/releases/v1.1.12.md)
+
 ## [1.1.11] - 2025-01-17
 
 ### 🔍 Features: Attribute Validation + 🐛 Bug Fixes

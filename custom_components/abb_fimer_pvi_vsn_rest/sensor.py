@@ -82,6 +82,7 @@ DEVICE_CLASS_VALID_UNITS = {
 # These units are not supported by any Home Assistant device class
 DEVICE_CLASS_EXCEPTIONS = {
     "MOhm": "Insulation resistance - no HA device class supports MOhm",
+    "MΩ": "Insulation resistance - no HA device class supports MΩ (Unicode variant)",
     "kVAh": "Apparent energy - HA only has apparent power, not apparent energy",
 }
 

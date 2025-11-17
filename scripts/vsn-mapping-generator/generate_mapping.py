@@ -360,6 +360,42 @@ M64061_POINTS = {
     "ETotDischarge",
 }
 
+# VSN name normalization for duplicate detection
+# PRIORITY: VSN300 names are SunSpec-based and are canonical
+# Maps VSN700 proprietary names → VSN300 SunSpec names for merging
+# VSN300 names don't need normalization (they're already canonical)
+VSN_NAME_NORMALIZATION = {
+    # Insulation Resistance (CRITICAL - user-reported icon issue)
+    # VSN300: m64061_1_Isolation_Ohm1 → Isolation_Ohm1 (SunSpec-based, canonical)
+    # VSN700: Riso → Isolation_Ohm1 (normalize to SunSpec name)
+    # Result: Single "isolation_ohm1" sensor, both REST names, unit=MOhm, icon=mdi:omega
+    "Riso": "Isolation_Ohm1",  # VSN700 → VSN300 (SunSpec) name
+
+    # Leakage Current - Inverter (CRITICAL - unit mismatch A vs mA)
+    # VSN300: m64061_1_ILeakDcAc → ILeakDcAc (mA, describes DC-to-AC path, canonical)
+    # VSN700: IleakInv → ILeakDcAc (A, less specific, normalize to VSN300)
+    # Result: Single "ileakdcac" sensor, unit=mA, A→mA conversion in normalizer
+    "IleakInv": "ILeakDcAc",  # VSN700 → VSN300 (SunSpec) name
+
+    # Leakage Current - DC (CRITICAL - unit mismatch A vs mA)
+    # VSN300: m64061_1_ILeakDcDc → ILeakDcDc (mA, describes DC-to-DC path, canonical)
+    # VSN700: IleakDC → ILeakDcDc (A, less specific, normalize to VSN300)
+    # Result: Single "ileakdcdc" sensor, unit=mA, A→mA conversion in normalizer
+    "IleakDC": "ILeakDcDc",  # VSN700 → VSN300 (SunSpec) name
+
+    # Voltage - Ground Reference (capitalization only)
+    # VSN300: VGnd (V, PascalCase - SunSpec convention, canonical)
+    # VSN700: Vgnd (V, lowercase g, normalize to VSN300)
+    # Result: Single "vgnd" sensor with both REST names
+    "Vgnd": "VGnd",  # VSN700 → VSN300 (SunSpec) name
+
+    # Battery State of Charge (naming convention)
+    # VSN300: Soc (%, standard SunSpec name, canonical)
+    # VSN700: TSoc (%, proprietary prefix, normalize to VSN300)
+    # Result: Single "soc" sensor with both REST names
+    "TSoc": "Soc",  # VSN700 → VSN300 (SunSpec) name
+}
+
 # ABB Proprietary points (REST API only)
 ABB_PROPRIETARY = {
     # Battery measurements
@@ -898,8 +934,6 @@ UNIT_CORRECTIONS = {
     "DCW": "W",
     "DCW_1": "W",
     "DCW_2": "W",
-    # Resistance unit fixes - MOhm to MΩ
-    "Isolation_Ohm1": "MΩ",
 }
 
 # Temperature unit normalization - degC → °C
@@ -1363,12 +1397,6 @@ SUNSPEC_TO_HA_METADATA = {
     # Fan Speed (RPM, measurement)
     "Fan1rpm": {"device_class": None, "state_class": "measurement", "unit": "RPM"},
     "Fan2rpm": {"device_class": None, "state_class": "measurement", "unit": "RPM"},
-    # Resistance (MOhm, measurement)
-    "Isolation_Ohm1": {
-        "device_class": None,
-        "state_class": "measurement",
-        "unit": "MΩ",
-    },
     # Network Monitoring (%, measurement)
     # Note: WiFi link quality is a percentage (0-100%), not signal strength in dB/dBm
     "wlan0_link_quality": {
@@ -1576,8 +1604,8 @@ SUNSPEC_TO_HA_METADATA = {
     # ===========================================================================
     # RESISTANCE SENSORS (v1.1.4+) - Omega icon, precision=2
     # ===========================================================================
-    "Riso": {
-        "device_class": "current",
+    "Isolation_Ohm1": {
+        "device_class": None,  # Exception - no HA device_class supports MOhm
         "state_class": "measurement",
         "unit": "MOhm",
         "icon": "mdi:omega",
@@ -1606,13 +1634,13 @@ SUNSPEC_TO_HA_METADATA = {
     },
     "IleakInv": {
         "device_class": "current",
-        "unit": "A",
+        "unit": "mA",  # Standardized to mA (conversion from A in normalizer)
         "state_class": "measurement",
         "precision": 2,
     },
     "IleakDC": {
         "device_class": "current",
-        "unit": "A",
+        "unit": "mA",  # Standardized to mA (conversion from A in normalizer)
         "state_class": "measurement",
         "precision": 2,
     },
@@ -2034,7 +2062,7 @@ DESCRIPTION_IMPROVEMENTS = {
     "ShU": "Current shunt voltage",
     "cosPhi": "Power factor (cosine phi)",
     # Other measurements
-    "Riso": "DC insulation resistance to ground",
+    "Isolation_Ohm1": "DC insulation resistance to ground",
     "Sh U": "Current shunt voltage",
     "Type": "Inverter device type identifier",
     # ==========================================
@@ -2931,6 +2959,21 @@ def detect_models_from_point(vsn300_name, vsn700_name, model_hint=None):
     return models
 
 
+def normalize_vsn700_name(vsn700_name):
+    """Apply VSN700 to VSN300 name normalization for duplicate detection.
+
+    Args:
+        vsn700_name: VSN700 REST API point name
+
+    Returns:
+        Normalized name that will be used as sunspec_name for deduplication
+
+    """
+    if vsn700_name in VSN_NAME_NORMALIZATION:
+        return VSN_NAME_NORMALIZATION[vsn700_name]
+    return vsn700_name
+
+
 def merge_duplicate_rows(rows_by_sunspec):
     """Merge duplicate rows with the same SunSpec name."""
     merged_rows = []
@@ -3496,10 +3539,13 @@ def _process_m64061_points(
                 point_name, point_name, "M64061", label, "", feeds_info
             )
 
+            # Apply VSN700 name normalization for duplicate detection
+            normalized_name = normalize_vsn700_name(point_name)
+
             row = create_row_with_model_flags(
                 vsn700_name=point_name,
                 vsn300_name="N/A",
-                sunspec_name=point_name,
+                sunspec_name=normalized_name,
                 ha_name=ha_name,
                 in_livedata="✓" if point_name in vsn700_livedata_points else "",
                 in_feeds="✓" if point_name in vsn700_feeds_points else "",
@@ -3612,6 +3658,9 @@ def _process_vsn300_only_points(
                     model = f"M{model_num}"
                     sunspec_name = sunspec_point
 
+            # Apply VSN300 sunspec name normalization for duplicate detection
+            sunspec_name = normalize_vsn700_name(sunspec_name)
+
             # Lookup from SunSpec metadata if we have a model
             label = ""
             workbook_description = ""
@@ -3699,10 +3748,13 @@ def _process_vsn700_only_points(
                 label, description, model_flags, None, point_name
             )
 
+            # Apply VSN700 name normalization for duplicate detection
+            normalized_name = normalize_vsn700_name(point_name)
+
             row = create_row_with_model_flags(
                 vsn700_name=point_name,
                 vsn300_name="N/A",
-                sunspec_name=point_name,
+                sunspec_name=normalized_name,
                 ha_name=ha_name,
                 in_livedata="✓" if point_name in vsn700_livedata_points else "",
                 in_feeds="✓" if point_name in vsn700_feeds_points else "",

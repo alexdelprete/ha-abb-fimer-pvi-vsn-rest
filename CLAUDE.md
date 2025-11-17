@@ -323,6 +323,67 @@ All HA device info fields populated from discovery:
 - JSON: `models` array with applicable model names
 - Loader: Handles both formats (backward compatible)
 
+### VSN Name Normalization for Duplicate Detection (v1.1.12)
+
+**Decision**: Prioritize VSN300 (SunSpec-based) names as canonical when merging duplicate sensors that exist in both VSN300 and VSN700 models.
+
+**Rationale**:
+
+- VSN300 REST API names are based on the SunSpec international standard (e.g., `Isolation_Ohm1`, `ILeakDcAc`)
+- VSN700 REST API names are ABB/FIMER proprietary (e.g., `Riso`, `IleakInv`)
+- SunSpec names provide consistent, standardized naming across all solar inverter systems
+- Merging duplicates eliminates redundant sensors with inconsistent metadata
+
+**Problem Solved**:
+
+Before normalization, duplicate entries existed for 5 sensor pairs:
+
+1. Insulation Resistance: `Isolation_Ohm1` (VSN300) vs `Riso` (VSN700) - different units (MΩ vs MOhm), missing icon
+2. Leakage Current Inverter: `ILeakDcAc` (VSN300, mA) vs `IleakInv` (VSN700, A) - **CRITICAL 1000x unit mismatch**
+3. Leakage Current DC: `ILeakDcDc` (VSN300, mA) vs `IleakDC` (VSN700, A) - **CRITICAL 1000x unit mismatch**
+4. Ground Voltage: `VGnd` (VSN300) vs `Vgnd` (VSN700) - capitalization only
+5. Battery SoC: `Soc` (VSN300) vs `TSoc` (VSN700) - naming convention
+
+**Implementation**:
+
+```python
+# scripts/vsn-mapping-generator/generate_mapping.py
+VSN_NAME_NORMALIZATION = {
+    # VSN700 proprietary → VSN300 SunSpec (canonical)
+    "Riso": "Isolation_Ohm1",
+    "IleakInv": "ILeakDcAc",
+    "IleakDC": "ILeakDcDc",
+    "Vgnd": "VGnd",
+    "TSoc": "Soc",
+}
+
+# Applied during VSN700 point processing
+normalized_name = normalize_vsn700_name(point_name)
+row = create_row_with_model_flags(
+    vsn700_name=point_name,
+    vsn300_name="N/A",
+    sunspec_name=normalized_name,  # Uses canonical VSN300 name
+    ...
+)
+```
+
+**Runtime Value Conversion** (normalizer.py):
+
+```python
+# VSN700 leakage current sensors report in A, standardize to mA
+A_TO_MA_POINTS = {"IleakInv", "IleakDC"}
+
+if vsn_model == "VSN700" and point_name in A_TO_MA_POINTS:
+    point_value = point_value * 1000  # A → mA
+```
+
+**Result**:
+
+- Reduced from 265 to 253 unique points (5 duplicates merged)
+- Single `isolation_ohm1` sensor with both REST names, unit=MOhm, icon=mdi:omega ✅
+- Single `ileakdcac` and `ileakdcdc` sensors with unit=mA, A→mA conversion for VSN700 ✅
+- Consistent metadata across both VSN models
+
 ### HA-Prefixed Column Names
 
 **Decision**: Use "HA Unit of Measurement", "HA State Class", "HA Device Class" in mapping.

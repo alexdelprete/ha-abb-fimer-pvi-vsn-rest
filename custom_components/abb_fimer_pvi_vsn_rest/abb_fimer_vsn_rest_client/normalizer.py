@@ -25,6 +25,13 @@ UA_TO_MA_POINTS = {
     "Ileak 2",  # VSN700 - Leakage current 2
 }
 
+# A to mA conversion registry: VSN700 points in Amps that need mA conversion
+# These points report in A but should be mA (multiply by 1000)
+A_TO_MA_POINTS = {
+    "IleakInv",  # VSN700 - Inverter leakage current (A → mA)
+    "IleakDC",   # VSN700 - DC leakage current (A → mA)
+}
+
 # Temperature correction registry: Points with incorrect scale factor
 # Some ABB/FIMER inverters report cabinet temperature with SF=-1 instead of SF=-2
 # Detected when temperature exceeds reasonable threshold (70°C)
@@ -174,6 +181,23 @@ class VSNDataNormalizer:
                         _LOGGER.debug(
                             "Converted %s from uA to mA: %s",
                             point_name,
+                            point_value,
+                        )
+
+                # Convert A to mA (multiply by 1000) for VSN700 leakage current sensors
+                # VSN700 reports in A, but we standardize to mA to match VSN300
+                if (
+                    self.vsn_model == "VSN700"
+                    and point_name in A_TO_MA_POINTS
+                    and point_value is not None
+                ):
+                    if isinstance(point_value, (int, float)) and point_value != 0:
+                        original_value = point_value
+                        point_value = point_value * 1000  # A to mA
+                        _LOGGER.debug(
+                            "Converted %s from A to mA: %s A → %s mA",
+                            point_name,
+                            original_value,
                             point_value,
                         )
 
