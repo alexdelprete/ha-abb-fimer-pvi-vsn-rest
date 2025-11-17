@@ -7,6 +7,54 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.7] - 2025-11-17
+
+### 🏗️ Internal Improvements
+
+**Generator Script: Single Source of Truth for Sensor Metadata**:
+
+- Extended generator script with precision field support and ALL fixes from v1.1.3-v1.1.7
+- Added `_get_suggested_precision()` helper function with intelligent precision rules
+- Extended SUNSPEC_TO_HA_METADATA dictionary with 50+ new sensor entries:
+  - 6 state sensors (GlobalSt, DcSt1, DcSt2, InverterSt, AlarmState, AlarmSt)
+  - 3 cycle counters (Chc, Dhc, CycleNum)
+  - 10 state/flag sensors (BatteryMode, BattExtCtrlState, etc.)
+  - 3 integer count sensors (BattNum, NumOfMPPT, CountryStd)
+  - 1 resistance sensor (Riso with omega icon)
+  - 33 incomplete sensors with full metadata (v1.1.3 fixes)
+- Updated metadata application logic to handle entity_category and precision
+- Added "Suggested Display Precision" column to Excel output (28 columns)
+- Fixed convert_to_json.py path (added missing abb_fimer_vsn_rest_client directory)
+- Documented Wh→kWh conversion in normalizer.py as defensive code
+- Regenerated all mapping files: 258 sensors with precision field
+  - 6 sensors: precision="" (state sensors)
+  - 175 sensors: precision=0 (power, energy, cycles)
+  - 40 sensors: precision=1 (voltage, temperature)
+  - 37 sensors: precision=2 (current, frequency)
+- Commit: [d4181c9](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/d4181c9)
+
+**Documentation: Mandatory Sensor Mapping Workflow**:
+
+- Added CRITICAL session startup checklist (read CLAUDE.md, review commits, check git status)
+- Added comprehensive "MANDATORY: Sensor Mapping Workflow" section (150+ lines)
+- Explained single source of truth principle and why manual edits are forbidden
+- Provided wrong vs right examples with code snippets
+- Updated "Don't Do" and "Do" sections with CRITICAL directives
+- Updated current version to v1.1.7
+
+**Benefits:**
+- Generator is now single source of truth for ALL sensor metadata
+- All fixes from v1.1.3-v1.1.7 permanently codified in generator
+- No risk of manual edits being lost during regeneration
+- Consistent precision rules across all 258 sensors
+- Future sensor changes: Edit generator → Regenerate → Commit
+
+**No Breaking Changes**: Internal improvement only, all sensor attributes remain the same.
+
+**Full release notes**: [v1.1.7](docs/releases/v1.1.7.md)
+
+---
+
 ## [1.1.6] - 2025-11-17
 
 ### 🏗️ Architecture
