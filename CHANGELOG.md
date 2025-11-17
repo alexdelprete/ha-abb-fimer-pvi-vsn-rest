@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.10] - 2025-11-17
+
+### 🐛 Critical Bug Fix (v1.1.9 Hotfix)
+
+**This is a critical hotfix release fixing energy sensors still showing Wh instead of kWh after v1.1.9.**
+
+**Bug: Energy Sensors Still Showing Wh (Critical)**:
+
+- Fixed energy sensors still displaying Wh instead of kWh even after v1.1.9 fix and fresh installation
+- User reported: "Energia - Oggi: 8.606 Wh" (should be "8.606 kWh") - confirmed NOT a cache issue
+- Root cause: normalizer tried to modify PointMapping dataclass attribute `mapping.units = "kWh"` which didn't work
+- The modification was either ignored or lost before being used in `normalized_point["units"]`
+- normalizer.py fix: Use local variable `unit_to_use` instead of modifying dataclass attribute
+  - `unit_to_use = mapping.units` (default)
+  - `unit_to_use = "kWh"` (after energy conversion)
+  - `normalized_point["units"] = unit_to_use` (always correct)
+- Result: Energy sensors now correctly display in kWh after fresh installation
+
+**Files Modified**:
+- `custom_components/.../normalizer.py` (use local variable pattern)
+- Version bump to v1.1.10
+
+**Impact**: v1.1.9 users had 4 energy sensors displaying Wh instead of kWh (confusing data presentation).
+
+**Upgrade Priority**: 🚨 **CRITICAL** - All v1.1.9 users should upgrade immediately.
+
+**Full release notes**: [v1.1.10](docs/releases/v1.1.10.md)
+
+---
+
 ## [1.1.9] - 2025-11-17
 
 ### 🐛 Critical Bug Fixes (v1.1.8 Hotfix)
@@ -1690,7 +1720,8 @@ After updating:
 
 ---
 
-[Unreleased]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.1.9...HEAD
+[Unreleased]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.1.10...HEAD
+[1.1.10]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.1.9...v1.1.10
 [1.1.9]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.1.8...v1.1.9
 [1.1.8]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.1.7...v1.1.8
 [1.1.7]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.1.6...v1.1.7
