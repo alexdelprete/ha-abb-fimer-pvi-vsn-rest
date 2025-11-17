@@ -1369,13 +1369,6 @@ SUNSPEC_TO_HA_METADATA = {
         "state_class": "measurement",
         "unit": "MΩ",
     },
-    # Counters (no device_class, total)
-    "CycleNum": {"device_class": None, "state_class": "total", "unit": "cycles"},
-    "NumOfMPPT": {
-        "device_class": None,
-        "state_class": "measurement",
-        "unit": "channels",
-    },
     # Network Monitoring (%, measurement)
     # Note: WiFi link quality is a percentage (0-100%), not signal strength in dB/dBm
     "wlan0_link_quality": {
@@ -3050,6 +3043,7 @@ def _get_suggested_precision(sunspec_name, device_class, units, state_class, ent
 
     Returns:
         int or str: Precision value (0-2) or empty string for state sensors
+
     """
     # State sensors with state mappings should NOT have precision at all (they display text, not numbers)
     # These sensors have integer state codes mapped to human-readable strings in const.py
@@ -3076,13 +3070,13 @@ def _get_suggested_precision(sunspec_name, device_class, units, state_class, ent
         if units in ("W", "kW", "Wh", "kWh", "var", "VAR", "VAh", "kVAh", "s", "B"):
             return 0
         # Voltage, low current (mA), temperature, battery %, capacity, storage: 1 decimal
-        elif units in ("V", "mA", "%", "Ah", "°C", "°F", "MB", "GB"):
+        if units in ("V", "mA", "%", "Ah", "°C", "°F", "MB", "GB"):
             return 1
         # High current (A), frequency, large resistance: 2 decimals
-        elif units in ("A", "Hz", "MOhm", "MΩ", "kΩ"):
+        if units in ("A", "Hz", "MOhm", "MΩ", "kΩ"):
             return 2
         # Small resistance, cycles, channels: 0 decimals
-        elif units in ("Ω", "Ohm", "cycles", "channels"):
+        if units in ("Ω", "Ohm", "cycles", "channels"):
             return 0
 
     # Device class fallback for sensors with empty units
@@ -3091,10 +3085,10 @@ def _get_suggested_precision(sunspec_name, device_class, units, state_class, ent
         if device_class in ("power", "reactive_power", "apparent_power", "duration", "timestamp", "battery"):
             return 0
         # Voltage and temperature: 1 decimal
-        elif device_class in ("voltage", "temperature"):
+        if device_class in ("voltage", "temperature"):
             return 1
         # Current, frequency, energy: 2 decimals
-        elif device_class in ("current", "frequency", "energy"):
+        if device_class in ("current", "frequency", "energy"):
             return 2
 
     # Default: 0 for unitless numeric sensors
