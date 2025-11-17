@@ -50,7 +50,7 @@ logging.basicConfig(
 _LOGGER = logging.getLogger(__name__)
 
 # URL to the mapping JSON on GitHub (integration runtime location)
-MAPPING_URL = "https://raw.githubusercontent.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/master/custom_components/abb_fimer_pvi_vsn_rest/data/vsn-sunspec-point-mapping.json"
+MAPPING_URL = "https://raw.githubusercontent.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/master/custom_components/abb_fimer_pvi_vsn_rest/abb_fimer_vsn_rest_client/data/vsn-sunspec-point-mapping.json"
 
 
 # ============================================================================
@@ -472,14 +472,25 @@ def normalize_livedata(
 
             mapping = index[point_name]
             ha_entity = mapping.get("HA Entity Name")
+            point_value = point.get("value")
+
+            # Get metadata from mapping
+            device_class = mapping.get("HA Device Class", "")
+            unit = mapping.get("HA Unit of Measurement", "")
+
+            # Convert energy sensors from Wh to kWh (matching normalizer.py logic)
+            if device_class == "energy" and point_value is not None:
+                if isinstance(point_value, (int, float)) and point_value != 0:
+                    point_value = point_value / 1000  # Wh → kWh
+                    unit = "kWh"
 
             if ha_entity:
                 device_points[ha_entity] = {
-                    "value": point.get("value"),
-                    "units": mapping.get("HA Unit of Measurement", ""),
+                    "value": point_value,
+                    "units": unit,
                     "label": mapping.get("Label", ""),
                     "description": mapping.get("Description", ""),
-                    "device_class": mapping.get("HA Device Class", ""),
+                    "device_class": device_class,
                     "state_class": mapping.get("HA State Class", ""),
                 }
 
