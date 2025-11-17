@@ -24,8 +24,7 @@ jobs:
         - name: "Install requirements"
           run: python3 -m pip install -r requirements.txt
 
-        - name: "Check formatting"
-          run: python3 -m ruff format --check .
-
-        - name: "Check linting"
-          run: python3 -m ruff check .
+        - name: "Run Ruff"
+          uses: chartboost/ruff-action@v1
+          with:
+            args: 'check --output-format github'
