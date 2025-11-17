@@ -24,19 +24,65 @@ from .coordinator import ABBFimerPVIVSNRestCoordinator
 _LOGGER = logging.getLogger(__name__)
 
 # Device class to valid units mapping (for validation)
-# Used to validate mapping file data before applying to entities
+# Based on official Home Assistant documentation:
+# https://developers.home-assistant.io/docs/core/entity/sensor/#available-device-classes
+# Only includes device classes actually used in this integration
 DEVICE_CLASS_VALID_UNITS = {
-    "energy": ["kWh", "kVAh"],  # kWh for active energy, kVAh for apparent energy
-    "power": ["W", "kW"],
-    "voltage": ["V"],
-    "current": ["A", "mA", "MOhm"],  # MOhm for insulation resistance
-    "frequency": ["Hz"],
-    "temperature": ["°C", "°F"],
     "battery": ["%"],
-    "reactive_power": ["var", "kvar"],
-    "data_size": ["MB", "GB"],
-    "duration": ["s", "min", "h"],
-    "power_factor": [""],  # Unitless
+    "current": ["A", "mA"],  # Does NOT include MOhm (insulation resistance has no device_class)
+    "data_size": [
+        "bit",
+        "kbit",
+        "Mbit",
+        "Gbit",
+        "B",
+        "kB",
+        "MB",
+        "GB",
+        "TB",
+        "PB",
+        "EB",
+        "ZB",
+        "YB",
+        "KiB",
+        "MiB",
+        "GiB",
+        "TiB",
+        "PiB",
+        "EiB",
+        "ZiB",
+        "YiB",
+    ],
+    "duration": ["d", "h", "min", "s", "ms", "µs"],
+    "energy": [
+        "J",
+        "kJ",
+        "MJ",
+        "GJ",
+        "mWh",
+        "Wh",
+        "kWh",
+        "MWh",
+        "GWh",
+        "TWh",
+        "cal",
+        "kcal",
+        "Mcal",
+        "Gcal",
+    ],  # Does NOT include kVAh (apparent energy has no device_class)
+    "frequency": ["Hz", "kHz", "MHz", "GHz"],
+    "power": ["mW", "W", "kW", "MW", "GW", "TW"],
+    "power_factor": ["%", ""],  # Can be percentage or unitless
+    "reactive_power": ["mvar", "var", "kvar"],
+    "temperature": ["°C", "°F", "K"],
+    "voltage": ["V", "mV", "µV", "kV", "MV"],
+}
+
+# Units that should NOT have a device_class (exceptions)
+# These units are not supported by any Home Assistant device class
+DEVICE_CLASS_EXCEPTIONS = {
+    "MOhm": "Insulation resistance - no HA device class supports MOhm",
+    "kVAh": "Apparent energy - HA only has apparent power, not apparent energy",
 }
 
 
@@ -288,6 +334,24 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         if is_numeric:
             # Numeric sensor: set device_class, state_class, units, precision as available
             device_class_str = point_data.get("device_class")
+            units = point_data.get("units")
+
+            # Handle exceptions: units that should NOT have a device_class
+            # These units are not supported by any HA device class
+            if units in DEVICE_CLASS_EXCEPTIONS:
+                if device_class_str:
+                    reason = DEVICE_CLASS_EXCEPTIONS[units]
+                    _LOGGER.warning(
+                        "Sensor %s (device: %s) has unit '%s' which doesn't have a valid HA device_class. "
+                        "Removing device_class '%s' from mapping. Reason: %s",
+                        point_name,
+                        device_id,
+                        units,
+                        device_class_str,
+                        reason,
+                    )
+                    device_class_str = None  # Remove invalid device_class
+
             if device_class_str:
                 try:
                     self._attr_device_class = SensorDeviceClass(device_class_str)
@@ -307,7 +371,6 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
 
             # Validate and apply unit of measurement
             # Mapping file is the source of truth, but we validate it's correct for HA
-            units = point_data.get("units")
             if units:
                 # Validate unit matches device_class (if device_class is set)
                 if device_class_str and device_class_str in DEVICE_CLASS_VALID_UNITS:
