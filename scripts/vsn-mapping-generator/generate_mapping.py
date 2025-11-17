@@ -1467,7 +1467,7 @@ SUNSPEC_TO_HA_METADATA = {
         "precision": 0,
     },
     # ===========================================================================
-    # STATE SENSORS (v1.1.6+) - Diagnostic, no unit, empty precision (display text)
+    # STATE SENSORS (v1.1.6+) - Diagnostic, no unit, NO precision (display text, not numbers)
     # ===========================================================================
     "GlobalSt": {
         "device_class": None,
@@ -1475,7 +1475,6 @@ SUNSPEC_TO_HA_METADATA = {
         "unit": "",
         "entity_category": "diagnostic",
         "icon": "mdi:information-box-outline",
-        "precision": "",
     },
     "DcSt1": {
         "device_class": None,
@@ -1483,7 +1482,6 @@ SUNSPEC_TO_HA_METADATA = {
         "unit": "",
         "entity_category": "diagnostic",
         "icon": "mdi:information-box-outline",
-        "precision": "",
     },
     "DcSt2": {
         "device_class": None,
@@ -1491,7 +1489,6 @@ SUNSPEC_TO_HA_METADATA = {
         "unit": "",
         "entity_category": "diagnostic",
         "icon": "mdi:information-box-outline",
-        "precision": "",
     },
     "InverterSt": {
         "device_class": None,
@@ -1499,7 +1496,6 @@ SUNSPEC_TO_HA_METADATA = {
         "unit": "",
         "entity_category": "diagnostic",
         "icon": "mdi:information-box-outline",
-        "precision": "",
     },
     "AlarmSt": {
         "device_class": None,
@@ -1507,7 +1503,6 @@ SUNSPEC_TO_HA_METADATA = {
         "unit": "",
         "entity_category": "diagnostic",
         "icon": "mdi:information-box-outline",
-        "precision": "",
     },
     "AlarmState": {
         "device_class": None,
@@ -1515,7 +1510,6 @@ SUNSPEC_TO_HA_METADATA = {
         "unit": "",
         "entity_category": "diagnostic",
         "icon": "mdi:information-box-outline",
-        "precision": "",
     },
     # ===========================================================================
     # INTEGER COUNT SENSORS (v1.1.7+) - Precision=0
@@ -1791,10 +1785,10 @@ SUNSPEC_TO_HA_METADATA = {
         "precision": 0,
     },
     # ===========================================================================
-    # TIMESTAMP (v1.1.3+) - Precision=0 (no decimals for timestamps)
+    # TIMESTAMP (v1.1.3+) - NO device_class (displays formatted string, not "2 hours ago")
     # ===========================================================================
     "SysTime": {
-        "device_class": "timestamp",
+        "device_class": None,  # Not "timestamp" - we want formatted string, not relative time
         "unit": "",
         "state_class": "",
         "precision": 0,
@@ -3056,11 +3050,12 @@ def _get_suggested_precision(sunspec_name, device_class, units, state_class, ent
     Returns:
         int or str: Precision value (0-2) or empty string for state sensors
     """
-    # State sensors with state mappings get empty string (they display text, not numbers)
+    # State sensors with state mappings should NOT have precision at all (they display text, not numbers)
     # These sensors have integer state codes mapped to human-readable strings in const.py
+    # Return None so they don't get a precision field in the mapping
     STATE_SENSORS = {"GlobalSt", "DcSt1", "DcSt2", "InverterSt", "AlarmState", "AlarmSt"}
     if sunspec_name in STATE_SENSORS:
-        return ""  # Empty string, not 0 - these display text values
+        return None  # No precision field - these are text-based sensors
 
     # Special case: system_load gets 2 decimals despite no unit (float value 0.00-100.00)
     if sunspec_name == "sys_load":

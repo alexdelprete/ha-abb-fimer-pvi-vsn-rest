@@ -7,6 +7,58 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.8] - 2025-11-17
+
+### 🐛 Critical Bug Fixes (v1.1.7 Hotfix)
+
+**This is a critical hotfix release addressing 3 serious bugs introduced in v1.1.7.**
+
+**Bug #1: State Sensors Unavailable (Critical)**:
+
+- Fixed state sensors (GlobalSt, AlarmSt, DcSt1, DcSt2, InverterSt) returning error and unavailable
+- Root cause: Empty string precision (`precision=""`) made HA think sensors were numeric, but they return text values
+- Error: "has suggested precision '' thus indicating it has a numeric value; however, it has the non-numeric value: 'Run'"
+- Generator fix: Changed `_get_suggested_precision()` to return `None` (not `""`) for state sensors
+- Generator fix: Removed `"precision": ""` from all 6 state sensor metadata entries
+- sensor.py fix: Added defensive check `if precision is not None and precision != ""`
+- Result: State sensors now load correctly and display text values ("Run", "MPPT", "No Alarm")
+
+**Bug #2: SysTime Showing "2 hours ago" Instead of Formatted Date/Time**:
+
+- Fixed SysTime sensor displaying relative time ("2 hours ago") instead of formatted date/time string
+- Root cause: v1.1.7 added `device_class="timestamp"` which triggers HA's relative time display
+- Error: "Invalid datetime: ...system_time has timestamp device class but provides state 2025-11-17 13:52:14:<class 'str'>"
+- Generator fix: Changed SysTime `device_class` from `"timestamp"` to `None`
+- Result: SysTime now displays formatted string "2025-11-17 13:52:14" (not "2 hours ago")
+
+**Bug #3: Energy Sensors Wrong Values by 1000x (Critical)**:
+
+- Fixed energy sensors showing incorrect values (either in Wh instead of kWh, or Wh values with kWh unit = 1000x error)
+- Examples from user report:
+  - Some sensors: `7.240 Wh` (should be `7.240 kWh`)
+  - Some sensors: `108.892.416 kWh` (should be `108.892 kWh` - WRONG by 1000x!)
+- Root cause: normalizer.py checked `if mapping.units == "Wh"` to convert, but v1.1.7 set some sensors to `unit="kWh"` in mapping, so they skipped conversion
+- VSN API always returns Wh values → sensors with `mapping.units="kWh"` displayed Wh as kWh = 1000x error
+- normalizer.py fix: Changed from unit-based to device_class-based conversion
+  - Old (BROKEN): `if mapping.units == "Wh"`
+  - New (FIXED): `if mapping.device_class == "energy"`
+- Result: ALL energy sensors now convert correctly and display in kWh with proper values
+
+**Files Modified**:
+- `scripts/vsn-mapping-generator/generate_mapping.py` (4 changes: state sensor precision, SysTime device_class)
+- `custom_components/.../sensor.py` (defensive precision check)
+- `custom_components/.../normalizer.py` (device_class-based energy conversion)
+- Regenerated all mapping files (Excel + 3 JSON copies)
+- Version bump to v1.1.8
+
+**Impact**: v1.1.7 users experienced 6 unavailable sensors, 1 timestamp display issue, and 70+ energy sensors with wrong values (critical data error).
+
+**Upgrade Priority**: 🚨 **CRITICAL** - All v1.1.7 users should upgrade immediately.
+
+**Full release notes**: [v1.1.8](docs/releases/v1.1.8.md)
+
+---
+
 ## [1.1.7] - 2025-11-17
 
 ### 🏗️ Internal Improvements
@@ -1600,7 +1652,33 @@ After updating:
 
 ---
 
-[Unreleased]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.10...HEAD
+[Unreleased]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.1.8...HEAD
+[1.1.8]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.1.7...v1.1.8
+[1.1.7]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.1.6...v1.1.7
+[1.1.6]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.1.5...v1.1.6
+[1.1.5]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.1.4...v1.1.5
+[1.1.4]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.1.3...v1.1.4
+[1.1.3]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.1.2...v1.1.3
+[1.1.2]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.1.1...v1.1.2
+[1.1.1]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.1.0...v1.1.1
+[1.1.0]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0...v1.1.0
+[1.0.0]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.29...v1.0.0
+[1.0.0-beta.29]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.28...v1.0.0-beta.29
+[1.0.0-beta.28]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.27...v1.0.0-beta.28
+[1.0.0-beta.27]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.26...v1.0.0-beta.27
+[1.0.0-beta.26]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.25...v1.0.0-beta.26
+[1.0.0-beta.25]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.24...v1.0.0-beta.25
+[1.0.0-beta.24]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.23...v1.0.0-beta.24
+[1.0.0-beta.23]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.22...v1.0.0-beta.23
+[1.0.0-beta.22]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.21...v1.0.0-beta.22
+[1.0.0-beta.21]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.20...v1.0.0-beta.21
+[1.0.0-beta.20]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.19...v1.0.0-beta.20
+[1.0.0-beta.19]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.15...v1.0.0-beta.19
+[1.0.0-beta.15]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.14...v1.0.0-beta.15
+[1.0.0-beta.14]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.13...v1.0.0-beta.14
+[1.0.0-beta.13]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.12...v1.0.0-beta.13
+[1.0.0-beta.12]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.11...v1.0.0-beta.12
+[1.0.0-beta.11]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.10...v1.0.0-beta.11
 [1.0.0-beta.10]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.9...v1.0.0-beta.10
 [1.0.0-beta.9]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.8...v1.0.0-beta.9
 [1.0.0-beta.8]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/compare/v1.0.0-beta.7...v1.0.0-beta.8

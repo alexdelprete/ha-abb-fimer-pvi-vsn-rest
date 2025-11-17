@@ -240,19 +240,21 @@ class VSNDataNormalizer:
                     )
                     continue
 
-                # Convert Wh to kWh for energy sensors (defensive code)
-                # NOTE: As of v1.1.7+, the mapping generator (generate_mapping.py) now sets kWh
-                # units in the mapping file via SUNSPEC_TO_HA_METADATA. This conversion serves
-                # as defensive code for edge cases where Wh units might still appear in the mapping
-                # or if the raw API data unexpectedly contains Wh values.
-                # Period counters (DayWH, WeekWH, MonthWH, YearWH) remain as Wh per SunSpec spec.
-                if mapping.units == "Wh" and point_value is not None:
-                    if isinstance(point_value, (int, float)):
+                # Convert ALL energy sensors from Wh to kWh
+                # The VSN API always returns energy values in Wh, but we display them in kWh for readability
+                # Check device_class instead of units to ensure ALL energy sensors are converted,
+                # regardless of what the mapping file says
+                # v1.1.8 FIX: Previous logic checked mapping.units == "Wh", which missed sensors
+                # that had mapping.units == "kWh", resulting in Wh values displayed as kWh (wrong by 1000x)
+                if mapping.device_class == "energy" and point_value is not None:
+                    if isinstance(point_value, (int, float)) and point_value != 0:
                         original_value = point_value
-                        point_value = point_value / 1000  # Wh to kWh
-                        mapping.units = "kWh"  # Update unit in mapping
+                        point_value = point_value / 1000  # Wh → kWh
+                        # Ensure units are set to kWh after conversion
+                        if mapping.units != "kWh":
+                            mapping.units = "kWh"
                         _LOGGER.debug(
-                            "Converted %s from Wh to kWh: %s Wh → %s kWh",
+                            "Converted energy sensor %s from Wh to kWh: %s Wh → %s kWh",
                             point_name,
                             original_value,
                             point_value,

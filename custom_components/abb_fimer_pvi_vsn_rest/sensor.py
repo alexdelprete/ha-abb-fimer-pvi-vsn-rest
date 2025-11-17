@@ -296,7 +296,9 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
             # Set suggested display precision
             # Priority: 1) mapping file, 2) unit-based defaults, 3) entity-specific overrides
             precision = point_data.get("suggested_display_precision")
-            if precision is not None:
+            # Only apply if precision is a valid value (not None or empty string)
+            # Empty string would make HA think this is a numeric sensor when it's actually text-based
+            if precision is not None and precision != "":
                 # Use precision from mapping file if specified
                 self._attr_suggested_display_precision = precision
             elif units:
