@@ -45,3 +45,4 @@ docs/vsn-sunspec-point-mapping-backup-*.xlsx
 docs/vsn-sunspec-point-mapping-*-fixed.xlsx
 docs/vsn-sunspec-point-mapping-*.xlsx
 !docs/vsn-sunspec-point-mapping.xlsx
+venv/
