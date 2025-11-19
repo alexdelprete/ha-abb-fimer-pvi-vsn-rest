@@ -17,6 +17,7 @@ Example:
 
 """
 
+import argparse
 import asyncio
 import json
 import logging
@@ -93,7 +94,7 @@ async def test_endpoint(
         raise VSNClientError(f"Request failed: HTTP {response.status}")
 
 
-async def test_client(base_url: str) -> None:
+async def test_client(base_url: str, username: str = "guest", password: str = "", timeout: int = 10) -> None:
     """Test the VSN REST client.
 
     Args:
@@ -103,16 +104,19 @@ async def test_client(base_url: str) -> None:
     _LOGGER.info("=" * 80)
     _LOGGER.info("VSN REST Client - Comprehensive Test")
     _LOGGER.info("Base URL: %s", base_url)
-    _LOGGER.info("Username: guest (default)")
-    _LOGGER.info("Password: (empty)")
+    _LOGGER.info("Username: %s", username)
+    _LOGGER.info("Password: %s", "(set)" if password else "(empty)")
     _LOGGER.info("=" * 80)
 
     async with aiohttp.ClientSession() as session:
         try:
-            # Create client with default guest credentials
+            # Create client with provided credentials
             client = ABBFimerVSNRestClient(
                 session=session,
                 base_url=base_url,
+                username=username,
+                password=password,
+                timeout=timeout,
             )
 
             # Test 1: Connect and detect device
@@ -124,7 +128,9 @@ async def test_client(base_url: str) -> None:
             # Test 2: /v1/status endpoint
             _LOGGER.info("\n[TEST 2] /v1/status - System Information")
             _LOGGER.info("-" * 80)
-            status_data = await test_endpoint(session, base_url, "/v1/status", model)
+            status_data = await test_endpoint(
+                session, base_url, "/v1/status", model, username=username, password=password
+            )
             _LOGGER.info("✓ Status endpoint successful")
 
             if isinstance(status_data, dict):
@@ -172,7 +178,9 @@ async def test_client(base_url: str) -> None:
             # Test 4: /v1/feeds endpoint
             _LOGGER.info("\n[TEST 4] /v1/feeds - Feed Metadata")
             _LOGGER.info("-" * 80)
-            feeds_data = await test_endpoint(session, base_url, "/v1/feeds", model)
+            feeds_data = await test_endpoint(
+                session, base_url, "/v1/feeds", model, username=username, password=password
+            )
             _LOGGER.info("✓ Feeds endpoint successful")
 
             if isinstance(feeds_data, dict):
@@ -254,13 +262,15 @@ async def test_client(base_url: str) -> None:
 
 def main() -> None:
     """Main entry point."""
-    if len(sys.argv) != 2:
-        print("Usage: python test_vsn_client.py <host>")
-        print("Example: python test_vsn_client.py 192.168.1.100")
-        print("         python test_vsn_client.py abb-vsn300.axel.dom")
-        sys.exit(1)
+    parser = argparse.ArgumentParser(description="Test VSN REST client")
+    parser.add_argument("host", help="Host or URL of the VSN device (e.g. 192.168.1.100)")
+    parser.add_argument("--username", "-u", default="guest", help="Username to authenticate with")
+    parser.add_argument("--password", "-p", default="", help="Password to authenticate with")
+    parser.add_argument("--timeout", "-t", type=int, default=10, help="Request timeout seconds")
 
-    host = sys.argv[1]
+    args = parser.parse_args()
+
+    host = args.host
 
     # Add http:// prefix if not present
     if not host.startswith(("http://", "https://")):
@@ -268,7 +278,7 @@ def main() -> None:
     else:
         base_url = host
 
-    asyncio.run(test_client(base_url))
+    asyncio.run(test_client(base_url, username=args.username, password=args.password, timeout=args.timeout))
 
 
 if __name__ == "__main__":
