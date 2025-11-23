@@ -7,6 +7,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.14] - 2025-11-23
+
+### Features: M101/M102 Single-Phase Support + Energy Display Names
+
+**This release adds full support for single-phase (M101) and split-phase (M102) inverters,
+fixing missing sensors for users with these systems.**
+
+Thanks to **@SidShetye** for reporting [Issue #14](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/issues/14)
+and providing test data from their PVI-4.2-OUTD single-phase inverter.
+
+**Feature #1: M101/M102 Single-Phase Inverter Support**:
+
+- Single-phase inverters (e.g., PVI-4.2-OUTD) now have all 253 sensors working
+- Runtime normalization converts M101/M102 point prefixes to M103 for mapping lookup
+- SunSpec M101/M102/M103 models have identical point definitions - only phase count differs
+- Zero mapping file changes needed - leverages SunSpec model equivalence
+- Temperature correction now works for M101 cabinet temperature (`m101_1_TmpCab`)
+
+**Feature #2: Improved Energy Display Names**:
+
+- Changed time period naming pattern for better clarity:
+  - "Last 7 Days" → "(Current Week)"
+  - "Last 30 Days" → "(Current Month)"
+  - "Last Year" → "(Current Year)"
+  - Added "(Today)" for daily energy
+- Examples: "Energy AC - Produced (Current Week)", "Energy - Battery Charge (Current Month)"
+
+**Files Modified**:
+
+- `custom_components/.../normalizer.py` (M101/M102 normalization logic)
+- `scripts/vsn-mapping-generator/generate_mapping.py` (display name updates)
+- `vsn-sunspec-point-mapping.json` and `.xlsx` (regenerated)
+
+**See**: [v1.1.14 Release Notes](docs/releases/v1.1.14.md)
+
 ## [1.1.13] - 2025-11-23
 
 ### 🐛 Bug Fixes: Log Spam Prevention
