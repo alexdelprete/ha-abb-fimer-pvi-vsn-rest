@@ -1,8 +1,8 @@
-# VSN Client - Self-Contained Testing Script
+# VSN REST Client - Self-Contained Testing Script
 
 ## Overview
 
-`vsn_client.py` is a self-contained Python script for testing ABB/FIMER VSN300
+`vsn_rest_client.py` is a self-contained Python script for testing ABB/FIMER VSN300
 and VSN700 dataloggers without needing to install the full Home Assistant
 integration.
 
@@ -32,7 +32,7 @@ pip install aiohttp
 ### Basic Usage
 
 ```bash
-python vsn_client.py <host> [--username USER] [--password PASS] [--timeout SEC]
+python vsn_rest_client.py <host> [--username USER] [--password PASS] [--timeout SEC]
 ```
 
 ### Options
@@ -49,19 +49,19 @@ python vsn_client.py <host> [--username USER] [--password PASS] [--timeout SEC]
 Basic usage with IP address:
 
 ```bash
-python vsn_client.py 192.168.1.100
+python vsn_rest_client.py 192.168.1.100
 ```
 
 With custom credentials:
 
 ```bash
-python vsn_client.py 192.168.1.100 --username admin --password mypassword
+python vsn_rest_client.py 192.168.1.100 --username admin --password mypassword
 ```
 
 With short options:
 
 ```bash
-python vsn_client.py abb-vsn300.local -u admin -p secret -t 15
+python vsn_rest_client.py abb-vsn300.local -u admin -p secret -t 15
 ```
 
 The script automatically adds `http://` prefix if not provided.
@@ -196,7 +196,7 @@ The script defaults to username `guest` with an empty password, but credentials 
 Use `--username` and `--password` to specify your device's credentials:
 
 ```bash
-python vsn_client.py 192.168.1.100 --username admin --password mypassword
+python vsn_rest_client.py 192.168.1.100 --username admin --password mypassword
 ```
 
 ### VSN300
@@ -250,9 +250,9 @@ If you see "Normalization will be skipped":
 
 To share with users for testing:
 
-1. Send them the `vsn_client.py` file
+1. Send them the `vsn_rest_client.py` file
 2. Provide installation instructions (Python 3.9+ and aiohttp)
-3. Give them the command: `python vsn_client.py <their_device_ip>`
+3. Give them the command: `python vsn_rest_client.py <their_device_ip>`
 4. Ask them to send back the generated JSON files (3-4 files depending on internet availability)
 
 ## Technical Details

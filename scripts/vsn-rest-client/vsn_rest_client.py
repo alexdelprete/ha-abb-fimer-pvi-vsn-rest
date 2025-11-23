@@ -12,12 +12,12 @@ Features:
 - Creates both raw and normalized JSON outputs
 
 Usage:
-    python vsn_client.py <host> [--username USER] [--password PASS] [--timeout SEC]
+    python vsn_rest_client.py <host> [--username USER] [--password PASS] [--timeout SEC]
 
 Example:
-    python vsn_client.py 192.168.1.100
-    python vsn_client.py 192.168.1.100 --username admin --password mypassword
-    python vsn_client.py abb-vsn300.local -u guest -p "" -t 15
+    python vsn_rest_client.py 192.168.1.100
+    python vsn_rest_client.py 192.168.1.100 --username admin --password mypassword
+    python vsn_rest_client.py abb-vsn300.local -u guest -p "" -t 15
 
 Requirements:
     - Python 3.9+

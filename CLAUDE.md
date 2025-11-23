@@ -792,7 +792,7 @@ def discover_vsn_device(
 Use test scripts in `scripts/`:
 
 - `test_vsn_client.py`: Test REST client with real VSN device
-- `vsn_client.py`: Standalone client for user testing
+- `vsn-rest-client/vsn_rest_client.py`: Standalone client for user testing
 
 ### Test Data
 
@@ -1163,7 +1163,7 @@ No external libraries for Modbus or SunSpec - we implement what we need.
 - `scripts/convert_excel_to_json.py`: Convert Excel to JSON (current)
 - `scripts/analyze_and_deduplicate_mapping.py`: Analyze and deduplicate mappings
 - `scripts/apply_mapping_fixes.py`: Apply automated fixes to mappings
-- `scripts/vsn_client.py`: Standalone test client
+- `scripts/vsn-rest-client/vsn_rest_client.py`: Standalone test client
 - `scripts/test_vsn_client.py`: Integration test script
 
 **Documentation:**

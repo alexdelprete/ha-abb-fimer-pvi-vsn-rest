@@ -331,7 +331,7 @@ The repository includes a standalone diagnostic script that can test your VSN de
 
 1. **Download the script**:
    ```bash
-   wget https://raw.githubusercontent.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/master/scripts/vsn_client.py
+   wget https://raw.githubusercontent.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/master/scripts/vsn-rest-client/vsn_rest_client.py
    ```
 
 2. **Install dependencies**:
@@ -341,7 +341,7 @@ The repository includes a standalone diagnostic script that can test your VSN de
 
 3. **Run the test**:
    ```bash
-   python vsn_client.py 192.168.1.100
+   python vsn_rest_client.py 192.168.1.100
    ```
    (Replace `192.168.1.100` with your datalogger's IP address)
 
