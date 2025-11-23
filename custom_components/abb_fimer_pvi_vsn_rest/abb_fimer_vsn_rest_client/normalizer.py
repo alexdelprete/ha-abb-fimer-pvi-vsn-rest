@@ -98,6 +98,103 @@ class VSNDataNormalizer:
         await self._mapping_loader.async_load()
         self._loaded = True
 
+    def _apply_value_transformations(
+        self, point_name: str, point_value: Any
+    ) -> Any:
+        """Apply unit conversions and value transformations to a point value.
+
+        Handles conversions for:
+        - uA → mA (leakage current sensors)
+        - A → mA (VSN700 leakage current)
+        - Temperature scale factor correction
+        - String cleanup (strip dashes)
+        - Case normalization (title case)
+        - Bytes → MB (storage sensors)
+
+        Args:
+            point_name: VSN REST API point name
+            point_value: Raw value from API
+
+        Returns:
+            Transformed value (or original if no transformation needed)
+
+        """
+        if point_value is None:
+            return point_value
+
+        # uA to mA conversion (divide by 1000)
+        if point_name in UA_TO_MA_POINTS and isinstance(point_value, (int, float)):
+            point_value = point_value / 1000
+            _LOGGER.debug("Converted %s from uA to mA: %s", point_name, point_value)
+
+        # A to mA conversion for VSN700 leakage current (multiply by 1000)
+        if (
+            self.vsn_model == "VSN700"
+            and point_name in A_TO_MA_POINTS
+            and isinstance(point_value, (int, float))
+            and point_value != 0
+        ):
+            original_value = point_value
+            point_value = point_value * 1000
+            _LOGGER.debug(
+                "Converted %s from A to mA: %s A → %s mA",
+                point_name,
+                original_value,
+                point_value,
+            )
+
+        # Temperature scale factor correction (divide by 10)
+        if (
+            point_name in TEMP_CORRECTION_POINTS
+            and isinstance(point_value, (int, float))
+            and point_value > TEMP_THRESHOLD_CELSIUS
+        ):
+            point_value = point_value / 10
+            _LOGGER.debug(
+                "Applied temperature scale factor correction to %s: %s°C",
+                point_name,
+                point_value,
+            )
+
+        # String cleanup - strip dashes
+        if (
+            point_name in STRING_STRIP_POINTS
+            and isinstance(point_value, str)
+        ):
+            original_value = point_value
+            point_value = point_value.strip("-")
+            _LOGGER.debug(
+                "Stripped dashes from %s: '%s' → '%s'",
+                point_name,
+                original_value,
+                point_value,
+            )
+
+        # Case normalization - title case
+        if (
+            point_name in TITLE_CASE_POINTS
+            and isinstance(point_value, str)
+        ):
+            original_value = point_value
+            point_value = point_value.title()
+            _LOGGER.debug(
+                "Applied title case to %s: '%s' → '%s'",
+                point_name,
+                original_value,
+                point_value,
+            )
+
+        # Bytes to MB conversion
+        if point_name in B_TO_MB_POINTS and isinstance(point_value, (int, float)):
+            point_value = point_value / 1048576  # Bytes to MB (1024^2)
+            _LOGGER.debug(
+                "Converted %s from bytes to MB: %.1f MB",
+                point_name,
+                point_value,
+            )
+
+        return point_value
+
     def normalize(self, raw_data: dict[str, Any]) -> dict[str, Any]:
         """Normalize VSN livedata to SunSpec schema.
 
@@ -173,81 +270,8 @@ class VSNDataNormalizer:
                 if not point_name:
                     continue
 
-                # Apply unit conversions for points that need value transformation
-                # Convert uA to mA (divide by 1000) for HA compatibility
-                if point_name in UA_TO_MA_POINTS and point_value is not None:
-                    if isinstance(point_value, (int, float)):
-                        point_value = point_value / 1000  # uA to mA
-                        _LOGGER.debug(
-                            "Converted %s from uA to mA: %s",
-                            point_name,
-                            point_value,
-                        )
-
-                # Convert A to mA (multiply by 1000) for VSN700 leakage current sensors
-                # VSN700 reports in A, but we standardize to mA to match VSN300
-                if (
-                    self.vsn_model == "VSN700"
-                    and point_name in A_TO_MA_POINTS
-                    and point_value is not None
-                ):
-                    if isinstance(point_value, (int, float)) and point_value != 0:
-                        original_value = point_value
-                        point_value = point_value * 1000  # A to mA
-                        _LOGGER.debug(
-                            "Converted %s from A to mA: %s A → %s mA",
-                            point_name,
-                            original_value,
-                            point_value,
-                        )
-
-                # Apply temperature correction for points with incorrect scale factor
-                # Some ABB/FIMER inverters report SF=-1 instead of SF=-2 for cabinet temp
-                if point_name in TEMP_CORRECTION_POINTS and point_value is not None:
-                    if (
-                        isinstance(point_value, (int, float))
-                        and point_value > TEMP_THRESHOLD_CELSIUS
-                    ):
-                        point_value = point_value / 10  # Correct SF from -1 to -2
-                        _LOGGER.debug(
-                            "Applied temperature scale factor correction to %s: %s°C",
-                            point_name,
-                            point_value,
-                        )
-
-                # Apply string cleanup for points that need it
-                if point_name in STRING_STRIP_POINTS and point_value is not None:
-                    if isinstance(point_value, str):
-                        original_value = point_value
-                        point_value = point_value.strip("-")
-                        _LOGGER.debug(
-                            "Stripped dashes from %s: '%s' → '%s'",
-                            point_name,
-                            original_value,
-                            point_value,
-                        )
-
-                # Apply case normalization for points that need title case
-                if point_name in TITLE_CASE_POINTS and point_value is not None:
-                    if isinstance(point_value, str):
-                        original_value = point_value
-                        point_value = point_value.title()
-                        _LOGGER.debug(
-                            "Applied title case to %s: '%s' → '%s'",
-                            point_name,
-                            original_value,
-                            point_value,
-                        )
-
-                # Convert bytes to megabytes for storage points
-                if point_name in B_TO_MB_POINTS and point_value is not None:
-                    if isinstance(point_value, (int, float)):
-                        point_value = point_value / 1048576  # Bytes to MB (1024^2)
-                        _LOGGER.debug(
-                            "Converted %s from bytes to MB: %.1f MB",
-                            point_name,
-                            point_value,
-                        )
+                # Apply all unit conversions and value transformations
+                point_value = self._apply_value_transformations(point_name, point_value)
 
                 # Look up mapping based on VSN model
                 if self.vsn_model == "VSN300":

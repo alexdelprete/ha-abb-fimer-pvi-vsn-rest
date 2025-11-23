@@ -120,6 +120,45 @@ def _simplify_device_type(device_type: str) -> str:
     return device_type.lower()
 
 
+def _get_precision_from_units(units: str | None) -> int | None:
+    """Get default precision based on unit of measurement.
+
+    Args:
+        units: Unit of measurement string
+
+    Returns:
+        Default precision value or None if no default applies
+
+    """
+    if not units:
+        return None
+
+    if units in (
+        "W", "Wh", "kW", "kWh", "kVAh", "var", "VAR", "VAh",
+        "s", "B", "cycles", "channels",
+    ):
+        # Power, energy, reactive power, apparent energy, duration, bytes, cycles, counts
+        return 0
+
+    if units in ("V", "A", "mA", "%", "Ah", "°C", "°F"):
+        # Voltage, current, percentage, capacity, temperature
+        return 1
+
+    if units in ("Hz", "MOhm", "MΩ", "kΩ"):
+        # Frequency, large resistance values
+        return 2
+
+    if units in ("Ω", "Ohm"):
+        # Small resistance values in ohms
+        return 0
+
+    if units in ("MB", "GB"):
+        # Storage sizes
+        return 1
+
+    return None
+
+
 def _format_device_name(
     manufacturer: str,
     device_type_simple: str,
@@ -333,124 +372,7 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         is_numeric = isinstance(initial_value, (int, float))
 
         if is_numeric:
-            # Numeric sensor: set device_class, state_class, units, precision as available
-            device_class_str = point_data.get("device_class")
-            units = point_data.get("units")
-
-            # Handle exceptions: units that should NOT have a device_class
-            # These units are not supported by any HA device class
-            if units in DEVICE_CLASS_EXCEPTIONS:
-                if device_class_str:
-                    reason = DEVICE_CLASS_EXCEPTIONS[units]
-                    _LOGGER.warning(
-                        "Sensor %s (device: %s) has unit '%s' which doesn't have a valid HA device_class. "
-                        "Removing device_class '%s' from mapping. Reason: %s",
-                        point_name,
-                        device_id,
-                        units,
-                        device_class_str,
-                        reason,
-                    )
-                    device_class_str = None  # Remove invalid device_class
-
-            if device_class_str:
-                try:
-                    self._attr_device_class = SensorDeviceClass(device_class_str)
-                except ValueError:
-                    _LOGGER.debug(
-                        "Unknown device_class '%s' for %s", device_class_str, point_name
-                    )
-
-            state_class_str = point_data.get("state_class")
-            if state_class_str:
-                try:
-                    self._attr_state_class = SensorStateClass(state_class_str)
-                except ValueError:
-                    _LOGGER.debug(
-                        "Unknown state_class '%s' for %s", state_class_str, point_name
-                    )
-
-            # Validate and apply unit of measurement
-            # Mapping file is the source of truth, but we validate it's correct for HA
-            if units:
-                # Validate unit matches device_class (if device_class is set)
-                if device_class_str and device_class_str in DEVICE_CLASS_VALID_UNITS:
-                    valid_units = DEVICE_CLASS_VALID_UNITS[device_class_str]
-                    if units not in valid_units:
-                        _LOGGER.error(
-                            "Invalid unit '%s' for device_class '%s' on sensor %s (device: %s). "
-                            "Expected one of: %s. This is a mapping file bug that needs to be fixed.",
-                            units,
-                            device_class_str,
-                            point_name,
-                            device_id,
-                            valid_units,
-                        )
-                        # Defensive fix: use first valid unit for this device_class
-                        if valid_units and valid_units[0]:
-                            units = valid_units[0]
-                            _LOGGER.warning(
-                                "Applying defensive fix: using '%s' instead of '%s' for %s",
-                                units,
-                                point_data.get("units"),
-                                point_name,
-                            )
-
-                # Apply validated unit
-                self._attr_native_unit_of_measurement = units
-
-            # Validate and apply suggested display precision
-            # Priority: 1) mapping file, 2) unit-based defaults, 3) entity-specific overrides
-            precision = point_data.get("suggested_display_precision")
-            # Only apply if precision is a valid value (not None or empty string)
-            # Empty string would make HA think this is a numeric sensor when it's actually text-based
-            if precision is not None and precision != "":
-                # Validate precision is an integer
-                if isinstance(precision, int) and precision >= 0:
-                    self._attr_suggested_display_precision = precision
-                else:
-                    _LOGGER.warning(
-                        "Invalid precision value '%s' for sensor %s (device: %s). "
-                        "Expected non-negative integer. Falling back to unit-based default.",
-                        precision,
-                        point_name,
-                        device_id,
-                    )
-
-            # Fall back to unit-based precision defaults if not set by mapping
-            if not hasattr(self, "_attr_suggested_display_precision") and units:
-                if units in (
-                    "W",
-                    "Wh",
-                    "kW",
-                    "kWh",
-                    "kVAh",  # Apparent energy (validated above)
-                    "var",
-                    "VAR",
-                    "VAh",
-                    "s",
-                    "B",
-                    "cycles",
-                    "channels",
-                ):
-                    # Power, energy, reactive power, apparent energy, duration, bytes, cycles, counts: no decimals
-                    self._attr_suggested_display_precision = 0
-                elif units in ("V", "A", "mA", "%", "Ah", "°C", "°F"):
-                    # Voltage, current, percentage, capacity, temperature: 1 decimal
-                    self._attr_suggested_display_precision = 1
-                elif units in ("Hz", "MOhm", "MΩ", "kΩ"):
-                    # Frequency, large resistance values: 2 decimals
-                    self._attr_suggested_display_precision = 2
-                elif units in ("Ω", "Ohm"):
-                    # Small resistance values in ohms: no decimals
-                    self._attr_suggested_display_precision = 0
-                elif units in ("MB", "GB"):
-                    # Storage sizes: 1 decimal for readability
-                    self._attr_suggested_display_precision = 1
-
-            # Special precision overrides for specific entities
-            if self._point_name == "system_load":
-                self._attr_suggested_display_precision = 2
+            self._configure_numeric_sensor(point_data, point_name, device_id)
         else:
             # String sensor: explicitly set ALL numeric attributes to None
             # This prevents HA from inferring numeric type from any attribute
@@ -493,6 +415,150 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
             getattr(self, "_attr_icon", None),
             self._attr_translation_key,
         )
+
+    def _configure_numeric_sensor(
+        self,
+        point_data: dict[str, Any],
+        point_name: str,
+        device_id: str,
+    ) -> None:
+        """Configure device_class, state_class, units, and precision for numeric sensors.
+
+        Args:
+            point_data: Point metadata from coordinator
+            point_name: HA entity name
+            device_id: Device serial number
+
+        """
+        device_class_str = point_data.get("device_class")
+        units = point_data.get("units")
+
+        # Handle exceptions: units that should NOT have a device_class
+        if units in DEVICE_CLASS_EXCEPTIONS and device_class_str:
+            reason = DEVICE_CLASS_EXCEPTIONS[units]
+            _LOGGER.warning(
+                "Sensor %s (device: %s) has unit '%s' which doesn't have a valid HA device_class. "
+                "Removing device_class '%s' from mapping. Reason: %s",
+                point_name,
+                device_id,
+                units,
+                device_class_str,
+                reason,
+            )
+            device_class_str = None
+
+        # Set device_class if valid
+        if device_class_str:
+            try:
+                self._attr_device_class = SensorDeviceClass(device_class_str)
+            except ValueError:
+                _LOGGER.debug(
+                    "Unknown device_class '%s' for %s", device_class_str, point_name
+                )
+
+        # Set state_class if valid
+        state_class_str = point_data.get("state_class")
+        if state_class_str:
+            try:
+                self._attr_state_class = SensorStateClass(state_class_str)
+            except ValueError:
+                _LOGGER.debug(
+                    "Unknown state_class '%s' for %s", state_class_str, point_name
+                )
+
+        # Validate and apply unit of measurement
+        if units:
+            units = self._validate_and_apply_units(
+                units, device_class_str, point_name, device_id, point_data
+            )
+
+        # Apply precision from mapping, unit-based defaults, or entity overrides
+        self._apply_display_precision(point_data, point_name, device_id, units)
+
+    def _validate_and_apply_units(
+        self,
+        units: str,
+        device_class_str: str | None,
+        point_name: str,
+        device_id: str,
+        point_data: dict[str, Any],
+    ) -> str:
+        """Validate unit matches device_class and apply to sensor.
+
+        Args:
+            units: Unit of measurement
+            device_class_str: Device class string (may be None)
+            point_name: Sensor point name
+            device_id: Device ID
+            point_data: Point metadata
+
+        Returns:
+            Validated/corrected unit string
+
+        """
+        if device_class_str and device_class_str in DEVICE_CLASS_VALID_UNITS:
+            valid_units = DEVICE_CLASS_VALID_UNITS[device_class_str]
+            if units not in valid_units:
+                _LOGGER.error(
+                    "Invalid unit '%s' for device_class '%s' on sensor %s (device: %s). "
+                    "Expected one of: %s. This is a mapping file bug that needs to be fixed.",
+                    units,
+                    device_class_str,
+                    point_name,
+                    device_id,
+                    valid_units,
+                )
+                # Defensive fix: use first valid unit for this device_class
+                if valid_units and valid_units[0]:
+                    units = valid_units[0]
+                    _LOGGER.warning(
+                        "Applying defensive fix: using '%s' instead of '%s' for %s",
+                        units,
+                        point_data.get("units"),
+                        point_name,
+                    )
+
+        self._attr_native_unit_of_measurement = units
+        return units
+
+    def _apply_display_precision(
+        self,
+        point_data: dict[str, Any],
+        point_name: str,
+        device_id: str,
+        units: str | None,
+    ) -> None:
+        """Apply suggested display precision from mapping, unit defaults, or overrides.
+
+        Args:
+            point_data: Point metadata
+            point_name: Sensor point name
+            device_id: Device ID
+            units: Unit of measurement (for fallback precision)
+
+        """
+        # Priority 1: Mapping file precision
+        precision = point_data.get("suggested_display_precision")
+        if precision is not None and precision != "":
+            if isinstance(precision, int) and precision >= 0:
+                self._attr_suggested_display_precision = precision
+                return
+            _LOGGER.warning(
+                "Invalid precision value '%s' for sensor %s (device: %s). "
+                "Expected non-negative integer. Falling back to unit-based default.",
+                precision,
+                point_name,
+                device_id,
+            )
+
+        # Priority 2: Unit-based precision defaults
+        unit_precision = _get_precision_from_units(units)
+        if unit_precision is not None:
+            self._attr_suggested_display_precision = unit_precision
+
+        # Priority 3: Entity-specific overrides
+        if point_name == "system_load":
+            self._attr_suggested_display_precision = 2
 
     def _format_uptime_seconds(self, seconds: float) -> str:
         """Format uptime seconds to friendly human-readable string.
