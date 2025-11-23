@@ -1013,6 +1013,12 @@ If you need to add raw data sources:
 
 See [docs/releases/README.md](docs/releases/README.md) for the detailed 8-step process. Summary:
 
+0. **⚠️ VERIFY TRANSLATIONS**: Before ANY release, ensure translation files match the mapping:
+   - Compare `HA Display Name` values in `vsn-sunspec-point-mapping.json` with `translations/en.json`
+   - Entity names come from translations, NOT from the mapping file
+   - If mapping was updated, translations MUST be regenerated
+   - Run: Check all `entity.sensor.{key}.name` entries match mapping's `HA Display Name`
+
 1. **Prepare Release Notes**: Create `docs/releases/vX.Y.Z.md` with comprehensive release notes following the template
 2. **Update CHANGELOG.md**: Add new version section with summary and links
 3. **Bump Version Numbers**: Update `manifest.json` version field

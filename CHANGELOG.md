@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.15] - 2025-11-23
+
+### 🐛 Bug Fix: Translation Files Updated for Energy Sensor Names
+
+**This release fixes entity display names not updating in Home Assistant UI.**
+
+Thanks to **@ivanfmartinez** for reporting this in [Discussion #7](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/discussions/7#discussioncomment-15053980).
+
+**Bug: Energy Sensor Names Not Changing (Fixed)**:
+
+- v1.1.14 changed energy sensor display names (e.g., "Last 7 Days" → "(Current Week)")
+- Mapping file was updated but **translation files were not regenerated**
+- Entity names in HA come from `translations/*.json`, not the mapping file
+- Users saw old names because HA uses `_attr_translation_key` for entity names
+
+**Fix Applied**:
+
+- Regenerated all 10 translation files from mapping data
+- Updated 246 entity translations in each language file (de, en, es, et, fi, fr, it, nb, pt, sv)
+- Added translation verification step to release process in CLAUDE.md
+
+**Files Modified**:
+
+- `custom_components/.../translations/*.json` (all 10 language files)
+- `CLAUDE.md` (added release process verification step)
+
+**See**: [v1.1.15 Release Notes](docs/releases/v1.1.15.md)
+
 ## [1.1.14] - 2025-11-23
 
 ### Features: M101/M102 Single-Phase Support + Energy Display Names
