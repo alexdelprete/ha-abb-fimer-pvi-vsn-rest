@@ -2136,7 +2136,6 @@ DESCRIPTION_IMPROVEMENTS = {
     "VBulkMid": "DC bus bulk capacitor midpoint voltage",
     "ILeakDcAc": "DC-to-AC ground leakage current",
     "ILeakDcDc": "DC-to-DC ground leakage current",
-    "Isolation_Ohm1": "DC insulation resistance to ground",
     "m126Mod_Ena": "SunSpec Model 126 module enabled",
     "m132Mod_Ena": "SunSpec Model 132 module enabled",
     # VSN-specific points (user-requested fixes)
