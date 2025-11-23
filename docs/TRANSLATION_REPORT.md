@@ -2,7 +2,9 @@
 
 ## ABB/FIMER PVI VSN REST Integration
 
-**Date:** 2025-11-15
+**Date:** 2025-11-24
+
+**Version:** v1.2.0
 
 **Task:** Generate complete translation files for 10 European languages
 
@@ -10,22 +12,24 @@
 
 ## Summary
 
-Successfully generated **10 complete translation files** for the ABB/FIMER PVI VSN REST Home Assistant integration, covering **251 solar inverter sensors** plus complete config and options sections.
+Successfully generated **10 complete translation files** for the ABB/FIMER PVI VSN REST Home
+Assistant integration, covering **246 solar inverter sensors** plus complete config and options
+sections.
 
 ### Languages Delivered
 
 | Language | Code | Sensors | File Size | Status |
 |----------|------|---------|-----------|--------|
-| English | `en` | 251 | 21.7 KB | ✓ Complete |
-| Italian | `it` | 251 | 22.1 KB | ✓ Complete |
-| French | `fr` | 251 | 22.0 KB | ✓ Complete |
-| Spanish | `es` | 251 | 21.9 KB | ✓ Complete |
-| Portuguese | `pt` | 251 | 21.8 KB | ✓ Complete |
-| German | `de` | 251 | 21.8 KB | ✓ Complete |
-| Swedish | `sv` | 251 | 21.7 KB | ✓ Complete |
-| Norwegian Bokmål | `nb` | 251 | 21.7 KB | ✓ Complete |
-| Finnish | `fi` | 251 | 21.8 KB | ✓ Complete |
-| Estonian | `et` | 251 | 21.7 KB | ✓ Complete |
+| English | `en` | 246 | ~22 KB | ✓ Complete |
+| Italian | `it` | 246 | ~22 KB | ✓ Complete |
+| French | `fr` | 246 | ~22 KB | ✓ Complete |
+| Spanish | `es` | 246 | ~22 KB | ✓ Complete |
+| Portuguese | `pt` | 246 | ~22 KB | ✓ Complete |
+| German | `de` | 246 | ~22 KB | ✓ Complete |
+| Swedish | `sv` | 246 | ~22 KB | ✓ Complete |
+| Norwegian Bokmål | `nb` | 246 | ~22 KB | ✓ Complete |
+| Finnish | `fi` | 246 | ~22 KB | ✓ Complete |
+| Estonian | `et` | 246 | ~22 KB | ✓ Complete |
 
 ---
 
@@ -37,7 +41,7 @@ Each translation file contains:
 
 - **Config section**: Setup flow, error messages, abort messages
 - **Options section**: Configuration options for scan interval
-- **Entity section**: 251 sensor translations
+- **Entity section**: 246 sensor translations
 
 ### Sensor Categories Translated
 
@@ -159,7 +163,7 @@ Each translation file contains:
 
 - ✓ All 10 files are valid JSON
 - ✓ All files contain complete structure (config, options, entity)
-- ✓ All files have exactly 251 sensors
+- ✓ All files have exactly 246 sensors
 - ✓ Config and options sections preserved from original files
 - ✓ Consistent terminology within each language
 - ✓ Proper UTF-8 encoding with special characters
@@ -223,7 +227,7 @@ To add new sensors or update translations:
 
 All 10 translation files have been successfully generated with:
 
-- 251 sensors per language
+- 246 sensors per language
 - Professional electrical/solar terminology
 - Consistent naming patterns
 - Complete file structure (config, options, entities)
@@ -231,3 +235,21 @@ All 10 translation files have been successfully generated with:
 - Proper UTF-8 encoding
 
 The integration is now fully internationalized and ready for users across 10 European language markets.
+
+---
+
+## Version History
+
+| Version | Date | Sensor Count | Changes |
+|---------|------|--------------|---------|
+| v1.2.0 | 2025-11-24 | 246 | 15 entity IDs renamed (`_lifetime` → `_since_restart`) |
+| v1.1.15 | 2025-11-23 | 246 | Translations regenerated for display name consistency |
+| v1.1.14 | 2025-11-23 | 246 | Energy display names standardized with time periods |
+| v1.1.12 | 2025-11-17 | 253 | VSN name normalization merged 5 duplicate sensors |
+| v1.0.0 | 2025-11-15 | 251 | Initial translation generation |
+
+### Notable Changes (v1.2.0)
+
+- **Entity ID Corrections**: 15 "since restart" sensors incorrectly had `_lifetime` suffix
+- **Display Name Updates**: Time period formats standardized (e.g., "Last 7 Days" → "(Current Week)")
+- **Duplicate Removal**: 5 sensor pairs merged via VSN name normalization (265 → 253 → 246)

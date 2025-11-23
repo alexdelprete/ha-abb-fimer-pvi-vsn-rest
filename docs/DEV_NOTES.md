@@ -1,5 +1,201 @@
 # Development Notes - ha-abb-fimer-pvi-vsn-rest
 
+## 2025-11-24: v1.2.0 Breaking Change - Entity ID Fix for "Since Restart" Sensors
+
+### Summary
+
+Released v1.2.0 which fixes a long-standing bug where 15 energy sensors tracking "since restart"
+values were incorrectly named with `_lifetime` suffix instead of `_since_restart`.
+
+### Problem
+
+The `period_map` dictionary in `generate_mapping.py` incorrectly mapped:
+
+```python
+"runtime": "Lifetime",  # WRONG - should be "Since Restart"
+```
+
+The VSN700 REST API uses `_runtime` suffix (e.g., `E0_runtime`, `E1_runtime`) which means
+"since device restart", not "lifetime". The actual lifetime sensors have different names
+like `ETotal`, `ETotalAbsorbed`.
+
+### Evidence
+
+| Sensor Type | Runtime Value | Lifetime Value | Ratio |
+|-------------|---------------|----------------|-------|
+| AC Produced | `E0_runtime`: 32,821 Wh | `ETotal`: 13,341,652 Wh | 406x |
+| AC Apparent | `E2_runtime`: 32,830 VAh | `ETotalApparent`: 13,350,977 VAh | 406x |
+| Grid Export | `E3_runtime`: 19,029 Wh | `EGridExport`: 5,773,382 Wh | 303x |
+
+Runtime values are ~400x smaller, confirming they reset on device restart.
+
+### Breaking Changes
+
+15 entity IDs renamed:
+
+| Old Entity ID | New Entity ID |
+|---------------|---------------|
+| `*_e0_lifetime` | `*_e0_since_restart` |
+| `*_e1_lifetime` | `*_e1_since_restart` |
+| `*_e2_lifetime` | `*_e2_since_restart` |
+| `*_e3_lifetime` | `*_e3_since_restart` |
+| `*_e4_lifetime` | `*_e4_since_restart` |
+| `*_e5_lifetime` | `*_e5_since_restart` |
+| `*_e6_lifetime` | `*_e6_since_restart` |
+| `*_e7_lifetime` | `*_e7_since_restart` |
+| `*_e8_lifetime` | `*_e8_since_restart` |
+| `*_e15_lifetime` | `*_e15_since_restart` |
+| `*_ein_lifetime` | `*_ein_since_restart` |
+| `*_e_charge_lifetime` | `*_e_charge_since_restart` |
+| `*_e_discharge_lifetime` | `*_e_discharge_since_restart` |
+| `*_e_tot_charge_lifetime` | `*_e_tot_charge_since_restart` |
+| `*_e_tot_discharge_lifetime` | `*_e_tot_discharge_since_restart` |
+
+### Unique ID Impact
+
+Both entity_id AND unique_id changed because:
+
+1. `period_map` change affects label generation
+2. Label is used to derive `point_name` (via `ha_name` field)
+3. `point_name` is the suffix of unique_id: `{domain}_{device_type}_{serial}_{point_name}`
+
+Users need to:
+
+1. Delete orphaned entities (Settings → Devices & Services → Entities → filter "unavailable")
+2. Clean up statistics (Developer Tools → Statistics → Fix issues)
+
+### Files Modified
+
+- `scripts/vsn-mapping-generator/generate_mapping.py`: Line 2689 fixed
+- All mapping files regenerated
+- All 10 translation files regenerated
+- Version bumped to 1.2.0
+
+---
+
+## 2025-11-23: v1.1.15 Translation Files Update
+
+### Summary
+
+Fixed issue where energy sensor display names were not updating in Home Assistant UI after v1.1.14 release.
+
+### Problem
+
+- Integration uses `_attr_translation_key` for entity naming
+- Entity display names come from `translations/*.json` files, NOT directly from mapping
+- v1.1.14 updated mapping file but failed to regenerate translation files
+- Users saw old names because HA loads from translations
+
+### Fix
+
+Regenerated all 10 translation files (de, en, es, et, fi, fr, it, nb, pt, sv) with 246 entity translations each.
+
+### Process Improvement
+
+Added "Step 0: VERIFY TRANSLATIONS" to release process in CLAUDE.md to prevent this issue.
+
+---
+
+## 2025-11-23: v1.1.14 M101/M102 Single-Phase Support + Energy Display Names
+
+### Summary
+
+Added support for M101/M102 single-phase inverter models and standardized energy sensor display names with time period suffixes.
+
+### Changes
+
+**Single-Phase Support:**
+
+- Added M101, M102 to model flags in generator
+- Single-phase inverters now properly detected and mapped
+
+**Energy Display Name Standardization:**
+
+- Changed "Last 7 Days" → "(Current Week)"
+- Changed "Last 30 Days" → "(Current Month)"
+- Changed "Last Year" → "(Current Year)"
+- Changed "Today" → "(Today)" with consistent formatting
+
+### Files Modified
+
+- `scripts/vsn-mapping-generator/generate_mapping.py`
+- All mapping files regenerated
+
+---
+
+## 2025-11-23: v1.1.13 Log Spam Prevention During Device Offline
+
+### Summary
+
+Fixed excessive logging during device offline periods that was flooding Home Assistant logs.
+
+### Problem
+
+When VSN datalogger was unreachable, each polling cycle generated multiple error/warning logs,
+making it difficult to find other issues.
+
+### Fix
+
+- Added connection state tracking
+- Log errors only on state transitions (online→offline, offline→online)
+- Reduced polling frequency during offline periods
+- Added summary logging instead of per-request errors
+
+### Benefits
+
+- Cleaner logs during network issues
+- Easier debugging of actual problems
+- Reduced log storage requirements
+
+---
+
+## 2025-11-17: v1.1.12 VSN Name Normalization for Duplicate Detection
+
+### Summary
+
+Implemented VSN name normalization to merge duplicate sensors that exist in both VSN300
+(SunSpec-based) and VSN700 (proprietary) APIs.
+
+### Problem
+
+5 sensor pairs had duplicate entries with inconsistent metadata:
+
+1. **Insulation Resistance**: `Isolation_Ohm1` (VSN300) vs `Riso` (VSN700) - different units
+2. **Leakage Current Inverter**: `ILeakDcAc` (VSN300, mA) vs `IleakInv` (VSN700, A) - **1000x unit mismatch**
+3. **Leakage Current DC**: `ILeakDcDc` (VSN300, mA) vs `IleakDC` (VSN700, A) - **1000x unit mismatch**
+4. **Ground Voltage**: `VGnd` (VSN300) vs `Vgnd` (VSN700) - capitalization
+5. **Battery SoC**: `Soc` (VSN300) vs `TSoc` (VSN700) - naming convention
+
+### Solution
+
+**Generator Script (`generate_mapping.py`):**
+
+```python
+VSN_NAME_NORMALIZATION = {
+    "Riso": "Isolation_Ohm1",
+    "IleakInv": "ILeakDcAc",
+    "IleakDC": "ILeakDcDc",
+    "Vgnd": "VGnd",
+    "TSoc": "Soc",
+}
+```
+
+**Runtime Conversion (`normalizer.py`):**
+
+```python
+A_TO_MA_POINTS = {"IleakInv", "IleakDC"}
+if vsn_model == "VSN700" and point_name in A_TO_MA_POINTS:
+    point_value = point_value * 1000  # A → mA
+```
+
+### Result
+
+- Reduced from 265 to 253 unique points (5 duplicates merged)
+- Consistent metadata across both VSN models
+- Correct unit handling for leakage current sensors
+
+---
+
 ## 2025-10-26: Italian Translation and Documentation Updates
 
 ### Summary

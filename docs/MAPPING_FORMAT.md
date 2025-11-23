@@ -7,19 +7,23 @@ is normalized to Home Assistant entities with proper metadata.
 
 ## Files
 
-### Source (Excel)
+### Source (Generator Script)
 
-- **Location**: `docs/vsn-sunspec-point-mapping.xlsx`
-- **Purpose**: Human-readable/editable mapping maintained in Excel
+- **Location**: `scripts/vsn-mapping-generator/generate_mapping.py`
+- **Purpose**: Single source of truth for all sensor mappings
+- **Points**: 253 unique mappings (v1.2.0)
+
+### Output (Excel)
+
+- **Location**: `scripts/vsn-mapping-generator/output/vsn-sunspec-point-mapping.xlsx`
+- **Purpose**: Human-readable review format
 - **Format**: Deduplicated structure with model flag columns
-- **Points**: 210 unique mappings (deduplicated from original 277)
 
 ### Runtime (JSON)
 
-- **Location**: `docs/vsn-sunspec-point-mapping.json`
-- **Purpose**: Machine-readable format used by the integration
-- **Size**: ~95 KB
-- **Points**: 210 mappings
+- **Location**: `custom_components/abb_fimer_pvi_vsn_rest/abb_fimer_vsn_rest_client/data/vsn-sunspec-point-mapping.json`
+- **Purpose**: Machine-readable format used by the integration at runtime
+- **Points**: 253 mappings
 - **Format**: Each point includes `models` array for multi-model support
 
 ## JSON Structure
@@ -72,35 +76,44 @@ Each mapping entry contains:
 | Model_Notes | Additional notes about model compatibility | `` |
 | models | Array of applicable SunSpec/VSN models | `["M103", "M802"]` |
 
-## Converting Excel to JSON
+## Regenerating Mapping Files
 
-When the Excel file is updated, regenerate the JSON:
+**Important**: Never edit JSON or Excel files directly. Always use the generator script.
+
+### Step 1: Edit Generator Script
 
 ```bash
-python scripts/convert_excel_to_json.py
+# Edit the source of truth
+scripts/vsn-mapping-generator/generate_mapping.py
+```
+
+### Step 2: Regenerate Excel and JSON
+
+```bash
+python scripts/vsn-mapping-generator/generate_mapping.py
+python scripts/vsn-mapping-generator/convert_to_json.py
 ```
 
 This will:
 
-1. Read `docs/vsn-sunspec-point-mapping.xlsx`
-2. Convert to JSON format with models array structure
-3. Write to `docs/vsn-sunspec-point-mapping.json`
-4. Copy to `custom_components/abb_fimer_pvi_vsn_rest/data/vsn-sunspec-point-mapping.json`
-5. Display model statistics
+1. Generate Excel from source data and metadata dictionaries
+2. Convert Excel to JSON format with models array structure
+3. Copy JSON to `custom_components/.../data/vsn-sunspec-point-mapping.json`
+4. Display model statistics
 
-## Statistics (Deduplicated)
+## Statistics (v1.2.0)
 
-- **Total unique mappings**: 210 (deduplicated from original 277)
+- **Total unique mappings**: 253
+- **Translation entities**: 246
 - **Model distribution**:
-  - M1 (Common): 6 points
-  - M103 (Inverter Single-Phase): 23 points
-  - M160 (MPPT): 6 points
-  - M203 (Meter Three-Phase): 17 points
-  - M802 (Battery): 14 points
-  - M64061 (ABB Proprietary): 74 points
-  - VSN300-only: 73 points
-  - VSN700-only: 10 points
-  - ABB Proprietary: 47 points
+  - M1 (Common): ~6 points
+  - M103 (Inverter): ~23 points
+  - M160 (MPPT): ~6 points
+  - M203 (Meter Three-Phase): ~17 points
+  - M802 (Battery): ~14 points
+  - M64061 (ABB Proprietary): ~74 points
+  - VSN300-only: ~73 points
+  - VSN700-only: ~10 points
 
 ## Point Categories
 
@@ -129,10 +142,11 @@ This will:
 
 ## Workflow
 
-1. **Edit** mapping in Excel (`vsn-sunspec-point-mapping.xlsx`)
-2. **Convert** to JSON using `convert_excel_to_json.py`
-3. **Commit** both files to git (Excel + both JSON copies)
-4. **Integration** loads JSON at runtime (no openpyxl needed)
+1. **Edit** generator script (`scripts/vsn-mapping-generator/generate_mapping.py`)
+2. **Regenerate** Excel: `python scripts/vsn-mapping-generator/generate_mapping.py`
+3. **Convert** to JSON: `python scripts/vsn-mapping-generator/convert_to_json.py`
+4. **Commit** generator + all generated files to git
+5. **Integration** loads JSON at runtime (no openpyxl needed)
 
 ## Usage in Code
 
@@ -162,27 +176,31 @@ directly or loaded from a URL, eliminating the need for the docs folder.
 
 ## Maintenance
 
-### Adding New Points
+### Adding New Sensors
 
-1. Open Excel file (`vsn-sunspec-point-mapping.xlsx`)
-2. Add row with all columns filled
-3. Set appropriate model flags (M1, M103, etc.)
-4. Save Excel
-5. Run `convert_excel_to_json.py`
-6. Test with `test_vsn_client.py`
-7. Commit all files (Excel + both JSON copies)
+1. Edit `scripts/vsn-mapping-generator/generate_mapping.py`
+2. Add entry to `SUNSPEC_TO_HA_METADATA` dictionary
+3. Add display name to `DISPLAY_NAME_STANDARDIZATION` if needed
+4. Run: `python scripts/vsn-mapping-generator/generate_mapping.py`
+5. Run: `python scripts/vsn-mapping-generator/convert_to_json.py`
+6. Test changes
+7. Commit generator + all generated files
 
-### Updating Metadata
+### Updating Sensor Metadata
 
-1. Edit Excel file (labels, descriptions, HA units, device classes, etc.)
-2. Run `convert_excel_to_json.py`
-3. Test changes
-4. Commit all files
+1. Edit appropriate dictionary in `generate_mapping.py`:
+   - `SUNSPEC_TO_HA_METADATA` for device_class, state_class, units
+   - `DISPLAY_NAME_STANDARDIZATION` for display names
+   - `DESCRIPTION_IMPROVEMENTS` for descriptions
+2. Regenerate: `python scripts/vsn-mapping-generator/generate_mapping.py`
+3. Convert: `python scripts/vsn-mapping-generator/convert_to_json.py`
+4. Test changes
+5. Commit all files
 
-### Removing Points
+### Removing Sensors
 
-1. Delete row in Excel
-2. Run `convert_excel_to_json.py`
+1. Remove entry from `generate_mapping.py` dictionaries
+2. Regenerate and convert
 3. Test to ensure no breakage
 4. Commit all files
 
@@ -196,9 +214,14 @@ directly or loaded from a URL, eliminating the need for the docs folder.
 
 ## See Also
 
-- `generate_mapping_excel.py` - Original script that created the Excel file
-- `convert_excel_to_json.py` - Converts Excel (with model flags) to JSON
-- `analyze_and_deduplicate_mapping.py` - Analyzes and deduplicates mapping entries
-- `apply_mapping_fixes.py` - Applies automated description and category fixes
-- `mapping_loader.py` - Loads JSON and provides lookup methods
-- `normalizer.py` - Uses mappings to normalize VSN data
+- `scripts/vsn-mapping-generator/generate_mapping.py` - **Single source of truth** for all mappings
+- `scripts/vsn-mapping-generator/convert_to_json.py` - Converts Excel to JSON
+- `custom_components/.../abb_fimer_vsn_rest_client/mapping_loader.py` - Loads JSON and provides lookup methods
+- `custom_components/.../abb_fimer_vsn_rest_client/normalizer.py` - Uses mappings to normalize VSN data
+- [MAPPING_NOTES.md](MAPPING_NOTES.md) - Additional notes on entity naming and time periods
+- [CLAUDE.md](../CLAUDE.md) - Complete development guidelines
+
+---
+
+**Last Updated**: 2025-11-24
+**Version**: v1.2.0
