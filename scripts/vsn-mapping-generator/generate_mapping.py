@@ -771,9 +771,9 @@ DISPLAY_NAME_STANDARDIZATION = {
     # Base energy entities
     "AC Energy": "Energy AC - Lifetime",
     "Energy - Today": "Energy AC - Produced (Today)",
-    "Energy - Year": "Energy - (Current Year)",
-    "Energy - Week": "Energy - (Current Week)",
-    "Energy - Month": "Energy - (Current Month)",
+    "Energy - Year": "Energy AC - Produced (Current Year)",
+    "Energy - Week": "Energy AC - Produced (Current Week)",
+    "Energy - Month": "Energy AC - Produced (Current Month)",
     "Battery discharge energy - Lifetime": "Energy - Battery Discharge Lifetime",
     "Battery charge energy - Lifetime": "Energy - Battery Charge Lifetime",
     "Inverter PV energy (DC input) - Lifetime": "Energy DC - PV Input Lifetime",

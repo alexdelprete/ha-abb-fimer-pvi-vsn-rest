@@ -567,7 +567,7 @@
         "name": "Model Type"
       },
       "month_wh": {
-        "name": "Energy - (Current Month)"
+        "name": "Energy AC - Produced (Current Month)"
       },
       "num_of_mppt": {
         "name": "Count - MPPT Channels"
@@ -747,7 +747,7 @@
         "name": "Power AC"
       },
       "week_wh": {
-        "name": "Energy - (Current Week)"
+        "name": "Energy AC - Produced (Current Week)"
       },
       "wlan0_essid": {
         "name": "WiFi SSID"
@@ -789,7 +789,7 @@
         "name": "WiFi FSM Status"
       },
       "year_wh": {
-        "name": "Energy - (Current Year)"
+        "name": "Energy AC - Produced (Current Year)"
       }
     }
   }
