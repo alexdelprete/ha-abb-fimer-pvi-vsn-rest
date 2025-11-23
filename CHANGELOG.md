@@ -7,6 +7,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2025-11-23
+
+### BREAKING CHANGE: Fix Incorrect Entity IDs for "Since Restart" Energy Sensors
+
+**This release fixes 15 energy sensors that were incorrectly named with `_lifetime` suffix when they actually track "since restart" values.**
+
+**Breaking Change - 15 Entity IDs Renamed**:
+
+| Old Entity ID | New Entity ID |
+|---------------|---------------|
+| `*_e0_lifetime` | `*_e0_since_restart` |
+| `*_e1_lifetime` | `*_e1_since_restart` |
+| `*_e2_lifetime` | `*_e2_since_restart` |
+| `*_e3_lifetime` | `*_e3_since_restart` |
+| `*_e4_lifetime` | `*_e4_since_restart` |
+| `*_e5_lifetime` | `*_e5_since_restart` |
+| `*_e6_lifetime` | `*_e6_since_restart` |
+| `*_e7_lifetime` | `*_e7_since_restart` |
+| `*_e8_lifetime` | `*_e8_since_restart` |
+| `*_e15_lifetime` | `*_e15_since_restart` |
+| `*_ein_lifetime` | `*_ein_since_restart` |
+| `*_e_charge_lifetime` | `*_e_charge_since_restart` |
+| `*_e_discharge_lifetime` | `*_e_discharge_since_restart` |
+| `*_e_tot_charge_lifetime` | `*_e_tot_charge_since_restart` |
+| `*_e_tot_discharge_lifetime` | `*_e_tot_discharge_since_restart` |
+
+**Root Cause**: The VSN700 REST API uses `_runtime` suffix (e.g., `E0_runtime`) for "since restart" data, not lifetime. The generator script incorrectly mapped `runtime` → `Lifetime` instead of `runtime` → `Since Restart`.
+
+**Evidence**: `E0_runtime` value (32,821 Wh) is ~400x smaller than `ETotal` (13,341,652 Wh), confirming it resets on device restart.
+
+**Additional Display Name Fixes**:
+
+- E2 series: "Energy AC Apparent - (X)" → "Energy AC - Apparent (X)"
+- `ein1/ein2`: "DC energy (String X) - Lifetime" → "Energy DC - String X (Lifetime)"
+- `power_peak_today`: "Power - Peak Today" → "Power - Peak (Today)"
+- `watthours`: "Energy AC - Lifetime" → "Energy AC - Produced (Lifetime)"
+
+**See**: [v1.2.0 Release Notes](docs/releases/v1.2.0.md)
+
 ## [1.1.15] - 2025-11-23
 
 ### 🐛 Bug Fix: Translation Files Updated for Energy Sensor Names

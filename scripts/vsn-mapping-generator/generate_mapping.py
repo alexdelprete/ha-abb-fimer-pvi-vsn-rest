@@ -769,7 +769,7 @@ DISPLAY_NAME_STANDARDIZATION = {
     "Meter reactive power - Total": "Reactive Power AC - Meter Total",
     # ========== ENERGY ENTITIES (75 changes) ==========
     # Base energy entities
-    "AC Energy": "Energy AC - Lifetime",
+    "AC Energy": "Energy AC - Produced (Lifetime)",
     "Energy - Today": "Energy AC - Produced (Today)",
     "Energy - Year": "Energy AC - Produced (Current Year)",
     "Energy - Week": "Energy AC - Produced (Current Week)",
@@ -796,10 +796,10 @@ DISPLAY_NAME_STANDARDIZATION = {
     "Inverter absorbed AC energy - Last 30 Days": "Energy AC - Absorbed (Current Month)",
     "Inverter absorbed AC energy - Lifetime": "Energy AC - Absorbed Lifetime",
     # E2 series (Inverter apparent AC energy)
-    "Inverter apparent AC energy - Since Restart": "Energy AC Apparent - (Since Restart)",
-    "Inverter apparent AC energy - Last 7 Days": "Energy AC Apparent - (Current Week)",
-    "Inverter apparent AC energy - Last 30 Days": "Energy AC Apparent - (Current Month)",
-    "Inverter apparent AC energy - Lifetime": "Energy AC Apparent - Lifetime",
+    "Inverter apparent AC energy - Since Restart": "Energy AC - Apparent (Since Restart)",
+    "Inverter apparent AC energy - Last 7 Days": "Energy AC - Apparent (Current Week)",
+    "Inverter apparent AC energy - Last 30 Days": "Energy AC - Apparent (Current Month)",
+    "Inverter apparent AC energy - Lifetime": "Energy AC - Apparent (Lifetime)",
     # E3 series (Energy exported to grid)
     "Energy exported to grid - Since Restart": "Energy AC - Grid Export (Since Restart)",
     "Energy exported to grid - Last 7 Days": "Energy AC - Grid Export (Current Week)",
@@ -867,8 +867,11 @@ DISPLAY_NAME_STANDARDIZATION = {
     "Battery Cycle Count": "Count - Battery Cycles",
     "Fan 1 Speed": "Speed - Fan 1",
     "Fan 2 Speed": "Speed - Fan 2",
-    "Peak Output Power - Today": "Power - Peak Today",
-    "Peak Output Power - Lifetime": "Power - Peak Lifetime",
+    "Peak Output Power - Today": "Power - Peak (Today)",
+    "Peak Output Power - Lifetime": "Power - Peak (Lifetime)",
+    # DC String energy lifetime
+    "DC energy (String 1) - Lifetime": "Energy DC - String 1 (Lifetime)",
+    "DC energy (String 2) - Lifetime": "Energy DC - String 2 (Lifetime)",
     "Nominal Power": "Power - Nominal Rating",
     "Nominal Apparent Power": "Power - Nominal Apparent Rating",
 }
@@ -2686,7 +2689,7 @@ def generate_label_from_name(point_name):
     if "_" in point_name:
         base, suffix = point_name.rsplit("_", 1)
         period_map = {
-            "runtime": "Lifetime",
+            "runtime": "Since Restart",  # v1.2.0: Fixed - was incorrectly "Lifetime"
             "7D": "Last Week",  # v2.0.9: Changed from "7 Day"
             "30D": "Last Month",  # v2.0.9: Changed from "30 Day"
             "1Y": "1 Year",

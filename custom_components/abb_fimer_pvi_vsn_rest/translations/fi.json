@@ -54,436 +54,436 @@
   "entity": {
     "sensor": {
       "alarm_st": {
-        "name": "Alarm Status"
+        "name": "Hälytystila"
       },
       "alarm_state": {
-        "name": "Alarm State"
+        "name": "Hälytystila"
       },
       "amps": {
-        "name": "Current AC"
+        "name": "Virta AC"
       },
       "amps_phasea": {
-        "name": "Current AC - Phase A"
+        "name": "Virta AC - Vaihe A"
       },
       "amps_phaseb": {
-        "name": "Current AC - Phase B"
+        "name": "Virta AC - Vaihe B"
       },
       "amps_phasec": {
-        "name": "Current AC - Phase C"
+        "name": "Virta AC - Vaihe C"
       },
       "batt_ext_ctrl_ena": {
-        "name": "Battery Control Enabled"
+        "name": "Akun Ohjaus Käytössä"
       },
       "batt_ext_ctrl_state": {
-        "name": "Battery Control State"
+        "name": "Akun Ohjaus Tila"
       },
       "batt_num": {
-        "name": "Number of battery cells or modules"
+        "name": "Akkukennojen tai moduulien määrä"
       },
       "battery_mode": {
-        "name": "Battery Mode"
+        "name": "Akkutila"
       },
       "booster_tmp": {
-        "name": "Temperature - Booster"
+        "name": "Lämpötila - Booster"
       },
       "cabinet_temperature": {
-        "name": "Temperature - Cabinet"
+        "name": "Lämpötila - Kaappi"
       },
       "chc": {
-        "name": "Battery charge cycles counter"
+        "name": "Akun lataussyklien laskuri"
       },
       "clock_state": {
-        "name": "Clock State"
+        "name": "Kello Tila"
       },
       "commissioning_freeze": {
-        "name": "Commissioning Freeze"
+        "name": "Käyttöönoton Jäädytys"
       },
       "communication_protocol": {
-        "name": "Communication Protocol"
+        "name": "Viestintäprotokolla"
       },
       "cos_phi": {
-        "name": "Power Factor"
+        "name": "Tehokerroin"
       },
       "country_std": {
-        "name": "Country grid standard setting"
+        "name": "Maaverkon standardiasetus"
       },
       "cycle_num": {
-        "name": "Count - Battery Cycles"
+        "name": "Lukumäärä - Akkusyklit"
       },
       "d_c1_state": {
-        "name": "DC Input 1 State"
+        "name": "DC Tulo 1 Tila"
       },
       "d_c2_state": {
-        "name": "DC Input 2 State"
+        "name": "DC Tulo 2 Tila"
       },
       "day_wh": {
-        "name": "Energy AC - Produced (Today)"
+        "name": "Energia AC - Tuotettu (Tänään)"
       },
       "dc_current_1": {
-        "name": "Current DC - String 1"
+        "name": "Virta DC - Ketju 1"
       },
       "dc_current_2": {
-        "name": "Current DC - String 2"
+        "name": "Virta DC - Ketju 2"
       },
       "dc_power_1": {
-        "name": "Power DC - String 1"
+        "name": "Teho DC - Ketju 1"
       },
       "dc_power_2": {
-        "name": "Power DC - String 2"
+        "name": "Teho DC - Ketju 2"
       },
       "dc_st1": {
-        "name": "DC Input 1 Status"
+        "name": "DC Tulo 1 Tila"
       },
       "dc_st2": {
-        "name": "DC Input 2 Status"
+        "name": "DC Tulo 2 Tila"
       },
       "dc_voltage_1": {
-        "name": "Voltage DC - String 1"
+        "name": "Jännite DC - Ketju 1"
       },
       "dc_voltage_2": {
-        "name": "Voltage DC - String 2"
+        "name": "Jännite DC - Ketju 2"
       },
       "dc_watts": {
-        "name": "Power DC"
+        "name": "Teho DC"
       },
       "detected_battery_number": {
-        "name": "Detected Battery Number"
+        "name": "Havaittu Akkunumero"
       },
       "device_address": {
-        "name": "Modbus address"
+        "name": "Modbus osoite"
       },
       "device_name": {
-        "name": "Device 2 Name"
+        "name": "Laite 2 Nimi"
       },
       "device_type": {
-        "name": "Device 2 Type"
+        "name": "Laite 2 Tyyppi"
       },
       "dhc": {
-        "name": "Battery discharge cycles counter"
+        "name": "Akun purkaussyklien laskuri"
       },
       "di0_mode": {
-        "name": "Digital Input 0 Mode"
+        "name": "Digitaalitulo 0 Tila"
       },
       "di1_mode": {
-        "name": "Digital Input 1 Mode"
+        "name": "Digitaalitulo 1 Tila"
       },
       "di_status": {
-        "name": "Digital Input Status"
+        "name": "Digitaalitulo Tila"
       },
       "dynamic_feed_in_ctrl": {
-        "name": "Dynamic Feed In Ctrl"
+        "name": "Dynaaminen Syöttö Ohjaus"
       },
       "e0_1_year": {
-        "name": "Energy AC - Produced (Current Year)"
+        "name": "Energia AC - Tuotettu (Virta Year)"
       },
       "e0_last_month": {
-        "name": "Energy AC - Produced (Current Month)"
+        "name": "Energia AC - Tuotettu (Virta Month)"
       },
       "e0_last_week": {
-        "name": "Energy AC - Produced (Current Week)"
+        "name": "Energia AC - Tuotettu (Virta Week)"
       },
       "e0_lifetime": {
-        "name": "Energy AC - Produced (Since Restart)"
+        "name": "Energia AC - Tuotettu (Uudelleenkäynnistyksestä)"
       },
       "e15_last_month": {
-        "name": "Energy AC - Backup Output (Current Month)"
+        "name": "Energia AC - Varmuuskopiointi Lähtö (Virta Month)"
       },
       "e15_last_week": {
-        "name": "Energy AC - Backup Output (Current Week)"
+        "name": "Energia AC - Varmuuskopiointi Lähtö (Virta Week)"
       },
       "e15_lifetime": {
-        "name": "Energy AC - Backup Output (Since Restart)"
+        "name": "Energia AC - Varmuuskopiointi Lähtö (Uudelleenkäynnistyksestä)"
       },
       "e1_last_month": {
-        "name": "Energy AC - Absorbed (Current Month)"
+        "name": "Energia AC - Absorboitu (Virta Month)"
       },
       "e1_last_week": {
-        "name": "Energy AC - Absorbed (Current Week)"
+        "name": "Energia AC - Absorboitu (Virta Week)"
       },
       "e1_lifetime": {
-        "name": "Energy AC - Absorbed (Since Restart)"
+        "name": "Energia AC - Absorboitu (Uudelleenkäynnistyksestä)"
       },
       "e2_last_month": {
-        "name": "Energy AC Apparent - (Current Month)"
+        "name": "Energia AC Näennäinen - (Virta Month)"
       },
       "e2_last_week": {
-        "name": "Energy AC Apparent - (Current Week)"
+        "name": "Energia AC Näennäinen - (Virta Week)"
       },
       "e2_lifetime": {
-        "name": "Energy AC Apparent - (Since Restart)"
+        "name": "Energia AC Näennäinen - (Uudelleenkäynnistyksestä)"
       },
       "e3_last_month": {
-        "name": "Energy AC - Grid Export (Current Month)"
+        "name": "Energia AC - Verkko Vienti (Virta Month)"
       },
       "e3_last_week": {
-        "name": "Energy AC - Grid Export (Current Week)"
+        "name": "Energia AC - Verkko Vienti (Virta Week)"
       },
       "e3_lifetime": {
-        "name": "Energy AC - Grid Export (Since Restart)"
+        "name": "Energia AC - Verkko Vienti (Uudelleenkäynnistyksestä)"
       },
       "e4_last_month": {
-        "name": "Energy - Self-Consumed (Current Month)"
+        "name": "Energia - Self-Consumed (Virta Month)"
       },
       "e4_last_week": {
-        "name": "Energy - Self-Consumed (Current Week)"
+        "name": "Energia - Self-Consumed (Virta Week)"
       },
       "e4_lifetime": {
-        "name": "Energy - Self-Consumed (Since Restart)"
+        "name": "Energia - Self-Consumed (Uudelleenkäynnistyksestä)"
       },
       "e5_last_month": {
-        "name": "Energy - Battery Charge (Current Month)"
+        "name": "Energia - Akun Lataus (Virta Month)"
       },
       "e5_last_week": {
-        "name": "Energy - Battery Charge (Current Week)"
+        "name": "Energia - Akun Lataus (Virta Week)"
       },
       "e5_lifetime": {
-        "name": "Energy - Battery Charge (Since Restart)"
+        "name": "Energia - Akun Lataus (Uudelleenkäynnistyksestä)"
       },
       "e6_last_month": {
-        "name": "Energy - House from Inverter (Current Month)"
+        "name": "Energia - Talo invertteristä Invertteri (Virta Month)"
       },
       "e6_last_week": {
-        "name": "Energy - House from Inverter (Current Week)"
+        "name": "Energia - Talo invertteristä Invertteri (Virta Week)"
       },
       "e6_lifetime": {
-        "name": "Energy - House from Inverter (Since Restart)"
+        "name": "Energia - Talo invertteristä Invertteri (Uudelleenkäynnistyksestä)"
       },
       "e6_total": {
-        "name": "Energy - House from Inverter Lifetime"
+        "name": "Energia - Talo invertteristä Invertteri Yhteensä"
       },
       "e7_last_month": {
-        "name": "Energy - House Consumption (Current Month)"
+        "name": "Energia - Talo Kulutus (Virta Month)"
       },
       "e7_last_week": {
-        "name": "Energy - House Consumption (Current Week)"
+        "name": "Energia - Talo Kulutus (Virta Week)"
       },
       "e7_lifetime": {
-        "name": "Energy - House Consumption (Since Restart)"
+        "name": "Energia - Talo Kulutus (Uudelleenkäynnistyksestä)"
       },
       "e7_total": {
-        "name": "Energy - House Consumption Lifetime"
+        "name": "Energia - Talo Kulutus Yhteensä"
       },
       "e8_last_month": {
-        "name": "Energy AC - Grid Import (Current Month)"
+        "name": "Energia AC - Verkko Tuonti (Virta Month)"
       },
       "e8_last_week": {
-        "name": "Energy AC - Grid Import (Current Week)"
+        "name": "Energia AC - Verkko Tuonti (Virta Week)"
       },
       "e8_lifetime": {
-        "name": "Energy AC - Grid Import (Since Restart)"
+        "name": "Energia AC - Verkko Tuonti (Uudelleenkäynnistyksestä)"
       },
       "e_backup": {
-        "name": "Energy AC - Backup Output Lifetime"
+        "name": "Energia AC - Varmuuskopiointi Lähtö Yhteensä"
       },
       "e_charge": {
-        "name": "Energy - Battery Charge Lifetime"
+        "name": "Energia - Akun Lataus Yhteensä"
       },
       "e_charge_last_month": {
-        "name": "Energy - Battery Charge (Current Month)"
+        "name": "Energia - Akun Lataus (Virta Month)"
       },
       "e_charge_last_week": {
-        "name": "Energy - Battery Charge (Current Week)"
+        "name": "Energia - Akun Lataus (Virta Week)"
       },
       "e_charge_lifetime": {
-        "name": "Energy - Battery Charge (Since Restart)"
+        "name": "Energia - Akun Lataus (Uudelleenkäynnistyksestä)"
       },
       "e_ct": {
-        "name": "Total energy from current transformer (CT)"
+        "name": "Kokonaisenergia virtamuuntajasta (CT)"
       },
       "e_discharge": {
-        "name": "Energy - Battery Discharge Lifetime"
+        "name": "Energia - Akun Purkaus Yhteensä"
       },
       "e_discharge_last_month": {
-        "name": "Energy - Battery Discharge (Current Month)"
+        "name": "Energia - Akun Purkaus (Virta Month)"
       },
       "e_discharge_last_week": {
-        "name": "Energy - Battery Discharge (Current Week)"
+        "name": "Energia - Akun Purkaus (Virta Week)"
       },
       "e_discharge_lifetime": {
-        "name": "Energy - Battery Discharge (Since Restart)"
+        "name": "Energia - Akun Purkaus (Uudelleenkäynnistyksestä)"
       },
       "e_dt": {
-        "name": "Total energy from direct transducer (DT)"
+        "name": "Kokonaisenergia suorasta anturista (DT)"
       },
       "e_grid_export": {
-        "name": "Energy AC - Grid Export Lifetime"
+        "name": "Energia AC - Verkko Vienti Yhteensä"
       },
       "e_grid_import": {
-        "name": "Energy AC - Grid Import Lifetime"
+        "name": "Energia AC - Verkko Tuonti Yhteensä"
       },
       "e_tot_charge": {
-        "name": "Energy - Battery Charge Total Lifetime"
+        "name": "Energia - Akun Lataus Total Yhteensä"
       },
       "e_tot_charge_last_month": {
-        "name": "Energy - Battery Charge Total (Current Month)"
+        "name": "Energia - Akun Lataus Total (Virta Month)"
       },
       "e_tot_charge_last_week": {
-        "name": "Energy - Battery Charge Total (Current Week)"
+        "name": "Energia - Akun Lataus Total (Virta Week)"
       },
       "e_tot_charge_lifetime": {
-        "name": "Energy - Battery Charge Total (Since Restart)"
+        "name": "Energia - Akun Lataus Total (Uudelleenkäynnistyksestä)"
       },
       "e_tot_discharge": {
-        "name": "Energy - Battery Discharge Total Lifetime"
+        "name": "Energia - Akun Purkaus Total Yhteensä"
       },
       "e_tot_discharge_last_month": {
-        "name": "Energy - Battery Discharge Total (Current Month)"
+        "name": "Energia - Akun Purkaus Total (Virta Month)"
       },
       "e_tot_discharge_last_week": {
-        "name": "Energy - Battery Discharge Total (Current Week)"
+        "name": "Energia - Akun Purkaus Total (Virta Week)"
       },
       "e_tot_discharge_lifetime": {
-        "name": "Energy - Battery Discharge Total (Since Restart)"
+        "name": "Energia - Akun Purkaus Total (Uudelleenkäynnistyksestä)"
       },
       "e_total": {
-        "name": "Energy AC - Produced Lifetime"
+        "name": "Energia AC - Tuotettu Yhteensä"
       },
       "e_total_absorbed": {
-        "name": "Energy AC - Absorbed Lifetime"
+        "name": "Energia AC - Absorboitu Yhteensä"
       },
       "e_total_apparent": {
-        "name": "Energy AC Apparent - Lifetime"
+        "name": "Energia AC Näennäinen - Yhteensä"
       },
       "ein": {
-        "name": "Energy DC - PV Input Lifetime"
+        "name": "Energia DC - PV Yhteensä"
       },
       "ein1": {
-        "name": "DC energy (String 1) - Lifetime"
+        "name": "Energia DC (Ketju 1) - Yhteensä"
       },
       "ein2": {
-        "name": "DC energy (String 2) - Lifetime"
+        "name": "Energia DC (Ketju 2) - Yhteensä"
       },
       "ein_last_month": {
-        "name": "Energy DC - PV Input (Current Month)"
+        "name": "Energia DC - PV (Virta Month)"
       },
       "ein_last_week": {
-        "name": "Energy DC - PV Input (Current Week)"
+        "name": "Energia DC - PV (Virta Week)"
       },
       "ein_lifetime": {
-        "name": "Energy DC - PV Input (Since Restart)"
+        "name": "Energia DC - PV (Uudelleenkäynnistyksestä)"
       },
       "energy_policy": {
-        "name": "Energy Policy"
+        "name": "Energiapolitiikka"
       },
       "fan1rpm": {
-        "name": "Speed - Fan 1"
+        "name": "Nopeus - Tuuletin 1"
       },
       "fan2rpm": {
-        "name": "Speed - Fan 2"
+        "name": "Nopeus - Tuuletin 2"
       },
       "fcc": {
-        "name": "Central controller frequency"
+        "name": "Keskusohjain taajuus"
       },
       "firmware_version": {
-        "name": "Firmware Version"
+        "name": "Firmware Versio"
       },
       "flash_memory_free": {
-        "name": "Available flash storage"
+        "name": "Käytettävissä oleva flash-muisti"
       },
       "free_ram": {
-        "name": "Available RAM"
+        "name": "Käytettävissä oleva RAM"
       },
       "frt_state": {
-        "name": "Fault Ride Through (FRT) status"
+        "name": "Fault Ride Through (FRT) Tila"
       },
       "fw_build_date": {
-        "name": "Firmware Build Date"
+        "name": "Firmware Build Päivämäärä"
       },
       "fw_build_number": {
         "name": "Firmware Build Hash"
       },
       "fw_release_number": {
-        "name": "Firmware Version"
+        "name": "Firmware Versio"
       },
       "fw_revision": {
-        "name": "Firmware Revision"
+        "name": "Firmware Revisio"
       },
       "fw_version": {
-        "name": "Fw Version"
+        "name": "Fw Versio"
       },
       "glob_state": {
-        "name": "Global operational state"
+        "name": "Globaali toimintatila"
       },
       "global_st": {
-        "name": "Global Status"
+        "name": "Globaali Tila"
       },
       "grid_ext_ctrl_ena": {
-        "name": "Grid External Control Enabled"
+        "name": "Verkko Ulkoinen Ohjaus Käytössä"
       },
       "grid_ext_ctrl_state": {
-        "name": "Grid External Control State"
+        "name": "Verkko Ulkoinen Ohjaus Tila"
       },
       "house_igrid_l1": {
-        "name": "Current AC - House Phase A"
+        "name": "Virta AC - Talo Vaihe A"
       },
       "house_igrid_l2": {
-        "name": "Current AC - House Phase B"
+        "name": "Virta AC - Talo Vaihe B"
       },
       "house_igrid_l3": {
-        "name": "Current AC - House Phase C"
+        "name": "Virta AC - Talo Vaihe C"
       },
       "house_p_inverter": {
-        "name": "Power - Home PV"
+        "name": "Teho - PV Koti"
       },
       "house_pgrid_l1": {
-        "name": "Power AC - House Phase A"
+        "name": "Teho AC - Talo Vaihe A"
       },
       "house_pgrid_l2": {
-        "name": "Power AC - House Phase B"
+        "name": "Teho AC - Talo Vaihe B"
       },
       "house_pgrid_l3": {
-        "name": "Power AC - House Phase C"
+        "name": "Teho AC - Talo Vaihe C"
       },
       "house_pgrid_tot": {
-        "name": "Power AC - House Load Total"
+        "name": "Teho AC - Talokuorma Yhteensä"
       },
       "hz": {
-        "name": "Frequency AC - Grid"
+        "name": "Taajuus AC - Verkko"
       },
       "hz_a": {
-        "name": "Frequency AC - Phase A"
+        "name": "Taajuus AC - Vaihe A"
       },
       "hz_b": {
-        "name": "Frequency AC - Phase B"
+        "name": "Taajuus AC - Vaihe B"
       },
       "hz_c": {
-        "name": "Frequency AC - Phase C"
+        "name": "Taajuus AC - Vaihe C"
       },
       "i_leak_dc_ac": {
-        "name": "Current DC - Leakage DC-AC"
+        "name": "Virta DC - Vuoto DC-AC"
       },
       "i_leak_dc_dc": {
-        "name": "Current DC - Leakage DC-DC"
+        "name": "Virta DC - Vuoto DC-DC"
       },
       "iba": {
-        "name": "Current - Battery"
+        "name": "Virta - Akku"
       },
       "iin1": {
-        "name": "Current DC - String 1"
+        "name": "Virta DC - Ketju 1"
       },
       "iin2": {
-        "name": "Current DC - String 2"
+        "name": "Virta DC - Ketju 2"
       },
       "input_mode": {
-        "name": "Input Mode"
+        "name": "Tulotila"
       },
       "inv_state": {
-        "name": "Inverter State"
+        "name": "Invertteri Tila"
       },
       "inverter_id": {
-        "name": "Inverter ID"
+        "name": "Invertteri ID"
       },
       "inverter_st": {
-        "name": "Inverter Status"
+        "name": "Invertteri Tila"
       },
       "inverter_time": {
-        "name": "Inverter Time"
+        "name": "Invertteri Aika"
       },
       "isolation_ohm1": {
-        "name": "Resistance - Insulation"
+        "name": "Vastus - Eristys"
       },
       "logger_board_model": {
-        "name": "Logger Board Model"
+        "name": "Logger Kortin Malli"
       },
       "logger_hostname": {
         "name": "Logger Hostname"
@@ -492,304 +492,304 @@
         "name": "Logger ID"
       },
       "logger_sn": {
-        "name": "Logger Serial Number"
+        "name": "Logger Sarjanumero"
       },
       "m126_mod_ena": {
-        "name": "Model 126 Enabled"
+        "name": "Malli 126 Käytössä"
       },
       "m132_mod_ena": {
-        "name": "Model 132 Enabled"
+        "name": "Malli 132 Käytössä"
       },
       "manufacturer": {
-        "name": "Manufacturer name"
+        "name": "Valmistajan nimi"
       },
       "meter_fgrid": {
-        "name": "Frequency AC - Meter"
+        "name": "Taajuus AC - Mittari"
       },
       "meter_igrid_l1": {
-        "name": "Current AC - Meter Phase A"
+        "name": "Virta AC - Mittari Vaihe A"
       },
       "meter_igrid_l2": {
-        "name": "Current AC - Meter Phase B"
+        "name": "Virta AC - Mittari Vaihe B"
       },
       "meter_igrid_l3": {
-        "name": "Current AC - Meter Phase C"
+        "name": "Virta AC - Mittari Vaihe C"
       },
       "meter_pgrid_l1": {
-        "name": "Power AC - Meter Phase A"
+        "name": "Teho AC - Mittari Vaihe A"
       },
       "meter_pgrid_l2": {
-        "name": "Power AC - Meter Phase B"
+        "name": "Teho AC - Mittari Vaihe B"
       },
       "meter_pgrid_l3": {
-        "name": "Power AC - Meter Phase C"
+        "name": "Teho AC - Mittari Vaihe C"
       },
       "meter_pgrid_tot": {
-        "name": "Power AC - Meter Total"
+        "name": "Teho AC - Mittari Total"
       },
       "meter_qgrid_l1": {
-        "name": "Reactive Power AC - Meter Phase A"
+        "name": "Loisteho Teho AC - Mittari Vaihe A"
       },
       "meter_qgrid_l2": {
-        "name": "Reactive Power AC - Meter Phase B"
+        "name": "Loisteho Teho AC - Mittari Vaihe B"
       },
       "meter_qgrid_l3": {
-        "name": "Reactive Power AC - Meter Phase C"
+        "name": "Loisteho Teho AC - Mittari Vaihe C"
       },
       "meter_qgrid_tot": {
-        "name": "Reactive Power AC - Meter Total"
+        "name": "Loisteho Teho AC - Mittari Total"
       },
       "meter_vgrid_l1": {
-        "name": "Voltage AC - Meter Phase A"
+        "name": "Jännite AC - Mittari Vaihe A"
       },
       "meter_vgrid_l2": {
-        "name": "Voltage AC - Meter Phase B"
+        "name": "Jännite AC - Mittari Vaihe B"
       },
       "meter_vgrid_l3": {
-        "name": "Voltage AC - Meter Phase C"
+        "name": "Jännite AC - Mittari Vaihe C"
       },
       "mfg_part_number": {
-        "name": "Part Number"
+        "name": "Osanumero"
       },
       "mfg_serial_number": {
-        "name": "Serial Number"
+        "name": "Sarjanumero"
       },
       "mfg_week_year": {
-        "name": "Manufacturing Week/Year"
+        "name": "Valmistusviikko/Vuosi"
       },
       "model": {
-        "name": "Model identifier"
+        "name": "Mallin tunniste"
       },
       "model_description": {
-        "name": "Model Description"
+        "name": "Mallin Kuvaus"
       },
       "model_type": {
-        "name": "Model Type"
+        "name": "Mallityyppi"
       },
       "month_wh": {
-        "name": "Energy AC - Produced (Current Month)"
+        "name": "Energia AC - Tuotettu (Virta Month)"
       },
       "num_of_mppt": {
-        "name": "Count - MPPT Channels"
+        "name": "Lukumäärä - MPPT Kanavat"
       },
       "options": {
-        "name": "Configuration options"
+        "name": "Konfigurointivaihtoehdot"
       },
       "other_temperature": {
-        "name": "Temperature - Other"
+        "name": "Lämpötila - Muu"
       },
       "p_ch": {
-        "name": "Power - Battery Charge"
+        "name": "Teho - Akun Lataus"
       },
       "p_dh": {
-        "name": "Power - Battery Discharge"
+        "name": "Teho - Akun Purkaus"
       },
       "pac_derating_flags": {
-        "name": "AC Power Derating Flags"
+        "name": "AC Teho Derating Liput"
       },
       "pac_stand_alone": {
-        "name": "Power AC - Stand Alone Mode"
+        "name": "Teho AC - Itsenäinen Tila"
       },
       "pac_togrid": {
-        "name": "Power AC - Export to Grid"
+        "name": "Teho AC - Vienti to Verkko"
       },
       "pba": {
-        "name": "Power - Battery Total"
+        "name": "Teho - Akku Yhteensä"
       },
       "pba_t": {
-        "name": "Power - Battery Total"
+        "name": "Teho - Akku Yhteensä"
       },
       "pf": {
-        "name": "Power Factor"
+        "name": "Tehokerroin"
       },
       "ph_vph_a_b": {
-        "name": "Voltage AC - Phase A-B"
+        "name": "Jännite AC - Vaihe A-B"
       },
       "ph_vph_b_c": {
-        "name": "Voltage AC - Phase B-C"
+        "name": "Jännite AC - Vaihe B-C"
       },
       "ph_vph_c_a": {
-        "name": "Voltage AC - Phase C-A"
+        "name": "Jännite AC - Vaihe C-A"
       },
       "phase_voltage_an": {
-        "name": "Voltage AC - Phase A-N"
+        "name": "Jännite AC - Vaihe A-N"
       },
       "phase_voltage_bn": {
-        "name": "Voltage AC - Phase B-N"
+        "name": "Jännite AC - Vaihe B-N"
       },
       "phase_voltage_cn": {
-        "name": "Voltage AC - Phase C-N"
+        "name": "Jännite AC - Vaihe C-N"
       },
       "pin": {
-        "name": "Power DC - Input Total"
+        "name": "Teho DC - Tulo Yhteensä"
       },
       "pin1": {
-        "name": "Power DC - String 1"
+        "name": "Teho DC - Ketju 1"
       },
       "pin2": {
-        "name": "Power DC - String 2"
+        "name": "Teho DC - Ketju 2"
       },
       "pn": {
-        "name": "Product number"
+        "name": "Tuotenumero"
       },
       "power_peak_abs": {
-        "name": "Power - Peak Lifetime"
+        "name": "Teho - Huippu Yhteensä"
       },
       "power_peak_today": {
-        "name": "Power - Peak Today"
+        "name": "Teho - Huippu Tänään"
       },
       "ppeak": {
-        "name": "Power - Peak"
+        "name": "Teho - Huippu"
       },
       "qac_derating_flags": {
-        "name": "Reactive Power Derating"
+        "name": "Loisteho Derating"
       },
       "sac_derating_flags": {
-        "name": "Apparent Power Derating"
+        "name": "Näennäinen Teho Derating"
       },
       "serial_number": {
         "name": "Device serial number"
       },
       "sh_u": {
-        "name": "Voltage - Shunt"
+        "name": "Jännite - Shunt"
       },
       "sn": {
-        "name": "Serial number"
+        "name": "Sarjanumero"
       },
       "split_phase": {
-        "name": "Split-phase configuration flag"
+        "name": "Split-phase konfiguraatiolippu"
       },
       "state_of_charge": {
-        "name": "State of Charge"
+        "name": "Lataustila"
       },
       "state_of_health": {
-        "name": "State of Health"
+        "name": "Terveystila"
       },
       "storage_size": {
-        "name": "Flash storage used"
+        "name": "Käytetty flash-muisti"
       },
       "sys_time": {
-        "name": "System Time"
+        "name": "Järjestelmäaika"
       },
       "system_load": {
-        "name": "System load average"
+        "name": "Järjestelmän keskimääräinen kuorma"
       },
       "system_uptime": {
-        "name": "System Uptime"
+        "name": "Järjestelmän Käyntiaika"
       },
       "tba": {
-        "name": "Temperature - Battery"
+        "name": "Lämpötila - Akku"
       },
       "tc_max": {
-        "name": "Temperature - Cabinet Max"
+        "name": "Lämpötila - Kaappi Max"
       },
       "tc_min": {
-        "name": "Temperature - Cabinet Min"
+        "name": "Lämpötila - Kaappi Min"
       },
       "temp1": {
-        "name": "Temperature - Sensor 1"
+        "name": "Lämpötila - Anturi 1"
       },
       "temp_bst": {
-        "name": "Temperature - Booster"
+        "name": "Lämpötila - Booster"
       },
       "temp_inv": {
-        "name": "Temperature - Inverter"
+        "name": "Lämpötila - Invertteri"
       },
       "type": {
-        "name": "Type"
+        "name": "Tyyppi"
       },
       "v_bulk": {
-        "name": "Voltage DC - Bulk Capacitor"
+        "name": "Jännite DC - Bulk Kondensaattori"
       },
       "v_bulk_mid": {
-        "name": "Voltage DC - Bus Midpoint"
+        "name": "Jännite DC - Väylän Keskipiste"
       },
       "v_gnd": {
-        "name": "Voltage - Ground"
+        "name": "Jännite - Maa"
       },
       "var": {
-        "name": "Reactive Power - Grid Connection"
+        "name": "Loisteho - Verkkoyhteys"
       },
       "vba": {
-        "name": "Voltage - Battery"
+        "name": "Jännite - Akku"
       },
       "vc_max": {
-        "name": "Voltage - Battery Cell Max"
+        "name": "Jännite - Akkukenno Max"
       },
       "vc_min": {
-        "name": "Voltage - Battery Cell Min"
+        "name": "Jännite - Akkukenno Min"
       },
       "version": {
-        "name": "Firmware version"
+        "name": "Firmware versio"
       },
       "vgrid_l1_n": {
-        "name": "Voltage AC - Phase A-N"
+        "name": "Jännite AC - Vaihe A-N"
       },
       "vgrid_l2_n": {
-        "name": "Voltage AC - Phase B-N"
+        "name": "Jännite AC - Vaihe B-N"
       },
       "vin1": {
-        "name": "Voltage DC - Input 1"
+        "name": "Jännite DC - Tulo 1"
       },
       "vin2": {
-        "name": "Voltage DC - Input 2"
+        "name": "Jännite DC - Tulo 2"
       },
       "w_rtg": {
-        "name": "Power - Rating"
+        "name": "Teho - Nimellis"
       },
       "warning_flags": {
-        "name": "Warning Flags"
+        "name": "Varoitusliput"
       },
       "watthours": {
-        "name": "Energy AC - Lifetime"
+        "name": "Energia AC - Yhteensä"
       },
       "watts": {
-        "name": "Power AC"
+        "name": "Teho AC"
       },
       "week_wh": {
-        "name": "Energy AC - Produced (Current Week)"
+        "name": "Energia AC - Tuotettu (Virta Week)"
       },
       "wlan0_essid": {
         "name": "WiFi SSID"
       },
       "wlan0_ipaddr_local": {
-        "name": "WiFi Local IP"
+        "name": "WiFi Paikallinen IP"
       },
       "wlan0_link_quality": {
-        "name": "WiFi link quality percentage"
+        "name": "WiFi linkin laatu prosentti"
       },
       "wlan0_mode": {
-        "name": "WiFi Mode"
+        "name": "WiFi Tila"
       },
       "wlan_0_broadcast": {
         "name": "WiFi Broadcast"
       },
       "wlan_0_dhcp_state": {
-        "name": "WiFi DHCP State"
+        "name": "WiFi DHCP Tila"
       },
       "wlan_0_dns": {
-        "name": "WiFi DNS Server"
+        "name": "WiFi DNS Palvelin"
       },
       "wlan_0_gateway": {
-        "name": "WiFi Gateway"
+        "name": "WiFi Yhdyskäytävä"
       },
       "wlan_0_ipaddr": {
-        "name": "WiFi IP Address"
+        "name": "WiFi IP Osoite"
       },
       "wlan_0_netmask": {
-        "name": "WiFi Netmask"
+        "name": "WiFi Verkkopeite"
       },
       "wlan_0_status": {
-        "name": "WiFi Status"
+        "name": "WiFi Tila"
       },
       "wlan_ap_status": {
-        "name": "WiFi AP Status"
+        "name": "WiFi AP Tila"
       },
       "wlan_fsm_status": {
-        "name": "WiFi FSM Status"
+        "name": "WiFi FSM Tila"
       },
       "year_wh": {
-        "name": "Energy AC - Produced (Current Year)"
+        "name": "Energia AC - Tuotettu (Virta Year)"
       }
     }
   }

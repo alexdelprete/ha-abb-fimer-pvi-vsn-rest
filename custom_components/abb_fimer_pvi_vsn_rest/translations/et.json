@@ -54,436 +54,436 @@
   "entity": {
     "sensor": {
       "alarm_st": {
-        "name": "Alarm Status"
+        "name": "Häire Olek"
       },
       "alarm_state": {
-        "name": "Alarm State"
+        "name": "Häire Seisund"
       },
       "amps": {
-        "name": "Current AC"
+        "name": "Vool AC"
       },
       "amps_phasea": {
-        "name": "Current AC - Phase A"
+        "name": "Vool AC - Faas A"
       },
       "amps_phaseb": {
-        "name": "Current AC - Phase B"
+        "name": "Vool AC - Faas B"
       },
       "amps_phasec": {
-        "name": "Current AC - Phase C"
+        "name": "Vool AC - Faas C"
       },
       "batt_ext_ctrl_ena": {
-        "name": "Battery Control Enabled"
+        "name": "Aku Juhtimine Lubatud"
       },
       "batt_ext_ctrl_state": {
-        "name": "Battery Control State"
+        "name": "Aku Juhtimine Seisund"
       },
       "batt_num": {
-        "name": "Number of battery cells or modules"
+        "name": "Akuelementide või moodulite arv"
       },
       "battery_mode": {
-        "name": "Battery Mode"
+        "name": "Aku Režiim"
       },
       "booster_tmp": {
-        "name": "Temperature - Booster"
+        "name": "Temperatuur - Booster"
       },
       "cabinet_temperature": {
-        "name": "Temperature - Cabinet"
+        "name": "Temperatuur - Kapp"
       },
       "chc": {
-        "name": "Battery charge cycles counter"
+        "name": "Aku laadimistsüklite loendur"
       },
       "clock_state": {
-        "name": "Clock State"
+        "name": "Kell Seisund"
       },
       "commissioning_freeze": {
-        "name": "Commissioning Freeze"
+        "name": "Kasutuselevõtu Külmutamine"
       },
       "communication_protocol": {
-        "name": "Communication Protocol"
+        "name": "Kommunikatsiooniprotokoll"
       },
       "cos_phi": {
-        "name": "Power Factor"
+        "name": "Võimsustegur"
       },
       "country_std": {
-        "name": "Country grid standard setting"
+        "name": "Riigi võrgu standardseade"
       },
       "cycle_num": {
-        "name": "Count - Battery Cycles"
+        "name": "Arv - Aku Tsüklid"
       },
       "d_c1_state": {
-        "name": "DC Input 1 State"
+        "name": "DC Sisend 1 Seisund"
       },
       "d_c2_state": {
-        "name": "DC Input 2 State"
+        "name": "DC Sisend 2 Seisund"
       },
       "day_wh": {
-        "name": "Energy AC - Produced (Today)"
+        "name": "Energia AC - Toodetud (Täna)"
       },
       "dc_current_1": {
-        "name": "Current DC - String 1"
+        "name": "Vool DC - Ahel 1"
       },
       "dc_current_2": {
-        "name": "Current DC - String 2"
+        "name": "Vool DC - Ahel 2"
       },
       "dc_power_1": {
-        "name": "Power DC - String 1"
+        "name": "Võimsus DC - Ahel 1"
       },
       "dc_power_2": {
-        "name": "Power DC - String 2"
+        "name": "Võimsus DC - Ahel 2"
       },
       "dc_st1": {
-        "name": "DC Input 1 Status"
+        "name": "DC Sisend 1 Olek"
       },
       "dc_st2": {
-        "name": "DC Input 2 Status"
+        "name": "DC Sisend 2 Olek"
       },
       "dc_voltage_1": {
-        "name": "Voltage DC - String 1"
+        "name": "Pinge DC - Ahel 1"
       },
       "dc_voltage_2": {
-        "name": "Voltage DC - String 2"
+        "name": "Pinge DC - Ahel 2"
       },
       "dc_watts": {
-        "name": "Power DC"
+        "name": "Võimsus DC"
       },
       "detected_battery_number": {
-        "name": "Detected Battery Number"
+        "name": "Tuvastatud Aku Number"
       },
       "device_address": {
-        "name": "Modbus address"
+        "name": "Modbus aadress"
       },
       "device_name": {
-        "name": "Device 2 Name"
+        "name": "Seade 2 Nimi"
       },
       "device_type": {
-        "name": "Device 2 Type"
+        "name": "Seade 2 Tüüp"
       },
       "dhc": {
-        "name": "Battery discharge cycles counter"
+        "name": "Aku tühjendamistsüklite loendur"
       },
       "di0_mode": {
-        "name": "Digital Input 0 Mode"
+        "name": "Digitaalsisend 0 Režiim"
       },
       "di1_mode": {
-        "name": "Digital Input 1 Mode"
+        "name": "Digitaalsisend 1 Režiim"
       },
       "di_status": {
-        "name": "Digital Input Status"
+        "name": "Digitaalsisend Olek"
       },
       "dynamic_feed_in_ctrl": {
-        "name": "Dynamic Feed In Ctrl"
+        "name": "Dünaamiline Sisestus Juhtimine"
       },
       "e0_1_year": {
-        "name": "Energy AC - Produced (Current Year)"
+        "name": "Energia AC - Toodetud (Vool Year)"
       },
       "e0_last_month": {
-        "name": "Energy AC - Produced (Current Month)"
+        "name": "Energia AC - Toodetud (Vool Month)"
       },
       "e0_last_week": {
-        "name": "Energy AC - Produced (Current Week)"
+        "name": "Energia AC - Toodetud (Vool Week)"
       },
       "e0_lifetime": {
-        "name": "Energy AC - Produced (Since Restart)"
+        "name": "Energia AC - Toodetud (Alates Taaskäivitusest)"
       },
       "e15_last_month": {
-        "name": "Energy AC - Backup Output (Current Month)"
+        "name": "Energia AC - Varundus Väljund (Vool Month)"
       },
       "e15_last_week": {
-        "name": "Energy AC - Backup Output (Current Week)"
+        "name": "Energia AC - Varundus Väljund (Vool Week)"
       },
       "e15_lifetime": {
-        "name": "Energy AC - Backup Output (Since Restart)"
+        "name": "Energia AC - Varundus Väljund (Alates Taaskäivitusest)"
       },
       "e1_last_month": {
-        "name": "Energy AC - Absorbed (Current Month)"
+        "name": "Energia AC - Neeldunud (Vool Month)"
       },
       "e1_last_week": {
-        "name": "Energy AC - Absorbed (Current Week)"
+        "name": "Energia AC - Neeldunud (Vool Week)"
       },
       "e1_lifetime": {
-        "name": "Energy AC - Absorbed (Since Restart)"
+        "name": "Energia AC - Neeldunud (Alates Taaskäivitusest)"
       },
       "e2_last_month": {
-        "name": "Energy AC Apparent - (Current Month)"
+        "name": "Energia AC Näiv - (Vool Month)"
       },
       "e2_last_week": {
-        "name": "Energy AC Apparent - (Current Week)"
+        "name": "Energia AC Näiv - (Vool Week)"
       },
       "e2_lifetime": {
-        "name": "Energy AC Apparent - (Since Restart)"
+        "name": "Energia AC Näiv - (Alates Taaskäivitusest)"
       },
       "e3_last_month": {
-        "name": "Energy AC - Grid Export (Current Month)"
+        "name": "Energia AC - Võrk Eksport (Vool Month)"
       },
       "e3_last_week": {
-        "name": "Energy AC - Grid Export (Current Week)"
+        "name": "Energia AC - Võrk Eksport (Vool Week)"
       },
       "e3_lifetime": {
-        "name": "Energy AC - Grid Export (Since Restart)"
+        "name": "Energia AC - Võrk Eksport (Alates Taaskäivitusest)"
       },
       "e4_last_month": {
-        "name": "Energy - Self-Consumed (Current Month)"
+        "name": "Energia - Self-Consumed (Vool Month)"
       },
       "e4_last_week": {
-        "name": "Energy - Self-Consumed (Current Week)"
+        "name": "Energia - Self-Consumed (Vool Week)"
       },
       "e4_lifetime": {
-        "name": "Energy - Self-Consumed (Since Restart)"
+        "name": "Energia - Self-Consumed (Alates Taaskäivitusest)"
       },
       "e5_last_month": {
-        "name": "Energy - Battery Charge (Current Month)"
+        "name": "Energia - Aku Laadimine (Vool Month)"
       },
       "e5_last_week": {
-        "name": "Energy - Battery Charge (Current Week)"
+        "name": "Energia - Aku Laadimine (Vool Week)"
       },
       "e5_lifetime": {
-        "name": "Energy - Battery Charge (Since Restart)"
+        "name": "Energia - Aku Laadimine (Alates Taaskäivitusest)"
       },
       "e6_last_month": {
-        "name": "Energy - House from Inverter (Current Month)"
+        "name": "Energia - Maja inverterist Inverter (Vool Month)"
       },
       "e6_last_week": {
-        "name": "Energy - House from Inverter (Current Week)"
+        "name": "Energia - Maja inverterist Inverter (Vool Week)"
       },
       "e6_lifetime": {
-        "name": "Energy - House from Inverter (Since Restart)"
+        "name": "Energia - Maja inverterist Inverter (Alates Taaskäivitusest)"
       },
       "e6_total": {
-        "name": "Energy - House from Inverter Lifetime"
+        "name": "Energia - Maja inverterist Inverter Kokku"
       },
       "e7_last_month": {
-        "name": "Energy - House Consumption (Current Month)"
+        "name": "Energia - Maja Tarbimine (Vool Month)"
       },
       "e7_last_week": {
-        "name": "Energy - House Consumption (Current Week)"
+        "name": "Energia - Maja Tarbimine (Vool Week)"
       },
       "e7_lifetime": {
-        "name": "Energy - House Consumption (Since Restart)"
+        "name": "Energia - Maja Tarbimine (Alates Taaskäivitusest)"
       },
       "e7_total": {
-        "name": "Energy - House Consumption Lifetime"
+        "name": "Energia - Maja Tarbimine Kokku"
       },
       "e8_last_month": {
-        "name": "Energy AC - Grid Import (Current Month)"
+        "name": "Energia AC - Võrk Import (Vool Month)"
       },
       "e8_last_week": {
-        "name": "Energy AC - Grid Import (Current Week)"
+        "name": "Energia AC - Võrk Import (Vool Week)"
       },
       "e8_lifetime": {
-        "name": "Energy AC - Grid Import (Since Restart)"
+        "name": "Energia AC - Võrk Import (Alates Taaskäivitusest)"
       },
       "e_backup": {
-        "name": "Energy AC - Backup Output Lifetime"
+        "name": "Energia AC - Varundus Väljund Kokku"
       },
       "e_charge": {
-        "name": "Energy - Battery Charge Lifetime"
+        "name": "Energia - Aku Laadimine Kokku"
       },
       "e_charge_last_month": {
-        "name": "Energy - Battery Charge (Current Month)"
+        "name": "Energia - Aku Laadimine (Vool Month)"
       },
       "e_charge_last_week": {
-        "name": "Energy - Battery Charge (Current Week)"
+        "name": "Energia - Aku Laadimine (Vool Week)"
       },
       "e_charge_lifetime": {
-        "name": "Energy - Battery Charge (Since Restart)"
+        "name": "Energia - Aku Laadimine (Alates Taaskäivitusest)"
       },
       "e_ct": {
-        "name": "Total energy from current transformer (CT)"
+        "name": "Koguenergia voolumuundurist (CT)"
       },
       "e_discharge": {
-        "name": "Energy - Battery Discharge Lifetime"
+        "name": "Energia - Aku Tühjendamine Kokku"
       },
       "e_discharge_last_month": {
-        "name": "Energy - Battery Discharge (Current Month)"
+        "name": "Energia - Aku Tühjendamine (Vool Month)"
       },
       "e_discharge_last_week": {
-        "name": "Energy - Battery Discharge (Current Week)"
+        "name": "Energia - Aku Tühjendamine (Vool Week)"
       },
       "e_discharge_lifetime": {
-        "name": "Energy - Battery Discharge (Since Restart)"
+        "name": "Energia - Aku Tühjendamine (Alates Taaskäivitusest)"
       },
       "e_dt": {
-        "name": "Total energy from direct transducer (DT)"
+        "name": "Koguenergia otseandurist (DT)"
       },
       "e_grid_export": {
-        "name": "Energy AC - Grid Export Lifetime"
+        "name": "Energia AC - Võrk Eksport Kokku"
       },
       "e_grid_import": {
-        "name": "Energy AC - Grid Import Lifetime"
+        "name": "Energia AC - Võrk Import Kokku"
       },
       "e_tot_charge": {
-        "name": "Energy - Battery Charge Total Lifetime"
+        "name": "Energia - Aku Laadimine Total Kokku"
       },
       "e_tot_charge_last_month": {
-        "name": "Energy - Battery Charge Total (Current Month)"
+        "name": "Energia - Aku Laadimine Total (Vool Month)"
       },
       "e_tot_charge_last_week": {
-        "name": "Energy - Battery Charge Total (Current Week)"
+        "name": "Energia - Aku Laadimine Total (Vool Week)"
       },
       "e_tot_charge_lifetime": {
-        "name": "Energy - Battery Charge Total (Since Restart)"
+        "name": "Energia - Aku Laadimine Total (Alates Taaskäivitusest)"
       },
       "e_tot_discharge": {
-        "name": "Energy - Battery Discharge Total Lifetime"
+        "name": "Energia - Aku Tühjendamine Total Kokku"
       },
       "e_tot_discharge_last_month": {
-        "name": "Energy - Battery Discharge Total (Current Month)"
+        "name": "Energia - Aku Tühjendamine Total (Vool Month)"
       },
       "e_tot_discharge_last_week": {
-        "name": "Energy - Battery Discharge Total (Current Week)"
+        "name": "Energia - Aku Tühjendamine Total (Vool Week)"
       },
       "e_tot_discharge_lifetime": {
-        "name": "Energy - Battery Discharge Total (Since Restart)"
+        "name": "Energia - Aku Tühjendamine Total (Alates Taaskäivitusest)"
       },
       "e_total": {
-        "name": "Energy AC - Produced Lifetime"
+        "name": "Energia AC - Toodetud Kokku"
       },
       "e_total_absorbed": {
-        "name": "Energy AC - Absorbed Lifetime"
+        "name": "Energia AC - Neeldunud Kokku"
       },
       "e_total_apparent": {
-        "name": "Energy AC Apparent - Lifetime"
+        "name": "Energia AC Näiv - Kokku"
       },
       "ein": {
-        "name": "Energy DC - PV Input Lifetime"
+        "name": "Energia DC - PV Kokku"
       },
       "ein1": {
-        "name": "DC energy (String 1) - Lifetime"
+        "name": "Energia DC (Ahel 1) - Kokku"
       },
       "ein2": {
-        "name": "DC energy (String 2) - Lifetime"
+        "name": "Energia DC (Ahel 2) - Kokku"
       },
       "ein_last_month": {
-        "name": "Energy DC - PV Input (Current Month)"
+        "name": "Energia DC - PV (Vool Month)"
       },
       "ein_last_week": {
-        "name": "Energy DC - PV Input (Current Week)"
+        "name": "Energia DC - PV (Vool Week)"
       },
       "ein_lifetime": {
-        "name": "Energy DC - PV Input (Since Restart)"
+        "name": "Energia DC - PV (Alates Taaskäivitusest)"
       },
       "energy_policy": {
-        "name": "Energy Policy"
+        "name": "Energiapoliitika"
       },
       "fan1rpm": {
-        "name": "Speed - Fan 1"
+        "name": "Kiirus - Ventilaator 1"
       },
       "fan2rpm": {
-        "name": "Speed - Fan 2"
+        "name": "Kiirus - Ventilaator 2"
       },
       "fcc": {
-        "name": "Central controller frequency"
+        "name": "Keskkontroller sagedus"
       },
       "firmware_version": {
-        "name": "Firmware Version"
+        "name": "Firmware Versioon"
       },
       "flash_memory_free": {
-        "name": "Available flash storage"
+        "name": "Saadaval flash-mälu"
       },
       "free_ram": {
-        "name": "Available RAM"
+        "name": "Saadaval RAM"
       },
       "frt_state": {
-        "name": "Fault Ride Through (FRT) status"
+        "name": "Fault Ride Through (FRT) Olek"
       },
       "fw_build_date": {
-        "name": "Firmware Build Date"
+        "name": "Firmware Build Kuupäev"
       },
       "fw_build_number": {
         "name": "Firmware Build Hash"
       },
       "fw_release_number": {
-        "name": "Firmware Version"
+        "name": "Firmware Versioon"
       },
       "fw_revision": {
-        "name": "Firmware Revision"
+        "name": "Firmware Revisioon"
       },
       "fw_version": {
-        "name": "Fw Version"
+        "name": "Fw Versioon"
       },
       "glob_state": {
-        "name": "Global operational state"
+        "name": "Globaalne tööseisund"
       },
       "global_st": {
-        "name": "Global Status"
+        "name": "Globaalne Olek"
       },
       "grid_ext_ctrl_ena": {
-        "name": "Grid External Control Enabled"
+        "name": "Võrk Väline Juhtimine Lubatud"
       },
       "grid_ext_ctrl_state": {
-        "name": "Grid External Control State"
+        "name": "Võrk Väline Juhtimine Seisund"
       },
       "house_igrid_l1": {
-        "name": "Current AC - House Phase A"
+        "name": "Vool AC - Maja Faas A"
       },
       "house_igrid_l2": {
-        "name": "Current AC - House Phase B"
+        "name": "Vool AC - Maja Faas B"
       },
       "house_igrid_l3": {
-        "name": "Current AC - House Phase C"
+        "name": "Vool AC - Maja Faas C"
       },
       "house_p_inverter": {
-        "name": "Power - Home PV"
+        "name": "Võimsus - PV Kodu"
       },
       "house_pgrid_l1": {
-        "name": "Power AC - House Phase A"
+        "name": "Võimsus AC - Maja Faas A"
       },
       "house_pgrid_l2": {
-        "name": "Power AC - House Phase B"
+        "name": "Võimsus AC - Maja Faas B"
       },
       "house_pgrid_l3": {
-        "name": "Power AC - House Phase C"
+        "name": "Võimsus AC - Maja Faas C"
       },
       "house_pgrid_tot": {
-        "name": "Power AC - House Load Total"
+        "name": "Võimsus AC - Maja Koormus Kokku"
       },
       "hz": {
-        "name": "Frequency AC - Grid"
+        "name": "Sagedus AC - Võrk"
       },
       "hz_a": {
-        "name": "Frequency AC - Phase A"
+        "name": "Sagedus AC - Faas A"
       },
       "hz_b": {
-        "name": "Frequency AC - Phase B"
+        "name": "Sagedus AC - Faas B"
       },
       "hz_c": {
-        "name": "Frequency AC - Phase C"
+        "name": "Sagedus AC - Faas C"
       },
       "i_leak_dc_ac": {
-        "name": "Current DC - Leakage DC-AC"
+        "name": "Vool DC - Leke DC-AC"
       },
       "i_leak_dc_dc": {
-        "name": "Current DC - Leakage DC-DC"
+        "name": "Vool DC - Leke DC-DC"
       },
       "iba": {
-        "name": "Current - Battery"
+        "name": "Vool - Aku"
       },
       "iin1": {
-        "name": "Current DC - String 1"
+        "name": "Vool DC - Ahel 1"
       },
       "iin2": {
-        "name": "Current DC - String 2"
+        "name": "Vool DC - Ahel 2"
       },
       "input_mode": {
-        "name": "Input Mode"
+        "name": "Sisendi Režiim"
       },
       "inv_state": {
-        "name": "Inverter State"
+        "name": "Inverter Seisund"
       },
       "inverter_id": {
         "name": "Inverter ID"
       },
       "inverter_st": {
-        "name": "Inverter Status"
+        "name": "Inverter Olek"
       },
       "inverter_time": {
-        "name": "Inverter Time"
+        "name": "Inverter Aeg"
       },
       "isolation_ohm1": {
-        "name": "Resistance - Insulation"
+        "name": "Takistus - Isolatsioon"
       },
       "logger_board_model": {
-        "name": "Logger Board Model"
+        "name": "Logger Kaardi Mudel"
       },
       "logger_hostname": {
         "name": "Logger Hostname"
@@ -492,304 +492,304 @@
         "name": "Logger ID"
       },
       "logger_sn": {
-        "name": "Logger Serial Number"
+        "name": "Logger Seerianumber"
       },
       "m126_mod_ena": {
-        "name": "Model 126 Enabled"
+        "name": "Mudel 126 Lubatud"
       },
       "m132_mod_ena": {
-        "name": "Model 132 Enabled"
+        "name": "Mudel 132 Lubatud"
       },
       "manufacturer": {
-        "name": "Manufacturer name"
+        "name": "Tootja nimi"
       },
       "meter_fgrid": {
-        "name": "Frequency AC - Meter"
+        "name": "Sagedus AC - Arvesti"
       },
       "meter_igrid_l1": {
-        "name": "Current AC - Meter Phase A"
+        "name": "Vool AC - Arvesti Faas A"
       },
       "meter_igrid_l2": {
-        "name": "Current AC - Meter Phase B"
+        "name": "Vool AC - Arvesti Faas B"
       },
       "meter_igrid_l3": {
-        "name": "Current AC - Meter Phase C"
+        "name": "Vool AC - Arvesti Faas C"
       },
       "meter_pgrid_l1": {
-        "name": "Power AC - Meter Phase A"
+        "name": "Võimsus AC - Arvesti Faas A"
       },
       "meter_pgrid_l2": {
-        "name": "Power AC - Meter Phase B"
+        "name": "Võimsus AC - Arvesti Faas B"
       },
       "meter_pgrid_l3": {
-        "name": "Power AC - Meter Phase C"
+        "name": "Võimsus AC - Arvesti Faas C"
       },
       "meter_pgrid_tot": {
-        "name": "Power AC - Meter Total"
+        "name": "Võimsus AC - Arvesti Total"
       },
       "meter_qgrid_l1": {
-        "name": "Reactive Power AC - Meter Phase A"
+        "name": "Reaktiivne Võimsus AC - Arvesti Faas A"
       },
       "meter_qgrid_l2": {
-        "name": "Reactive Power AC - Meter Phase B"
+        "name": "Reaktiivne Võimsus AC - Arvesti Faas B"
       },
       "meter_qgrid_l3": {
-        "name": "Reactive Power AC - Meter Phase C"
+        "name": "Reaktiivne Võimsus AC - Arvesti Faas C"
       },
       "meter_qgrid_tot": {
-        "name": "Reactive Power AC - Meter Total"
+        "name": "Reaktiivne Võimsus AC - Arvesti Total"
       },
       "meter_vgrid_l1": {
-        "name": "Voltage AC - Meter Phase A"
+        "name": "Pinge AC - Arvesti Faas A"
       },
       "meter_vgrid_l2": {
-        "name": "Voltage AC - Meter Phase B"
+        "name": "Pinge AC - Arvesti Faas B"
       },
       "meter_vgrid_l3": {
-        "name": "Voltage AC - Meter Phase C"
+        "name": "Pinge AC - Arvesti Faas C"
       },
       "mfg_part_number": {
-        "name": "Part Number"
+        "name": "Osa Number"
       },
       "mfg_serial_number": {
-        "name": "Serial Number"
+        "name": "Seerianumber"
       },
       "mfg_week_year": {
-        "name": "Manufacturing Week/Year"
+        "name": "Tootmisnädal/Aasta"
       },
       "model": {
-        "name": "Model identifier"
+        "name": "Mudeli identifikaator"
       },
       "model_description": {
-        "name": "Model Description"
+        "name": "Mudeli Kirjeldus"
       },
       "model_type": {
-        "name": "Model Type"
+        "name": "Mudeli Tüüp"
       },
       "month_wh": {
-        "name": "Energy AC - Produced (Current Month)"
+        "name": "Energia AC - Toodetud (Vool Month)"
       },
       "num_of_mppt": {
-        "name": "Count - MPPT Channels"
+        "name": "Arv - MPPT Kanalid"
       },
       "options": {
-        "name": "Configuration options"
+        "name": "Konfiguratsioonivalikud"
       },
       "other_temperature": {
-        "name": "Temperature - Other"
+        "name": "Temperatuur - Muu"
       },
       "p_ch": {
-        "name": "Power - Battery Charge"
+        "name": "Võimsus - Aku Laadimine"
       },
       "p_dh": {
-        "name": "Power - Battery Discharge"
+        "name": "Võimsus - Aku Tühjendamine"
       },
       "pac_derating_flags": {
-        "name": "AC Power Derating Flags"
+        "name": "AC Võimsus Derating Lipud"
       },
       "pac_stand_alone": {
-        "name": "Power AC - Stand Alone Mode"
+        "name": "Võimsus AC - Autonoomne Režiim"
       },
       "pac_togrid": {
-        "name": "Power AC - Export to Grid"
+        "name": "Võimsus AC - Eksport to Võrk"
       },
       "pba": {
-        "name": "Power - Battery Total"
+        "name": "Võimsus - Aku Kokku"
       },
       "pba_t": {
-        "name": "Power - Battery Total"
+        "name": "Võimsus - Aku Kokku"
       },
       "pf": {
-        "name": "Power Factor"
+        "name": "Võimsustegur"
       },
       "ph_vph_a_b": {
-        "name": "Voltage AC - Phase A-B"
+        "name": "Pinge AC - Faas A-B"
       },
       "ph_vph_b_c": {
-        "name": "Voltage AC - Phase B-C"
+        "name": "Pinge AC - Faas B-C"
       },
       "ph_vph_c_a": {
-        "name": "Voltage AC - Phase C-A"
+        "name": "Pinge AC - Faas C-A"
       },
       "phase_voltage_an": {
-        "name": "Voltage AC - Phase A-N"
+        "name": "Pinge AC - Faas A-N"
       },
       "phase_voltage_bn": {
-        "name": "Voltage AC - Phase B-N"
+        "name": "Pinge AC - Faas B-N"
       },
       "phase_voltage_cn": {
-        "name": "Voltage AC - Phase C-N"
+        "name": "Pinge AC - Faas C-N"
       },
       "pin": {
-        "name": "Power DC - Input Total"
+        "name": "Võimsus DC - Sisend Kokku"
       },
       "pin1": {
-        "name": "Power DC - String 1"
+        "name": "Võimsus DC - Ahel 1"
       },
       "pin2": {
-        "name": "Power DC - String 2"
+        "name": "Võimsus DC - Ahel 2"
       },
       "pn": {
-        "name": "Product number"
+        "name": "Tootenumber"
       },
       "power_peak_abs": {
-        "name": "Power - Peak Lifetime"
+        "name": "Võimsus - Tipp Kokku"
       },
       "power_peak_today": {
-        "name": "Power - Peak Today"
+        "name": "Võimsus - Tipp Täna"
       },
       "ppeak": {
-        "name": "Power - Peak"
+        "name": "Võimsus - Tipp"
       },
       "qac_derating_flags": {
-        "name": "Reactive Power Derating"
+        "name": "Reaktiivvõimsus Derating"
       },
       "sac_derating_flags": {
-        "name": "Apparent Power Derating"
+        "name": "Näiv Võimsus Derating"
       },
       "serial_number": {
         "name": "Device serial number"
       },
       "sh_u": {
-        "name": "Voltage - Shunt"
+        "name": "Pinge - Shunt"
       },
       "sn": {
-        "name": "Serial number"
+        "name": "Seerianumber"
       },
       "split_phase": {
-        "name": "Split-phase configuration flag"
+        "name": "Split-phase konfiguratsioonilipp"
       },
       "state_of_charge": {
-        "name": "State of Charge"
+        "name": "Laadimisseisund"
       },
       "state_of_health": {
-        "name": "State of Health"
+        "name": "Terviseseisund"
       },
       "storage_size": {
-        "name": "Flash storage used"
+        "name": "Kasutatud flash-mälu"
       },
       "sys_time": {
-        "name": "System Time"
+        "name": "Süsteemi Aeg"
       },
       "system_load": {
-        "name": "System load average"
+        "name": "Süsteemi keskmine koormus"
       },
       "system_uptime": {
-        "name": "System Uptime"
+        "name": "Süsteemi Töötamisaeg"
       },
       "tba": {
-        "name": "Temperature - Battery"
+        "name": "Temperatuur - Aku"
       },
       "tc_max": {
-        "name": "Temperature - Cabinet Max"
+        "name": "Temperatuur - Kapp Max"
       },
       "tc_min": {
-        "name": "Temperature - Cabinet Min"
+        "name": "Temperatuur - Kapp Min"
       },
       "temp1": {
-        "name": "Temperature - Sensor 1"
+        "name": "Temperatuur - Andur 1"
       },
       "temp_bst": {
-        "name": "Temperature - Booster"
+        "name": "Temperatuur - Booster"
       },
       "temp_inv": {
-        "name": "Temperature - Inverter"
+        "name": "Temperatuur - Inverter"
       },
       "type": {
-        "name": "Type"
+        "name": "Tüüp"
       },
       "v_bulk": {
-        "name": "Voltage DC - Bulk Capacitor"
+        "name": "Pinge DC - Bulk Kondensaator"
       },
       "v_bulk_mid": {
-        "name": "Voltage DC - Bus Midpoint"
+        "name": "Pinge DC - Siini Keskpunkt"
       },
       "v_gnd": {
-        "name": "Voltage - Ground"
+        "name": "Pinge - Maandus"
       },
       "var": {
-        "name": "Reactive Power - Grid Connection"
+        "name": "Reaktiivvõimsus - Võrguühendus"
       },
       "vba": {
-        "name": "Voltage - Battery"
+        "name": "Pinge - Aku"
       },
       "vc_max": {
-        "name": "Voltage - Battery Cell Max"
+        "name": "Pinge - Aku Element Max"
       },
       "vc_min": {
-        "name": "Voltage - Battery Cell Min"
+        "name": "Pinge - Aku Element Min"
       },
       "version": {
-        "name": "Firmware version"
+        "name": "Firmware versioon"
       },
       "vgrid_l1_n": {
-        "name": "Voltage AC - Phase A-N"
+        "name": "Pinge AC - Faas A-N"
       },
       "vgrid_l2_n": {
-        "name": "Voltage AC - Phase B-N"
+        "name": "Pinge AC - Faas B-N"
       },
       "vin1": {
-        "name": "Voltage DC - Input 1"
+        "name": "Pinge DC - Sisend 1"
       },
       "vin2": {
-        "name": "Voltage DC - Input 2"
+        "name": "Pinge DC - Sisend 2"
       },
       "w_rtg": {
-        "name": "Power - Rating"
+        "name": "Võimsus - Nimivõimsus"
       },
       "warning_flags": {
-        "name": "Warning Flags"
+        "name": "Hoiatuslipud"
       },
       "watthours": {
-        "name": "Energy AC - Lifetime"
+        "name": "Energia AC - Kokku"
       },
       "watts": {
-        "name": "Power AC"
+        "name": "Võimsus AC"
       },
       "week_wh": {
-        "name": "Energy AC - Produced (Current Week)"
+        "name": "Energia AC - Toodetud (Vool Week)"
       },
       "wlan0_essid": {
         "name": "WiFi SSID"
       },
       "wlan0_ipaddr_local": {
-        "name": "WiFi Local IP"
+        "name": "WiFi Kohalik IP"
       },
       "wlan0_link_quality": {
-        "name": "WiFi link quality percentage"
+        "name": "WiFi lingi kvaliteedi protsent"
       },
       "wlan0_mode": {
-        "name": "WiFi Mode"
+        "name": "WiFi Režiim"
       },
       "wlan_0_broadcast": {
         "name": "WiFi Broadcast"
       },
       "wlan_0_dhcp_state": {
-        "name": "WiFi DHCP State"
+        "name": "WiFi DHCP Seisund"
       },
       "wlan_0_dns": {
         "name": "WiFi DNS Server"
       },
       "wlan_0_gateway": {
-        "name": "WiFi Gateway"
+        "name": "WiFi Lüüs"
       },
       "wlan_0_ipaddr": {
-        "name": "WiFi IP Address"
+        "name": "WiFi IP Aadress"
       },
       "wlan_0_netmask": {
-        "name": "WiFi Netmask"
+        "name": "WiFi Võrgumask"
       },
       "wlan_0_status": {
-        "name": "WiFi Status"
+        "name": "WiFi Olek"
       },
       "wlan_ap_status": {
-        "name": "WiFi AP Status"
+        "name": "WiFi AP Olek"
       },
       "wlan_fsm_status": {
-        "name": "WiFi FSM Status"
+        "name": "WiFi FSM Olek"
       },
       "year_wh": {
-        "name": "Energy AC - Produced (Current Year)"
+        "name": "Energia AC - Toodetud (Vool Year)"
       }
     }
   }
