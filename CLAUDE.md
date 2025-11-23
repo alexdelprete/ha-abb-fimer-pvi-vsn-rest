@@ -695,6 +695,43 @@ _LOGGER.debug(f"Device {device_id} has {len(points)} points")
 
 Always include context in log messages.
 
+### Logging Best Practices (HA Integration Quality Scale)
+
+Follow [HA Integration Quality Scale: log-when-unavailable](https://developers.home-assistant.io/docs/core/integration-quality-scale/rules/log-when-unavailable/):
+
+**DataUpdateCoordinator** - Just raise `UpdateFailed`, don't manually log:
+
+```python
+# CORRECT - coordinator handles logging automatically
+except VSNConnectionError as err:
+    raise UpdateFailed(f"Connection error: {err}") from err
+
+# WRONG - causes double logging and log spam
+except VSNConnectionError as err:
+    _LOGGER.warning("Connection error: %s", err)  # ← Don't do this!
+    raise UpdateFailed(f"Connection error: {err}") from err
+```
+
+**ConfigEntryNotReady** - HA handles logging automatically:
+
+```python
+# CORRECT - HA logs at DEBUG level and shows in UI
+except Exception as err:
+    raise ConfigEntryNotReady(f"Discovery failed: {err}") from err
+
+# WRONG - redundant logging
+except Exception as err:
+    _LOGGER.error("Discovery failed: %s", err)  # ← Don't do this!
+    raise ConfigEntryNotReady(f"Discovery failed: {err}") from err
+```
+
+**Why this matters:**
+
+- DataUpdateCoordinator has built-in spam prevention (only logs state changes)
+- Manual logging runs on EVERY failure → 800+ log entries overnight when device is offline
+- HA already logs appropriately when exceptions are raised
+- Follows [HA Integration Setup Failures](https://developers.home-assistant.io/docs/integration_setup_failures) guidance
+
 ### Async/Await
 
 All I/O must be async:
