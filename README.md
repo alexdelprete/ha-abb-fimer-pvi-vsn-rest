@@ -44,19 +44,15 @@ entity creation.
 
 ### HACS (Recommended)
 
-This integration is available in [HACS][hacs] as a custom repository. Click this button to open HA directly on the integration page so you can easily install it:
+This integration is available in the official [HACS][hacs] default repository:
 
 [![Quick installation link](https://my.home-assistant.io/badges/hacs_repository.svg)][my-hacs]
 
 1. Open HACS in Home Assistant
 2. Go to "Integrations"
-3. Click the three dots menu → "Custom repositories"
-4. Add repository: `https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest`
-5. Category: Integration
-6. Click "Add"
-7. Search for "ABB FIMER PVI VSN REST"
-8. Click "Download"
-9. Restart Home Assistant
+3. Search for "ABB FIMER PVI VSN REST"
+4. Click "Download"
+5. Restart Home Assistant
 
 ### Manual Installation
 
