@@ -3,16 +3,16 @@
     "step": {
       "user": {
         "title": "ABB/FIMER PVI VSN REST",
-        "description": "Connettiti al tuo datalogger ABB/FIMER VSN300 o VSN700.\n\nCredenziali predefinite: username='guest', password=(vuota)",
+        "description": "Connettiti al tuo datalogger ABB/FIMER VSN300 o VSN700.\n\nCredenziali: Verifica gli utenti configurati nell'interfaccia web del tuo datalogger.",
         "data": {
           "host": "Host (IP o hostname)",
-          "username": "Nome utente (opzionale, predefinito: guest)",
-          "password": "Password (opzionale, predefinita: vuota)"
+          "username": "Nome utente",
+          "password": "Password"
         },
         "data_description": {
           "host": "Indirizzo IP o hostname del dispositivo VSN (es., 192.168.1.100 o abb-vsn300.local)",
-          "username": "Nome utente per l'autenticazione. Lasciare vuoto per usare l'account predefinito 'guest'.",
-          "password": "Password per l'autenticazione. Lasciare vuota per l'account guest (nessuna password)."
+          "username": "Nome utente configurato sul tuo datalogger.",
+          "password": "Password configurata sul tuo datalogger."
         }
       },
       "reconfigure": {
@@ -27,7 +27,7 @@
     },
     "error": {
       "cannot_connect": "Impossibile connettersi al dispositivo. Verificare:\n• Il dispositivo è acceso\n• L'indirizzo IP o hostname è corretto\n• Il dispositivo è accessibile sulla rete\n• La porta 80 non è bloccata dal firewall",
-      "invalid_auth": "Autenticazione fallita. Verificare nome utente e password.\n\nPer la maggior parte dei dispositivi VSN, usare:\n• Nome utente: guest\n• Password: (vuota)",
+      "invalid_auth": "Autenticazione fallita. Verificare nome utente e password.\n\nVerifica le credenziali nell'interfaccia web del tuo datalogger.",
       "timeout": "Timeout della connessione. Il dispositivo non risponde.\n\nVerificare:\n• Il dispositivo è acceso e avviato\n• La connessione di rete è stabile\n• Nessun firewall blocca l'accesso",
       "unknown": "Si è verificato un errore imprevisto. Controllare i log per maggiori dettagli."
     },

@@ -32,21 +32,36 @@ pip install aiohttp
 ### Basic Usage
 
 ```bash
-python vsn_client.py <host>
+python vsn_client.py <host> [--username USER] [--password PASS] [--timeout SEC]
 ```
+
+### Options
+
+| Option | Short | Default | Description |
+|--------|-------|---------|-------------|
+| `host` | - | (required) | IP address or hostname of VSN device |
+| `--username` | `-u` | `guest` | Authentication username |
+| `--password` | `-p` | (empty) | Authentication password |
+| `--timeout` | `-t` | `10` | Request timeout in seconds |
 
 ### Examples
 
-With IP address:
+Basic usage with IP address:
 
 ```bash
 python vsn_client.py 192.168.1.100
 ```
 
-With hostname:
+With custom credentials:
 
 ```bash
-python vsn_client.py abb-vsn300.axel.dom
+python vsn_client.py 192.168.1.100 --username admin --password mypassword
+```
+
+With short options:
+
+```bash
+python vsn_client.py abb-vsn300.local -u admin -p secret -t 15
 ```
 
 The script automatically adds `http://` prefix if not provided.
@@ -77,8 +92,9 @@ The script creates up to 4 JSON files in the current directory:
 VSN REST Client - Device Test
 Host: abb-vsn300.axel.dom
 Base URL: http://abb-vsn300.axel.dom
-Username: guest (default)
+Username: guest
 Password: (empty)
+Timeout: 10 seconds
 ================================================================================
 
 [TEST 1] Device Detection
@@ -174,7 +190,14 @@ The script automatically normalizes raw VSN data to Home Assistant entity format
 
 ## Authentication
 
-The script uses **guest** account with **empty password** by default, which should work for most VSN devices.
+The script defaults to username `guest` with an empty password, but credentials vary by device configuration.
+**Check your datalogger's web interface** for the correct username and password.
+
+Use `--username` and `--password` to specify your device's credentials:
+
+```bash
+python vsn_client.py 192.168.1.100 --username admin --password mypassword
+```
 
 ### VSN300
 
@@ -204,8 +227,8 @@ pip install aiohttp
 
 ### Authentication Failed
 
-- Default guest account should work for most devices
-- Check if device requires different credentials
+- Check your datalogger's web interface for configured credentials
+- Use `--username` and `--password` options to specify your credentials
 - Some devices may have authentication disabled
 
 ### 401 Unauthorized

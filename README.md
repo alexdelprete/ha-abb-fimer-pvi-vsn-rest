@@ -66,7 +66,7 @@ This integration is available in the official [HACS][hacs] default repository:
 
 1. VSN300 or VSN700 datalogger connected to your network
 2. Datalogger IP address or hostname
-3. Valid credentials (default: username=`guest`, password=empty)
+3. Valid credentials (check your datalogger's web interface for configured users)
 
 ### Setup Steps
 
@@ -75,8 +75,8 @@ This integration is available in the official [HACS][hacs] default repository:
 3. Search for **"ABB FIMER PVI VSN REST"**
 4. Enter configuration:
    - **Host**: IP address or hostname (e.g., `192.168.1.100` or `abb-vsn300.local`)
-   - **Username**: Authentication username (optional, default: `guest`)
-   - **Password**: Authentication password (optional, default: empty)
+   - **Username**: Authentication username (commonly `guest`, but check your device)
+   - **Password**: Authentication password (may be empty or configured on your device)
 5. Click **"Submit"**
 
 The integration will:
@@ -293,7 +293,7 @@ Both authentication methods are handled automatically by the integration - no co
 
 **Solutions**:
 
-1. Try default credentials (username: `guest`, password: empty)
+1. Check your datalogger's web interface for valid credentials
 2. Check credentials in datalogger web interface
 3. Reset datalogger credentials if necessary
 

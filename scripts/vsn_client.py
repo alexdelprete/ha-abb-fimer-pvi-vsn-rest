@@ -12,11 +12,12 @@ Features:
 - Creates both raw and normalized JSON outputs
 
 Usage:
-    python vsn_client.py <host>
+    python vsn_client.py <host> [--username USER] [--password PASS] [--timeout SEC]
 
 Example:
     python vsn_client.py 192.168.1.100
-    python vsn_client.py abb-vsn300.axel.dom
+    python vsn_client.py 192.168.1.100 --username admin --password mypassword
+    python vsn_client.py abb-vsn300.local -u guest -p "" -t 15
 
 Requirements:
     - Python 3.9+
@@ -24,6 +25,7 @@ Requirements:
 
 """
 
+import argparse
 import asyncio
 import base64
 import hashlib
@@ -504,8 +506,21 @@ def normalize_livedata(
     return normalized
 
 
-async def test_vsn_device(host: str) -> None:
-    """Test VSN device and display results."""
+async def test_vsn_device(
+    host: str,
+    username: str = "guest",
+    password: str = "",
+    timeout: int = 10,
+) -> None:
+    """Test VSN device and display results.
+
+    Args:
+        host: Hostname or IP address of the VSN device
+        username: Authentication username
+        password: Authentication password
+        timeout: Request timeout in seconds
+
+    """
     # Add http:// prefix if not present
     if not host.startswith(("http://", "https://")):
         base_url = f"http://{host}"
@@ -516,8 +531,9 @@ async def test_vsn_device(host: str) -> None:
     _LOGGER.info("VSN REST Client - Device Test")
     _LOGGER.info("Host: %s", host)
     _LOGGER.info("Base URL: %s", base_url)
-    _LOGGER.info("Username: guest (default)")
-    _LOGGER.info("Password: (empty)")
+    _LOGGER.info("Username: %s", username)
+    _LOGGER.info("Password: %s", "(set)" if password else "(empty)")
+    _LOGGER.info("Timeout: %d seconds", timeout)
     _LOGGER.info("=" * 80)
 
     async with aiohttp.ClientSession() as session:
@@ -525,13 +541,15 @@ async def test_vsn_device(host: str) -> None:
             # Test 1: Device Detection
             _LOGGER.info("\n[TEST 1] Device Detection")
             _LOGGER.info("-" * 80)
-            model = await detect_vsn_model(session, base_url, "guest", "", 10)
+            model = await detect_vsn_model(session, base_url, username, password, timeout)
             _LOGGER.info("✓ Device detected: %s", model)
 
             # Test 2: /v1/status
             _LOGGER.info("\n[TEST 2] /v1/status - System Information")
             _LOGGER.info("-" * 80)
-            status_data = await fetch_endpoint(session, base_url, "/v1/status", model)
+            status_data = await fetch_endpoint(
+                session, base_url, "/v1/status", model, username, password, timeout
+            )
             _LOGGER.info("✓ Status endpoint successful")
 
             if isinstance(status_data, dict) and "keys" in status_data:
@@ -557,7 +575,9 @@ async def test_vsn_device(host: str) -> None:
             # Test 3: /v1/livedata
             _LOGGER.info("\n[TEST 3] /v1/livedata - Live Data")
             _LOGGER.info("-" * 80)
-            livedata = await fetch_endpoint(session, base_url, "/v1/livedata", model)
+            livedata = await fetch_endpoint(
+                session, base_url, "/v1/livedata", model, username, password, timeout
+            )
             _LOGGER.info("✓ Livedata endpoint successful")
             _LOGGER.info("  - Number of devices: %d", len(livedata))
             _LOGGER.info("  - Device IDs: %s", list(livedata.keys()))
@@ -632,7 +652,9 @@ async def test_vsn_device(host: str) -> None:
             # Test 4: /v1/feeds
             _LOGGER.info("\n[TEST 4] /v1/feeds - Feed Metadata")
             _LOGGER.info("-" * 80)
-            feeds_data = await fetch_endpoint(session, base_url, "/v1/feeds", model)
+            feeds_data = await fetch_endpoint(
+                session, base_url, "/v1/feeds", model, username, password, timeout
+            )
             _LOGGER.info("✓ Feeds endpoint successful")
 
             if isinstance(feeds_data, dict) and "feeds" in feeds_data:
@@ -677,22 +699,38 @@ async def test_vsn_device(host: str) -> None:
 
 def main() -> None:
     """Main entry point."""
-    if len(sys.argv) != 2:
-        print("VSN REST Client - Self-contained testing script")
-        print()
-        print("Usage: python vsn_client.py <host>")
-        print()
-        print("Example:")
-        print("  python vsn_client.py 192.168.1.100")
-        print("  python vsn_client.py abb-vsn300.axel.dom")
-        print()
-        print("Requirements:")
-        print("  - Python 3.9+")
-        print("  - aiohttp (install with: pip install aiohttp)")
-        sys.exit(1)
+    parser = argparse.ArgumentParser(
+        description="VSN REST Client - Self-contained testing script for VSN300/VSN700 devices"
+    )
+    parser.add_argument(
+        "host",
+        help="Host or IP address of the VSN device (e.g., 192.168.1.100 or abb-vsn300.local)",
+    )
+    parser.add_argument(
+        "--username", "-u",
+        default="guest",
+        help="Authentication username (check your datalogger's web interface)",
+    )
+    parser.add_argument(
+        "--password", "-p",
+        default="",
+        help="Authentication password (check your datalogger's web interface)",
+    )
+    parser.add_argument(
+        "--timeout", "-t",
+        type=int,
+        default=10,
+        help="Request timeout in seconds (default: 10)",
+    )
 
-    host = sys.argv[1]
-    asyncio.run(test_vsn_device(host))
+    args = parser.parse_args()
+
+    asyncio.run(test_vsn_device(
+        host=args.host,
+        username=args.username,
+        password=args.password,
+        timeout=args.timeout,
+    ))
 
 
 if __name__ == "__main__":
