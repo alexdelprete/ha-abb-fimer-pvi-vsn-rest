@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.13] - 2025-11-23
+
+### 🐛 Bug Fixes: Log Spam Prevention
+
+**This release fixes excessive logging during device offline periods (e.g., inverter offline at night).**
+
+**Bug #1: Log Spam During Connection Failures (Fixed)**:
+
+- When inverter is offline (nighttime), integration was logging WARNING/ERROR messages every poll interval
+- Result: 800+ log entries overnight causing log spam
+- Root cause: Redundant manual logging in addition to HA's built-in coordinator logging
+
+**Fix Applied**:
+
+- Removed redundant `_LOGGER.warning` and `_LOGGER.error` calls from `coordinator.py`
+- Removed redundant `_LOGGER.error` calls from `__init__.py` before `ConfigEntryNotReady`
+- Now follows [HA Integration Quality Scale: log-when-unavailable](https://developers.home-assistant.io/docs/core/integration-quality-scale/rules/log-when-unavailable/)
+- DataUpdateCoordinator handles logging automatically with built-in spam prevention
+
+**Result**:
+
+- ✅ Coordinator logs ONCE when device goes offline
+- ✅ No repeated logging during overnight offline periods
+- ✅ Coordinator logs ONCE when device comes back online
+- ✅ Follows Home Assistant best practices
+
+**Files Modified**:
+
+- `custom_components/.../coordinator.py` (removed redundant logging)
+- `custom_components/.../__init__.py` (removed redundant logging)
+
+**See**: [v1.1.13 Release Notes](docs/releases/v1.1.13.md)
+
 ## [1.1.12] - 2025-01-17
 
 ### 🐛 Bug Fixes: Duplicate Sensor Resolution

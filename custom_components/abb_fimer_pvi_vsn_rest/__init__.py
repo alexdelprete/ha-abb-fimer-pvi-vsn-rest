@@ -102,7 +102,7 @@ async def async_setup_entry(
                 device.device_model or "Unknown",
             )
     except Exception as err:
-        _LOGGER.error("Discovery failed during setup: %s", err)
+        # HA handles logging for ConfigEntryNotReady automatically
         raise ConfigEntryNotReady(f"Discovery failed: {err}") from err
 
     # Initialize REST client with discovered VSN model and devices
@@ -128,7 +128,7 @@ async def async_setup_entry(
     try:
         await coordinator.async_config_entry_first_refresh()
     except Exception as err:
-        _LOGGER.error("Failed to fetch initial data: %s", err)
+        # HA handles logging for ConfigEntryNotReady automatically
         raise ConfigEntryNotReady(f"Failed to fetch data: {err}") from err
 
     # Store runtime data

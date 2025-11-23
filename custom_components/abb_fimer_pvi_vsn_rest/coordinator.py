@@ -82,23 +82,19 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             return data  # noqa: TRY300
 
         except VSNAuthenticationError as err:
-            # Authentication errors are likely configuration issues
-            _LOGGER.error("Authentication failed: %s", err)
+            # Authentication errors - coordinator handles logging automatically
             raise UpdateFailed(f"Authentication failed: {err}") from err
 
         except VSNConnectionError as err:
-            # Connection errors might be temporary (device offline, network issues)
-            _LOGGER.warning("Connection error: %s", err)
+            # Connection errors (device offline, network issues) - coordinator handles logging
             raise UpdateFailed(f"Connection error: {err}") from err
 
         except VSNClientError as err:
-            # Generic client errors
-            _LOGGER.error("Client error: %s", err)
+            # Generic client errors - coordinator handles logging automatically
             raise UpdateFailed(f"Client error: {err}") from err
 
         except Exception as err:
-            # Catch-all for unexpected errors
-            _LOGGER.exception("Unexpected error during data update")
+            # Unexpected errors - coordinator handles logging automatically
             raise UpdateFailed(f"Unexpected error: {err}") from err
 
     async def async_shutdown(self) -> None:
