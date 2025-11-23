@@ -99,6 +99,9 @@ async def test_client(base_url: str, username: str = "guest", password: str = ""
 
     Args:
         base_url: Base URL of the VSN device (e.g., http://192.168.1.100)
+        username: Authentication username (default: "guest")
+        password: Authentication password (default: empty)
+        timeout: Request timeout in seconds (default: 10)
 
     """
     _LOGGER.info("=" * 80)
