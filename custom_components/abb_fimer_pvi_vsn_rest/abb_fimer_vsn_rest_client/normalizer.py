@@ -35,8 +35,10 @@ A_TO_MA_POINTS = {
 # Temperature correction registry: Points with incorrect scale factor
 # Some ABB/FIMER inverters report cabinet temperature with SF=-1 instead of SF=-2
 # Detected when temperature exceeds reasonable threshold (70°C)
+# Note: M101 (single-phase) and M103 (three-phase) have same temperature points
 TEMP_CORRECTION_POINTS = {
-    "m103_1_TmpCab",  # VSN300 - Cabinet Temperature
+    "m103_1_TmpCab",  # VSN300 - Cabinet Temperature (3-phase)
+    "m101_1_TmpCab",  # VSN300 - Cabinet Temperature (1-phase)
     "Temp1",  # VSN700 - Cabinet Temperature
 }
 TEMP_THRESHOLD_CELSIUS = 70  # Temperatures above this are abnormal and need correction
@@ -97,6 +99,34 @@ class VSNDataNormalizer:
 
         await self._mapping_loader.async_load()
         self._loaded = True
+
+    def _normalize_vsn300_point_name(self, point_name: str) -> str:
+        """Normalize VSN300 point names for mapping lookup.
+
+        SunSpec defines M101 (single-phase), M102 (split-phase), and M103 (three-phase)
+        inverter models with identical point definitions. ABB/FIMER VSN300 prefixes
+        points with the model number (m101_1_W, m103_1_W), but they map to the same
+        SunSpec normalized names.
+
+        This normalizes all single-phase (M101) and split-phase (M102) prefixes
+        to three-phase (M103) for consistent mapping lookup.
+
+        Args:
+            point_name: VSN300 REST API point name (e.g., "m101_1_W")
+
+        Returns:
+            Normalized point name (e.g., "m103_1_W") or original if no normalization needed
+
+        """
+        if point_name.startswith(("m101_", "m102_")):
+            normalized = "m103_" + point_name[5:]
+            _LOGGER.debug(
+                "Normalized VSN300 point name: %s → %s (SunSpec model equivalence)",
+                point_name,
+                normalized,
+            )
+            return normalized
+        return point_name
 
     def _apply_value_transformations(
         self, point_name: str, point_value: Any
@@ -275,7 +305,9 @@ class VSNDataNormalizer:
 
                 # Look up mapping based on VSN model
                 if self.vsn_model == "VSN300":
-                    mapping = self._mapping_loader.get_by_vsn300(point_name)
+                    # Normalize for SunSpec model equivalence (M101/M102 → M103)
+                    lookup_name = self._normalize_vsn300_point_name(point_name)
+                    mapping = self._mapping_loader.get_by_vsn300(lookup_name)
                 else:  # VSN700
                     mapping = self._mapping_loader.get_by_vsn700(point_name)
 
