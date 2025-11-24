@@ -1,11 +1,4 @@
-#!/usr/bin/env python3
-"""Generate complete French translations from English source."""
-
-import json
-from pathlib import Path
-
-# Complete French translation mappings
-# Preserving technical terms where appropriate (AC, DC, WiFi, MPPT, etc.)
+"""French translation dictionary."""
 
 TRANSLATIONS = {
     # Exact phrases (highest priority - complete sensor names)
@@ -210,56 +203,3 @@ TRANSLATIONS = {
     "Fw Version": "Version Fw",
     "Connection": "Connexion",
 }
-
-
-def translate(text: str) -> str:
-    """Translate English text to French using the translation map."""
-    result = text
-
-    # Sort by length (longest first) to avoid partial replacements
-    for english in sorted(TRANSLATIONS.keys(), key=len, reverse=True):
-        french = TRANSLATIONS[english]
-        result = result.replace(english, french)
-
-    return result
-
-
-def main():
-    """Generate complete French translations from English."""
-
-    # Load English translations
-    en_file = Path("custom_components/abb_fimer_pvi_vsn_rest/translations/en.json")
-    with open(en_file, encoding="utf-8") as f:
-        en_data = json.load(f)
-
-    # Load current French (to preserve config/options sections which are already good)
-    fr_file = Path("custom_components/abb_fimer_pvi_vsn_rest/translations/fr.json")
-    with open(fr_file, encoding="utf-8") as f:
-        fr_data = json.load(f)
-
-    # Translate all sensors from English
-    for key, value in en_data["entity"]["sensor"].items():
-        english_name = value["name"]
-        french_name = translate(english_name)
-        fr_data["entity"]["sensor"][key] = {"name": french_name}
-
-    # Save updated translations
-    with open(fr_file, "w", encoding="utf-8") as f:
-        json.dump(fr_data, f, ensure_ascii=False, indent=2)
-
-    print("✓ French translations updated!")
-    print(f"  Translated {len(en_data['entity']['sensor'])} sensors")
-
-    # Show sample translations
-    print("\nSample translations:")
-    samples = list(en_data["entity"]["sensor"].items())[:15]
-    for key, value in samples:
-        en_name = value["name"]
-        fr_name = fr_data["entity"]["sensor"][key]["name"]
-        print(f"  {key}:")
-        print(f"    EN: {en_name}")
-        print(f"    FR: {fr_name}")
-
-
-if __name__ == "__main__":
-    main()

@@ -1,11 +1,4 @@
-#!/usr/bin/env python3
-"""Generate complete Finnish translations from English source."""
-
-import json
-from pathlib import Path
-
-# Complete Finnish translation mappings
-# Preserving technical terms where appropriate (AC, DC, WiFi, MPPT, etc.)
+"""Finnish translation dictionary."""
 
 TRANSLATIONS = {
     # Exact phrases (highest priority - complete sensor names)
@@ -210,56 +203,3 @@ TRANSLATIONS = {
     "Fw Version": "Fw Versio",
     "Connection": "Yhteys",
 }
-
-
-def translate(text: str) -> str:
-    """Translate English text to Finnish using the translation map."""
-    result = text
-
-    # Sort by length (longest first) to avoid partial replacements
-    for english in sorted(TRANSLATIONS.keys(), key=len, reverse=True):
-        finnish = TRANSLATIONS[english]
-        result = result.replace(english, finnish)
-
-    return result
-
-
-def main():
-    """Generate complete Finnish translations from English."""
-
-    # Load English translations
-    en_file = Path("custom_components/abb_fimer_pvi_vsn_rest/translations/en.json")
-    with open(en_file, encoding="utf-8") as f:
-        en_data = json.load(f)
-
-    # Load current Finnish (to preserve config/options sections which are already good)
-    fi_file = Path("custom_components/abb_fimer_pvi_vsn_rest/translations/fi.json")
-    with open(fi_file, encoding="utf-8") as f:
-        fi_data = json.load(f)
-
-    # Translate all sensors from English
-    for key, value in en_data["entity"]["sensor"].items():
-        english_name = value["name"]
-        finnish_name = translate(english_name)
-        fi_data["entity"]["sensor"][key] = {"name": finnish_name}
-
-    # Save updated translations
-    with open(fi_file, "w", encoding="utf-8") as f:
-        json.dump(fi_data, f, ensure_ascii=False, indent=2)
-
-    print("✓ Finnish translations updated!")
-    print(f"  Translated {len(en_data['entity']['sensor'])} sensors")
-
-    # Show sample translations
-    print("\nSample translations:")
-    samples = list(en_data["entity"]["sensor"].items())[:15]
-    for key, value in samples:
-        en_name = value["name"]
-        fi_name = fi_data["entity"]["sensor"][key]["name"]
-        print(f"  {key}:")
-        print(f"    EN: {en_name}")
-        print(f"    FI: {fi_name}")
-
-
-if __name__ == "__main__":
-    main()

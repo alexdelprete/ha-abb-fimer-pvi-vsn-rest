@@ -1,11 +1,4 @@
-#!/usr/bin/env python3
-"""Generate complete Norwegian Bokmål translations from English source."""
-
-import json
-from pathlib import Path
-
-# Complete Norwegian Bokmål translation mappings
-# Preserving technical terms where appropriate (AC, DC, WiFi, MPPT, etc.)
+"""Norwegian Bokmål translation dictionary."""
 
 TRANSLATIONS = {
     # Exact phrases (highest priority - complete sensor names)
@@ -210,56 +203,3 @@ TRANSLATIONS = {
     "Fw Version": "Fw Versjon",
     "Connection": "Tilkobling",
 }
-
-
-def translate(text: str) -> str:
-    """Translate English text to Norwegian Bokmål using the translation map."""
-    result = text
-
-    # Sort by length (longest first) to avoid partial replacements
-    for english in sorted(TRANSLATIONS.keys(), key=len, reverse=True):
-        norwegian = TRANSLATIONS[english]
-        result = result.replace(english, norwegian)
-
-    return result
-
-
-def main():
-    """Generate complete Norwegian Bokmål translations from English."""
-
-    # Load English translations
-    en_file = Path("custom_components/abb_fimer_pvi_vsn_rest/translations/en.json")
-    with open(en_file, encoding="utf-8") as f:
-        en_data = json.load(f)
-
-    # Load current Norwegian (to preserve config/options sections which are already good)
-    nb_file = Path("custom_components/abb_fimer_pvi_vsn_rest/translations/nb.json")
-    with open(nb_file, encoding="utf-8") as f:
-        nb_data = json.load(f)
-
-    # Translate all sensors from English
-    for key, value in en_data["entity"]["sensor"].items():
-        english_name = value["name"]
-        norwegian_name = translate(english_name)
-        nb_data["entity"]["sensor"][key] = {"name": norwegian_name}
-
-    # Save updated translations
-    with open(nb_file, "w", encoding="utf-8") as f:
-        json.dump(nb_data, f, ensure_ascii=False, indent=2)
-
-    print("✓ Norwegian Bokmål translations updated!")
-    print(f"  Translated {len(en_data['entity']['sensor'])} sensors")
-
-    # Show sample translations
-    print("\nSample translations:")
-    samples = list(en_data["entity"]["sensor"].items())[:15]
-    for key, value in samples:
-        en_name = value["name"]
-        nb_name = nb_data["entity"]["sensor"][key]["name"]
-        print(f"  {key}:")
-        print(f"    EN: {en_name}")
-        print(f"    NB: {nb_name}")
-
-
-if __name__ == "__main__":
-    main()
