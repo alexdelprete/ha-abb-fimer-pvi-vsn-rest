@@ -1,5 +1,72 @@
 # Development Notes - ha-abb-fimer-pvi-vsn-rest
 
+## 2025-11-24: Translation Scripts Consolidation
+
+### Summary
+
+Consolidated 9 duplicate translation scripts into a unified modular structure.
+
+### Problem
+
+The original translation scripts (`generate_complete_*.py`) had 96-97% code duplication:
+
+- 9 separate scripts (~265 lines each = ~2,385 lines total)
+- Only the translation dictionary differed between scripts
+- Maintenance required updating 9 files for any logic change
+
+### Solution
+
+Created a modular structure with:
+
+1. **Unified CLI tool**: `scripts/generate-translations/generate_translations.py`
+2. **Language dictionaries**: `scripts/generate-translations/translation_dictionaries/*.py`
+
+### New Structure
+
+```text
+scripts/generate-translations/
+├── __init__.py
+├── generate_translations.py          # Unified CLI (~150 lines)
+└── translation_dictionaries/
+    ├── __init__.py
+    ├── de.py   # German (~200 terms)
+    ├── es.py   # Spanish
+    ├── et.py   # Estonian
+    ├── fi.py   # Finnish
+    ├── fr.py   # French
+    ├── it.py   # Italian
+    ├── nb.py   # Norwegian Bokmål
+    ├── pt.py   # Portuguese
+    └── sv.py   # Swedish
+```
+
+### Usage
+
+```bash
+# Generate all languages
+python scripts/generate-translations/generate_translations.py --all
+
+# Generate single language
+python scripts/generate-translations/generate_translations.py --language de
+
+# List available languages
+python scripts/generate-translations/generate_translations.py --list
+```
+
+### Benefits
+
+- **85% code reduction**: ~2,385 lines → ~350 lines
+- **Single source of truth**: One translation logic file
+- **Easy language additions**: Just add a dictionary file
+- **Consistent CLI**: Same interface for all languages
+
+### Files Modified
+
+- **Deleted**: 9 `scripts/generate_complete_*.py` files
+- **Created**: `scripts/generate-translations/` folder structure
+
+---
+
 ## 2025-11-24: v1.2.0 Breaking Change - Entity ID Fix for "Since Restart" Sensors
 
 ### Summary

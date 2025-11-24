@@ -213,13 +213,52 @@ Once integrated, users can:
 - **Other languages**: Use English text for config/options (can be translated later if needed)
 - Sensor translations are complete and professional in all languages
 
+### Translation Script Architecture
+
+Translation files are generated using a unified script with modular language dictionaries:
+
+```text
+scripts/generate-translations/
+├── generate_translations.py          # Unified CLI tool
+└── translation_dictionaries/
+    ├── de.py   # German (~200 terms)
+    ├── es.py   # Spanish
+    ├── et.py   # Estonian
+    ├── fi.py   # Finnish
+    ├── fr.py   # French
+    ├── it.py   # Italian
+    ├── nb.py   # Norwegian Bokmål
+    ├── pt.py   # Portuguese
+    └── sv.py   # Swedish
+```
+
+**Usage:**
+
+```bash
+# Generate all languages
+python scripts/generate-translations/generate_translations.py --all
+
+# Generate single language
+python scripts/generate-translations/generate_translations.py --language de
+
+# List available languages
+python scripts/generate-translations/generate_translations.py --list
+```
+
 ### Future Maintenance
 
 To add new sensors or update translations:
 
 1. Update `vsn-sunspec-point-mapping.json` with new sensors
-2. Regenerate translation files using the same pattern-based approach
-3. Review and adjust any complex composite terms manually if needed
+2. Add any new terms to the appropriate dictionary in `translation_dictionaries/`
+3. Run `python scripts/generate-translations/generate_translations.py --all`
+4. Review and adjust any complex composite terms manually if needed
+
+To add a new language:
+
+1. Create a new dictionary file (e.g., `translation_dictionaries/nl.py`) with `TRANSLATIONS` dict
+2. Add the language to `LANGUAGE_CONFIG` in `generate_translations.py`
+3. Run the generator with `--language nl`
 
 ---
 

@@ -1171,6 +1171,8 @@ No external libraries for Modbus or SunSpec - we implement what we need.
 - `scripts/apply_mapping_fixes.py`: Apply automated fixes to mappings
 - `scripts/vsn-rest-client/vsn_rest_client.py`: Standalone test client
 - `scripts/test_vsn_client.py`: Integration test script
+- `scripts/generate-translations/generate_translations.py`: Unified translation file generator
+- `scripts/generate-translations/translation_dictionaries/*.py`: Language-specific translation dictionaries
 
 **Documentation:**
 
