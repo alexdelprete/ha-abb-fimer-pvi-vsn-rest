@@ -40,10 +40,11 @@ def load_translation_dict(lang_code: str) -> dict[str, str]:
     """Load translation dictionary for a language."""
     try:
         module = importlib.import_module(f"translation_dictionaries.{lang_code}")
-        return module.TRANSLATIONS
     except ImportError as e:
         print(f"✗ Failed to load dictionary for {lang_code}: {e}")
         sys.exit(1)
+    else:
+        return module.TRANSLATIONS
 
 
 def translate(text: str, translations: dict[str, str]) -> str:

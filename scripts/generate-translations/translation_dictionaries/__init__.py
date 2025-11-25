@@ -1,2 +1,1 @@
-# Translation dictionaries for sensor names
-# Each language module exports a TRANSLATIONS dict mapping English -> translated text
+"""Language-specific translation dictionaries for sensor display names."""

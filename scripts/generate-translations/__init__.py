@@ -1,1 +1,1 @@
-# Translation generation scripts for ha-abb-fimer-pvi-vsn-rest
+"""Translation generation scripts for ha-abb-fimer-pvi-vsn-rest."""
