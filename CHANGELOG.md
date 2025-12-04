@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 **This release fixes setup failures for VSN devices that have authentication disabled.**
 
+Thanks to **@wannabuy** for reporting this in [Issue #25](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/issues/25).
+
 **Problem**: Users with unauthenticated VSN devices could not complete integration setup. Error message:
 `Client error: Expected 401 response for detection, got 200`
 
