@@ -296,18 +296,17 @@ async def detect_vsn_model(
     password: str,
     timeout: int = 10,
 ) -> str:
-    """Detect VSN model by examining WWW-Authenticate header.
+    """Detect VSN model by examining response and data structure.
 
-    Makes an unauthenticated request to /v1/status and examines the 401 response's
-    WWW-Authenticate header to determine device type:
-    - VSN300: Contains "x-digest" or "digest"
-    - VSN700: Contains "basic"
+    Detection methods (in order of preference):
+    1. If 401: Examine WWW-Authenticate header (digest = VSN300, basic = VSN700)
+    2. If 200: Analyze status data structure to determine model
 
     Args:
         session: aiohttp client session
         base_url: Base URL of the VSN device
-        username: Username for authentication (not used for detection)
-        password: Password for authentication (not used for detection)
+        username: Username for authentication (used for VSN700 preemptive auth)
+        password: Password for authentication (used for VSN700 preemptive auth)
         timeout: Request timeout in seconds
 
     Returns:
@@ -428,14 +427,33 @@ async def detect_vsn_model(
                         f"Device authentication connection failed: {auth_err}"
                     ) from auth_err
 
-            # Got non-401 response
+            elif response.status == 200:
+                # No authentication required - detect model from status data structure
+                _LOGGER.info(
+                    "[VSN Detection] No authentication required (HTTP 200). "
+                    "Detecting model from status data structure."
+                )
+
+                try:
+                    status_data = await response.json()
+                    return _detect_model_from_status(status_data)
+                except Exception as parse_err:
+                    _LOGGER.error(
+                        "[VSN Detection] Failed to parse status response: %s",
+                        parse_err,
+                    )
+                    raise VSNDetectionError(
+                        f"Failed to parse status response: {parse_err}"
+                    ) from parse_err
+
+            # Got unexpected response status
             _LOGGER.error(
-                "[VSN Detection] Expected 401 response for detection, got %d. Headers: %s",
+                "[VSN Detection] Unexpected response status %d. Headers: %s",
                 response.status,
                 dict(response.headers),
             )
             raise VSNDetectionError(
-                f"Expected 401 response for detection, got {response.status}"
+                f"Unexpected response status {response.status} during detection"
             )
     except aiohttp.ClientError as err:
         _LOGGER.debug(
@@ -444,6 +462,86 @@ async def detect_vsn_model(
             type(err).__name__,
         )
         raise VSNConnectionError(f"Device detection connection error: {err}") from err
+
+
+def _detect_model_from_status(status_data: dict) -> str:
+    """Detect VSN model from status data structure.
+
+    VSN300 status has:
+    - keys.logger.sn (serial number like "111033-3N16-1421")
+    - keys.logger.board_model = "WIFI LOGGER CARD"
+    - Many keys including device info, firmware, etc.
+
+    VSN700 status has:
+    - keys.logger.loggerId (MAC address like "ac:1f:0f:b0:50:b5")
+    - Minimal keys (usually just loggerId)
+
+    Args:
+        status_data: Parsed status JSON response
+
+    Returns:
+        "VSN300" or "VSN700"
+
+    Raises:
+        VSNDetectionError: If model cannot be determined
+
+    """
+    keys = status_data.get("keys", {})
+
+    # Check for VSN300 indicators
+    logger_sn = keys.get("logger.sn", {}).get("value", "")
+    board_model = keys.get("logger.board_model", {}).get("value", "")
+
+    if board_model == "WIFI LOGGER CARD":
+        _LOGGER.info(
+            "[VSN Detection] Detected VSN300 (board_model='WIFI LOGGER CARD')"
+        )
+        return "VSN300"
+
+    # VSN300 serial number format: XXXXXX-XXXX-XXXX (digits and dashes)
+    if logger_sn and re.match(r"^\d{6}-\w{4}-\d{4}$", logger_sn):
+        _LOGGER.info(
+            "[VSN Detection] Detected VSN300 (serial number format: %s)",
+            logger_sn,
+        )
+        return "VSN300"
+
+    # Check for VSN700 indicators
+    logger_id = keys.get("logger.loggerId", {}).get("value", "")
+
+    # VSN700 loggerId is a MAC address format: xx:xx:xx:xx:xx:xx
+    if logger_id and re.match(r"^([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$", logger_id):
+        _LOGGER.info(
+            "[VSN Detection] Detected VSN700 (MAC address format: %s)",
+            logger_id,
+        )
+        return "VSN700"
+
+    # Fallback: VSN300 typically has many more keys than VSN700
+    if len(keys) > 10:
+        _LOGGER.info(
+            "[VSN Detection] Detected VSN300 (rich status data with %d keys)",
+            len(keys),
+        )
+        return "VSN300"
+
+    if len(keys) <= 3:
+        _LOGGER.info(
+            "[VSN Detection] Detected VSN700 (minimal status data with %d keys)",
+            len(keys),
+        )
+        return "VSN700"
+
+    # Cannot determine model
+    _LOGGER.error(
+        "[VSN Detection] Could not determine VSN model from status data. "
+        "Keys found: %s",
+        list(keys.keys()),
+    )
+    raise VSNDetectionError(
+        "Could not determine VSN model from status data. "
+        "Enable debug logging for details."
+    )
 
 
 def get_vsn700_basic_auth(username: str, password: str) -> str:
