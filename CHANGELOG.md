@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.1] - 2025-12-04
+
+### Bug Fix: Support for Devices Without Authentication
+
+**This release fixes setup failures for VSN devices that have authentication disabled.**
+
+**Problem**: Users with unauthenticated VSN devices could not complete integration setup. Error message:
+`Client error: Expected 401 response for detection, got 200`
+
+**Root Cause**: The `detect_vsn_model()` function only handled HTTP 401 responses for model detection.
+When a device returns HTTP 200 (no authentication required), detection failed.
+
+**Fix Applied**:
+
+- Added HTTP 200 response handling in `detect_vsn_model()`
+- Added new helper function `_detect_model_from_status()` that analyzes status data structure
+- VSN300 detection: `logger.board_model = "WIFI LOGGER CARD"`, serial format `XXXXXX-XXXX-XXXX`, or many keys (>10)
+- VSN700 detection: `logger.loggerId` in MAC format, or few keys (<=3)
+
+**Refactoring**: Consolidated 9 duplicate translation scripts (96% code duplication) into modular structure under `scripts/generate-translations/`.
+
+**See**: [v1.2.1 Release Notes](docs/releases/v1.2.1.md)
+
 ## [1.2.0] - 2025-11-23
 
 ### BREAKING CHANGE: Fix Incorrect Entity IDs for "Since Restart" Energy Sensors
