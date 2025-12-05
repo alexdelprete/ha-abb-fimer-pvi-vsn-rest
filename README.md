@@ -90,6 +90,10 @@ The integration will:
 After setup, click **"Configure"** on the integration card to adjust:
 
 - **Scan Interval**: How often to poll data (default: 60 seconds, range: 30-600)
+- **Custom Device Names**: Set custom names for each device type (inverter, datalogger, meter, battery)
+- **Regenerate Entity IDs**: Option to update entity IDs to match new device names (use with caution!)
+
+See [Custom Device Names](#custom-device-names) below for details on customizing device names.
 
 ### Reconfiguration
 
@@ -135,6 +139,40 @@ The integration uses Home Assistant's modern entity naming pattern (`has_entity_
 - Entity IDs are stable and won't change once created
 - Friendly names make entities easy to identify in the UI
 - Device page groups all entities by device for easy management
+
+### Custom Device Names
+
+You can customize device names for each device type through the integration options. This is useful if you want
+shorter, friendlier names for your devices.
+
+**To configure custom names**:
+
+1. Go to **Settings** → **Devices & Services**
+2. Find the **ABB/FIMER PVI VSN REST** integration card
+3. Click **Configure**
+4. Enter custom names for any device type you want to customize
+5. Leave fields empty to keep default naming
+
+**Example**:
+
+| Setting | Device Name | Entity ID Example |
+|---------|-------------|-------------------|
+| **No prefix (default)** | `Power-One Inverter PVI-10.0-OUTD (077909-3G82-3112)` | `sensor.power_one_inverter_pvi_...` |
+| **Custom: "Solar Inverter"** | `Solar Inverter` | `sensor.solar_inverter_power_ac` |
+
+**Dynamic Options Form**: The configuration only shows prefix fields for device types that were actually discovered.
+For example, if you only have an inverter and datalogger, you won't see fields for meter or battery.
+
+**Entity ID Behavior**:
+
+| Action | Entity ID | Automations |
+|--------|-----------|-------------|
+| Change device name only | **Preserved** | Keep working ✅ |
+| Change name + check "Regenerate entity IDs" | **Updated** | **Will break** ⚠️ |
+
+**⚠️ Warning**: The "Regenerate entity IDs" checkbox will update all entity IDs to match new device names.
+This **will break** existing automations, scripts, and dashboards that reference these entities.
+Only use this option if you understand the implications and are prepared to update your automations.
 
 ### Supported Languages
 
