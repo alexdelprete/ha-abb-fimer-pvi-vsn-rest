@@ -40,13 +40,23 @@
   "options": {
     "step": {
       "init": {
-        "title": "ABB/FIMER PVI VSN REST Options",
-        "description": "Configure update interval for data polling.",
+        "title": "Options ABB/FIMER PVI VSN REST",
+        "description": "Configurez l'intervalle de mise à jour et les préfixes de noms d'appareils personnalisés.\n\nLaissez les champs de préfixe vides pour utiliser la dénomination par défaut.",
         "data": {
-          "scan_interval": "Scan interval (seconds)"
+          "scan_interval": "Intervalle de balayage (secondes)",
+          "prefix_inverter": "Nom de l'appareil onduleur",
+          "prefix_datalogger": "Nom de l'appareil datalogger",
+          "prefix_meter": "Nom de l'appareil compteur",
+          "prefix_battery": "Nom de l'appareil batterie",
+          "regenerate_entity_ids": "Régénérer les IDs d'entités"
         },
         "data_description": {
-          "scan_interval": "How often to fetch data from the VSN device. Range: 30-600 seconds. Default: 60 seconds."
+          "scan_interval": "Fréquence de récupération des données du périphérique VSN. Plage: 30-600 secondes. Par défaut: 60 secondes.",
+          "prefix_inverter": "Nom personnalisé pour les appareils onduleurs. Laisser vide pour la valeur par défaut (e.g., 'Puissance-One Onduleur PVI-10.0-OUTD (077909-3G82-3112)').",
+          "prefix_datalogger": "Nom personnalisé pour les appareils datalogger. Laisser vide pour la valeur par défaut.",
+          "prefix_meter": "Nom personnalisé pour les appareils compteurs. Laisser vide pour la valeur par défaut.",
+          "prefix_battery": "Nom personnalisé pour les appareils batteries. Laisser vide pour la valeur par défaut.",
+          "regenerate_entity_ids": "⚠️ AVERTISSEMENT: Mettre à jour tous les IDs d'entités pour correspondre aux nouveaux noms d'appareils. Cela VA CASSER les automatisations, scripts et tableaux de bord existants qui font référence à ces entités!"
         }
       }
     }
@@ -204,10 +214,10 @@
         "name": "Énergie AC - Absorbée (Depuis Redémarrage)"
       },
       "e2_last_month": {
-        "name": "Énergie AC Apparente - (Courant Month)"
+        "name": "Énergie AC - Apparente (Courant Month)"
       },
       "e2_last_week": {
-        "name": "Énergie AC Apparente - (Courant Week)"
+        "name": "Énergie AC - Apparente (Courant Week)"
       },
       "e2_lifetime": {
         "name": "Énergie AC Apparente - (Depuis Redémarrage)"
@@ -342,16 +352,16 @@
         "name": "Énergie AC - Absorbée Total"
       },
       "e_total_apparent": {
-        "name": "Énergie AC Apparente - Total"
+        "name": "Énergie AC - Apparente (Total)"
       },
       "ein": {
         "name": "Énergie DC - PV Total"
       },
       "ein1": {
-        "name": "Énergie DC (Chaîne 1) - Total"
+        "name": "Énergie DC - Chaîne 1 (Total)"
       },
       "ein2": {
-        "name": "Énergie DC (Chaîne 2) - Total"
+        "name": "Énergie DC - Chaîne 2 (Total)"
       },
       "ein_last_month": {
         "name": "Énergie DC - PV (Courant Month)"
@@ -633,10 +643,10 @@
         "name": "Numéro produit"
       },
       "power_peak_abs": {
-        "name": "Puissance - Crête Total"
+        "name": "Puissance - Crête (Total)"
       },
       "power_peak_today": {
-        "name": "Puissance - Crête Aujourd'hui"
+        "name": "Puissance - Crête (Aujourd'hui)"
       },
       "ppeak": {
         "name": "Puissance - Crête"
@@ -741,7 +751,7 @@
         "name": "Flags Avertissement"
       },
       "watthours": {
-        "name": "Énergie AC - Total"
+        "name": "Énergie AC - Produite (Total)"
       },
       "watts": {
         "name": "Puissance AC"
@@ -790,6 +800,51 @@
       },
       "year_wh": {
         "name": "Énergie AC - Produite (Courant Year)"
+      },
+      "e1_since_restart": {
+        "name": "Énergie AC - Absorbée (Depuis Redémarrage)"
+      },
+      "e_discharge_since_restart": {
+        "name": "Énergie - Décharge Batterie (Depuis Redémarrage)"
+      },
+      "e4_since_restart": {
+        "name": "Énergie - Self-Consumed (Depuis Redémarrage)"
+      },
+      "e15_since_restart": {
+        "name": "Énergie AC - Sortie Secours (Depuis Redémarrage)"
+      },
+      "e3_since_restart": {
+        "name": "Énergie AC - Réseau Exportation (Depuis Redémarrage)"
+      },
+      "e2_since_restart": {
+        "name": "Énergie AC - Apparente (Depuis Redémarrage)"
+      },
+      "e5_since_restart": {
+        "name": "Énergie - Charge Batterie (Depuis Redémarrage)"
+      },
+      "e6_since_restart": {
+        "name": "Énergie - Maison depuis Onduleur (Depuis Redémarrage)"
+      },
+      "e_charge_since_restart": {
+        "name": "Énergie - Charge Batterie (Depuis Redémarrage)"
+      },
+      "ein_since_restart": {
+        "name": "Énergie DC - PV (Depuis Redémarrage)"
+      },
+      "e_tot_discharge_since_restart": {
+        "name": "Énergie - Décharge Batterie Total (Depuis Redémarrage)"
+      },
+      "e8_since_restart": {
+        "name": "Énergie AC - Réseau Importation (Depuis Redémarrage)"
+      },
+      "e0_since_restart": {
+        "name": "Énergie AC - Produite (Depuis Redémarrage)"
+      },
+      "e7_since_restart": {
+        "name": "Énergie - Maison Consommation (Depuis Redémarrage)"
+      },
+      "e_tot_charge_since_restart": {
+        "name": "Énergie - Charge Batterie Total (Depuis Redémarrage)"
       }
     }
   }

@@ -41,12 +41,22 @@
     "step": {
       "init": {
         "title": "Opzioni ABB/FIMER PVI VSN REST",
-        "description": "Configura l'intervallo di aggiornamento per il polling dei dati.",
+        "description": "Configura l'intervallo di aggiornamento e i prefissi personalizzati per i nomi dei dispositivi.\n\nLascia i campi prefisso vuoti per usare la denominazione predefinita.",
         "data": {
-          "scan_interval": "Intervallo di scansione (secondi)"
+          "scan_interval": "Intervallo di scansione (secondi)",
+          "prefix_inverter": "Nome dispositivo inverter",
+          "prefix_datalogger": "Nome dispositivo datalogger",
+          "prefix_meter": "Nome dispositivo contatore",
+          "prefix_battery": "Nome dispositivo batteria",
+          "regenerate_entity_ids": "Rigenera gli ID entità"
         },
         "data_description": {
-          "scan_interval": "Frequenza di recupero dati dal dispositivo VSN. Intervallo: 30-600 secondi. Predefinito: 60 secondi."
+          "scan_interval": "Frequenza di recupero dati dal dispositivo VSN. Intervallo: 30-600 secondi. Predefinito: 60 secondi.",
+          "prefix_inverter": "Nome personalizzato per i dispositivi inverter. Lascia vuoto per il valore predefinito (e.g., 'Potenza-One Inverter PVI-10.0-OUTD (077909-3G82-3112)').",
+          "prefix_datalogger": "Nome personalizzato per i dispositivi datalogger. Lascia vuoto per il valore predefinito.",
+          "prefix_meter": "Nome personalizzato per i dispositivi contatore. Lascia vuoto per il valore predefinito.",
+          "prefix_battery": "Nome personalizzato per i dispositivi batteria. Lascia vuoto per il valore predefinito.",
+          "regenerate_entity_ids": "⚠️ ATTENZIONE: Aggiorna tutti gli ID entità per corrispondere ai nuovi nomi dispositivo. Questo ROMPERÀ le automazioni, gli script e le dashboard esistenti che fanno riferimento a queste entità!"
         }
       }
     }
@@ -204,10 +214,10 @@
         "name": "Energia AC - Assorbita (Dal Riavvio)"
       },
       "e2_last_month": {
-        "name": "Energia AC Apparente - (Corrente Month)"
+        "name": "Energia AC - Apparente (Corrente Month)"
       },
       "e2_last_week": {
-        "name": "Energia AC Apparente - (Corrente Week)"
+        "name": "Energia AC - Apparente (Corrente Week)"
       },
       "e2_lifetime": {
         "name": "Energia AC Apparente - (Dal Riavvio)"
@@ -342,16 +352,16 @@
         "name": "Energia AC - Assorbita Totale"
       },
       "e_total_apparent": {
-        "name": "Energia AC Apparente - Totale"
+        "name": "Energia AC - Apparente (Totale)"
       },
       "ein": {
         "name": "Energia DC - PV Totale"
       },
       "ein1": {
-        "name": "Energia DC (Stringa 1) - Totale"
+        "name": "Energia DC - Stringa 1 (Totale)"
       },
       "ein2": {
-        "name": "Energia DC (Stringa 2) - Totale"
+        "name": "Energia DC - Stringa 2 (Totale)"
       },
       "ein_last_month": {
         "name": "Energia DC - PV (Corrente Month)"
@@ -633,10 +643,10 @@
         "name": "Codice prodotto"
       },
       "power_peak_abs": {
-        "name": "Potenza - Picco Totale"
+        "name": "Potenza - Picco (Totale)"
       },
       "power_peak_today": {
-        "name": "Potenza - Picco Oggi"
+        "name": "Potenza - Picco (Oggi)"
       },
       "ppeak": {
         "name": "Potenza - Picco"
@@ -741,7 +751,7 @@
         "name": "Flag Avviso"
       },
       "watthours": {
-        "name": "Energia AC - Totale"
+        "name": "Energia AC - Prodotta (Totale)"
       },
       "watts": {
         "name": "Potenza AC"
@@ -790,6 +800,51 @@
       },
       "year_wh": {
         "name": "Energia AC - Prodotta (Corrente Year)"
+      },
+      "e1_since_restart": {
+        "name": "Energia AC - Assorbita (Dal Riavvio)"
+      },
+      "e_discharge_since_restart": {
+        "name": "Energia - Scarica Batteria (Dal Riavvio)"
+      },
+      "e4_since_restart": {
+        "name": "Energia - Self-Consumed (Dal Riavvio)"
+      },
+      "e15_since_restart": {
+        "name": "Energia AC - Uscita Backup (Dal Riavvio)"
+      },
+      "e3_since_restart": {
+        "name": "Energia AC - Rete Esportazione (Dal Riavvio)"
+      },
+      "e2_since_restart": {
+        "name": "Energia AC - Apparente (Dal Riavvio)"
+      },
+      "e5_since_restart": {
+        "name": "Energia - Carica Batteria (Dal Riavvio)"
+      },
+      "e6_since_restart": {
+        "name": "Energia - Casa da Inverter (Dal Riavvio)"
+      },
+      "e_charge_since_restart": {
+        "name": "Energia - Carica Batteria (Dal Riavvio)"
+      },
+      "ein_since_restart": {
+        "name": "Energia DC - PV (Dal Riavvio)"
+      },
+      "e_tot_discharge_since_restart": {
+        "name": "Energia - Scarica Batteria Total (Dal Riavvio)"
+      },
+      "e8_since_restart": {
+        "name": "Energia AC - Rete Importazione (Dal Riavvio)"
+      },
+      "e0_since_restart": {
+        "name": "Energia AC - Prodotta (Dal Riavvio)"
+      },
+      "e7_since_restart": {
+        "name": "Energia - Casa Consumo (Dal Riavvio)"
+      },
+      "e_tot_charge_since_restart": {
+        "name": "Energia - Carica Batteria Total (Dal Riavvio)"
       }
     }
   }

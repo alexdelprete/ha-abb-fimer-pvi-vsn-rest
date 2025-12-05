@@ -17,6 +17,7 @@ Usage:
 """
 
 import argparse
+import copy
 import importlib
 import json
 import sys
@@ -59,6 +60,39 @@ def translate(text: str, translations: dict[str, str]) -> str:
     return result
 
 
+def translate_options_section(
+    options_data: dict, translations_dict: dict[str, str]
+) -> int:
+    """Translate the options section in-place.
+
+    Returns count of translated strings.
+    """
+    count = 0
+    init_step = options_data.get("step", {}).get("init", {})
+
+    # Translate title
+    if "title" in init_step:
+        init_step["title"] = translate(init_step["title"], translations_dict)
+        count += 1
+
+    # Translate description
+    if "description" in init_step:
+        init_step["description"] = translate(init_step["description"], translations_dict)
+        count += 1
+
+    # Translate data labels
+    for key, value in init_step.get("data", {}).items():
+        init_step["data"][key] = translate(value, translations_dict)
+        count += 1
+
+    # Translate data descriptions
+    for key, value in init_step.get("data_description", {}).items():
+        init_step["data_description"][key] = translate(value, translations_dict)
+        count += 1
+
+    return count
+
+
 def generate_translations(lang_code: str, lang_name: str) -> bool:
     """Generate translations for a single language.
 
@@ -97,11 +131,19 @@ def generate_translations(lang_code: str, lang_name: str) -> bool:
         lang_data["entity"]["sensor"][key] = {"name": translated_name}
         sensor_count += 1
 
+    # Copy and translate options section from English
+    options_count = 0
+    if "options" in en_data:
+        lang_data["options"] = copy.deepcopy(en_data["options"])
+        options_count = translate_options_section(lang_data["options"], translations_dict)
+
     # Save updated translations
     with open(lang_file, "w", encoding="utf-8") as f:
         json.dump(lang_data, f, ensure_ascii=False, indent=2)
 
-    print(f"✓ {lang_name} ({lang_code}) - {sensor_count} sensors translated")
+    print(
+        f"✓ {lang_name} ({lang_code}) - {sensor_count} sensors, {options_count} options translated"
+    )
     return True
 
 

@@ -40,13 +40,23 @@
   "options": {
     "step": {
       "init": {
-        "title": "ABB/FIMER PVI VSN REST Options",
-        "description": "Configure update interval for data polling.",
+        "title": "ABB/FIMER PVI VSN REST Optionen",
+        "description": "Konfigurieren Sie das Aktualisierungsintervall und benutzerdefinierte Gerätenamenpräfixe.\n\nLassen Sie die Präfixfelder leer, um die Standardbenennung zu verwenden.",
         "data": {
-          "scan_interval": "Scan interval (seconds)"
+          "scan_interval": "Abfrageintervall (Sekunden)",
+          "prefix_inverter": "Wechselrichter Gerätename",
+          "prefix_datalogger": "Datalogger Gerätename",
+          "prefix_meter": "Zähler Gerätename",
+          "prefix_battery": "Batterie Gerätename",
+          "regenerate_entity_ids": "Entitäts-IDs regenerieren"
         },
         "data_description": {
-          "scan_interval": "How often to fetch data from the VSN device. Range: 30-600 seconds. Default: 60 seconds."
+          "scan_interval": "Wie oft Daten vom VSN-Gerät abgerufen werden. Bereich: 30-600 Sekunden. Standard: 60 Sekunden.",
+          "prefix_inverter": "Benutzerdefinierter Name für Wechselrichtergeräte. Leer lassen für Standard (e.g., 'Leistung-One Wechselrichter PVI-10.0-OUTD (077909-3G82-3112)').",
+          "prefix_datalogger": "Benutzerdefinierter Name für Datalogger-Geräte. Leer lassen für Standard.",
+          "prefix_meter": "Benutzerdefinierter Name für Zählergeräte. Leer lassen für Standard.",
+          "prefix_battery": "Benutzerdefinierter Name für Batteriegeräte. Leer lassen für Standard.",
+          "regenerate_entity_ids": "⚠️ WARNUNG: Alle Entitäts-IDs aktualisieren, um den neuen Gerätenamen zu entsprechen. Dies WIRD bestehende Automatisierungen, Skripte und Dashboards UNTERBRECHEN, die auf diese Entitäten verweisen!"
         }
       }
     }
@@ -204,10 +214,10 @@
         "name": "Energie AC - Aufgenommen (Seit Neustart)"
       },
       "e2_last_month": {
-        "name": "Energie AC Scheinleistung - (Strom Month)"
+        "name": "Energie AC - Scheinleistung (Strom Month)"
       },
       "e2_last_week": {
-        "name": "Energie AC Scheinleistung - (Strom Week)"
+        "name": "Energie AC - Scheinleistung (Strom Week)"
       },
       "e2_lifetime": {
         "name": "Energie AC Scheinleistung - (Seit Neustart)"
@@ -342,16 +352,16 @@
         "name": "Energie AC - Aufgenommen Gesamt"
       },
       "e_total_apparent": {
-        "name": "Energie AC Scheinleistung - Gesamt"
+        "name": "Energie AC - Scheinleistung (Gesamt)"
       },
       "ein": {
         "name": "Energie DC - PV Gesamt"
       },
       "ein1": {
-        "name": "Energie DC (String 1) - Gesamt"
+        "name": "Energie DC - String 1 (Gesamt)"
       },
       "ein2": {
-        "name": "Energie DC (String 2) - Gesamt"
+        "name": "Energie DC - String 2 (Gesamt)"
       },
       "ein_last_month": {
         "name": "Energie DC - PV (Strom Month)"
@@ -633,10 +643,10 @@
         "name": "Produktnummer"
       },
       "power_peak_abs": {
-        "name": "Leistung - Spitze Gesamt"
+        "name": "Leistung - Spitze (Gesamt)"
       },
       "power_peak_today": {
-        "name": "Leistung - Spitze Heute"
+        "name": "Leistung - Spitze (Heute)"
       },
       "ppeak": {
         "name": "Leistung - Spitze"
@@ -741,7 +751,7 @@
         "name": "Warnungs Flags"
       },
       "watthours": {
-        "name": "Energie AC - Gesamt"
+        "name": "Energie AC - Erzeugt (Gesamt)"
       },
       "watts": {
         "name": "Leistung AC"
@@ -790,6 +800,51 @@
       },
       "year_wh": {
         "name": "Energie AC - Erzeugt (Strom Year)"
+      },
+      "e1_since_restart": {
+        "name": "Energie AC - Aufgenommen (Seit Neustart)"
+      },
+      "e_discharge_since_restart": {
+        "name": "Energie - Batterieentladung (Seit Neustart)"
+      },
+      "e4_since_restart": {
+        "name": "Energie - Self-Consumed (Seit Neustart)"
+      },
+      "e15_since_restart": {
+        "name": "Energie AC - Backup Ausgang (Seit Neustart)"
+      },
+      "e3_since_restart": {
+        "name": "Energie AC - Netz Export (Seit Neustart)"
+      },
+      "e2_since_restart": {
+        "name": "Energie AC - Scheinleistung (Seit Neustart)"
+      },
+      "e5_since_restart": {
+        "name": "Energie - Batterieladung (Seit Neustart)"
+      },
+      "e6_since_restart": {
+        "name": "Energie - Haus vom Wechselrichter (Seit Neustart)"
+      },
+      "e_charge_since_restart": {
+        "name": "Energie - Batterieladung (Seit Neustart)"
+      },
+      "ein_since_restart": {
+        "name": "Energie DC - PV (Seit Neustart)"
+      },
+      "e_tot_discharge_since_restart": {
+        "name": "Energie - Batterieentladung Total (Seit Neustart)"
+      },
+      "e8_since_restart": {
+        "name": "Energie AC - Netz Import (Seit Neustart)"
+      },
+      "e0_since_restart": {
+        "name": "Energie AC - Erzeugt (Seit Neustart)"
+      },
+      "e7_since_restart": {
+        "name": "Energie - Haus Verbrauch (Seit Neustart)"
+      },
+      "e_tot_charge_since_restart": {
+        "name": "Energie - Batterieladung Total (Seit Neustart)"
       }
     }
   }

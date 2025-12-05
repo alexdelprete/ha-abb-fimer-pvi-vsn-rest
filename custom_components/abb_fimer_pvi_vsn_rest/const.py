@@ -11,7 +11,7 @@ from .abb_fimer_vsn_rest_client import (  # noqa: F401
 )
 
 DOMAIN = "abb_fimer_pvi_vsn_rest"
-VERSION = "1.2.2"
+VERSION = "1.3.0-beta.1"
 
 # Configuration
 CONF_HOST = "host"
@@ -20,6 +20,15 @@ CONF_PASSWORD = "password"
 CONF_SCAN_INTERVAL = "scan_interval"
 CONF_VSN_MODEL = "vsn_model"  # Cached detection result
 CONF_REQUIRES_AUTH = "requires_auth"  # Whether device requires authentication
+
+# Device name prefix options (empty = use default naming)
+CONF_PREFIX_INVERTER = "prefix_inverter"
+CONF_PREFIX_DATALOGGER = "prefix_datalogger"
+CONF_PREFIX_METER = "prefix_meter"
+CONF_PREFIX_BATTERY = "prefix_battery"
+
+# Entity ID regeneration option (one-time action, not persisted)
+CONF_REGENERATE_ENTITY_IDS = "regenerate_entity_ids"
 
 DEFAULT_USERNAME = "guest"
 DEFAULT_SCAN_INTERVAL = 60

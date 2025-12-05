@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0-beta.1] - 2025-12-05
+
+### New Feature: Custom Device Name Prefixes
+
+**This release adds the ability to customize device names for each device type through the integration options.**
+
+Thanks to **@ivanfmartinez** for the feature request in [Issue #19](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/issues/19).
+
+**Features**:
+
+- Custom name prefixes for each device type in Options flow
+- Dynamic options form - only shows prefix fields for discovered device types
+- Optional entity ID regeneration with warning about breaking automations
+- Full translation support for 9 languages (DE, ES, ET, FI, FR, IT, NB, PT, SV)
+
+**How It Works**:
+
+- Leave prefix empty → default naming (e.g., "Power-One Inverter PVI-10.0-OUTD (077909-3G82-3112)")
+- Set custom prefix → completely replaces device name (e.g., "My Solar Inverter")
+- Entity IDs preserved by default (automations keep working)
+- Optional checkbox to regenerate entity IDs (breaks automations)
+
+**See**: [v1.3.0-beta.1 Release Notes](docs/releases/v1.3.0-beta.1.md)
+
 ## [1.2.2] - 2025-12-05
 
 ### Bug Fix: Complete Support for Devices Without Authentication

@@ -18,7 +18,15 @@ from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import AURORA_EPOCH_OFFSET, DOMAIN, STATE_ENTITY_MAPPINGS
+from .const import (
+    AURORA_EPOCH_OFFSET,
+    CONF_PREFIX_BATTERY,
+    CONF_PREFIX_DATALOGGER,
+    CONF_PREFIX_INVERTER,
+    CONF_PREFIX_METER,
+    DOMAIN,
+    STATE_ENTITY_MAPPINGS,
+)
 from .coordinator import ABBFimerPVIVSNRestCoordinator
 
 _LOGGER = logging.getLogger(__name__)
@@ -164,17 +172,20 @@ def _format_device_name(
     device_type_simple: str,
     device_model: str | None,
     device_sn_original: str,
+    custom_prefix: str | None = None,
 ) -> str:
-    """Format user-friendly device name: 'Manufacturer Type Model (Serial)'.
+    """Format user-friendly device name, or use custom prefix if provided.
 
     Args:
         manufacturer: Device manufacturer (e.g., "Power-One", "ABB", "FIMER")
         device_type_simple: Simplified device type (e.g., "inverter", "datalogger")
         device_model: Device model (e.g., "PVI-3.0-TL-OUTD", "VSN300")
         device_sn_original: Original serial number with dashes (e.g., "077909-3G82-3112")
+        custom_prefix: Optional custom device name that completely replaces default
 
     Returns:
-        Formatted device name (e.g., "Power-One Inverter PVI-3.0-TL-OUTD (077909-3G82-3112)")
+        Custom prefix if provided, otherwise formatted device name
+        (e.g., "Power-One Inverter PVI-3.0-TL-OUTD (077909-3G82-3112)")
 
     Examples:
         >>> _format_device_name("Power-One", "inverter", "PVI-3.0-TL-OUTD", "077909-3G82-3112")
@@ -183,8 +194,14 @@ def _format_device_name(
         'ABB Datalogger VSN300 (111033-3N16-1421)'
         >>> _format_device_name("FIMER", "inverter", None, "077909-3G82-3112")
         'FIMER Inverter 077909-3G82-3112'
+        >>> _format_device_name("ABB", "inverter", "PVI-10.0", "123", "My Solar Inverter")
+        'My Solar Inverter'
 
     """
+    # If custom prefix is set, use it as the complete device name
+    if custom_prefix:
+        return custom_prefix
+
     # Use full serial number in uppercase (preserves original dash formatting)
     sn_display = device_sn_original.upper()
 
@@ -245,6 +262,7 @@ async def async_setup_entry(
         for point_name, point_data in points.items():
             sensor = VSNSensor(
                 coordinator=coordinator,
+                config_entry=config_entry,
                 device_id=device_id,
                 device_type=device_type,
                 point_name=point_name,
@@ -282,6 +300,7 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
     def __init__(
         self,
         coordinator: ABBFimerPVIVSNRestCoordinator,
+        config_entry: ConfigEntry,
         device_id: str,
         device_type: str,
         point_name: str,
@@ -291,6 +310,7 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
 
         Args:
             coordinator: The data coordinator
+            config_entry: The config entry for this integration
             device_id: Device serial number
             device_type: Device type (e.g., "inverter_3phases")
             point_name: HA entity name (e.g., "abb_m103_w")
@@ -326,6 +346,15 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
             device_type_simple = "datalogger"
         else:
             device_type_simple = _simplify_device_type(device_type)
+
+        # Get custom prefix for this device type from options
+        prefix_map = {
+            "inverter": config_entry.options.get(CONF_PREFIX_INVERTER, ""),
+            "datalogger": config_entry.options.get(CONF_PREFIX_DATALOGGER, ""),
+            "meter": config_entry.options.get(CONF_PREFIX_METER, ""),
+            "battery": config_entry.options.get(CONF_PREFIX_BATTERY, ""),
+        }
+        self._custom_prefix = prefix_map.get(device_type_simple, "").strip() or None
 
         # Compact device serial number (remove dashes/colons/underscores, lowercase)
         device_sn_compact = _compact_serial_number(device_id)
@@ -781,14 +810,15 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
                 break
 
         # Use friendly device name for beautiful UI display
-        # Format: "Manufacturer Type Model (Serial)"
-        # Example: "ABB Datalogger VSN300 (111033-3N16-1421)"
+        # Format: "Manufacturer Type Model (Serial)" OR custom prefix if configured
+        # Example: "ABB Datalogger VSN300 (111033-3N16-1421)" or "My ABB Inverter"
         # With has_entity_name=True, this is slugified and becomes the entity_id prefix
         device_name = _format_device_name(
             manufacturer=manufacturer,
             device_type_simple=self._device_type_simple,
             device_model=device_model,
             device_sn_original=self._device_id,
+            custom_prefix=self._custom_prefix,
         )
 
         # Build device info dictionary with all available fields

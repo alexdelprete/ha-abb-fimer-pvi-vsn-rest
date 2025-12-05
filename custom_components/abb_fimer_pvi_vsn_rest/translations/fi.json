@@ -40,13 +40,23 @@
   "options": {
     "step": {
       "init": {
-        "title": "ABB/FIMER PVI VSN REST Options",
-        "description": "Configure update interval for data polling.",
+        "title": "ABB/FIMER PVI VSN REST Asetukset",
+        "description": "Määritä päivitysväli ja mukautetut laitenimi-etuliitteet.\n\nJätä etuliitekentät tyhjiksi käyttääksesi oletusnimeämistä.",
         "data": {
-          "scan_interval": "Scan interval (seconds)"
+          "scan_interval": "Kyselyväli (sekuntia)",
+          "prefix_inverter": "Invertteri laitteen nimi",
+          "prefix_datalogger": "Datalogger laitteen nimi",
+          "prefix_meter": "Mittari laitteen nimi",
+          "prefix_battery": "Akku laitteen nimi",
+          "regenerate_entity_ids": "Luo entitetti-ID:t uudelleen"
         },
         "data_description": {
-          "scan_interval": "How often to fetch data from the VSN device. Range: 30-600 seconds. Default: 60 seconds."
+          "scan_interval": "Kuinka usein haetaan tietoja VSN-laitteesta. Alue: 30-600 sekuntia. Oletus: 60 sekuntia.",
+          "prefix_inverter": "Mukautettu nimi invertterilaitteille. Jätä tyhjäksi oletusarvolle (e.g., 'Teho-One Invertteri PVI-10.0-OUTD (077909-3G82-3112)').",
+          "prefix_datalogger": "Mukautettu nimi datalogger-laitteille. Jätä tyhjäksi oletusarvolle.",
+          "prefix_meter": "Mukautettu nimi mittarilaitteille. Jätä tyhjäksi oletusarvolle.",
+          "prefix_battery": "Mukautettu nimi akkulaitteille. Jätä tyhjäksi oletusarvolle.",
+          "regenerate_entity_ids": "⚠️ VAROITUS: Päivitä kaikki entitetti-ID:t vastaamaan uusia laitenimiä. Tämä RIKKOO olemassa olevat automaatiot, skriptit ja kojelaudat, jotka viittaavat näihin entiteetteihin!"
         }
       }
     }
@@ -204,10 +214,10 @@
         "name": "Energia AC - Absorboitu (Uudelleenkäynnistyksestä)"
       },
       "e2_last_month": {
-        "name": "Energia AC Näennäinen - (Virta Month)"
+        "name": "Energia AC - Näennäinen (Virta Month)"
       },
       "e2_last_week": {
-        "name": "Energia AC Näennäinen - (Virta Week)"
+        "name": "Energia AC - Näennäinen (Virta Week)"
       },
       "e2_lifetime": {
         "name": "Energia AC Näennäinen - (Uudelleenkäynnistyksestä)"
@@ -342,16 +352,16 @@
         "name": "Energia AC - Absorboitu Yhteensä"
       },
       "e_total_apparent": {
-        "name": "Energia AC Näennäinen - Yhteensä"
+        "name": "Energia AC - Näennäinen (Yhteensä)"
       },
       "ein": {
         "name": "Energia DC - PV Yhteensä"
       },
       "ein1": {
-        "name": "Energia DC (Ketju 1) - Yhteensä"
+        "name": "Energia DC - Ketju 1 (Yhteensä)"
       },
       "ein2": {
-        "name": "Energia DC (Ketju 2) - Yhteensä"
+        "name": "Energia DC - Ketju 2 (Yhteensä)"
       },
       "ein_last_month": {
         "name": "Energia DC - PV (Virta Month)"
@@ -633,10 +643,10 @@
         "name": "Tuotenumero"
       },
       "power_peak_abs": {
-        "name": "Teho - Huippu Yhteensä"
+        "name": "Teho - Huippu (Yhteensä)"
       },
       "power_peak_today": {
-        "name": "Teho - Huippu Tänään"
+        "name": "Teho - Huippu (Tänään)"
       },
       "ppeak": {
         "name": "Teho - Huippu"
@@ -741,7 +751,7 @@
         "name": "Varoitusliput"
       },
       "watthours": {
-        "name": "Energia AC - Yhteensä"
+        "name": "Energia AC - Tuotettu (Yhteensä)"
       },
       "watts": {
         "name": "Teho AC"
@@ -790,6 +800,51 @@
       },
       "year_wh": {
         "name": "Energia AC - Tuotettu (Virta Year)"
+      },
+      "e1_since_restart": {
+        "name": "Energia AC - Absorboitu (Uudelleenkäynnistyksestä)"
+      },
+      "e_discharge_since_restart": {
+        "name": "Energia - Akun Purkaus (Uudelleenkäynnistyksestä)"
+      },
+      "e4_since_restart": {
+        "name": "Energia - Self-Consumed (Uudelleenkäynnistyksestä)"
+      },
+      "e15_since_restart": {
+        "name": "Energia AC - Varmuuskopiointi Lähtö (Uudelleenkäynnistyksestä)"
+      },
+      "e3_since_restart": {
+        "name": "Energia AC - Verkko Vienti (Uudelleenkäynnistyksestä)"
+      },
+      "e2_since_restart": {
+        "name": "Energia AC - Näennäinen (Uudelleenkäynnistyksestä)"
+      },
+      "e5_since_restart": {
+        "name": "Energia - Akun Lataus (Uudelleenkäynnistyksestä)"
+      },
+      "e6_since_restart": {
+        "name": "Energia - Talo invertteristä Invertteri (Uudelleenkäynnistyksestä)"
+      },
+      "e_charge_since_restart": {
+        "name": "Energia - Akun Lataus (Uudelleenkäynnistyksestä)"
+      },
+      "ein_since_restart": {
+        "name": "Energia DC - PV (Uudelleenkäynnistyksestä)"
+      },
+      "e_tot_discharge_since_restart": {
+        "name": "Energia - Akun Purkaus Total (Uudelleenkäynnistyksestä)"
+      },
+      "e8_since_restart": {
+        "name": "Energia AC - Verkko Tuonti (Uudelleenkäynnistyksestä)"
+      },
+      "e0_since_restart": {
+        "name": "Energia AC - Tuotettu (Uudelleenkäynnistyksestä)"
+      },
+      "e7_since_restart": {
+        "name": "Energia - Talo Kulutus (Uudelleenkäynnistyksestä)"
+      },
+      "e_tot_charge_since_restart": {
+        "name": "Energia - Akun Lataus Total (Uudelleenkäynnistyksestä)"
       }
     }
   }

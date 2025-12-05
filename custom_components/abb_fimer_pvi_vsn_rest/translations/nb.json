@@ -40,13 +40,23 @@
   "options": {
     "step": {
       "init": {
-        "title": "ABB/FIMER PVI VSN REST Options",
-        "description": "Configure update interval for data polling.",
+        "title": "ABB/FIMER PVI VSN REST Alternativer",
+        "description": "Konfigurer oppdateringsintervall og egendefinerte enhetsnavnprefikser.\n\nLa prefiksfeltene være tomme for å bruke standardnavngivning.",
         "data": {
-          "scan_interval": "Scan interval (seconds)"
+          "scan_interval": "Skanneintervall (sekunder)",
+          "prefix_inverter": "Vekselretter enhetsnavn",
+          "prefix_datalogger": "Datalogger enhetsnavn",
+          "prefix_meter": "Måler enhetsnavn",
+          "prefix_battery": "Batteri enhetsnavn",
+          "regenerate_entity_ids": "Regenerer entitets-IDer"
         },
         "data_description": {
-          "scan_interval": "How often to fetch data from the VSN device. Range: 30-600 seconds. Default: 60 seconds."
+          "scan_interval": "Hvor ofte data hentes fra VSN-enheten. Område: 30-600 sekunder. Standard: 60 sekunder.",
+          "prefix_inverter": "Egendefinert navn for vekselretterenheter. La stå tom for standardverdi (e.g., 'Effekt-One Vekselretter PVI-10.0-OUTD (077909-3G82-3112)').",
+          "prefix_datalogger": "Egendefinert navn for datalogger-enheter. La stå tom for standardverdi.",
+          "prefix_meter": "Egendefinert navn for målerenheter. La stå tom for standardverdi.",
+          "prefix_battery": "Egendefinert navn for batterienheter. La stå tom for standardverdi.",
+          "regenerate_entity_ids": "⚠️ ADVARSEL: Oppdater alle entitets-IDer for å matche nye enhetsnavn. Dette VIL ØDELEGGE eksisterende automatiseringer, skript og dashboards som refererer til disse entitetene!"
         }
       }
     }
@@ -204,10 +214,10 @@
         "name": "Energi AC - Absorbert (Siden Omstart)"
       },
       "e2_last_month": {
-        "name": "Energi AC Tilsynelatende - (Strøm Month)"
+        "name": "Energi AC - Tilsynelatende (Strøm Month)"
       },
       "e2_last_week": {
-        "name": "Energi AC Tilsynelatende - (Strøm Week)"
+        "name": "Energi AC - Tilsynelatende (Strøm Week)"
       },
       "e2_lifetime": {
         "name": "Energi AC Tilsynelatende - (Siden Omstart)"
@@ -342,16 +352,16 @@
         "name": "Energi AC - Absorbert Total"
       },
       "e_total_apparent": {
-        "name": "Energi AC Tilsynelatende - Total"
+        "name": "Energi AC - Tilsynelatende (Total)"
       },
       "ein": {
         "name": "Energi DC - PV Total"
       },
       "ein1": {
-        "name": "Energi DC (Streng 1) - Total"
+        "name": "Energi DC - Streng 1 (Total)"
       },
       "ein2": {
-        "name": "Energi DC (Streng 2) - Total"
+        "name": "Energi DC - Streng 2 (Total)"
       },
       "ein_last_month": {
         "name": "Energi DC - PV (Strøm Month)"
@@ -633,10 +643,10 @@
         "name": "Produktnummer"
       },
       "power_peak_abs": {
-        "name": "Effekt - Topp Total"
+        "name": "Effekt - Topp (Total)"
       },
       "power_peak_today": {
-        "name": "Effekt - Topp I dag"
+        "name": "Effekt - Topp (I dag)"
       },
       "ppeak": {
         "name": "Effekt - Topp"
@@ -741,7 +751,7 @@
         "name": "Advarselsflagg"
       },
       "watthours": {
-        "name": "Energi AC - Total"
+        "name": "Energi AC - Produsert (Total)"
       },
       "watts": {
         "name": "Effekt AC"
@@ -790,6 +800,51 @@
       },
       "year_wh": {
         "name": "Energi AC - Produsert (Strøm Year)"
+      },
+      "e1_since_restart": {
+        "name": "Energi AC - Absorbert (Siden Omstart)"
+      },
+      "e_discharge_since_restart": {
+        "name": "Energi - Batteriutlading (Siden Omstart)"
+      },
+      "e4_since_restart": {
+        "name": "Energi - Self-Consumed (Siden Omstart)"
+      },
+      "e15_since_restart": {
+        "name": "Energi AC - Backup Utgang (Siden Omstart)"
+      },
+      "e3_since_restart": {
+        "name": "Energi AC - Nett Eksport (Siden Omstart)"
+      },
+      "e2_since_restart": {
+        "name": "Energi AC - Tilsynelatende (Siden Omstart)"
+      },
+      "e5_since_restart": {
+        "name": "Energi - Batterilading (Siden Omstart)"
+      },
+      "e6_since_restart": {
+        "name": "Energi - Hus fra Vekselretter (Siden Omstart)"
+      },
+      "e_charge_since_restart": {
+        "name": "Energi - Batterilading (Siden Omstart)"
+      },
+      "ein_since_restart": {
+        "name": "Energi DC - PV (Siden Omstart)"
+      },
+      "e_tot_discharge_since_restart": {
+        "name": "Energi - Batteriutlading Total (Siden Omstart)"
+      },
+      "e8_since_restart": {
+        "name": "Energi AC - Nett Import (Siden Omstart)"
+      },
+      "e0_since_restart": {
+        "name": "Energi AC - Produsert (Siden Omstart)"
+      },
+      "e7_since_restart": {
+        "name": "Energi - Hus Forbruk (Siden Omstart)"
+      },
+      "e_tot_charge_since_restart": {
+        "name": "Energi - Batterilading Total (Siden Omstart)"
       }
     }
   }

@@ -41,12 +41,22 @@
     "step": {
       "init": {
         "title": "ABB/FIMER PVI VSN REST Options",
-        "description": "Configure update interval for data polling.",
+        "description": "Configure update interval and custom device name prefixes.\n\nLeave prefix fields empty to use default naming.",
         "data": {
-          "scan_interval": "Scan interval (seconds)"
+          "scan_interval": "Scan interval (seconds)",
+          "prefix_inverter": "Inverter device name",
+          "prefix_datalogger": "Datalogger device name",
+          "prefix_meter": "Meter device name",
+          "prefix_battery": "Battery device name",
+          "regenerate_entity_ids": "Regenerate entity IDs"
         },
         "data_description": {
-          "scan_interval": "How often to fetch data from the VSN device. Range: 30-600 seconds. Default: 60 seconds."
+          "scan_interval": "How often to fetch data from the VSN device. Range: 30-600 seconds. Default: 60 seconds.",
+          "prefix_inverter": "Custom name for inverter devices. Leave empty for default (e.g., 'Power-One Inverter PVI-10.0-OUTD (077909-3G82-3112)').",
+          "prefix_datalogger": "Custom name for datalogger devices. Leave empty for default.",
+          "prefix_meter": "Custom name for meter devices. Leave empty for default.",
+          "prefix_battery": "Custom name for battery devices. Leave empty for default.",
+          "regenerate_entity_ids": "⚠️ WARNING: Update all entity IDs to match new device names. This WILL BREAK existing automations, scripts, and dashboards that reference these entities!"
         }
       }
     }

@@ -10,7 +10,9 @@ from homeassistant import config_entries
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import FlowResult
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.util import slugify
 
 from .abb_fimer_vsn_rest_client.discovery import discover_vsn_device
 from .abb_fimer_vsn_rest_client.exceptions import (
@@ -20,6 +22,11 @@ from .abb_fimer_vsn_rest_client.exceptions import (
 )
 from .abb_fimer_vsn_rest_client.utils import check_socket_connection
 from .const import (
+    CONF_PREFIX_BATTERY,
+    CONF_PREFIX_DATALOGGER,
+    CONF_PREFIX_INVERTER,
+    CONF_PREFIX_METER,
+    CONF_REGENERATE_ENTITY_IDS,
     CONF_REQUIRES_AUTH,
     CONF_SCAN_INTERVAL,
     CONF_VSN_MODEL,
@@ -327,21 +334,161 @@ class ABBFimerPVIVSNRestOptionsFlowHandler(config_entries.OptionsFlow):
     ) -> FlowResult:
         """Manage the options."""
         if user_input is not None:
+            # Check if entity ID regeneration was requested (one-time action)
+            regenerate = user_input.pop(CONF_REGENERATE_ENTITY_IDS, False)
+
+            if regenerate:
+                await self._regenerate_entity_ids(user_input)
+
             return self.async_create_entry(title="", data=user_input)
+
+        # Determine which device types exist from discovered devices
+        has_inverters = False
+        has_datalogger = False
+        has_meters = False
+        has_batteries = False
+
+        # Access discovered devices from coordinator (if available)
+        if (
+            hasattr(self.config_entry, "runtime_data")
+            and self.config_entry.runtime_data
+        ):
+            coordinator = self.config_entry.runtime_data.coordinator
+            discovered_devices = getattr(coordinator, "discovered_devices", None) or []
+
+            for device in discovered_devices:
+                if device.is_datalogger:
+                    has_datalogger = True
+                elif device.device_type.startswith("inverter"):
+                    has_inverters = True
+                elif device.device_type == "meter":
+                    has_meters = True
+                elif device.device_type == "battery":
+                    has_batteries = True
+        else:
+            # Fallback: show all fields if no runtime data (shouldn't happen normally)
+            _LOGGER.debug("No runtime_data available, showing all prefix fields")
+            has_inverters = has_datalogger = has_meters = has_batteries = True
+
+        # Build schema dynamically based on discovered device types
+        schema_dict: dict[vol.Marker, Any] = {
+            vol.Optional(
+                CONF_SCAN_INTERVAL,
+                default=self.config_entry.options.get(
+                    CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL
+                ),
+            ): vol.All(
+                vol.Coerce(int),
+                vol.Range(min=MIN_SCAN_INTERVAL, max=MAX_SCAN_INTERVAL),
+            ),
+        }
+
+        # Only add prefix fields for device types that exist
+        if has_inverters:
+            schema_dict[
+                vol.Optional(
+                    CONF_PREFIX_INVERTER,
+                    default=self.config_entry.options.get(CONF_PREFIX_INVERTER, ""),
+                )
+            ] = str
+
+        if has_datalogger:
+            schema_dict[
+                vol.Optional(
+                    CONF_PREFIX_DATALOGGER,
+                    default=self.config_entry.options.get(CONF_PREFIX_DATALOGGER, ""),
+                )
+            ] = str
+
+        if has_meters:
+            schema_dict[
+                vol.Optional(
+                    CONF_PREFIX_METER,
+                    default=self.config_entry.options.get(CONF_PREFIX_METER, ""),
+                )
+            ] = str
+
+        if has_batteries:
+            schema_dict[
+                vol.Optional(
+                    CONF_PREFIX_BATTERY,
+                    default=self.config_entry.options.get(CONF_PREFIX_BATTERY, ""),
+                )
+            ] = str
+
+        # Always show regenerate checkbox if any device type has prefix support
+        if has_inverters or has_datalogger or has_meters or has_batteries:
+            schema_dict[
+                vol.Optional(
+                    CONF_REGENERATE_ENTITY_IDS,
+                    default=False,
+                )
+            ] = bool
 
         return self.async_show_form(
             step_id="init",
-            data_schema=vol.Schema(
-                {
-                    vol.Optional(
-                        CONF_SCAN_INTERVAL,
-                        default=self.config_entry.options.get(
-                            CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL
-                        ),
-                    ): vol.All(
-                        vol.Coerce(int),
-                        vol.Range(min=MIN_SCAN_INTERVAL, max=MAX_SCAN_INTERVAL),
-                    ),
-                }
-            ),
+            data_schema=vol.Schema(schema_dict),
         )
+
+    async def _regenerate_entity_ids(self, new_options: dict[str, Any]) -> None:
+        """Regenerate entity IDs based on new prefix settings.
+
+        This updates entity_id in the entity registry to match the new device names.
+        Warning: This breaks existing automations and dashboards!
+        """
+        registry = er.async_get(self.hass)
+
+        # Map device types to their prefix options
+        prefix_map = {
+            "inverter": new_options.get(CONF_PREFIX_INVERTER, ""),
+            "datalogger": new_options.get(CONF_PREFIX_DATALOGGER, ""),
+            "meter": new_options.get(CONF_PREFIX_METER, ""),
+            "battery": new_options.get(CONF_PREFIX_BATTERY, ""),
+        }
+
+        # Get all entities for this config entry
+        entities = er.async_entries_for_config_entry(
+            registry, self.config_entry.entry_id
+        )
+
+        regenerated_count = 0
+        for entity_entry in entities:
+            # Extract device type from unique_id
+            # Format: abb_fimer_pvi_vsn_rest_{device_type}_{serial}_{point_name}
+            unique_id_parts = entity_entry.unique_id.split("_")
+            if len(unique_id_parts) >= 8:
+                # Find device type (after domain prefix: abb_fimer_pvi_vsn_rest)
+                device_type = unique_id_parts[5]  # inverter, datalogger, meter, battery
+                # Point name is everything after the serial (index 6 is serial)
+                point_name = "_".join(unique_id_parts[7:])
+
+                custom_prefix = prefix_map.get(device_type, "").strip()
+
+                if not custom_prefix:
+                    # Keep current entity_id if no prefix set
+                    continue
+
+                # Generate new entity_id from custom prefix
+                new_entity_id = f"sensor.{slugify(custom_prefix)}_{point_name}"
+
+                # Update if different and new ID doesn't exist
+                if entity_entry.entity_id != new_entity_id:
+                    if not registry.async_get(new_entity_id):
+                        registry.async_update_entity(
+                            entity_entry.entity_id, new_entity_id=new_entity_id
+                        )
+                        regenerated_count += 1
+                        _LOGGER.info(
+                            "Regenerated entity ID: %s → %s",
+                            entity_entry.entity_id,
+                            new_entity_id,
+                        )
+                    else:
+                        _LOGGER.warning(
+                            "Cannot regenerate %s → %s: target already exists",
+                            entity_entry.entity_id,
+                            new_entity_id,
+                        )
+
+        if regenerated_count > 0:
+            _LOGGER.info("Regenerated %d entity IDs", regenerated_count)

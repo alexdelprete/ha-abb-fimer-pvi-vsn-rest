@@ -40,13 +40,23 @@
   "options": {
     "step": {
       "init": {
-        "title": "ABB/FIMER PVI VSN REST Options",
-        "description": "Configure update interval for data polling.",
+        "title": "ABB/FIMER PVI VSN REST Valikud",
+        "description": "Seadistage värskendusintervall ja kohandatud seadmenimede eesliited.\n\nJätke eesliite väljad tühjaks vaikenimede kasutamiseks.",
         "data": {
-          "scan_interval": "Scan interval (seconds)"
+          "scan_interval": "Päringuintervall (sekundites)",
+          "prefix_inverter": "Inverter seadme nimi",
+          "prefix_datalogger": "Datalogger seadme nimi",
+          "prefix_meter": "Arvesti seadme nimi",
+          "prefix_battery": "Aku seadme nimi",
+          "regenerate_entity_ids": "Taasgenereeri olemi ID-d"
         },
         "data_description": {
-          "scan_interval": "How often to fetch data from the VSN device. Range: 30-600 seconds. Default: 60 seconds."
+          "scan_interval": "Kui sageli andmeid VSN seadmest pärida. Vahemik: 30-600 sekundit. Vaikimisi: 60 sekundit.",
+          "prefix_inverter": "Kohandatud nimi inverter seadmetele. Jäta tühjaks vaikeväärtuse jaoks (e.g., 'Võimsus-One Inverter PVI-10.0-OUTD (077909-3G82-3112)').",
+          "prefix_datalogger": "Kohandatud nimi datalogger seadmetele. Jäta tühjaks vaikeväärtuse jaoks.",
+          "prefix_meter": "Kohandatud nimi arvesti seadmetele. Jäta tühjaks vaikeväärtuse jaoks.",
+          "prefix_battery": "Kohandatud nimi aku seadmetele. Jäta tühjaks vaikeväärtuse jaoks.",
+          "regenerate_entity_ids": "⚠️ HOIATUS: Värskenda kõik olemi ID-d, et need vastaksid uutele seadmenimedele. See RIKUB olemasolevad automatiseerimised, skriptid ja juhtpaneelid, mis viitavad nendele olemitele!"
         }
       }
     }
@@ -204,10 +214,10 @@
         "name": "Energia AC - Neeldunud (Alates Taaskäivitusest)"
       },
       "e2_last_month": {
-        "name": "Energia AC Näiv - (Vool Month)"
+        "name": "Energia AC - Näiv (Vool Month)"
       },
       "e2_last_week": {
-        "name": "Energia AC Näiv - (Vool Week)"
+        "name": "Energia AC - Näiv (Vool Week)"
       },
       "e2_lifetime": {
         "name": "Energia AC Näiv - (Alates Taaskäivitusest)"
@@ -342,16 +352,16 @@
         "name": "Energia AC - Neeldunud Kokku"
       },
       "e_total_apparent": {
-        "name": "Energia AC Näiv - Kokku"
+        "name": "Energia AC - Näiv (Kokku)"
       },
       "ein": {
         "name": "Energia DC - PV Kokku"
       },
       "ein1": {
-        "name": "Energia DC (Ahel 1) - Kokku"
+        "name": "Energia DC - Ahel 1 (Kokku)"
       },
       "ein2": {
-        "name": "Energia DC (Ahel 2) - Kokku"
+        "name": "Energia DC - Ahel 2 (Kokku)"
       },
       "ein_last_month": {
         "name": "Energia DC - PV (Vool Month)"
@@ -633,10 +643,10 @@
         "name": "Tootenumber"
       },
       "power_peak_abs": {
-        "name": "Võimsus - Tipp Kokku"
+        "name": "Võimsus - Tipp (Kokku)"
       },
       "power_peak_today": {
-        "name": "Võimsus - Tipp Täna"
+        "name": "Võimsus - Tipp (Täna)"
       },
       "ppeak": {
         "name": "Võimsus - Tipp"
@@ -741,7 +751,7 @@
         "name": "Hoiatuslipud"
       },
       "watthours": {
-        "name": "Energia AC - Kokku"
+        "name": "Energia AC - Toodetud (Kokku)"
       },
       "watts": {
         "name": "Võimsus AC"
@@ -790,6 +800,51 @@
       },
       "year_wh": {
         "name": "Energia AC - Toodetud (Vool Year)"
+      },
+      "e1_since_restart": {
+        "name": "Energia AC - Neeldunud (Alates Taaskäivitusest)"
+      },
+      "e_discharge_since_restart": {
+        "name": "Energia - Aku Tühjendamine (Alates Taaskäivitusest)"
+      },
+      "e4_since_restart": {
+        "name": "Energia - Self-Consumed (Alates Taaskäivitusest)"
+      },
+      "e15_since_restart": {
+        "name": "Energia AC - Varundus Väljund (Alates Taaskäivitusest)"
+      },
+      "e3_since_restart": {
+        "name": "Energia AC - Võrk Eksport (Alates Taaskäivitusest)"
+      },
+      "e2_since_restart": {
+        "name": "Energia AC - Näiv (Alates Taaskäivitusest)"
+      },
+      "e5_since_restart": {
+        "name": "Energia - Aku Laadimine (Alates Taaskäivitusest)"
+      },
+      "e6_since_restart": {
+        "name": "Energia - Maja inverterist Inverter (Alates Taaskäivitusest)"
+      },
+      "e_charge_since_restart": {
+        "name": "Energia - Aku Laadimine (Alates Taaskäivitusest)"
+      },
+      "ein_since_restart": {
+        "name": "Energia DC - PV (Alates Taaskäivitusest)"
+      },
+      "e_tot_discharge_since_restart": {
+        "name": "Energia - Aku Tühjendamine Total (Alates Taaskäivitusest)"
+      },
+      "e8_since_restart": {
+        "name": "Energia AC - Võrk Import (Alates Taaskäivitusest)"
+      },
+      "e0_since_restart": {
+        "name": "Energia AC - Toodetud (Alates Taaskäivitusest)"
+      },
+      "e7_since_restart": {
+        "name": "Energia - Maja Tarbimine (Alates Taaskäivitusest)"
+      },
+      "e_tot_charge_since_restart": {
+        "name": "Energia - Aku Laadimine Total (Alates Taaskäivitusest)"
       }
     }
   }

@@ -40,13 +40,23 @@
   "options": {
     "step": {
       "init": {
-        "title": "ABB/FIMER PVI VSN REST Options",
-        "description": "Configure update interval for data polling.",
+        "title": "ABB/FIMER PVI VSN REST Alternativ",
+        "description": "Konfigurera uppdateringsintervall och anpassade enhetsnamnsprefix.\n\nLämna prefixfälten tomma för att använda standardnamngivning.",
         "data": {
-          "scan_interval": "Scan interval (seconds)"
+          "scan_interval": "Skanningsintervall (sekunder)",
+          "prefix_inverter": "Växelriktare enhetsnamn",
+          "prefix_datalogger": "Datalogger enhetsnamn",
+          "prefix_meter": "Mätare enhetsnamn",
+          "prefix_battery": "Batteri enhetsnamn",
+          "regenerate_entity_ids": "Återskapa entitets-IDer"
         },
         "data_description": {
-          "scan_interval": "How often to fetch data from the VSN device. Range: 30-600 seconds. Default: 60 seconds."
+          "scan_interval": "Hur ofta data hämtas från VSN-enheten. Intervall: 30-600 sekunder. Standard: 60 sekunder.",
+          "prefix_inverter": "Anpassat namn för växelriktarenheter. Lämna tomt för standardvärde (e.g., 'Effekt-One Växelriktare PVI-10.0-OUTD (077909-3G82-3112)').",
+          "prefix_datalogger": "Anpassat namn för datalogger-enheter. Lämna tomt för standardvärde.",
+          "prefix_meter": "Anpassat namn för mätarenheter. Lämna tomt för standardvärde.",
+          "prefix_battery": "Anpassat namn för batterienheter. Lämna tomt för standardvärde.",
+          "regenerate_entity_ids": "⚠️ VARNING: Uppdatera alla entitets-IDer för att matcha nya enhetsnamn. Detta KOMMER ATT FÖRSTÖRA befintliga automatiseringar, skript och instrumentpaneler som refererar till dessa entiteter!"
         }
       }
     }
@@ -204,10 +214,10 @@
         "name": "Energi AC - Absorberad (Sedan Omstart)"
       },
       "e2_last_month": {
-        "name": "Energi AC Skenbar - (Ström Month)"
+        "name": "Energi AC - Skenbar (Ström Month)"
       },
       "e2_last_week": {
-        "name": "Energi AC Skenbar - (Ström Week)"
+        "name": "Energi AC - Skenbar (Ström Week)"
       },
       "e2_lifetime": {
         "name": "Energi AC Skenbar - (Sedan Omstart)"
@@ -342,16 +352,16 @@
         "name": "Energi AC - Absorberad Total"
       },
       "e_total_apparent": {
-        "name": "Energi AC Skenbar - Total"
+        "name": "Energi AC - Skenbar (Total)"
       },
       "ein": {
         "name": "Energi DC - PV Total"
       },
       "ein1": {
-        "name": "Energi DC (Sträng 1) - Total"
+        "name": "Energi DC - Sträng 1 (Total)"
       },
       "ein2": {
-        "name": "Energi DC (Sträng 2) - Total"
+        "name": "Energi DC - Sträng 2 (Total)"
       },
       "ein_last_month": {
         "name": "Energi DC - PV (Ström Month)"
@@ -633,10 +643,10 @@
         "name": "Produktnummer"
       },
       "power_peak_abs": {
-        "name": "Effekt - Topp Total"
+        "name": "Effekt - Topp (Total)"
       },
       "power_peak_today": {
-        "name": "Effekt - Topp Idag"
+        "name": "Effekt - Topp (Idag)"
       },
       "ppeak": {
         "name": "Effekt - Topp"
@@ -741,7 +751,7 @@
         "name": "Varningsflaggor"
       },
       "watthours": {
-        "name": "Energi AC - Total"
+        "name": "Energi AC - Producerad (Total)"
       },
       "watts": {
         "name": "Effekt AC"
@@ -790,6 +800,51 @@
       },
       "year_wh": {
         "name": "Energi AC - Producerad (Ström Year)"
+      },
+      "e1_since_restart": {
+        "name": "Energi AC - Absorberad (Sedan Omstart)"
+      },
+      "e_discharge_since_restart": {
+        "name": "Energi - Batteriurladdning (Sedan Omstart)"
+      },
+      "e4_since_restart": {
+        "name": "Energi - Self-Consumed (Sedan Omstart)"
+      },
+      "e15_since_restart": {
+        "name": "Energi AC - Backup Utgång (Sedan Omstart)"
+      },
+      "e3_since_restart": {
+        "name": "Energi AC - Nät Export (Sedan Omstart)"
+      },
+      "e2_since_restart": {
+        "name": "Energi AC - Skenbar (Sedan Omstart)"
+      },
+      "e5_since_restart": {
+        "name": "Energi - Batteriladdning (Sedan Omstart)"
+      },
+      "e6_since_restart": {
+        "name": "Energi - Hus från Växelriktare (Sedan Omstart)"
+      },
+      "e_charge_since_restart": {
+        "name": "Energi - Batteriladdning (Sedan Omstart)"
+      },
+      "ein_since_restart": {
+        "name": "Energi DC - PV (Sedan Omstart)"
+      },
+      "e_tot_discharge_since_restart": {
+        "name": "Energi - Batteriurladdning Total (Sedan Omstart)"
+      },
+      "e8_since_restart": {
+        "name": "Energi AC - Nät Import (Sedan Omstart)"
+      },
+      "e0_since_restart": {
+        "name": "Energi AC - Producerad (Sedan Omstart)"
+      },
+      "e7_since_restart": {
+        "name": "Energi - Hus Förbrukning (Sedan Omstart)"
+      },
+      "e_tot_charge_since_restart": {
+        "name": "Energi - Batteriladdning Total (Sedan Omstart)"
       }
     }
   }
