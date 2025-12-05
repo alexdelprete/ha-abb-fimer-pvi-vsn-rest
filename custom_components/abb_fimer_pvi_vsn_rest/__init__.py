@@ -114,6 +114,7 @@ async def async_setup_entry(
         vsn_model=discovery_result.vsn_model,
         timeout=10,
         discovered_devices=discovery_result.devices,
+        requires_auth=discovery_result.requires_auth,
     )
 
     # Initialize coordinator with discovery result

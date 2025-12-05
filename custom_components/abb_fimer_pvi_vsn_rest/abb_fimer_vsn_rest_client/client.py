@@ -35,6 +35,7 @@ class ABBFimerVSNRestClient:
         vsn_model: str | None = None,
         timeout: int = 10,
         discovered_devices: list[Any] | None = None,
+        requires_auth: bool = True,
     ):
         """Initialize the VSN client.
 
@@ -46,6 +47,7 @@ class ABBFimerVSNRestClient:
             vsn_model: Optional VSN model ("VSN300" or "VSN700"). If None, will auto-detect.
             timeout: Request timeout in seconds
             discovered_devices: Optional list of discovered devices from discovery phase
+            requires_auth: Whether device requires authentication (default: True)
 
         """
         self.session = session
@@ -56,6 +58,7 @@ class ABBFimerVSNRestClient:
         self.timeout = timeout
         self._normalizer: VSNDataNormalizer | None = None
         self._discovered_devices = discovered_devices or []
+        self.requires_auth = requires_auth
 
     async def connect(self) -> str:
         """Connect and detect VSN model.
@@ -69,7 +72,7 @@ class ABBFimerVSNRestClient:
 
         """
         if not self.vsn_model:
-            self.vsn_model = await detect_vsn_model(
+            self.vsn_model, self.requires_auth = await detect_vsn_model(
                 self.session,
                 self.base_url,
                 self.username,
@@ -81,7 +84,12 @@ class ABBFimerVSNRestClient:
         self._normalizer = VSNDataNormalizer(self.vsn_model)
         await self._normalizer.async_load()
 
-        _LOGGER.info("Connected to %s at %s", self.vsn_model, self.base_url)
+        _LOGGER.info(
+            "Connected to %s at %s (requires_auth=%s)",
+            self.vsn_model,
+            self.base_url,
+            self.requires_auth,
+        )
         return self.vsn_model
 
     async def get_livedata(self) -> dict[str, Any]:
@@ -106,8 +114,12 @@ class ABBFimerVSNRestClient:
         url = f"{self.base_url}{ENDPOINT_LIVEDATA}"
         uri = ENDPOINT_LIVEDATA
 
-        # Build authentication headers based on model
-        if self.vsn_model == "VSN300":
+        # Build authentication headers based on model (skip if no auth required)
+        if not self.requires_auth:
+            _LOGGER.debug("[Client] No authentication required")
+            headers = {}
+            auth_type = "None"
+        elif self.vsn_model == "VSN300":
             # VSN300: Digest auth with X-Digest scheme
             # Format: Authorization: X-Digest username="...", realm="...", nonce="...", ...
             _LOGGER.debug("[Client] Using VSN300 digest authentication")

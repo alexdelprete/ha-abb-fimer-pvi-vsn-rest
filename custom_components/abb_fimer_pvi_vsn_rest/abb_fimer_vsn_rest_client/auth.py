@@ -295,12 +295,12 @@ async def detect_vsn_model(
     username: str,
     password: str,
     timeout: int = 10,
-) -> str:
+) -> tuple[str, bool]:
     """Detect VSN model by examining response and data structure.
 
     Detection methods (in order of preference):
     1. If 401: Examine WWW-Authenticate header (digest = VSN300, basic = VSN700)
-    2. If 200: Analyze status data structure to determine model
+    2. If 200: Analyze status data structure to determine model (no auth required)
 
     Args:
         session: aiohttp client session
@@ -310,7 +310,9 @@ async def detect_vsn_model(
         timeout: Request timeout in seconds
 
     Returns:
-        "VSN300" or "VSN700"
+        Tuple of (vsn_model, requires_auth):
+        - vsn_model: "VSN300" or "VSN700"
+        - requires_auth: True if authentication is required, False if device is open
 
     Raises:
         VSNDetectionError: If detection fails
@@ -364,7 +366,7 @@ async def detect_vsn_model(
                         "[VSN Detection] Detected VSN300 (digest auth in WWW-Authenticate: %s)",
                         www_authenticate_raw,
                     )
-                    return "VSN300"
+                    return ("VSN300", True)  # Auth required
 
                 # Not VSN300 - try preemptive Basic authentication
                 # VSN700 uses preemptive Basic auth (may or may not send WWW-Authenticate header)
@@ -397,7 +399,7 @@ async def detect_vsn_model(
                             _LOGGER.info(
                                 "[VSN Detection] Detected VSN700 (preemptive Basic authentication)"
                             )
-                            return "VSN700"
+                            return ("VSN700", True)  # Auth required
 
                         # Preemptive auth failed
                         _LOGGER.error(
@@ -436,7 +438,7 @@ async def detect_vsn_model(
 
                 try:
                     status_data = await response.json()
-                    return _detect_model_from_status(status_data)
+                    model = _detect_model_from_status(status_data)
                 except Exception as parse_err:
                     _LOGGER.error(
                         "[VSN Detection] Failed to parse status response: %s",
@@ -445,6 +447,8 @@ async def detect_vsn_model(
                     raise VSNDetectionError(
                         f"Failed to parse status response: {parse_err}"
                     ) from parse_err
+                else:
+                    return (model, False)  # No auth required
 
             # Got unexpected response status
             _LOGGER.error(

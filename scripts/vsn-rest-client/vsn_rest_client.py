@@ -281,12 +281,12 @@ async def detect_vsn_model(
     username: str,
     password: str,
     timeout: int = 10,
-) -> str:
+) -> tuple[str, bool]:
     """Detect VSN model by examining response and data structure.
 
     Detection methods (in order of preference):
     1. If 401: Examine WWW-Authenticate header (digest = VSN300, basic = VSN700)
-    2. If 200: Analyze status data structure to determine model
+    2. If 200: Analyze status data structure to determine model (no auth required)
 
     This approach supports:
     - VSN300 (digest authentication with WWW-Authenticate header)
@@ -301,7 +301,9 @@ async def detect_vsn_model(
         timeout: Request timeout in seconds
 
     Returns:
-        "VSN300" or "VSN700"
+        Tuple of (vsn_model, requires_auth):
+        - vsn_model: "VSN300" or "VSN700"
+        - requires_auth: True if authentication is required, False if device is open
 
     Raises:
         Exception: If detection fails or device is not compatible
@@ -347,7 +349,7 @@ async def detect_vsn_model(
                         "Detected VSN300 (digest auth in WWW-Authenticate: %s)",
                         www_authenticate_raw,
                     )
-                    return "VSN300"
+                    return ("VSN300", True)  # Auth required
 
                 # Not VSN300 - try preemptive Basic authentication
                 # VSN700 uses preemptive Basic auth (may or may not send WWW-Authenticate header)
@@ -379,7 +381,7 @@ async def detect_vsn_model(
                             _LOGGER.info(
                                 "Detected VSN700 (preemptive Basic authentication)"
                             )
-                            return "VSN700"
+                            return ("VSN700", True)  # Auth required
 
                         # Preemptive auth failed
                         _LOGGER.error(
@@ -410,7 +412,7 @@ async def detect_vsn_model(
 
                 try:
                     status_data = await response.json()
-                    return _detect_model_from_status(status_data)
+                    model = _detect_model_from_status(status_data)
                 except Exception as parse_err:
                     _LOGGER.error(
                         "[VSN Detection] Failed to parse status response: %s",
@@ -419,6 +421,8 @@ async def detect_vsn_model(
                     raise Exception(
                         f"Failed to parse status response: {parse_err}"
                     ) from parse_err
+                else:
+                    return (model, False)  # No auth required
 
             # Got unexpected response status
             _LOGGER.error(
@@ -446,12 +450,31 @@ async def fetch_endpoint(
     username: str = "guest",
     password: str = "",
     timeout: int = 10,
+    requires_auth: bool = True,
 ) -> dict:
-    """Fetch data from a VSN endpoint."""
+    """Fetch data from a VSN endpoint.
+
+    Args:
+        session: aiohttp client session
+        base_url: Base URL of VSN device
+        endpoint: API endpoint (e.g., /v1/status)
+        vsn_model: "VSN300" or "VSN700"
+        username: Authentication username
+        password: Authentication password
+        timeout: Request timeout in seconds
+        requires_auth: Whether authentication is required
+
+    Returns:
+        JSON response data
+
+    """
     url = f"{base_url.rstrip('/')}{endpoint}"
 
-    # Build auth header based on model
-    if vsn_model == "VSN300":
+    # Build auth header based on model (skip if no auth required)
+    if not requires_auth:
+        _LOGGER.debug("[Fetch %s] No authentication required", endpoint)
+        headers = {}
+    elif vsn_model == "VSN300":
         digest_value = await get_vsn300_digest_header(
             session, base_url, username, password, endpoint, "GET", timeout
         )
@@ -642,14 +665,18 @@ async def test_vsn_device(
             # Test 1: Device Detection
             _LOGGER.info("\n[TEST 1] Device Detection")
             _LOGGER.info("-" * 80)
-            model = await detect_vsn_model(session, base_url, username, password, timeout)
+            model, requires_auth = await detect_vsn_model(
+                session, base_url, username, password, timeout
+            )
             _LOGGER.info("✓ Device detected: %s", model)
+            _LOGGER.info("  - Requires authentication: %s", requires_auth)
 
             # Test 2: /v1/status
             _LOGGER.info("\n[TEST 2] /v1/status - System Information")
             _LOGGER.info("-" * 80)
             status_data = await fetch_endpoint(
-                session, base_url, "/v1/status", model, username, password, timeout
+                session, base_url, "/v1/status", model, username, password, timeout,
+                requires_auth=requires_auth,
             )
             _LOGGER.info("✓ Status endpoint successful")
 
@@ -677,7 +704,8 @@ async def test_vsn_device(
             _LOGGER.info("\n[TEST 3] /v1/livedata - Live Data")
             _LOGGER.info("-" * 80)
             livedata = await fetch_endpoint(
-                session, base_url, "/v1/livedata", model, username, password, timeout
+                session, base_url, "/v1/livedata", model, username, password, timeout,
+                requires_auth=requires_auth,
             )
             _LOGGER.info("✓ Livedata endpoint successful")
             _LOGGER.info("  - Number of devices: %d", len(livedata))
@@ -754,7 +782,8 @@ async def test_vsn_device(
             _LOGGER.info("\n[TEST 4] /v1/feeds - Feed Metadata")
             _LOGGER.info("-" * 80)
             feeds_data = await fetch_endpoint(
-                session, base_url, "/v1/feeds", model, username, password, timeout
+                session, base_url, "/v1/feeds", model, username, password, timeout,
+                requires_auth=requires_auth,
             )
             _LOGGER.info("✓ Feeds endpoint successful")
 
@@ -772,6 +801,7 @@ async def test_vsn_device(
             _LOGGER.info("TEST SUMMARY")
             _LOGGER.info("=" * 80)
             _LOGGER.info("✓ Device model: %s", model)
+            _LOGGER.info("✓ Requires authentication: %s", requires_auth)
             _LOGGER.info("✓ All 3 endpoints tested successfully!")
             _LOGGER.info("✓ /v1/status: OK")
             _LOGGER.info("✓ /v1/livedata: OK (%d devices)", len(livedata))

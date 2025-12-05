@@ -19,6 +19,7 @@ CONF_USERNAME = "username"
 CONF_PASSWORD = "password"
 CONF_SCAN_INTERVAL = "scan_interval"
 CONF_VSN_MODEL = "vsn_model"  # Cached detection result
+CONF_REQUIRES_AUTH = "requires_auth"  # Whether device requires authentication
 
 DEFAULT_USERNAME = "guest"
 DEFAULT_SCAN_INTERVAL = 60

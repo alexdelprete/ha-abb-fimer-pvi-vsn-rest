@@ -55,6 +55,7 @@ async def test_endpoint(
     username: str = "guest",
     password: str = "",
     timeout: int = 10,
+    requires_auth: bool = True,
 ) -> dict:
     """Test a specific VSN endpoint.
 
@@ -66,6 +67,7 @@ async def test_endpoint(
         username: Username
         password: Password
         timeout: Timeout in seconds
+        requires_auth: Whether authentication is required
 
     Returns:
         Response data
@@ -73,8 +75,11 @@ async def test_endpoint(
     """
     url = f"{base_url.rstrip('/')}{endpoint}"
 
-    # Build auth header based on model
-    if vsn_model == "VSN300":
+    # Build auth header based on model (skip if no auth required)
+    if not requires_auth:
+        _LOGGER.debug("[Test Endpoint %s] No authentication required", endpoint)
+        headers = {}
+    elif vsn_model == "VSN300":
         digest_value = await get_vsn300_digest_header(
             session, base_url, username, password, endpoint, "GET", timeout
         )
@@ -126,13 +131,16 @@ async def test_client(base_url: str, username: str = "guest", password: str = ""
             _LOGGER.info("\n[TEST 1] Device Detection")
             _LOGGER.info("-" * 80)
             model = await client.connect()
+            requires_auth = client.requires_auth
             _LOGGER.info("✓ Device detected: %s", model)
+            _LOGGER.info("  - Requires authentication: %s", requires_auth)
 
             # Test 2: /v1/status endpoint
             _LOGGER.info("\n[TEST 2] /v1/status - System Information")
             _LOGGER.info("-" * 80)
             status_data = await test_endpoint(
-                session, base_url, "/v1/status", model, username=username, password=password
+                session, base_url, "/v1/status", model, username=username, password=password,
+                requires_auth=requires_auth,
             )
             _LOGGER.info("✓ Status endpoint successful")
 
@@ -182,7 +190,8 @@ async def test_client(base_url: str, username: str = "guest", password: str = ""
             _LOGGER.info("\n[TEST 4] /v1/feeds - Feed Metadata")
             _LOGGER.info("-" * 80)
             feeds_data = await test_endpoint(
-                session, base_url, "/v1/feeds", model, username=username, password=password
+                session, base_url, "/v1/feeds", model, username=username, password=password,
+                requires_auth=requires_auth,
             )
             _LOGGER.info("✓ Feeds endpoint successful")
 
@@ -241,6 +250,7 @@ async def test_client(base_url: str, username: str = "guest", password: str = ""
             _LOGGER.info("TEST SUMMARY")
             _LOGGER.info("=" * 80)
             _LOGGER.info("✓ Device detection: %s", model)
+            _LOGGER.info("✓ Requires authentication: %s", requires_auth)
             _LOGGER.info("✓ /v1/status endpoint: OK")
             _LOGGER.info("✓ /v1/livedata endpoint: OK (%d devices)", len(raw_data))
             _LOGGER.info("✓ /v1/feeds endpoint: OK")

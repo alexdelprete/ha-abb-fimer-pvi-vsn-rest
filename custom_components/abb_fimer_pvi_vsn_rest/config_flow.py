@@ -20,6 +20,7 @@ from .abb_fimer_vsn_rest_client.exceptions import (
 )
 from .abb_fimer_vsn_rest_client.utils import check_socket_connection
 from .const import (
+    CONF_REQUIRES_AUTH,
     CONF_SCAN_INTERVAL,
     CONF_VSN_MODEL,
     DEFAULT_SCAN_INTERVAL,
@@ -102,6 +103,7 @@ async def validate_connection(
 
         return {
             "vsn_model": discovery.vsn_model,
+            "requires_auth": discovery.requires_auth,
             "title": discovery.get_title(),
             "logger_sn": discovery.logger_sn,
             "devices": discovery.devices,  # Include discovered devices
@@ -201,6 +203,7 @@ class ABBFimerPVIVSNRestConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  #
                         CONF_USERNAME: username,
                         CONF_PASSWORD: password,
                         CONF_VSN_MODEL: info["vsn_model"],
+                        CONF_REQUIRES_AUTH: info["requires_auth"],
                     },
                     options={
                         CONF_SCAN_INTERVAL: DEFAULT_SCAN_INTERVAL,
@@ -266,6 +269,7 @@ class ABBFimerPVIVSNRestConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  #
                         CONF_USERNAME: username,
                         CONF_PASSWORD: password,
                         CONF_VSN_MODEL: info["vsn_model"],
+                        CONF_REQUIRES_AUTH: info["requires_auth"],
                     },
                 )
 

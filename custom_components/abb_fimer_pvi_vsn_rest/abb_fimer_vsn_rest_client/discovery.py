@@ -46,6 +46,7 @@ class DiscoveryResult:
     """Complete discovery result from VSN device."""
 
     vsn_model: str  # VSN300 or VSN700
+    requires_auth: bool  # Whether device requires authentication
     logger_sn: str  # Logger serial number
     logger_model: str | None  # WIFI LOGGER CARD, etc.
     firmware_version: str | None  # 1.9.2, etc.
@@ -98,18 +99,22 @@ async def discover_vsn_device(
     """
     _LOGGER.debug("Starting VSN device discovery at %s", base_url)
 
-    # Step 1: Detect VSN model
-    vsn_model = await detect_vsn_model(session, base_url, username, password, timeout)
-    _LOGGER.info("Detected VSN model: %s", vsn_model)
+    # Step 1: Detect VSN model and auth requirement
+    vsn_model, requires_auth = await detect_vsn_model(
+        session, base_url, username, password, timeout
+    )
+    _LOGGER.info(
+        "Detected VSN model: %s (requires_auth=%s)", vsn_model, requires_auth
+    )
 
     # Step 2: Fetch status data
     status_data = await _fetch_status(
-        session, base_url, vsn_model, username, password, timeout
+        session, base_url, vsn_model, username, password, timeout, requires_auth
     )
 
     # Step 3: Fetch livedata
     livedata = await _fetch_livedata(
-        session, base_url, vsn_model, username, password, timeout
+        session, base_url, vsn_model, username, password, timeout, requires_auth
     )
 
     # Step 4: Extract logger information from status
@@ -126,6 +131,7 @@ async def discover_vsn_device(
 
     return DiscoveryResult(
         vsn_model=vsn_model,
+        requires_auth=requires_auth,
         logger_sn=logger_info["logger_sn"],
         logger_model=logger_info.get("logger_model"),
         firmware_version=logger_info.get("firmware_version"),
@@ -142,6 +148,7 @@ async def _fetch_status(
     username: str,
     password: str,
     timeout: int,
+    requires_auth: bool = True,
 ) -> dict[str, Any]:
     """Fetch status endpoint.
 
@@ -152,6 +159,7 @@ async def _fetch_status(
         username: Authentication username
         password: Authentication password
         timeout: Request timeout in seconds
+        requires_auth: Whether authentication is required
 
     Returns:
         Status data dictionary
@@ -166,8 +174,12 @@ async def _fetch_status(
     status_url = f"{base_url}{ENDPOINT_STATUS}"
     uri = ENDPOINT_STATUS
 
-    # Build authentication headers based on model
-    if vsn_model == "VSN300":
+    # Build authentication headers based on model (skip if no auth required)
+    if not requires_auth:
+        _LOGGER.debug("[Discovery Status] No authentication required")
+        headers = {}
+        auth_type = "None"
+    elif vsn_model == "VSN300":
         _LOGGER.debug("[Discovery Status] Using VSN300 digest authentication")
         digest_value = await get_vsn300_digest_header(
             session, base_url, username, password, uri, "GET", timeout
@@ -228,6 +240,7 @@ async def _fetch_livedata(
     username: str,
     password: str,
     timeout: int,
+    requires_auth: bool = True,
 ) -> dict[str, Any]:
     """Fetch livedata endpoint.
 
@@ -238,6 +251,7 @@ async def _fetch_livedata(
         username: Authentication username
         password: Authentication password
         timeout: Request timeout in seconds
+        requires_auth: Whether authentication is required
 
     Returns:
         Livedata dictionary
@@ -252,8 +266,12 @@ async def _fetch_livedata(
     livedata_url = f"{base_url}{ENDPOINT_LIVEDATA}"
     uri = ENDPOINT_LIVEDATA
 
-    # Build authentication headers based on model
-    if vsn_model == "VSN300":
+    # Build authentication headers based on model (skip if no auth required)
+    if not requires_auth:
+        _LOGGER.debug("[Discovery Livedata] No authentication required")
+        headers = {}
+        auth_type = "None"
+    elif vsn_model == "VSN300":
         _LOGGER.debug("[Discovery Livedata] Using VSN300 digest authentication")
         digest_value = await get_vsn300_digest_header(
             session, base_url, username, password, uri, "GET", timeout
