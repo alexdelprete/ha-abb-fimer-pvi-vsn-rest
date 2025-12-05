@@ -1192,6 +1192,7 @@ No external libraries for Modbus or SunSpec - we implement what we need.
 - ❌ **ALWAYS use the generator script** for ALL sensor changes
 
 **Code Quality:**
+
 - ❌ Use `hass.data[DOMAIN]` - Use `config_entry.runtime_data`
 - ❌ Use f-strings in logging - Use `%s` formatting
 - ❌ Shadow built-ins - Check with ruff
@@ -1200,6 +1201,12 @@ No external libraries for Modbus or SunSpec - we implement what we need.
 - ❌ Use blocking calls in async context
 - ❌ Create documentation files without explicit request
 - ❌ Use emojis unless user requests
+
+**GitHub Issues:**
+
+- ❌ **NEVER close GitHub issues unless explicitly commanded by the user**
+- ❌ Do not assume an issue should be closed just because a fix was committed/released
+- ❌ Do not close issues automatically after creating a release that addresses them
 
 ## Do
 
