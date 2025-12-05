@@ -254,9 +254,10 @@ The integration automatically detects which VSN model you have and uses the appr
 ### Detection Process
 
 1. **Send unauthenticated request** to `/v1/status`
-2. **Examine 401 response**:
-   - If `WWW-Authenticate` contains `x-digest` or `digest` → **VSN300**
-   - Otherwise → Try preemptive Basic authentication → **VSN700**
+2. **Examine response**:
+   - **HTTP 401** with `WWW-Authenticate: X-Digest...` → **VSN300** (auth required)
+   - **HTTP 401** without digest → Try preemptive Basic auth → **VSN700** (auth required)
+   - **HTTP 200** → Analyze status data → **VSN300 or VSN700** (no auth required)
 
 ### VSN300
 
@@ -272,7 +273,18 @@ The integration automatically detects which VSN model you have and uses the appr
 - **Process**: Send `Authorization: Basic {base64(username:password)}` with every request
 - **Note**: VSN700 accepts credentials immediately without requiring a challenge-response flow
 
-Both authentication methods are handled automatically by the integration - no configuration needed!
+### Devices Without Authentication
+
+Some VSN devices may have authentication disabled. The integration fully supports this:
+
+- When the device returns HTTP 200 (no authentication required), the integration analyzes
+  the status data structure to determine the model
+- **VSN300 indicators**: `logger.board_model = "WIFI LOGGER CARD"`, serial format
+  `XXXXXX-XXXX-XXXX`, or many status keys (>10)
+- **VSN700 indicators**: `logger.loggerId` in MAC address format, or minimal status keys (≤3)
+- All subsequent requests are made without authentication headers
+
+All authentication methods are handled automatically by the integration - no configuration needed!
 
 ## Troubleshooting
 

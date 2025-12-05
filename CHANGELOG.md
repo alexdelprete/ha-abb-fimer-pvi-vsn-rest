@@ -7,6 +7,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.2] - 2025-12-05
+
+### Bug Fix: Complete Support for Devices Without Authentication
+
+**This release completes the fix for Issue #25 that was only partially fixed in v1.2.1.**
+
+Thanks to **@wannabuy** for continued testing and feedback on [Issue #25](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/issues/25).
+
+**Problem in v1.2.1**: Detection was fixed to handle HTTP 200 responses, but subsequent data fetching still failed with:
+`Client error: Expected 401 challenge response, got 200`
+
+**Root Cause**: The `requires_auth` state was detected but not tracked through the data flow:
+
+- Detection: HTTP 200 → correctly detected VSN300 ✅
+- Data fetch: Called auth functions → expected 401 → got 200 → failed ❌
+
+**Complete Fix Applied**:
+
+- `detect_vsn_model()` now returns tuple: `(model, requires_auth)`
+- Added `requires_auth` field to `DiscoveryResult` dataclass
+- All fetch functions (`_fetch_status()`, `_fetch_livedata()`, `get_livedata()`) accept `requires_auth` parameter
+- When `requires_auth=False`, authentication is skipped entirely
+- Client stores `requires_auth` attribute for runtime use
+- Config entry stores `requires_auth` for persistence
+
+**Files Modified**:
+
+- `const.py`: Added `CONF_REQUIRES_AUTH` constant
+- `auth.py`: Return tuple from `detect_vsn_model()`
+- `discovery.py`: Pass `requires_auth` through fetch functions
+- `client.py`: Store and use `requires_auth` attribute
+- `config_flow.py`: Store in config entry data
+- `__init__.py`: Pass `requires_auth` to client
+- `scripts/vsn-rest-client/vsn_rest_client.py`: Same pattern for standalone script
+- `scripts/test_vsn_client.py`: Same pattern for test script
+
+**See**: [v1.2.2 Release Notes](docs/releases/v1.2.2.md)
+
 ## [1.2.1] - 2025-12-04
 
 ### Bug Fix: Support for Devices Without Authentication
