@@ -62,6 +62,13 @@ B_TO_MB_POINTS = {
     "store_size",  # VSN300 - Flash storage used
 }
 
+# VSN700 name normalization registry: Alternate VSN700 names → canonical names
+# Some VSN700 devices use different names for the same data point.
+# This maps them to the canonical names used in the mapping file.
+VSN700_NAME_NORMALIZATION = {
+    "TSoc": "Soc",  # Battery state of charge (REACT2 systems use TSoc)
+}
+
 
 class VSNDataNormalizer:
     """Normalize VSN300/VSN700 data to SunSpec schema."""
@@ -122,6 +129,31 @@ class VSNDataNormalizer:
             normalized = "m103_" + point_name[5:]
             _LOGGER.debug(
                 "Normalized VSN300 point name: %s → %s (SunSpec model equivalence)",
+                point_name,
+                normalized,
+            )
+            return normalized
+        return point_name
+
+    def _normalize_vsn700_point_name(self, point_name: str) -> str:
+        """Normalize VSN700 point names for mapping lookup.
+
+        Some VSN700 devices use alternate names for the same data point.
+        For example, REACT2 battery systems report 'TSoc' instead of 'Soc'.
+        This normalizes these alternate names to the canonical names used
+        in the mapping file.
+
+        Args:
+            point_name: VSN700 REST API point name (e.g., "TSoc")
+
+        Returns:
+            Normalized point name (e.g., "Soc") or original if no normalization needed
+
+        """
+        normalized = VSN700_NAME_NORMALIZATION.get(point_name)
+        if normalized:
+            _LOGGER.debug(
+                "Normalized VSN700 point name: %s → %s",
                 point_name,
                 normalized,
             )
@@ -309,7 +341,9 @@ class VSNDataNormalizer:
                     lookup_name = self._normalize_vsn300_point_name(point_name)
                     mapping = self._mapping_loader.get_by_vsn300(lookup_name)
                 else:  # VSN700
-                    mapping = self._mapping_loader.get_by_vsn700(point_name)
+                    # Normalize alternate VSN700 names (e.g., TSoc → Soc)
+                    lookup_name = self._normalize_vsn700_point_name(point_name)
+                    mapping = self._mapping_loader.get_by_vsn700(lookup_name)
 
                 if not mapping:
                     unmapped_points.append(point_name)
