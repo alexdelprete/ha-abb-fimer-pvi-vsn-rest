@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0-beta.2] - 2025-12-06
+
+### Bug Fix: "Unknown Error" on First Options Submit
+
+**Fixes the confusing error message when saving configuration options.**
+
+Thanks to **@ivanfmartinez** for reporting this in [Issue #19](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/issues/19).
+
+**Problem**: When submitting configuration changes, an "Unknown error" appeared on first submit, but:
+
+- Changes were actually saved correctly
+- No error in logs
+- Second submit showed success
+
+**Root Cause**: The `async_reload_entry` function was incorrectly defined as a sync function (`@callback def`)
+but Home Assistant's `add_update_listener` expects an async coroutine (`async def`).
+
+**Fix**: Changed function signature from sync to async.
+
+**See**: [v1.3.0-beta.2 Release Notes](docs/releases/v1.3.0-beta.2.md)
+
 ## [1.3.0-beta.1] - 2025-12-05
 
 ### New Feature: Custom Device Name Prefixes
