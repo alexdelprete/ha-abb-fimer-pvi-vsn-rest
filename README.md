@@ -562,7 +562,7 @@ SunSpec model definitions from [SunSpec Models Repository](https://github.com/su
 
 If you like this integration, I'll gladly accept some quality coffee, but please don't feel obliged. :)
 
-<a href="https://www.buymeacoffee.com/alexdelprete"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=alexdelprete&button_colour=746363&font_colour=ffffff&font_family=Bree&outline_colour=ffffff&coffee_colour=FFDD00" /></a>
+[![BuyMeCoffee][buymecoffee-shield]][buymecoffee]
 
 [releases-shield]: https://img.shields.io/github/v/release/alexdelprete/ha-abb-fimer-pvi-vsn-rest?style=for-the-badge&color=darkgreen
 [releases]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/releases
