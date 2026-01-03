@@ -88,9 +88,11 @@ def test_sensor_attributes(
         point_data=sample_point_data,
     )
 
-    # Test entity attributes (use _attr_ properties directly to avoid HA platform context)
+    # Test entity attributes
+    # Note: sensor.name requires HA platform context (translation system)
+    # so we test _attr_translation_key instead which is used to look up the name
     assert sensor.has_entity_name is True
-    assert sensor._attr_name == "Power AC"  # Direct attribute access
+    assert sensor._attr_translation_key == "watts"  # Translation key for name lookup
     assert sensor.native_unit_of_measurement == "W"
     assert sensor.device_class == SensorDeviceClass.POWER
     assert sensor.state_class == SensorStateClass.MEASUREMENT
@@ -151,8 +153,12 @@ def test_sensor_extra_state_attributes(
     sample_device: MockDiscoveredDevice,
     mock_coordinator: MagicMock,
     mock_sensor_config_entry: MagicMock,
+    mock_normalized_data: dict,
 ) -> None:
     """Test sensor has extra state attributes."""
+    # Setup coordinator data with correct structure
+    mock_coordinator.data = mock_normalized_data
+
     sensor = VSNSensor(
         coordinator=mock_coordinator,
         config_entry=mock_sensor_config_entry,

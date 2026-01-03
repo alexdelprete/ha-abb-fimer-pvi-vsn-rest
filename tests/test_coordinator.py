@@ -63,10 +63,11 @@ async def test_coordinator_update_success(
     # Verify client was called
     mock_vsn_client.get_normalized_data.assert_called_once()
 
-    # Verify data was returned
+    # Verify data was returned with correct structure
     assert data == mock_normalized_data
-    assert TEST_INVERTER_SN in data
-    assert TEST_LOGGER_SN in data
+    assert "devices" in data
+    assert TEST_INVERTER_SN in data["devices"]
+    assert TEST_LOGGER_SN in data["devices"]
 
 
 async def test_coordinator_update_failure(
