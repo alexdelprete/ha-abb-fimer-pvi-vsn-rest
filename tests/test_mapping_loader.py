@@ -479,20 +479,28 @@ class TestVSNMappingLoaderGitHubFallback:
         file_path = tmp_path / "mapping.json"
 
         # Mock successful response with valid JSON content
-        mock_response = AsyncMock()
+        mock_response = MagicMock()
         mock_response.status = 200
-        mock_response.text = AsyncMock(return_value='[{"key": "value"}]')
 
-        mock_context = AsyncMock()
-        mock_context.__aenter__.return_value = mock_response
-        mock_context.__aexit__.return_value = None
+        # Use a regular mock that returns a coroutine for text()
+        async def mock_text() -> str:
+            return '[{"key": "value"}]'
 
-        mock_session = AsyncMock()
-        mock_session.get.return_value = mock_context
+        mock_response.text = mock_text
 
-        mock_session_context = AsyncMock()
-        mock_session_context.__aenter__.return_value = mock_session
-        mock_session_context.__aexit__.return_value = None
+        # Create proper async context manager for session.get()
+        mock_get_context = MagicMock()
+        mock_get_context.__aenter__ = AsyncMock(return_value=mock_response)
+        mock_get_context.__aexit__ = AsyncMock(return_value=None)
+
+        # Create mock session
+        mock_session = MagicMock()
+        mock_session.get.return_value = mock_get_context
+
+        # Create proper async context manager for ClientSession()
+        mock_session_context = MagicMock()
+        mock_session_context.__aenter__ = AsyncMock(return_value=mock_session)
+        mock_session_context.__aexit__ = AsyncMock(return_value=None)
 
         with patch("aiohttp.ClientSession", return_value=mock_session_context):
             await loader._fetch_from_github(file_path)

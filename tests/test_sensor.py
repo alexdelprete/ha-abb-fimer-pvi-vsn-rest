@@ -1452,6 +1452,7 @@ class TestVSNSensorStateMapping:
         point_data = {
             "value": 999,  # Unknown state code
             "ha_display_name": "Global State",
+            "sunspec_name": "GlobalSt",  # Required for state mapping lookup
         }
 
         mock_coordinator.data = {
@@ -1480,6 +1481,7 @@ class TestVSNSensorStateMapping:
         point_data = {
             "value": 6,  # Known state code for "Run"
             "ha_display_name": "Global State",
+            "sunspec_name": "GlobalSt",  # Required for state mapping lookup
         }
 
         mock_coordinator.data = {
@@ -1544,6 +1546,7 @@ class TestVSNSensorExtraStateAttributesEdgeCases:
         point_data = {
             "value": 6,
             "ha_display_name": "Global State",
+            "sunspec_name": "GlobalSt",  # Required for state mapping lookup
         }
 
         mock_coordinator.data = {
@@ -1727,6 +1730,7 @@ class TestVSNSensorDeviceInfoEdgeCases:
             firmware_version="1.9.2",
             hostname="abb-vsn300.local",
             devices=[datalogger],
+            status_data={},
         )
 
         point_data = {
@@ -1782,6 +1786,7 @@ class TestVSNSensorDeviceInfoEdgeCases:
             firmware_version="1.9.2",
             hostname="abb-vsn300.local",
             devices=[datalogger, inverter],
+            status_data={},
         )
 
         point_data = {
