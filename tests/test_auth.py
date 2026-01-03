@@ -488,6 +488,190 @@ class TestDetectVSNModel:
             )
 
     @pytest.mark.asyncio
+    async def test_detect_preemptive_auth_fails_non_200(self) -> None:
+        """Test preemptive basic auth that returns non-success status."""
+        # First request: 401 without digest (basic auth challenge)
+        mock_response_401 = MagicMock()
+        mock_response_401.status = 401
+        mock_response_401.headers = {"WWW-Authenticate": "Basic realm=vsn700"}
+        mock_response_401.__aenter__ = AsyncMock(return_value=mock_response_401)
+        mock_response_401.__aexit__ = AsyncMock(return_value=None)
+
+        # Second request with basic auth: 403 Forbidden
+        mock_response_403 = MagicMock()
+        mock_response_403.status = 403
+        mock_response_403.__aenter__ = AsyncMock(return_value=mock_response_403)
+        mock_response_403.__aexit__ = AsyncMock(return_value=None)
+
+        mock_session = MagicMock()
+        mock_session.get = MagicMock(side_effect=[mock_response_401, mock_response_403])
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.auth.check_socket_connection",
+                new_callable=AsyncMock,
+            ),
+            pytest.raises(VSNDetectionError, match="authentication failed"),
+        ):
+            await detect_vsn_model(
+                session=mock_session,
+                base_url="http://192.168.1.100",
+                username="guest",
+                password="password",
+            )
+
+    @pytest.mark.asyncio
+    async def test_detect_preemptive_auth_connection_error(self) -> None:
+        """Test preemptive basic auth with connection error."""
+        # First request: 401 without digest
+        mock_response_401 = MagicMock()
+        mock_response_401.status = 401
+        mock_response_401.headers = {"WWW-Authenticate": "Basic realm=vsn700"}
+        mock_response_401.__aenter__ = AsyncMock(return_value=mock_response_401)
+        mock_response_401.__aexit__ = AsyncMock(return_value=None)
+
+        mock_session = MagicMock()
+        # First call returns 401, second call raises connection error
+        mock_session.get = MagicMock(
+            side_effect=[mock_response_401, aiohttp.ClientError("Connection lost")]
+        )
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.auth.check_socket_connection",
+                new_callable=AsyncMock,
+            ),
+            pytest.raises(VSNDetectionError, match="connection failed"),
+        ):
+            await detect_vsn_model(
+                session=mock_session,
+                base_url="http://192.168.1.100",
+                username="guest",
+                password="password",
+            )
+
+    @pytest.mark.asyncio
+    async def test_detect_model_json_parse_error(self) -> None:
+        """Test model detection with JSON parse error on 200 response."""
+        mock_response = MagicMock()
+        mock_response.status = 200
+        mock_response.headers = {}
+        mock_response.json = AsyncMock(side_effect=ValueError("Invalid JSON"))
+        mock_response.__aenter__ = AsyncMock(return_value=mock_response)
+        mock_response.__aexit__ = AsyncMock(return_value=None)
+
+        mock_session = MagicMock()
+        mock_session.get = MagicMock(return_value=mock_response)
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.auth.check_socket_connection",
+                new_callable=AsyncMock,
+            ),
+            pytest.raises(VSNDetectionError, match="Failed to parse"),
+        ):
+            await detect_vsn_model(
+                session=mock_session,
+                base_url="http://192.168.1.100",
+                username="guest",
+                password="password",
+            )
+
+    @pytest.mark.asyncio
+    async def test_detect_vsn700_from_x_digest_header(self) -> None:
+        """Test detecting VSN300 from X-Digest header variation."""
+        mock_response = MagicMock()
+        mock_response.status = 401
+        mock_response.headers = {"WWW-Authenticate": 'X-Digest realm="vsn300", nonce="abc123"'}
+        mock_response.__aenter__ = AsyncMock(return_value=mock_response)
+        mock_response.__aexit__ = AsyncMock(return_value=None)
+
+        mock_session = MagicMock()
+        mock_session.get = MagicMock(return_value=mock_response)
+
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.auth.check_socket_connection",
+            new_callable=AsyncMock,
+        ):
+            model, requires_auth = await detect_vsn_model(
+                session=mock_session,
+                base_url="http://192.168.1.100",
+                username="guest",
+                password="password",
+            )
+
+        assert model == "VSN300"
+        assert requires_auth is True
+
+    @pytest.mark.asyncio
+    async def test_detect_vsn700_no_auth_from_mac_address(self) -> None:
+        """Test detecting VSN700 from MAC address in status when no auth required."""
+        mock_response = MagicMock()
+        mock_response.status = 200
+        mock_response.headers = {}
+        mock_response.json = AsyncMock(
+            return_value={
+                "keys": {
+                    "logger.loggerId": {"value": "ac:1f:0f:b0:50:b5"},
+                }
+            }
+        )
+        mock_response.__aenter__ = AsyncMock(return_value=mock_response)
+        mock_response.__aexit__ = AsyncMock(return_value=None)
+
+        mock_session = MagicMock()
+        mock_session.get = MagicMock(return_value=mock_response)
+
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.auth.check_socket_connection",
+            new_callable=AsyncMock,
+        ):
+            model, requires_auth = await detect_vsn_model(
+                session=mock_session,
+                base_url="http://192.168.1.100",
+                username="guest",
+                password="password",
+            )
+
+        assert model == "VSN700"
+        assert requires_auth is False
+
+
+class TestDetectModelFromStatusAdditional:
+    """Additional tests for _detect_model_from_status function edge cases."""
+
+    def test_detect_vsn300_by_serial_format_variant(self) -> None:
+        """Test detecting VSN300 by serial number format with letters."""
+        status_data = {
+            "keys": {
+                "logger.sn": {"value": "123456-ABCD-5678"},
+            }
+        }
+
+        result = _detect_model_from_status(status_data)
+        assert result == "VSN300"
+
+    def test_detect_vsn700_by_minimal_keys(self) -> None:
+        """Test detecting VSN700 with exactly 3 keys."""
+        status_data = {
+            "keys": {
+                "key1": {"value": 1},
+                "key2": {"value": 2},
+                "key3": {"value": 3},
+            }
+        }
+
+        result = _detect_model_from_status(status_data)
+        assert result == "VSN700"
+
+    def test_empty_keys_raises_error(self) -> None:
+        """Test empty keys dict raises detection error."""
+        status_data = {"keys": {}}
+
+        with pytest.raises(VSNDetectionError, match="Could not determine"):
+            _detect_model_from_status(status_data)
+
+    @pytest.mark.asyncio
     async def test_detect_connection_error(self) -> None:
         """Test connection error is wrapped."""
         mock_session = MagicMock()

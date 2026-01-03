@@ -544,3 +544,257 @@ class TestGetVSNCrossReference:
         result = normalizer.get_vsn_cross_reference("unknown_point")
 
         assert result is None
+
+
+class TestNormalizeAdditional:
+    """Additional tests for normalize method edge cases."""
+
+    @pytest.fixture
+    def mock_energy_mapping_kwh(self) -> PointMapping:
+        """Create a mock PointMapping for energy sensor with kWh in mapping."""
+        return PointMapping(
+            vsn700_name="Etot",
+            vsn300_name="m103_1_WH",
+            sunspec_name="WH",
+            ha_entity_name="watthours",
+            in_livedata=True,
+            in_feeds=False,
+            label="Watt-Hours",
+            description="Lifetime Energy",
+            ha_display_name="Energy AC - Produced Lifetime",
+            models=["M103"],
+            category="Inverter",
+            units="kWh",  # Already kWh in mapping
+            state_class="total_increasing",
+            device_class="energy",
+            entity_category=None,
+            available_in_modbus="Yes",
+            icon="",
+            suggested_display_precision=2,
+        )
+
+    def test_normalize_energy_zero_value_not_converted(
+        self, mock_energy_mapping_kwh: PointMapping
+    ) -> None:
+        """Test energy sensors with zero value are not converted."""
+        mock_loader = MagicMock()
+        mock_loader.get_by_vsn300.return_value = mock_energy_mapping_kwh
+        normalizer = VSNDataNormalizer("VSN300", mapping_loader=mock_loader)
+        normalizer._loaded = True
+
+        raw_data = {
+            "077909-3G82-3112": {
+                "points": [
+                    {"name": "m103_1_WH", "value": 0},
+                ],
+            }
+        }
+
+        result = normalizer.normalize(raw_data)
+
+        device = result["devices"]["077909-3G82-3112"]
+        # Zero value should not be converted
+        assert device["points"]["watthours"]["value"] == 0
+
+    def test_normalize_energy_none_value_not_converted(
+        self, mock_energy_mapping_kwh: PointMapping
+    ) -> None:
+        """Test energy sensors with None value are not converted."""
+        mock_loader = MagicMock()
+        mock_loader.get_by_vsn300.return_value = mock_energy_mapping_kwh
+        normalizer = VSNDataNormalizer("VSN300", mapping_loader=mock_loader)
+        normalizer._loaded = True
+
+        raw_data = {
+            "077909-3G82-3112": {
+                "points": [
+                    {"name": "m103_1_WH", "value": None},
+                ],
+            }
+        }
+
+        result = normalizer.normalize(raw_data)
+
+        device = result["devices"]["077909-3G82-3112"]
+        assert device["points"]["watthours"]["value"] is None
+
+    def test_normalize_preserves_device_type(self) -> None:
+        """Test normalize preserves device_type from raw data."""
+        mock_mapping = PointMapping(
+            vsn700_name="Pgrid",
+            vsn300_name="m103_1_W",
+            sunspec_name="W",
+            ha_entity_name="watts",
+            in_livedata=True,
+            in_feeds=False,
+            label="Watts",
+            description="AC Power",
+            ha_display_name="Power AC",
+            models=["M103"],
+            category="Inverter",
+            units="W",
+            state_class="measurement",
+            device_class="power",
+            entity_category=None,
+            available_in_modbus="Yes",
+            icon="",
+            suggested_display_precision=0,
+        )
+        mock_loader = MagicMock()
+        mock_loader.get_by_vsn300.return_value = mock_mapping
+        normalizer = VSNDataNormalizer("VSN300", mapping_loader=mock_loader)
+        normalizer._loaded = True
+
+        raw_data = {
+            "077909-3G82-3112": {
+                "points": [
+                    {"name": "m103_1_W", "value": 5000},
+                ],
+                "device_type": "inverter_3phases",
+            }
+        }
+
+        result = normalizer.normalize(raw_data)
+
+        device = result["devices"]["077909-3G82-3112"]
+        assert device["device_type"] == "inverter_3phases"
+
+    def test_normalize_m101_point_name_uses_m103_mapping(self) -> None:
+        """Test M101 points are normalized to M103 for mapping lookup."""
+        mock_mapping = PointMapping(
+            vsn700_name="Pgrid",
+            vsn300_name="m103_1_W",  # Mapping uses M103
+            sunspec_name="W",
+            ha_entity_name="watts",
+            in_livedata=True,
+            in_feeds=False,
+            label="Watts",
+            description="AC Power",
+            ha_display_name="Power AC",
+            models=["M103"],
+            category="Inverter",
+            units="W",
+            state_class="measurement",
+            device_class="power",
+            entity_category=None,
+            available_in_modbus="Yes",
+            icon="",
+            suggested_display_precision=0,
+        )
+        mock_loader = MagicMock()
+        mock_loader.get_by_vsn300.return_value = mock_mapping
+        normalizer = VSNDataNormalizer("VSN300", mapping_loader=mock_loader)
+        normalizer._loaded = True
+
+        raw_data = {
+            "077909-3G82-3112": {
+                "points": [
+                    {"name": "m101_1_W", "value": 5000},  # M101 prefix
+                ],
+            }
+        }
+
+        result = normalizer.normalize(raw_data)
+
+        # Should have called get_by_vsn300 with normalized name
+        mock_loader.get_by_vsn300.assert_called_with("m103_1_W")
+        device = result["devices"]["077909-3G82-3112"]
+        assert "watts" in device["points"]
+
+    def test_normalize_vsn700_tsoc_to_soc(self) -> None:
+        """Test VSN700 TSoc is normalized to Soc for mapping lookup."""
+        mock_mapping = PointMapping(
+            vsn700_name="Soc",
+            vsn300_name="Soc",
+            sunspec_name="Soc",
+            ha_entity_name="battery_soc",
+            in_livedata=True,
+            in_feeds=False,
+            label="State of Charge",
+            description="Battery State of Charge",
+            ha_display_name="Battery SoC",
+            models=["M802"],
+            category="Battery",
+            units="%",
+            state_class="measurement",
+            device_class="battery",
+            entity_category=None,
+            available_in_modbus="Yes",
+            icon="",
+            suggested_display_precision=0,
+        )
+        mock_loader = MagicMock()
+        mock_loader.get_by_vsn700.return_value = mock_mapping
+        normalizer = VSNDataNormalizer("VSN700", mapping_loader=mock_loader)
+        normalizer._loaded = True
+
+        raw_data = {
+            "123456-ABCD-1234": {
+                "points": [
+                    {"name": "TSoc", "value": 85},  # VSN700 uses TSoc
+                ],
+            }
+        }
+
+        result = normalizer.normalize(raw_data)
+
+        # Should have called get_by_vsn700 with normalized name (Soc)
+        mock_loader.get_by_vsn700.assert_called_with("Soc")
+        device = result["devices"]["123456-ABCD-1234"]
+        assert "battery_soc" in device["points"]
+
+
+class TestValueTransformationsAdditional:
+    """Additional tests for value transformations edge cases."""
+
+    def test_multiple_transformations_applied_in_order(self) -> None:
+        """Test that transformations are applied correctly when multiple apply."""
+        normalizer = VSNDataNormalizer("VSN700")
+
+        # IleakInv should get A to mA conversion
+        result = normalizer._apply_value_transformations("IleakInv", 0.003)
+        assert result == 3.0  # 0.003 A = 3 mA
+
+    def test_temperature_correction_exactly_at_threshold(self) -> None:
+        """Test temperature at exact threshold is not corrected."""
+        normalizer = VSNDataNormalizer("VSN300")
+        result = normalizer._apply_value_transformations("m103_1_TmpCab", 70)
+        assert result == 70  # At threshold, not corrected
+
+    def test_temperature_correction_just_above_threshold(self) -> None:
+        """Test temperature just above threshold is corrected."""
+        normalizer = VSNDataNormalizer("VSN300")
+        result = normalizer._apply_value_transformations("m103_1_TmpCab", 71)
+        assert result == 7.1  # Just above threshold, corrected
+
+    def test_string_strip_empty_string(self) -> None:
+        """Test string strip with empty string."""
+        normalizer = VSNDataNormalizer("VSN300")
+        result = normalizer._apply_value_transformations("pn", "")
+        assert result == ""
+
+    def test_string_strip_only_dashes(self) -> None:
+        """Test string strip with only dashes."""
+        normalizer = VSNDataNormalizer("VSN300")
+        result = normalizer._apply_value_transformations("pn", "---")
+        assert result == ""
+
+    def test_title_case_already_title_case(self) -> None:
+        """Test title case with already title cased value."""
+        normalizer = VSNDataNormalizer("VSN300")
+        result = normalizer._apply_value_transformations("type", "Wifi Logger Card")
+        assert result == "Wifi Logger Card"
+
+    def test_bytes_to_mb_small_value(self) -> None:
+        """Test bytes to MB conversion with small value."""
+        normalizer = VSNDataNormalizer("VSN300")
+        result = normalizer._apply_value_transformations("flash_free", 1024)  # 1KB
+        assert result == pytest.approx(0.0009765625)  # 1KB in MB
+
+    def test_non_numeric_value_for_numeric_transformation(self) -> None:
+        """Test non-numeric value passed to numeric transformation."""
+        normalizer = VSNDataNormalizer("VSN300")
+        # String value for a point that expects numeric
+        result = normalizer._apply_value_transformations("flash_free", "not a number")
+        # Should pass through unchanged since it's not numeric
+        assert result == "not a number"
