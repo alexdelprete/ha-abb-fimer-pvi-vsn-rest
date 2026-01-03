@@ -26,15 +26,19 @@ import sys
 
 import aiohttp
 
-# Add parent directory to path for imports
-sys.path.insert(
-    0,
-    str(Path(__file__).parent.parent / "custom_components" / "abb_fimer_pvi_vsn_rest"),
-)
+# Add project root to path for imports
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from abb_fimer_vsn_rest_client.auth import get_vsn300_digest_header, get_vsn700_basic_auth
-from abb_fimer_vsn_rest_client.client import ABBFimerVSNRestClient
-from abb_fimer_vsn_rest_client.exceptions import VSNClientError
+from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.auth import (
+    get_vsn300_digest_header,
+    get_vsn700_basic_auth,
+)
+from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.client import (
+    ABBFimerVSNRestClient,
+)
+from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.exceptions import (
+    VSNClientError,
+)
 
 # Configure logging
 logging.basicConfig(

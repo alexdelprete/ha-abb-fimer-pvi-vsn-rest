@@ -13,16 +13,10 @@ from typing import Any
 
 import aiohttp
 
-try:
-    from .auth import detect_vsn_model, get_vsn300_digest_header, get_vsn700_basic_auth
-    from .constants import ENDPOINT_LIVEDATA, ENDPOINT_STATUS
-    from .exceptions import VSNConnectionError
-    from .utils import check_socket_connection
-except ImportError:
-    from auth import detect_vsn_model, get_vsn300_digest_header, get_vsn700_basic_auth
-    from constants import ENDPOINT_LIVEDATA, ENDPOINT_STATUS
-    from exceptions import VSNConnectionError
-    from utils import check_socket_connection
+from .auth import detect_vsn_model, get_vsn300_digest_header, get_vsn700_basic_auth
+from .constants import ENDPOINT_LIVEDATA, ENDPOINT_STATUS
+from .exceptions import VSNConnectionError
+from .utils import check_socket_connection
 
 _LOGGER = logging.getLogger(__name__)
 

@@ -5,10 +5,7 @@ import logging
 import socket
 from urllib.parse import urlparse
 
-try:
-    from .exceptions import VSNConnectionError
-except ImportError:
-    from exceptions import VSNConnectionError
+from .exceptions import VSNConnectionError
 
 _LOGGER = logging.getLogger(__name__)
 

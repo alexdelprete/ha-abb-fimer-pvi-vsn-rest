@@ -9,10 +9,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-try:
-    from .mapping_loader import PointMapping, VSNMappingLoader
-except ImportError:
-    from mapping_loader import PointMapping, VSNMappingLoader
+from .mapping_loader import PointMapping, VSNMappingLoader
 
 _LOGGER = logging.getLogger(__name__)
 
