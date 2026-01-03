@@ -2047,9 +2047,10 @@ class TestVSNSensorNativeValueEdgeCases:
         mock_sensor_config_entry: MagicMock,
     ) -> None:
         """Test sys_time conversion handles exceptions gracefully."""
-        point_data = {"value": -999999999999, "ha_display_name": "System Time"}
+        # Use a positive value (required for sys_time handling) but invalid timezone
+        point_data = {"value": 1000000, "ha_display_name": "System Time"}
         mock_coordinator.data = {
-            "devices": {TEST_INVERTER_SN: {"points": {"sys_time": {"value": -999999999999}}}}
+            "devices": {TEST_INVERTER_SN: {"points": {"sys_time": {"value": 1000000}}}}
         }
 
         sensor = VSNSensor(
@@ -2061,12 +2062,12 @@ class TestVSNSensorNativeValueEdgeCases:
             point_data=point_data,
         )
 
-        # Mock hass with timezone
+        # Mock hass with invalid timezone to trigger KeyError in ZoneInfo
         mock_hass = MagicMock()
-        mock_hass.config.time_zone = "UTC"
+        mock_hass.config.time_zone = "Invalid/Timezone"
 
         with patch.object(type(sensor), "hass", new_callable=PropertyMock, return_value=mock_hass):
-            # Should return None due to invalid timestamp
+            # Should return None due to invalid timezone (KeyError from ZoneInfo)
             result = sensor.native_value
             assert result is None
 
