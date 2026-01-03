@@ -847,5 +847,33 @@
         "name": "Energia - Akun Lataus Total (Uudelleenkäynnistyksestä)"
       }
     }
+  },
+  "exceptions": {
+    "connection_timeout": {
+      "message": "Aikakatkaisu yhdistettäessä {device_name}. Tarkista, että laite on päällä ja tavoitettavissa määritetyssä IP-osoitteessa."
+    },
+    "connection_failed": {
+      "message": "Yhteys laitteeseen osoitteessa {host} epäonnistui. Varmista, että laite on verkossa ja yhteysasetukset ovat oikein."
+    },
+    "authentication_failed": {
+      "message": "Todennus epäonnistui {device_name}. Tarkista käyttäjätunnus ja salasana."
+    }
+  },
+  "issues": {
+    "connection_failed": {
+      "title": "Ei yhteyttä {device_name}",
+      "description": "Integraatio ei saa yhteyttä ABB/FIMER VSN -dataloggeriisi osoitteessa {host}.\n\n**Mahdolliset syyt:**\n- Laite on sammutettu tai ei ole yhteydessä verkkoon\n- IP-osoite on muuttunut\n- Palomuuri estää yhteyden\n- REST API -portti (80) ei ole käytettävissä\n\n**Ratkaisemiseksi:**\n1. Tarkista, että laite on päällä ja yhteydessä verkkoosi\n2. Tarkista IP-osoite reitittimesi DHCP-taulukosta\n3. Yritä käyttää laitteen verkkokäyttöliittymää suoraan\n4. Jos IP on muuttunut, määritä integraatio uudelleen uudella osoitteella"
+    },
+    "recovery_success": {
+      "title": "{device_name} on palautunut",
+      "description": "ABB/FIMER VSN -dataloggerisi vastaa jälleen.\n\n**Vika alkoi:** {started_at}\n**Palautumisaika:** {ended_at}\n**Kokonaiskatkosaika:** {downtime}"
+    }
+  },
+  "device_automation": {
+    "trigger_type": {
+      "device_unreachable": "{device_name} ei tavoitettavissa (verkko-ongelma)",
+      "device_not_responding": "{device_name} ei vastaa (REST API -virhe)",
+      "device_recovered": "{device_name} palautunut"
+    }
   }
 }

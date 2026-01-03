@@ -847,5 +847,33 @@
         "name": "Énergie - Charge Batterie Total (Depuis Redémarrage)"
       }
     }
+  },
+  "exceptions": {
+    "connection_timeout": {
+      "message": "Délai d'attente lors de la connexion à {device_name}. Vérifiez que l'appareil est allumé et accessible à l'adresse IP configurée."
+    },
+    "connection_failed": {
+      "message": "Échec de la connexion à l'appareil à {host}. Vérifiez que l'appareil est en ligne et que les paramètres de connexion sont corrects."
+    },
+    "authentication_failed": {
+      "message": "Échec de l'authentification pour {device_name}. Veuillez vérifier votre nom d'utilisateur et mot de passe."
+    }
+  },
+  "issues": {
+    "connection_failed": {
+      "title": "Impossible de se connecter à {device_name}",
+      "description": "L'intégration ne peut pas se connecter à votre enregistreur de données ABB/FIMER VSN à {host}.\n\n**Causes possibles :**\n- L'appareil est éteint ou non connecté au réseau\n- L'adresse IP a changé\n- Un pare-feu bloque la connexion\n- Le port de l'API REST (80) n'est pas accessible\n\n**Pour résoudre :**\n1. Vérifiez que l'appareil est allumé et connecté à votre réseau\n2. Vérifiez l'adresse IP dans la table DHCP de votre routeur\n3. Essayez d'accéder directement à l'interface web de l'appareil\n4. Si l'IP a changé, reconfigurez l'intégration avec la nouvelle adresse"
+    },
+    "recovery_success": {
+      "title": "{device_name} s'est rétabli",
+      "description": "Votre enregistreur de données ABB/FIMER VSN répond à nouveau.\n\n**Début de la panne :** {started_at}\n**Temps de récupération :** {ended_at}\n**Temps d'arrêt total :** {downtime}"
+    }
+  },
+  "device_automation": {
+    "trigger_type": {
+      "device_unreachable": "{device_name} est injoignable (problème réseau)",
+      "device_not_responding": "{device_name} ne répond pas (erreur API REST)",
+      "device_recovered": "{device_name} rétabli"
+    }
   }
 }

@@ -35,6 +35,9 @@ DEFAULT_SCAN_INTERVAL = 60
 MIN_SCAN_INTERVAL = 30
 MAX_SCAN_INTERVAL = 600
 
+# Failure tracking for repair issues
+DEFAULT_FAILURES_THRESHOLD = 3  # Number of consecutive failures before creating repair issue
+
 # VSN Models
 VSN_MODEL_300 = "VSN300"
 VSN_MODEL_700 = "VSN700"

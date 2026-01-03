@@ -10,9 +10,9 @@ Loads the vsn-sunspec-point-mapping.json file to provide lookups for:
 from __future__ import annotations
 
 import asyncio
+from dataclasses import dataclass
 import json
 import logging
-from dataclasses import dataclass
 from pathlib import Path
 
 import aiohttp

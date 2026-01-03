@@ -1,0 +1,48 @@
+{
+  "entity": {
+    "sensor": {
+      "watts": {
+        "default": "mdi:solar-power-variant-outline"
+      },
+      "dc_watts_1": {
+        "default": "mdi:solar-panel"
+      },
+      "dc_watts_2": {
+        "default": "mdi:solar-panel"
+      },
+      "wh": {
+        "default": "mdi:lightning-bolt"
+      },
+      "wh_lifetime": {
+        "default": "mdi:lightning-bolt"
+      },
+      "global_st": {
+        "default": "mdi:state-machine"
+      },
+      "inverter_st": {
+        "default": "mdi:state-machine"
+      },
+      "alarm_state": {
+        "default": "mdi:alert-circle-outline"
+      },
+      "alarm_st": {
+        "default": "mdi:alert-circle-outline"
+      },
+      "cabinet_temperature": {
+        "default": "mdi:thermometer"
+      },
+      "isolation_ohm1": {
+        "default": "mdi:omega"
+      },
+      "firmware_version": {
+        "default": "mdi:information-outline"
+      },
+      "fw_ver": {
+        "default": "mdi:information-outline"
+      },
+      "sys_time": {
+        "default": "mdi:clock-outline"
+      }
+    }
+  }
+}

@@ -21,8 +21,8 @@ import argparse
 import asyncio
 import json
 import logging
-import sys
 from pathlib import Path
+import sys
 
 import aiohttp
 
@@ -32,10 +32,7 @@ sys.path.insert(
     str(Path(__file__).parent.parent / "custom_components" / "abb_fimer_pvi_vsn_rest"),
 )
 
-from abb_fimer_vsn_rest_client.auth import (
-    get_vsn300_digest_header,
-    get_vsn700_basic_auth,
-)
+from abb_fimer_vsn_rest_client.auth import get_vsn300_digest_header, get_vsn700_basic_auth
 from abb_fimer_vsn_rest_client.client import ABBFimerVSNRestClient
 from abb_fimer_vsn_rest_client.exceptions import VSNClientError
 

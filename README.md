@@ -1,6 +1,12 @@
 # ABB/FIMER PVI VSN REST Integration
 
-[![GitHub Release][releases-shield]][releases][![BuyMeCoffee][buymecoffee-shield]][buymecoffee][![Community Forum][forum-shield]][forum]
+[![GitHub Release][releases-shield]][releases]
+[![BuyMeCoffee][buymecoffee-shield]][buymecoffee]
+[![Community Forum][forum-shield]][forum]
+
+[![Tests][tests-shield]][tests]
+[![Code Coverage][coverage-shield]][coverage]
+[![Downloads][downloads-shield]][downloads]
 
 Home Assistant custom integration for ABB/FIMER/Power-One PVI inverters via **VSN300/VSN700 datalogger REST API**.
 
@@ -572,3 +578,9 @@ If you like this integration, I'll gladly accept some quality coffee, but please
 [buymecoffee-shield]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-white?style=for-the-badge
 [forum-shield]: https://img.shields.io/badge/community-forum-darkred?style=for-the-badge
 [forum]: https://community.home-assistant.io/t/integration-for-abb-fimer-power-one-pvi-inverters-via-vsn300-vsn700-datalogger-rest-api/
+[tests-shield]: https://img.shields.io/github/actions/workflow/status/alexdelprete/ha-abb-fimer-pvi-vsn-rest/test.yml?style=for-the-badge&label=Tests
+[tests]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/actions/workflows/test.yml
+[coverage-shield]: https://img.shields.io/codecov/c/github/alexdelprete/ha-abb-fimer-pvi-vsn-rest?style=for-the-badge
+[coverage]: https://codecov.io/gh/alexdelprete/ha-abb-fimer-pvi-vsn-rest
+[downloads-shield]: https://img.shields.io/github/downloads/alexdelprete/ha-abb-fimer-pvi-vsn-rest/total?style=for-the-badge
+[downloads]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/releases

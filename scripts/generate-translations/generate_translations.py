@@ -20,8 +20,8 @@ import argparse
 import copy
 import importlib
 import json
-import sys
 from pathlib import Path
+import sys
 
 # Language configuration: code -> (name, dictionary module name)
 LANGUAGE_CONFIG = {

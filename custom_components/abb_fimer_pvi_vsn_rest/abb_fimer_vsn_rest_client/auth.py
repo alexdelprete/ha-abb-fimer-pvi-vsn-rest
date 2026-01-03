@@ -22,11 +22,7 @@ import aiohttp
 
 try:
     from .constants import ENDPOINT_LIVEDATA, ENDPOINT_STATUS
-    from .exceptions import (
-        VSNAuthenticationError,
-        VSNConnectionError,
-        VSNDetectionError,
-    )
+    from .exceptions import VSNAuthenticationError, VSNConnectionError, VSNDetectionError
     from .utils import check_socket_connection
 except ImportError:
     from constants import ENDPOINT_LIVEDATA, ENDPOINT_STATUS

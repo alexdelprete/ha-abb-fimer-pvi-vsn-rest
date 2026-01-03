@@ -847,5 +847,33 @@
         "name": "Energia - Aku Laadimine Total (Alates Taaskäivitusest)"
       }
     }
+  },
+  "exceptions": {
+    "connection_timeout": {
+      "message": "Ajalõpp {device_name} ühendamisel. Kontrollige, et seade on sisse lülitatud ja kättesaadav konfigureeritud IP-aadressil."
+    },
+    "connection_failed": {
+      "message": "Ühendus seadmega aadressil {host} ebaõnnestus. Veenduge, et seade on võrgus ja ühenduse seaded on õiged."
+    },
+    "authentication_failed": {
+      "message": "Autentimine ebaõnnestus {device_name}. Palun kontrollige oma kasutajanime ja parooli."
+    }
+  },
+  "issues": {
+    "connection_failed": {
+      "title": "{device_name} ühendamine ebaõnnestus",
+      "description": "Integratsioon ei saa ühendust teie ABB/FIMER VSN andmelogijaga aadressil {host}.\n\n**Võimalikud põhjused:**\n- Seade on välja lülitatud või pole võrku ühendatud\n- IP-aadress on muutunud\n- Tulemüür blokeerib ühenduse\n- REST API port (80) pole kättesaadav\n\n**Lahendamiseks:**\n1. Kontrollige, et seade on sisse lülitatud ja võrku ühendatud\n2. Kontrollige IP-aadressi oma ruuteri DHCP tabelis\n3. Proovige seadme veebiliidesele otse juurde pääseda\n4. Kui IP on muutunud, konfigureerige integratsioon uue aadressiga"
+    },
+    "recovery_success": {
+      "title": "{device_name} on taastunud",
+      "description": "Teie ABB/FIMER VSN andmelogija vastab nüüd uuesti.\n\n**Tõrge algas:** {started_at}\n**Taastumisaeg:** {ended_at}\n**Kogu seisakuaeg:** {downtime}"
+    }
+  },
+  "device_automation": {
+    "trigger_type": {
+      "device_unreachable": "{device_name} pole kättesaadav (võrguprobleem)",
+      "device_not_responding": "{device_name} ei vasta (REST API viga)",
+      "device_recovered": "{device_name} taastunud"
+    }
   }
 }

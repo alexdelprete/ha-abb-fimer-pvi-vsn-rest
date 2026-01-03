@@ -5,14 +5,15 @@ https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest
 
 from __future__ import annotations
 
-import logging
 from dataclasses import dataclass
 from datetime import timedelta
+import logging
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME, Platform
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .abb_fimer_vsn_rest_client.client import ABBFimerVSNRestClient
@@ -135,12 +136,13 @@ async def async_setup_entry(
     # Store runtime data
     config_entry.runtime_data = RuntimeData(coordinator=coordinator)
 
-    # Register an update listener for config flow options changes
-    # Listener is attached when entry loads and automatically detached at unload
-    config_entry.async_on_unload(config_entry.add_update_listener(async_reload_entry))
+    # Note: No manual update listener needed - OptionsFlowWithReload handles reload automatically
 
     # Forward setup to platforms
     await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
+
+    # Register device and store device_id in coordinator for device triggers
+    async_update_device_registry(hass, config_entry)
 
     _LOGGER.info(
         "Successfully set up %s integration for %s",
@@ -151,29 +153,71 @@ async def async_setup_entry(
     return True
 
 
+@callback
+def async_update_device_registry(
+    hass: HomeAssistant, config_entry: ABBFimerPVIVSNRestConfigEntry
+) -> None:
+    """Register the main device and store device_id in coordinator for triggers."""
+    coordinator = config_entry.runtime_data.coordinator
+    device_registry = dr.async_get(hass)
+
+    # The logger (datalogger) is the main device
+    logger_sn = coordinator.discovery_result.logger_sn if coordinator.discovery_result else None
+
+    if not logger_sn:
+        _LOGGER.warning("No logger serial number found, skipping device registration")
+        return
+
+    # Register the main device (datalogger)
+    device_registry.async_get_or_create(
+        config_entry_id=config_entry.entry_id,
+        identifiers={(DOMAIN, logger_sn)},
+        manufacturer=coordinator.discovery_result.logger_model or "ABB/FIMER",
+        model=coordinator.vsn_model or "VSN Datalogger",
+        name=f"{DOMAIN}_datalogger_{logger_sn.lower().replace('-', '').replace(':', '')}",
+        serial_number=logger_sn,
+        sw_version=coordinator.discovery_result.firmware_version,
+        configuration_url=f"http://{config_entry.data.get(CONF_HOST)}",
+    )
+
+    # Store device_id in coordinator for device triggers
+    device = device_registry.async_get_device(identifiers={(DOMAIN, logger_sn)})
+    if device:
+        coordinator.device_id = device.id
+        _LOGGER.debug("Device ID stored in coordinator: %s", device.id)
+
+
 async def async_unload_entry(
     hass: HomeAssistant, config_entry: ABBFimerPVIVSNRestConfigEntry
 ) -> bool:
     """Unload a config entry."""
     _LOGGER.debug("Unloading config entry")
 
-    # Unload platforms
-    unload_ok = await hass.config_entries.async_unload_platforms(
+    # Unload platforms - only cleanup if successful
+    # ref.: https://developers.home-assistant.io/blog/2025/02/19/new-config-entry-states/
+    if unload_ok := await hass.config_entries.async_unload_platforms(
         config_entry, PLATFORMS
-    )
-
-    # Shutdown coordinator and cleanup
-    if unload_ok:
+    ):
+        # Shutdown coordinator and cleanup
         coordinator = config_entry.runtime_data.coordinator
         await coordinator.async_shutdown()
         _LOGGER.info("Successfully unloaded %s integration", DOMAIN)
+    else:
+        _LOGGER.debug("Platform unload failed, skipping cleanup")
 
     return unload_ok
 
 
-async def async_reload_entry(
-    hass: HomeAssistant, config_entry: ABBFimerPVIVSNRestConfigEntry
-) -> None:
-    """Reload the config entry when options change."""
-    _LOGGER.debug("Scheduling reload of config entry")
-    hass.config_entries.async_schedule_reload(config_entry.entry_id)
+async def async_remove_config_entry_device(
+    hass: HomeAssistant, config_entry: ConfigEntry, device_entry: dr.DeviceEntry
+) -> bool:
+    """Prevent deletion of device via device registry.
+
+    Users must remove the integration instead.
+    """
+    if any(identifier[0] == DOMAIN for identifier in device_entry.identifiers):
+        _LOGGER.error(
+            "Cannot delete device using device delete. Remove the integration instead."
+        )
+        return False
+    return True

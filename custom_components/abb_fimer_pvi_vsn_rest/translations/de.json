@@ -847,5 +847,33 @@
         "name": "Energie - Batterieladung Total (Seit Neustart)"
       }
     }
+  },
+  "exceptions": {
+    "connection_timeout": {
+      "message": "Zeitüberschreitung beim Verbinden mit {device_name}. Überprüfen Sie, ob das Gerät eingeschaltet und unter der konfigurierten IP-Adresse erreichbar ist."
+    },
+    "connection_failed": {
+      "message": "Verbindung zum Gerät unter {host} fehlgeschlagen. Überprüfen Sie, ob das Gerät online ist und die Verbindungseinstellungen korrekt sind."
+    },
+    "authentication_failed": {
+      "message": "Authentifizierung für {device_name} fehlgeschlagen. Bitte überprüfen Sie Benutzername und Passwort."
+    }
+  },
+  "issues": {
+    "connection_failed": {
+      "title": "Verbindung zu {device_name} nicht möglich",
+      "description": "Die Integration kann keine Verbindung zu Ihrem ABB/FIMER VSN-Datenlogger unter {host} herstellen.\n\n**Mögliche Ursachen:**\n- Das Gerät ist ausgeschaltet oder nicht mit dem Netzwerk verbunden\n- Die IP-Adresse hat sich geändert\n- Eine Firewall blockiert die Verbindung\n- Der REST-API-Port (80) ist nicht erreichbar\n\n**Zur Behebung:**\n1. Überprüfen Sie, ob das Gerät eingeschaltet und mit Ihrem Netzwerk verbunden ist\n2. Überprüfen Sie die IP-Adresse in der DHCP-Tabelle Ihres Routers\n3. Versuchen Sie, direkt auf die Web-Oberfläche des Geräts zuzugreifen\n4. Falls sich die IP geändert hat, konfigurieren Sie die Integration mit der neuen Adresse neu"
+    },
+    "recovery_success": {
+      "title": "{device_name} hat sich erholt",
+      "description": "Ihr ABB/FIMER VSN-Datenlogger antwortet wieder.\n\n**Ausfall begann:** {started_at}\n**Wiederherstellungszeit:** {ended_at}\n**Gesamte Ausfallzeit:** {downtime}"
+    }
+  },
+  "device_automation": {
+    "trigger_type": {
+      "device_unreachable": "{device_name} ist nicht erreichbar (Netzwerkproblem)",
+      "device_not_responding": "{device_name} antwortet nicht (REST-API-Fehler)",
+      "device_recovered": "{device_name} wiederhergestellt"
+    }
   }
 }

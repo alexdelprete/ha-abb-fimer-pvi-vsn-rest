@@ -847,5 +847,33 @@
         "name": "Energia - Carica Batteria Total (Dal Riavvio)"
       }
     }
+  },
+  "exceptions": {
+    "connection_timeout": {
+      "message": "Timeout durante la connessione a {device_name}. Verificare che il dispositivo sia acceso e raggiungibile all'indirizzo IP configurato."
+    },
+    "connection_failed": {
+      "message": "Connessione al dispositivo su {host} fallita. Verificare che il dispositivo sia online e che le impostazioni di connessione siano corrette."
+    },
+    "authentication_failed": {
+      "message": "Autenticazione fallita per {device_name}. Verificare nome utente e password."
+    }
+  },
+  "issues": {
+    "connection_failed": {
+      "title": "Impossibile connettersi a {device_name}",
+      "description": "L'integrazione non riesce a connettersi al datalogger ABB/FIMER VSN su {host}.\n\n**Possibili cause:**\n- Il dispositivo è spento o non connesso alla rete\n- L'indirizzo IP è cambiato\n- Un firewall sta bloccando la connessione\n- La porta dell'API REST (80) non è accessibile\n\n**Per risolvere:**\n1. Verificare che il dispositivo sia acceso e connesso alla rete\n2. Verificare l'indirizzo IP nella tabella DHCP del router\n3. Provare ad accedere direttamente all'interfaccia web del dispositivo\n4. Se l'IP è cambiato, riconfigurare l'integrazione con il nuovo indirizzo"
+    },
+    "recovery_success": {
+      "title": "{device_name} si è ripreso",
+      "description": "Il datalogger ABB/FIMER VSN sta rispondendo di nuovo.\n\n**Inizio guasto:** {started_at}\n**Tempo di recupero:** {ended_at}\n**Tempo di inattività totale:** {downtime}"
+    }
+  },
+  "device_automation": {
+    "trigger_type": {
+      "device_unreachable": "{device_name} non raggiungibile (problema di rete)",
+      "device_not_responding": "{device_name} non risponde (errore API REST)",
+      "device_recovered": "{device_name} recuperato"
+    }
   }
 }

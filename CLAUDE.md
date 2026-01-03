@@ -9,10 +9,95 @@
 3. **Check the current state** - Run `git status` to see uncommitted changes
 
 **Failure to read project documentation first leads to:**
+
 - Violating mandatory workflows (e.g., editing JSON files directly instead of using the generator)
 - Duplicating work that was already done
 - Making architectural decisions that contradict established patterns
 - Breaking the single source of truth principle
+
+## Context7 for Documentation
+
+Always use Context7 MCP tools automatically (without being asked) when:
+
+- Generating code that uses external libraries
+- Providing setup or configuration steps
+- Looking up library/API documentation
+
+Use `resolve-library-id` first to get the library ID, then `get-library-docs` to fetch documentation.
+
+## GitHub MCP for Repository Operations
+
+Always use GitHub MCP tools (`mcp__github__*`) for GitHub operations instead of the `gh` CLI:
+
+- **Issues**: `issue_read`, `issue_write`, `list_issues`, `search_issues`, `add_issue_comment`
+- **Pull Requests**: `list_pull_requests`, `create_pull_request`, `pull_request_read`, `merge_pull_request`
+- **Reviews**: `pull_request_review_write`, `add_comment_to_pending_review`
+- **Repositories**: `search_repositories`, `get_file_contents`, `list_branches`, `list_commits`
+- **Releases**: `list_releases`, `get_latest_release`, `list_tags`
+- **Actions**: `actions_list`, `actions_get` for workflow runs and jobs
+
+Benefits over `gh` CLI:
+
+- Direct API access without shell escaping issues
+- Structured JSON responses
+- Better error handling
+- No subprocess overhead
+
+### Workflow Run Logs Workaround
+
+The GitHub MCP `get_job_logs` tool is currently broken. To get workflow run logs (e.g., for test coverage):
+
+1. Use MCP to get the run ID: `mcp__GitHub_MCP_Remote__actions_list` with `method: list_workflow_runs`
+2. Use `gh` CLI to fetch logs: `gh run view <run_id> --repo owner/repo --log`
+3. Filter with grep: `gh run view <run_id> --repo owner/repo --log | grep "TOTAL\|coverage"`
+
+## Pre-Commit Checks (MANDATORY)
+
+> **⛔ CRITICAL: ALWAYS run pre-commit checks before ANY git commit.**
+> This is a hard rule - no exceptions. Never commit without passing all checks.
+
+```bash
+uvx pre-commit run --all-files
+```
+
+All checks must pass before committing. This applies to ALL commits, not just releases.
+
+### Pre-Commit Configuration
+
+Linting tools and settings are defined in `.pre-commit-config.yaml`:
+
+| Hook | Tool | Purpose |
+| ---- | ---- | ------- |
+| ruff | `ruff check --no-fix` | Python linting |
+| ruff-format | `ruff format --check` | Python formatting |
+| jsonlint | `uvx --from demjson3 jsonlint` | JSON validation |
+| yamllint | `uvx yamllint -d "{...}"` | YAML linting (inline config) |
+| pymarkdown | `pymarkdown scan` | Markdown linting |
+
+All hooks use `language: system` (local tools) with `verbose: true` for visibility.
+
+## Quality Scale Tracking
+
+This integration tracks [Home Assistant Quality Scale](https://developers.home-assistant.io/docs/core/integration-quality-scale/) rules in `quality_scale.yaml`.
+
+**When implementing new features or fixing bugs:**
+
+1. Check if the change affects any quality scale rules
+2. Update `quality_scale.yaml` status accordingly:
+   - `done` - Rule is fully implemented
+   - `todo` - Rule needs implementation
+   - `exempt` with `comment` - Rule doesn't apply (explain why)
+3. Aim to complete all Bronze tier rules first, then Silver, Gold, Platinum
+
+## Testing Approach
+
+> **⛔ CRITICAL: NEVER modify production code to make tests pass. Always fix the tests instead.**
+> Production code is the source of truth. If tests fail, the tests are wrong - not the production code.
+> The only exception is when production code has an actual bug that tests correctly identified.
+>
+> **📋 RECOMMENDED: Run tests via CI only.**
+> Push commits and let GitHub Actions run the test suite. This ensures consistent test environment
+> and avoids local environment issues. Only run tests locally when debugging specific failures.
 
 ## Project Overview
 
@@ -1011,27 +1096,57 @@ If you need to add raw data sources:
 
 **Complete Release Workflow:**
 
-See [docs/releases/README.md](docs/releases/README.md) for the detailed 8-step process. Summary:
+See [docs/releases/README.md](docs/releases/README.md) for the detailed process.
 
-0. **⚠️ VERIFY TRANSLATIONS**: Before ANY release, ensure translation files match the mapping:
-   - Compare `HA Display Name` values in `vsn-sunspec-point-mapping.json` with `translations/en.json`
-   - Entity names come from translations, NOT from the mapping file
-   - If mapping was updated, translations MUST be regenerated
-   - Run: Check all `entity.sensor.{key}.name` entries match mapping's `HA Display Name`
+| Step | Tool | Action |
+| ---- | ---- | ------ |
+| 0 | Verify | **VERIFY TRANSLATIONS**: Ensure translation files match the mapping |
+| 1 | Edit/Write | Create/update release notes in `docs/releases/vX.Y.Z.md` |
+| 2 | Edit | Update `CHANGELOG.md` with version summary |
+| 3 | Edit | Ensure `manifest.json` and `const.py` have correct version |
+| 4 | Bash | Run linting: `uvx pre-commit run --all-files` |
+| 5 | `commit-commands:commit` skill | Stage and commit with proper format |
+| 6 | git CLI | `git push` |
+| 7 | **⏸️ STOP** | Wait for user "tag and release" command |
+| 8 | **Checklist** | Display Release Readiness Checklist (see below) |
+| 9 | git CLI | `git tag -a vX.Y.Z -m "Release vX.Y.Z"` |
+| 10 | git CLI | `git push --tags` |
+| 11 | gh CLI | `gh release create vX.Y.Z --title "vX.Y.Z" --notes-file docs/releases/vX.Y.Z.md` |
+| 12 | GitHub Actions | Validates versions match, then auto-uploads ZIP asset |
+| 13 | Edit | Bump versions in `manifest.json` and `const.py` to next version |
 
-1. **Prepare Release Notes**: Create `docs/releases/vX.Y.Z.md` with comprehensive release notes following the template
-2. **Update CHANGELOG.md**: Add new version section with summary and links
-3. **Bump Version Numbers**: Update `manifest.json` version field
-4. **Bump Version Constants**: Update `const.py` VERSION and STARTUP_MESSAGE
-5. **Commit Changes**: `git add . && git commit -m "chore(release): bump version to vX.Y.Z"`
-6. **Push Commits**: `git push`
-7. **⚠️ VERIFY CLEAN STATE**: Run `git status` to ensure ALL changes are committed and pushed
-   - Check for any uncommitted changes
-   - Check for any unpushed commits
-   - **CRITICAL**: Do NOT proceed to tags/releases with uncommitted changes
-8. **⚠️ STOP HERE** - Get explicit user approval before creating tags/releases
-9. **Create Tag** (only when instructed): `git tag -a vX.Y.Z -m "Release vX.Y.Z" && git push --tags`
-10. **Create GitHub Release** (only when instructed): `gh release create vX.Y.Z --prerelease` (beta) or `--latest` (stable)
+### Release Readiness Checklist (MANDATORY)
+
+> **⛔ When user commands "tag and release", ALWAYS display this checklist BEFORE proceeding.**
+
+```markdown
+## Release Readiness Checklist
+
+| Item | Status |
+|------|--------|
+| Version in `manifest.json` | ✅ X.Y.Z |
+| Version in `const.py` | ✅ X.Y.Z |
+| Release notes (`docs/releases/vX.Y.Z.md`) | ✅ Created |
+| CHANGELOG.md updated | ✅ Updated |
+| GitHub Actions (lint/test/validate) | ✅ **PASSING** (check latest runs) |
+| Working tree clean | ✅ Clean |
+| Git tag | ✅ vX.Y.Z created/pushed |
+| Commits since last tag | N commits since vX.Y.Z-1 |
+```
+
+Verify ALL items show ✅ before proceeding with tag creation. If any item fails, fix it first.
+
+**Release notes content:**
+
+- **Download badge** (MANDATORY) - Add at top of every release note file:
+
+  ```markdown
+  [![GitHub Downloads](https://img.shields.io/github/downloads/alexdelprete/ha-abb-fimer-pvi-vsn-rest/vX.Y.Z/total?style=for-the-badge)](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/releases/tag/vX.Y.Z)
+  ```
+
+- Include ALL changes since last stable release
+- Review commits: `git log vX.Y.Z..HEAD`
+- Include sections: What's Changed, Bug Fixes, Features, Breaking Changes
 
 **⚠️ IMPORTANT - Release Policy:**
 
@@ -1193,6 +1308,8 @@ No external libraries for Modbus or SunSpec - we implement what we need.
 
 **Code Quality:**
 
+- ❌ Commit without running `uvx pre-commit run --all-files` first
+- ❌ Modify production code to make tests pass - fix the tests instead
 - ❌ Use `hass.data[DOMAIN]` - Use `config_entry.runtime_data`
 - ❌ Use f-strings in logging - Use `%s` formatting
 - ❌ Shadow built-ins - Check with ruff
@@ -1219,6 +1336,8 @@ No external libraries for Modbus or SunSpec - we implement what we need.
 - ✅ **Add sensor metadata to `SUNSPEC_TO_HA_METADATA` dictionary** in generator
 
 **Best Practices:**
+
+- ✅ Run `uvx pre-commit run --all-files` before EVERY commit
 - ✅ Use discovery module for device information
 - ✅ Include firmware version in device_info (not VSN model!)
 - ✅ Link devices with `via_device` to create hierarchy
@@ -1229,6 +1348,7 @@ No external libraries for Modbus or SunSpec - we implement what we need.
 - ✅ Log extensively with proper context
 - ✅ Test with both VSN300 and VSN700 data
 - ✅ Follow Home Assistant best practices
+- ✅ Get approval before creating tags/releases
 - ✅ Update documentation when changing architecture
 - ✅ Use `has_entity_name=True` with technical device names and `suggested_object_id` for predictable entity IDs
 - ✅ Populate comprehensive sensor attributes (14+ fields)

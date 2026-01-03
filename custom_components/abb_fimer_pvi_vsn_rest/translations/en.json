@@ -802,5 +802,33 @@
         "name": "Logger ID"
       }
     }
+  },
+  "exceptions": {
+    "connection_timeout": {
+      "message": "Timeout connecting to {device_name}. Check that the device is powered on and reachable at the configured IP address."
+    },
+    "connection_failed": {
+      "message": "Failed to connect to device at {host}. Verify the device is online and the connection settings are correct."
+    },
+    "authentication_failed": {
+      "message": "Authentication failed for {device_name}. Please check your username and password."
+    }
+  },
+  "issues": {
+    "connection_failed": {
+      "title": "Cannot connect to {device_name}",
+      "description": "The integration cannot connect to your ABB/FIMER VSN datalogger at {host}.\n\n**Possible causes:**\n- The device is powered off or not connected to the network\n- The IP address has changed\n- A firewall is blocking the connection\n- The REST API port (80) is not accessible\n\n**To resolve:**\n1. Check that the device is powered on and connected to your network\n2. Verify the IP address in your router's DHCP table\n3. Try accessing the device's web interface directly\n4. If the IP has changed, reconfigure the integration with the new address"
+    },
+    "recovery_success": {
+      "title": "{device_name} has recovered",
+      "description": "Your ABB/FIMER VSN datalogger is now responding again.\n\n**Failure started:** {started_at}\n**Recovery time:** {ended_at}\n**Total downtime:** {downtime}"
+    }
+  },
+  "device_automation": {
+    "trigger_type": {
+      "device_unreachable": "{device_name} is unreachable (network issue)",
+      "device_not_responding": "{device_name} is not responding (REST API error)",
+      "device_recovered": "{device_name} recovered"
+    }
   }
 }

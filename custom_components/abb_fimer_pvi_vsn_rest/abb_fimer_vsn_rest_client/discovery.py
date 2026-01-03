@@ -7,8 +7,8 @@ meters, batteries) from the status and livedata endpoints.
 
 from __future__ import annotations
 
-import logging
 from dataclasses import dataclass
+import logging
 from typing import Any
 
 import aiohttp

@@ -13,11 +13,11 @@ Version: 2.0.0
 Date: 2024-11-02
 """
 
-import json
-import re
 from collections import defaultdict
 from datetime import datetime
+import json
 from pathlib import Path
+import re
 
 import openpyxl
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side

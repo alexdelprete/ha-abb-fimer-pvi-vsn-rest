@@ -5,8 +5,8 @@ This script fixes the incomplete mapping entries identified from user feedback.
 """
 
 import json
-import sys
 from pathlib import Path
+import sys
 
 # Define mapping fixes based on analysis
 DEVICE_CLASS_FIXES = {

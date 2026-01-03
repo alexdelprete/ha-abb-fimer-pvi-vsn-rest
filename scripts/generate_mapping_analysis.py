@@ -6,8 +6,8 @@ for easy review and analysis.
 """
 
 import json
-import sys
 from pathlib import Path
+import sys
 
 try:
     import openpyxl

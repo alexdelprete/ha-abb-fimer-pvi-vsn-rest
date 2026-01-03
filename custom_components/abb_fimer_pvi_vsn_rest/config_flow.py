@@ -6,12 +6,19 @@ import logging
 from typing import Any
 
 import voluptuous as vol
+
 from homeassistant import config_entries
+from homeassistant.config_entries import (
+    ConfigEntry,
+    ConfigFlow,
+    ConfigFlowResult,
+    OptionsFlowWithReload,
+)
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.selector import NumberSelector, NumberSelectorConfig, NumberSelectorMode
 from homeassistant.util import slugify
 
 from .abb_fimer_vsn_rest_client.discovery import discover_vsn_device
@@ -171,18 +178,27 @@ async def validate_connection(
         raise VSNClientError(f"Unexpected error: {err}") from err
 
 
-class ABBFimerPVIVSNRestConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # type: ignore  # noqa: PGH003
+class ABBFimerPVIVSNRestConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg]
     """Handle a config flow for ABB FIMER PVI VSN REST."""
 
     VERSION = 1
+    CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_POLL
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(
+        config_entry: ConfigEntry,
+    ) -> ABBFimerPVIVSNRestOptionsFlow:
+        """Get the options flow for this handler."""
+        return ABBFimerPVIVSNRestOptionsFlow()
 
     def __init__(self) -> None:
         """Initialize config flow."""
-        self._reauth_entry: config_entries.ConfigEntry | None = None
+        self._reauth_entry: ConfigEntry | None = None
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Handle the initial user step."""
         errors: dict[str, str] = {}
 
@@ -248,12 +264,9 @@ class ABBFimerPVIVSNRestConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  #
 
     async def async_step_reconfigure(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Handle reconfiguration of the integration."""
-        entry = self.hass.config_entries.async_get_entry(self.context["entry_id"])
-        if entry is None:
-            return self.async_abort(reason="reconfigure_failed")
-
+        reconfigure_entry = self._get_reconfigure_entry()
         errors: dict[str, str] = {}
 
         if user_input is not None:
@@ -268,10 +281,10 @@ class ABBFimerPVIVSNRestConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  #
                 # Validate connection
                 info = await validate_connection(self.hass, host, username, password)
 
-                # Update config entry
-                self.hass.config_entries.async_update_entry(
-                    entry,
-                    data={
+                # Use async_update_reload_and_abort for modern reconfigure pattern
+                return self.async_update_reload_and_abort(
+                    reconfigure_entry,
+                    data_updates={
                         CONF_HOST: host,
                         CONF_USERNAME: username,
                         CONF_PASSWORD: password,
@@ -279,11 +292,6 @@ class ABBFimerPVIVSNRestConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  #
                         CONF_REQUIRES_AUTH: info["requires_auth"],
                     },
                 )
-
-                # Reload the integration
-                await self.hass.config_entries.async_reload(entry.entry_id)
-
-                return self.async_abort(reason="reconfigure_successful")
 
             except VSNAuthenticationError:
                 errors["base"] = ERROR_INVALID_AUTH
@@ -303,35 +311,29 @@ class ABBFimerPVIVSNRestConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  #
             step_id="reconfigure",
             data_schema=vol.Schema(
                 {
-                    vol.Required(CONF_HOST, default=entry.data.get(CONF_HOST)): str,
+                    vol.Required(
+                        CONF_HOST, default=reconfigure_entry.data.get(CONF_HOST)
+                    ): str,
                     vol.Optional(
                         CONF_USERNAME,
-                        default=entry.data.get(CONF_USERNAME, DEFAULT_USERNAME),
+                        default=reconfigure_entry.data.get(CONF_USERNAME, DEFAULT_USERNAME),
                     ): str,
                     vol.Optional(CONF_PASSWORD, default=""): str,
                 }
             ),
             errors=errors,
             description_placeholders={
-                "current_host": entry.data.get(CONF_HOST),
+                "current_host": reconfigure_entry.data.get(CONF_HOST),
             },
         )
 
-    @staticmethod
-    @callback
-    def async_get_options_flow(
-        config_entry: config_entries.ConfigEntry,
-    ) -> ABBFimerPVIVSNRestOptionsFlowHandler:
-        """Get the options flow for this handler."""
-        return ABBFimerPVIVSNRestOptionsFlowHandler()
 
-
-class ABBFimerPVIVSNRestOptionsFlowHandler(config_entries.OptionsFlow):
-    """Handle options flow for ABB FIMER PVI VSN REST."""
+class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
+    """Handle options flow for ABB FIMER PVI VSN REST with auto-reload."""
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Manage the options."""
         if user_input is not None:
             # Check if entity ID regeneration was requested (one-time action)
@@ -340,7 +342,11 @@ class ABBFimerPVIVSNRestOptionsFlowHandler(config_entries.OptionsFlow):
             if regenerate:
                 await self._regenerate_entity_ids(user_input)
 
-            return self.async_create_entry(title="", data=user_input)
+            _LOGGER.debug(
+                "Options updated: scan_interval=%s",
+                user_input.get(CONF_SCAN_INTERVAL),
+            )
+            return self.async_create_entry(data=user_input)
 
         # Determine which device types exist from discovered devices
         has_inverters = False
@@ -370,16 +376,21 @@ class ABBFimerPVIVSNRestOptionsFlowHandler(config_entries.OptionsFlow):
             _LOGGER.debug("No runtime_data available, showing all prefix fields")
             has_inverters = has_datalogger = has_meters = has_batteries = True
 
+        # Get current options with defaults
+        current_options = self.config_entry.options
+
         # Build schema dynamically based on discovered device types
         schema_dict: dict[vol.Marker, Any] = {
-            vol.Optional(
+            vol.Required(
                 CONF_SCAN_INTERVAL,
-                default=self.config_entry.options.get(
-                    CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL
-                ),
-            ): vol.All(
-                vol.Coerce(int),
-                vol.Range(min=MIN_SCAN_INTERVAL, max=MAX_SCAN_INTERVAL),
+                default=current_options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL),
+            ): NumberSelector(
+                NumberSelectorConfig(
+                    min=MIN_SCAN_INTERVAL,
+                    max=MAX_SCAN_INTERVAL,
+                    mode=NumberSelectorMode.BOX,
+                    unit_of_measurement="seconds",
+                )
             ),
         }
 
@@ -388,7 +399,7 @@ class ABBFimerPVIVSNRestOptionsFlowHandler(config_entries.OptionsFlow):
             schema_dict[
                 vol.Optional(
                     CONF_PREFIX_INVERTER,
-                    default=self.config_entry.options.get(CONF_PREFIX_INVERTER, ""),
+                    default=current_options.get(CONF_PREFIX_INVERTER, ""),
                 )
             ] = str
 
@@ -396,7 +407,7 @@ class ABBFimerPVIVSNRestOptionsFlowHandler(config_entries.OptionsFlow):
             schema_dict[
                 vol.Optional(
                     CONF_PREFIX_DATALOGGER,
-                    default=self.config_entry.options.get(CONF_PREFIX_DATALOGGER, ""),
+                    default=current_options.get(CONF_PREFIX_DATALOGGER, ""),
                 )
             ] = str
 
@@ -404,7 +415,7 @@ class ABBFimerPVIVSNRestOptionsFlowHandler(config_entries.OptionsFlow):
             schema_dict[
                 vol.Optional(
                     CONF_PREFIX_METER,
-                    default=self.config_entry.options.get(CONF_PREFIX_METER, ""),
+                    default=current_options.get(CONF_PREFIX_METER, ""),
                 )
             ] = str
 
@@ -412,7 +423,7 @@ class ABBFimerPVIVSNRestOptionsFlowHandler(config_entries.OptionsFlow):
             schema_dict[
                 vol.Optional(
                     CONF_PREFIX_BATTERY,
-                    default=self.config_entry.options.get(CONF_PREFIX_BATTERY, ""),
+                    default=current_options.get(CONF_PREFIX_BATTERY, ""),
                 )
             ] = str
 

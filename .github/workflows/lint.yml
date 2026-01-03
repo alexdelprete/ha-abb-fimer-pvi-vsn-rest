@@ -1,4 +1,4 @@
-name: "Lint"
+name: Lint
 
 on:
   push:
@@ -6,25 +6,39 @@ on:
       - master
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
-  ruff:
-    name: "Ruff"
-    runs-on: "ubuntu-latest"
-
+  lint:
+    name: Lint & Format
+    runs-on: ubuntu-latest
     steps:
-        - name: "Checkout the repository"
-          uses: "actions/checkout@v6.0.1"
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.head_ref }}
 
-        - name: "Set up Python"
-          uses: actions/setup-python@v6.1.0
-          with:
-            python-version: "3.13"
-            cache: "pip"
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
 
-        - name: "Install requirements"
-          run: python3 -m pip install -r requirements.txt
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
 
-        - name: "Run Ruff"
-          uses: chartboost/ruff-action@v1
-          with:
-            args: 'check --output-format github'
+      - name: Validate JSON files
+        run: find . -name "*.json" -not -path "./.vscode/*" | xargs uvx --from demjson3 jsonlint
+
+      - name: Run Ruff format check
+        run: uvx ruff format . --check
+
+      - name: Run Ruff check
+        run: uvx ruff check .
+
+      # ty needs dependencies installed to resolve imports (homeassistant, aiohttp, etc.)
+      - name: Install dependencies for ty
+        run: uv pip install -e ".[dev]" --system
+
+      - name: Run ty
+        run: uvx ty check -vv --python $(which python) custom_components/abb_fimer_pvi_vsn_rest

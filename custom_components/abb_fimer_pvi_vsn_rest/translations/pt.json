@@ -847,5 +847,33 @@
         "name": "Energia - Carga Bateria Total (Desde Reinício)"
       }
     }
+  },
+  "exceptions": {
+    "connection_timeout": {
+      "message": "Tempo limite ao conectar com {device_name}. Verifique se o dispositivo está ligado e acessível no endereço IP configurado."
+    },
+    "connection_failed": {
+      "message": "Falha ao conectar ao dispositivo em {host}. Verifique se o dispositivo está online e se as configurações de conexão estão corretas."
+    },
+    "authentication_failed": {
+      "message": "Falha na autenticação para {device_name}. Por favor verifique seu nome de usuário e senha."
+    }
+  },
+  "issues": {
+    "connection_failed": {
+      "title": "Não é possível conectar a {device_name}",
+      "description": "A integração não consegue conectar ao seu registrador de dados ABB/FIMER VSN em {host}.\n\n**Possíveis causas:**\n- O dispositivo está desligado ou não conectado à rede\n- O endereço IP mudou\n- Um firewall está bloqueando a conexão\n- A porta da API REST (80) não está acessível\n\n**Para resolver:**\n1. Verifique se o dispositivo está ligado e conectado à sua rede\n2. Verifique o endereço IP na tabela DHCP do seu roteador\n3. Tente acessar a interface web do dispositivo diretamente\n4. Se o IP mudou, reconfigure a integração com o novo endereço"
+    },
+    "recovery_success": {
+      "title": "{device_name} recuperou",
+      "description": "Seu registrador de dados ABB/FIMER VSN está respondendo novamente.\n\n**Início da falha:** {started_at}\n**Tempo de recuperação:** {ended_at}\n**Tempo total de inatividade:** {downtime}"
+    }
+  },
+  "device_automation": {
+    "trigger_type": {
+      "device_unreachable": "{device_name} está inacessível (problema de rede)",
+      "device_not_responding": "{device_name} não está respondendo (erro da API REST)",
+      "device_recovered": "{device_name} recuperado"
+    }
   }
 }

@@ -847,5 +847,33 @@
         "name": "Energi - Batterilading Total (Siden Omstart)"
       }
     }
+  },
+  "exceptions": {
+    "connection_timeout": {
+      "message": "Tidsavbrudd ved tilkobling til {device_name}. Kontroller at enheten er slått på og tilgjengelig på den konfigurerte IP-adressen."
+    },
+    "connection_failed": {
+      "message": "Tilkobling til enhet på {host} mislyktes. Kontroller at enheten er online og at tilkoblingsinnstillingene er riktige."
+    },
+    "authentication_failed": {
+      "message": "Autentisering mislyktes for {device_name}. Vennligst kontroller brukernavn og passord."
+    }
+  },
+  "issues": {
+    "connection_failed": {
+      "title": "Kan ikke koble til {device_name}",
+      "description": "Integrasjonen kan ikke koble til ABB/FIMER VSN-dataloggeren din på {host}.\n\n**Mulige årsaker:**\n- Enheten er slått av eller ikke koblet til nettverket\n- IP-adressen har endret seg\n- En brannmur blokkerer tilkoblingen\n- REST API-porten (80) er ikke tilgjengelig\n\n**For å løse:**\n1. Kontroller at enheten er slått på og koblet til nettverket\n2. Kontroller IP-adressen i ruterens DHCP-tabell\n3. Prøv å få tilgang til enhetens webgrensesnitt direkte\n4. Hvis IP-en har endret seg, rekonfigurer integrasjonen med den nye adressen"
+    },
+    "recovery_success": {
+      "title": "{device_name} har gjenopprettet",
+      "description": "ABB/FIMER VSN-dataloggeren din svarer igjen.\n\n**Feil startet:** {started_at}\n**Gjenopprettingstid:** {ended_at}\n**Total nedetid:** {downtime}"
+    }
+  },
+  "device_automation": {
+    "trigger_type": {
+      "device_unreachable": "{device_name} er utilgjengelig (nettverksproblem)",
+      "device_not_responding": "{device_name} svarer ikke (REST API-feil)",
+      "device_recovered": "{device_name} gjenopprettet"
+    }
   }
 }
