@@ -6,8 +6,9 @@ import asyncio
 import json
 from pathlib import Path
 from typing import Any
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
+import aiohttp
 import pytest
 
 from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.mapping_loader import (
@@ -427,3 +428,123 @@ class TestVSNMappingLoaderFileOperations:
         result = loader._read_and_parse_json(file_path)
 
         assert result == [{"key": "value"}]
+
+
+class TestVSNMappingLoaderGitHubFallback:
+    """Tests for GitHub fallback functionality."""
+
+    @pytest.mark.asyncio
+    async def test_fetch_from_github_http_error(self, tmp_path: Path) -> None:
+        """Test _fetch_from_github raises error on HTTP failure."""
+
+        loader = VSNMappingLoader()
+        file_path = tmp_path / "mapping.json"
+
+        # Set up mocks before the raises block
+        mock_response = AsyncMock()
+        mock_response.status = 404
+        mock_session = AsyncMock()
+        mock_session.get = MagicMock(
+            return_value=AsyncMock(__aenter__=AsyncMock(return_value=mock_response))
+        )
+
+        with patch("aiohttp.ClientSession") as mock_session_class:
+            mock_session_class.return_value.__aenter__ = AsyncMock(return_value=mock_session)
+            mock_session_class.return_value.__aexit__ = AsyncMock(return_value=None)
+
+            with pytest.raises(FileNotFoundError, match="Failed to fetch from GitHub"):
+                await loader._fetch_from_github(file_path)
+
+    @pytest.mark.asyncio
+    async def test_fetch_from_github_client_error(self, tmp_path: Path) -> None:
+        """Test _fetch_from_github raises error on client error."""
+        loader = VSNMappingLoader()
+        file_path = tmp_path / "mapping.json"
+
+        # Set up mocks before the raises block
+        mock_session = AsyncMock()
+        mock_session.get = MagicMock(side_effect=aiohttp.ClientError("Network error"))
+
+        with patch("aiohttp.ClientSession") as mock_session_class:
+            mock_session_class.return_value.__aenter__ = AsyncMock(return_value=mock_session)
+            mock_session_class.return_value.__aexit__ = AsyncMock(return_value=None)
+
+            with pytest.raises(FileNotFoundError, match="Failed to fetch mapping from GitHub"):
+                await loader._fetch_from_github(file_path)
+
+    @pytest.mark.asyncio
+    async def test_async_load_github_fallback_fails(self, tmp_path: Path) -> None:
+        """Test async_load raises error when file missing and GitHub fails."""
+        nonexistent_file = tmp_path / "nonexistent.json"
+        loader = VSNMappingLoader(nonexistent_file)
+
+        with (
+            patch.object(
+                loader,
+                "_fetch_from_github",
+                new_callable=AsyncMock,
+                side_effect=FileNotFoundError("GitHub fetch failed"),
+            ),
+            pytest.raises(FileNotFoundError, match="GitHub fetch failed"),
+        ):
+            await loader.async_load()
+
+    @pytest.mark.asyncio
+    async def test_async_load_with_missing_optional_fields(self, tmp_path: Path) -> None:
+        """Test async_load handles rows with missing optional fields."""
+        data = [
+            {
+                "REST Name (VSN700)": "TestPoint",
+                "REST Name (VSN300)": "test_point",
+                "SunSpec Normalized Name": "test",
+                "HA Name": "test_entity",
+                "In /livedata": "",  # Not checked
+                "In /feeds": "",  # Not checked
+                # Missing Label, Description, etc.
+            }
+        ]
+        mapping_file = tmp_path / "mapping.json"
+        mapping_file.write_text(json.dumps(data))
+
+        loader = VSNMappingLoader(mapping_file)
+        await loader.async_load()
+
+        assert "test_entity" in loader._mappings
+        mapping = loader._mappings["test_entity"]
+        assert mapping.label == ""
+        assert mapping.description == ""
+        assert mapping.ha_display_name == ""  # Falls back to empty string
+
+    @pytest.mark.asyncio
+    async def test_async_load_handles_null_precision(self, tmp_path: Path) -> None:
+        """Test async_load handles null suggested_display_precision."""
+        data = [
+            {
+                "REST Name (VSN700)": "NullPrecision",
+                "REST Name (VSN300)": "null_precision",
+                "SunSpec Normalized Name": "null_prec",
+                "HA Name": "null_precision_entity",
+                "In /livedata": "✓",
+                "In /feeds": "",
+                "Label": "Test",
+                "Description": "Test desc",
+                "HA Display Name": "Test Display",
+                "models": [],
+                "Category": "Test",
+                "HA Unit of Measurement": "",
+                "HA State Class": "",
+                "HA Device Class": "",
+                "Entity Category": "",
+                "Available in Modbus": "",
+                "HA Icon": "",
+                "Suggested Display Precision": None,
+            }
+        ]
+        mapping_file = tmp_path / "mapping.json"
+        mapping_file.write_text(json.dumps(data))
+
+        loader = VSNMappingLoader(mapping_file)
+        await loader.async_load()
+
+        mapping = loader._mappings["null_precision_entity"]
+        assert mapping.suggested_display_precision is None

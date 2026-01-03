@@ -713,3 +713,156 @@ class TestDiscoverVSNDevice:
             pytest.raises(VSNConnectionError, match="Connection failed"),
         ):
             await discover_vsn_device(mock_session, "http://192.168.1.100", "guest", "")
+
+
+class TestExtractDevicesEdgeCases:
+    """Additional tests for _extract_devices edge cases."""
+
+    def test_extract_battery_device(self) -> None:
+        """Test extracting battery device type."""
+        livedata: dict[str, Any] = {
+            "BATTERY001": {
+                "device_type": "battery",
+                "points": [
+                    {"name": "C_Mn", "value": "FIMER"},
+                ],
+            },
+        }
+        status_data = {
+            "keys": {
+                "logger.sn": {"value": "111033-3N16-1421"},
+            }
+        }
+        devices = _extract_devices(livedata, "VSN300", status_data)
+
+        battery = next((d for d in devices if d.device_type == "battery"), None)
+        assert battery is not None
+        assert battery.device_id == "BATTERY001"
+        assert battery.manufacturer == "FIMER"
+
+    def test_extract_meter_device(self) -> None:
+        """Test extracting meter device type."""
+        livedata: dict[str, Any] = {
+            "METER001": {
+                "device_type": "meter",
+                "points": [],
+            },
+        }
+        status_data = {
+            "keys": {
+                "logger.sn": {"value": "111033-3N16-1421"},
+            }
+        }
+        devices = _extract_devices(livedata, "VSN300", status_data)
+
+        meter = next((d for d in devices if d.device_type == "meter"), None)
+        assert meter is not None
+        assert meter.device_id == "METER001"
+
+    def test_extract_device_with_empty_points(self) -> None:
+        """Test extracting device with empty points array."""
+        livedata: dict[str, Any] = {
+            "077909-3G82-3112": {
+                "device_type": "inverter_3phases",
+                "points": [],  # Empty points
+            },
+        }
+        status_data = {
+            "keys": {
+                "logger.sn": {"value": "111033-3N16-1421"},
+            }
+        }
+        devices = _extract_devices(livedata, "VSN300", status_data)
+
+        inverter = next((d for d in devices if d.device_type == "inverter_3phases"), None)
+        assert inverter is not None
+        assert inverter.manufacturer is None  # No C_Mn point
+        assert inverter.firmware_version is None  # No C_Vr point
+
+    def test_extract_vsn700_device_model_from_livedata(self) -> None:
+        """Test VSN700 extracts device_model directly from livedata."""
+        livedata: dict[str, Any] = {
+            "123668-3P81-3821": {
+                "device_type": "inverter_3phases",
+                "device_model": "TRIO-50.0-TL",
+                "points": [],
+            },
+        }
+        status_data = {
+            "keys": {
+                "logger.loggerId": {"value": "ac:1f:0f:b0:50:b5"},
+            }
+        }
+        devices = _extract_devices(livedata, "VSN700", status_data)
+
+        inverter = next((d for d in devices if d.device_type == "inverter_3phases"), None)
+        assert inverter is not None
+        assert inverter.device_model == "TRIO-50.0-TL"
+
+    def test_extract_multiple_inverters(self) -> None:
+        """Test extracting multiple inverters."""
+        livedata: dict[str, Any] = {
+            "INV001": {
+                "device_type": "inverter_3phases",
+                "points": [{"name": "C_Mn", "value": "ABB"}],
+            },
+            "INV002": {
+                "device_type": "inverter_1phase",
+                "points": [{"name": "C_Mn", "value": "FIMER"}],
+            },
+        }
+        status_data = {
+            "keys": {
+                "logger.sn": {"value": "111033-3N16-1421"},
+            }
+        }
+        devices = _extract_devices(livedata, "VSN300", status_data)
+
+        inverters = [d for d in devices if d.device_type.startswith("inverter")]
+        assert len(inverters) == 2
+
+    def test_extract_handles_missing_keys_in_status(self) -> None:
+        """Test extracting devices when status has no keys."""
+        livedata: dict[str, Any] = {
+            "077909-3G82-3112": {
+                "device_type": "inverter_3phases",
+                "points": [],
+            },
+        }
+        status_data = {}  # No keys at all
+        devices = _extract_devices(livedata, "VSN300", status_data)
+
+        # Should still create a datalogger with Unknown S/N
+        datalogger = next((d for d in devices if d.is_datalogger), None)
+        assert datalogger is not None
+
+
+class TestExtractLoggerInfoEdgeCases:
+    """Additional tests for _extract_logger_info edge cases."""
+
+    def test_extract_logger_info_vsn700_missing_logger_id(self) -> None:
+        """Test VSN700 logger info when loggerId is missing."""
+        status_data = {
+            "keys": {
+                "fw.release_number": {"value": "2.0.0"},
+            }
+        }
+        info = _extract_logger_info(status_data, "VSN700")
+        assert info["logger_sn"] == "Unknown"
+        assert info["firmware_version"] == "2.0.0"
+
+    def test_extract_logger_info_with_all_optional_fields(self) -> None:
+        """Test extracting logger info with all optional fields present."""
+        status_data = {
+            "keys": {
+                "logger.sn": {"value": "111033-3N16-1421"},
+                "logger.board_model": {"value": "WIFI LOGGER CARD"},
+                "fw.release_number": {"value": "1.9.2"},
+                "logger.hostname": {"value": "ABB-077909-3G82-3112.local"},
+            }
+        }
+        info = _extract_logger_info(status_data, "VSN300")
+        assert info["logger_sn"] == "111033-3N16-1421"
+        assert info["logger_model"] == "WIFI LOGGER CARD"
+        assert info["firmware_version"] == "1.9.2"
+        assert info["hostname"] == "ABB-077909-3G82-3112.local"
