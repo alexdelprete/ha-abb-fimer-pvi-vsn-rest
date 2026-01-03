@@ -19,8 +19,14 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from .abb_fimer_vsn_rest_client.client import ABBFimerVSNRestClient
 from .abb_fimer_vsn_rest_client.discovery import discover_vsn_device
 from .const import (
+    CONF_ENABLE_REPAIR_NOTIFICATION,
+    CONF_FAILURES_THRESHOLD,
+    CONF_RECOVERY_SCRIPT,
     CONF_SCAN_INTERVAL,
     CONF_VSN_MODEL,
+    DEFAULT_ENABLE_REPAIR_NOTIFICATION,
+    DEFAULT_FAILURES_THRESHOLD,
+    DEFAULT_RECOVERY_SCRIPT,
     DEFAULT_SCAN_INTERVAL,
     DEFAULT_USERNAME,
     DOMAIN,
@@ -51,6 +57,9 @@ async def async_setup_entry(
     if not hass.data.get(STARTUP_LOGGED_KEY):
         _LOGGER.info(STARTUP_MESSAGE)
         hass.data[STARTUP_LOGGED_KEY] = True
+
+    # Migrate options for existing entries (add defaults for new options)
+    await _async_migrate_options(hass, config_entry)
 
     # Get configuration
     host: str = config_entry.data[CONF_HOST]
@@ -116,12 +125,15 @@ async def async_setup_entry(
         requires_auth=discovery_result.requires_auth,
     )
 
-    # Initialize coordinator with discovery result
+    # Initialize coordinator with discovery result and config entry
     coordinator = ABBFimerPVIVSNRestCoordinator(
         hass=hass,
         client=client,
         update_interval=timedelta(seconds=scan_interval),
         discovery_result=discovery_result,
+        entry_id=config_entry.entry_id,
+        host=host,
+        config_entry=config_entry,
     )
 
     # Perform initial data fetch
@@ -215,3 +227,31 @@ async def async_remove_config_entry_device(
         _LOGGER.error("Cannot delete device using device delete. Remove the integration instead.")
         return False
     return True
+
+
+async def _async_migrate_options(
+    hass: HomeAssistant, config_entry: ABBFimerPVIVSNRestConfigEntry
+) -> None:
+    """Migrate options for existing config entries.
+
+    Adds default values for new options that didn't exist in older versions.
+    """
+    options = dict(config_entry.options)
+    updated = False
+
+    # Add repair notification options if missing (added in v1.4.0)
+    if CONF_ENABLE_REPAIR_NOTIFICATION not in options:
+        options[CONF_ENABLE_REPAIR_NOTIFICATION] = DEFAULT_ENABLE_REPAIR_NOTIFICATION
+        updated = True
+
+    if CONF_FAILURES_THRESHOLD not in options:
+        options[CONF_FAILURES_THRESHOLD] = DEFAULT_FAILURES_THRESHOLD
+        updated = True
+
+    if CONF_RECOVERY_SCRIPT not in options:
+        options[CONF_RECOVERY_SCRIPT] = DEFAULT_RECOVERY_SCRIPT
+        updated = True
+
+    if updated:
+        hass.config_entries.async_update_entry(config_entry, options=options)
+        _LOGGER.debug("Migrated options with new repair notification defaults")

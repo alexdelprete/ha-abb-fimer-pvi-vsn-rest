@@ -41,9 +41,12 @@
     "step": {
       "init": {
         "title": "ABB/FIMER PVI VSN REST Options",
-        "description": "Configure update interval and custom device name prefixes.\n\nLeave prefix fields empty to use default naming.",
+        "description": "Configure update interval, notifications, and custom device name prefixes.\n\nLeave prefix fields empty to use default naming.",
         "data": {
           "scan_interval": "Scan interval (seconds)",
+          "enable_repair_notification": "Enable connection failure notifications",
+          "failures_threshold": "Failures before notification",
+          "recovery_script": "Recovery script (optional)",
           "prefix_inverter": "Inverter device name",
           "prefix_datalogger": "Datalogger device name",
           "prefix_meter": "Meter device name",
@@ -52,6 +55,9 @@
         },
         "data_description": {
           "scan_interval": "How often to fetch data from the VSN device. Range: 30-600 seconds. Default: 60 seconds.",
+          "enable_repair_notification": "Show a notification when the device becomes unreachable and when it recovers.",
+          "failures_threshold": "Number of consecutive failures before creating a notification. Range: 1-10. Default: 3.",
+          "recovery_script": "Script to execute when the device becomes unreachable (e.g., 'script.restart_router'). Leave empty for none.",
           "prefix_inverter": "Custom name for inverter devices. Leave empty for default (e.g., 'Power-One Inverter PVI-10.0-OUTD (077909-3G82-3112)').",
           "prefix_datalogger": "Custom name for datalogger devices. Leave empty for default.",
           "prefix_meter": "Custom name for meter devices. Leave empty for default.",
@@ -818,10 +824,6 @@
     "connection_failed": {
       "title": "Cannot connect to {device_name}",
       "description": "The integration cannot connect to your ABB/FIMER VSN datalogger at {host}.\n\n**Possible causes:**\n- The device is powered off or not connected to the network\n- The IP address has changed\n- A firewall is blocking the connection\n- The REST API port (80) is not accessible\n\n**To resolve:**\n1. Check that the device is powered on and connected to your network\n2. Verify the IP address in your router's DHCP table\n3. Try accessing the device's web interface directly\n4. If the IP has changed, reconfigure the integration with the new address"
-    },
-    "recovery_success": {
-      "title": "{device_name} has recovered",
-      "description": "Your ABB/FIMER VSN datalogger is now responding again.\n\n**Failure started:** {started_at}\n**Recovery time:** {ended_at}\n**Total downtime:** {downtime}"
     }
   },
   "device_automation": {

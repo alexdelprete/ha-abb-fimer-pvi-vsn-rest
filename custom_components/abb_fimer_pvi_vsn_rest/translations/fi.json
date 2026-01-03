@@ -41,9 +41,12 @@
     "step": {
       "init": {
         "title": "ABB/FIMER PVI VSN REST Asetukset",
-        "description": "Määritä päivitysväli ja mukautetut laitenimi-etuliitteet.\n\nJätä etuliitekentät tyhjiksi käyttääksesi oletusnimeämistä.",
+        "description": "Configure update interval, notifications, and custom device name prefixes.\n\nJätä etuliitekentät tyhjiksi käyttääksesi oletusnimeämistä.",
         "data": {
           "scan_interval": "Kyselyväli (sekuntia)",
+          "enable_repair_notification": "Enable connection failure notifications",
+          "failures_threshold": "Failures before notification",
+          "recovery_script": "Recovery script (optional)",
           "prefix_inverter": "Invertteri laitteen nimi",
           "prefix_datalogger": "Datalogger laitteen nimi",
           "prefix_meter": "Mittari laitteen nimi",
@@ -52,6 +55,9 @@
         },
         "data_description": {
           "scan_interval": "Kuinka usein haetaan tietoja VSN-laitteesta. Alue: 30-600 sekuntia. Oletus: 60 sekuntia.",
+          "enable_repair_notification": "Show a notification when the device becomes unreachable and when it recovers.",
+          "failures_threshold": "Number of consecutive failures before creating a notification. Range: 1-10. Default: 3.",
+          "recovery_script": "Script to execute when the device becomes unreachable (e.g., 'script.restart_router'). Leave empty for none.",
           "prefix_inverter": "Mukautettu nimi invertterilaitteille. Jätä tyhjäksi oletusarvolle (e.g., 'Teho-One Invertteri PVI-10.0-OUTD (077909-3G82-3112)').",
           "prefix_datalogger": "Mukautettu nimi datalogger-laitteille. Jätä tyhjäksi oletusarvolle.",
           "prefix_meter": "Mukautettu nimi mittarilaitteille. Jätä tyhjäksi oletusarvolle.",

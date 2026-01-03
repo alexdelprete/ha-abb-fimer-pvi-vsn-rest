@@ -41,9 +41,12 @@
     "step": {
       "init": {
         "title": "ABB/FIMER PVI VSN REST Valikud",
-        "description": "Seadistage värskendusintervall ja kohandatud seadmenimede eesliited.\n\nJätke eesliite väljad tühjaks vaikenimede kasutamiseks.",
+        "description": "Configure update interval, notifications, and custom device name prefixes.\n\nJätke eesliite väljad tühjaks vaikenimede kasutamiseks.",
         "data": {
           "scan_interval": "Päringuintervall (sekundites)",
+          "enable_repair_notification": "Enable connection failure notifications",
+          "failures_threshold": "Failures before notification",
+          "recovery_script": "Recovery script (optional)",
           "prefix_inverter": "Inverter seadme nimi",
           "prefix_datalogger": "Datalogger seadme nimi",
           "prefix_meter": "Arvesti seadme nimi",
@@ -52,6 +55,9 @@
         },
         "data_description": {
           "scan_interval": "Kui sageli andmeid VSN seadmest pärida. Vahemik: 30-600 sekundit. Vaikimisi: 60 sekundit.",
+          "enable_repair_notification": "Show a notification when the device becomes unreachable and when it recovers.",
+          "failures_threshold": "Number of consecutive failures before creating a notification. Range: 1-10. Default: 3.",
+          "recovery_script": "Script to execute when the device becomes unreachable (e.g., 'script.restart_router'). Leave empty for none.",
           "prefix_inverter": "Kohandatud nimi inverter seadmetele. Jäta tühjaks vaikeväärtuse jaoks (e.g., 'Võimsus-One Inverter PVI-10.0-OUTD (077909-3G82-3112)').",
           "prefix_datalogger": "Kohandatud nimi datalogger seadmetele. Jäta tühjaks vaikeväärtuse jaoks.",
           "prefix_meter": "Kohandatud nimi arvesti seadmetele. Jäta tühjaks vaikeväärtuse jaoks.",

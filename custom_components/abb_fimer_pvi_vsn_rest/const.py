@@ -30,13 +30,22 @@ CONF_PREFIX_BATTERY = "prefix_battery"
 # Entity ID regeneration option (one-time action, not persisted)
 CONF_REGENERATE_ENTITY_IDS = "regenerate_entity_ids"
 
+# Repair notification options
+CONF_ENABLE_REPAIR_NOTIFICATION = "enable_repair_notification"
+CONF_FAILURES_THRESHOLD = "failures_threshold"
+CONF_RECOVERY_SCRIPT = "recovery_script"
+
 DEFAULT_USERNAME = "guest"
 DEFAULT_SCAN_INTERVAL = 60
 MIN_SCAN_INTERVAL = 30
 MAX_SCAN_INTERVAL = 600
 
 # Failure tracking for repair issues
+DEFAULT_ENABLE_REPAIR_NOTIFICATION = True
 DEFAULT_FAILURES_THRESHOLD = 3  # Number of consecutive failures before creating repair issue
+DEFAULT_RECOVERY_SCRIPT = ""  # Empty = no script
+MIN_FAILURES_THRESHOLD = 1
+MAX_FAILURES_THRESHOLD = 10
 
 # VSN Models
 VSN_MODEL_300 = "VSN300"

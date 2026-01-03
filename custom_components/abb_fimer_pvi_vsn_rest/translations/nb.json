@@ -41,9 +41,12 @@
     "step": {
       "init": {
         "title": "ABB/FIMER PVI VSN REST Alternativer",
-        "description": "Konfigurer oppdateringsintervall og egendefinerte enhetsnavnprefikser.\n\nLa prefiksfeltene være tomme for å bruke standardnavngivning.",
+        "description": "Configure update interval, notifications, and custom device name prefixes.\n\nLa prefiksfeltene være tomme for å bruke standardnavngivning.",
         "data": {
           "scan_interval": "Skanneintervall (sekunder)",
+          "enable_repair_notification": "Enable connection failure notifications",
+          "failures_threshold": "Failures before notification",
+          "recovery_script": "Recovery script (optional)",
           "prefix_inverter": "Vekselretter enhetsnavn",
           "prefix_datalogger": "Datalogger enhetsnavn",
           "prefix_meter": "Måler enhetsnavn",
@@ -52,6 +55,9 @@
         },
         "data_description": {
           "scan_interval": "Hvor ofte data hentes fra VSN-enheten. Område: 30-600 sekunder. Standard: 60 sekunder.",
+          "enable_repair_notification": "Show a notification when the device becomes unreachable and when it recovers.",
+          "failures_threshold": "Number of consecutive failures before creating a notification. Range: 1-10. Default: 3.",
+          "recovery_script": "Script to execute when the device becomes unreachable (e.g., 'script.restart_router'). Leave empty for none.",
           "prefix_inverter": "Egendefinert navn for vekselretterenheter. La stå tom for standardverdi (e.g., 'Effekt-One Vekselretter PVI-10.0-OUTD (077909-3G82-3112)').",
           "prefix_datalogger": "Egendefinert navn for datalogger-enheter. La stå tom for standardverdi.",
           "prefix_meter": "Egendefinert navn for målerenheter. La stå tom for standardverdi.",

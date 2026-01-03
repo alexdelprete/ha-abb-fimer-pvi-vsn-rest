@@ -5,7 +5,12 @@ from __future__ import annotations
 from datetime import timedelta
 import logging
 import time
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+from homeassistant.exceptions import HomeAssistantError
+
+if TYPE_CHECKING:
+    from homeassistant.config_entries import ConfigEntry
 
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
@@ -18,7 +23,15 @@ from .abb_fimer_vsn_rest_client.exceptions import (
     VSNClientError,
     VSNConnectionError,
 )
-from .const import DEFAULT_FAILURES_THRESHOLD, DOMAIN
+from .const import (
+    CONF_ENABLE_REPAIR_NOTIFICATION,
+    CONF_FAILURES_THRESHOLD,
+    CONF_RECOVERY_SCRIPT,
+    DEFAULT_ENABLE_REPAIR_NOTIFICATION,
+    DEFAULT_FAILURES_THRESHOLD,
+    DEFAULT_RECOVERY_SCRIPT,
+    DOMAIN,
+)
 from .repairs import create_connection_issue, create_recovery_notification, delete_connection_issue
 
 _LOGGER = logging.getLogger(__name__)
@@ -35,6 +48,7 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         discovery_result: DiscoveryResult | None = None,
         entry_id: str | None = None,
         host: str | None = None,
+        config_entry: ConfigEntry | None = None,
     ) -> None:
         """Initialize the coordinator.
 
@@ -45,6 +59,7 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             discovery_result: Optional discovery result from initial setup
             entry_id: Config entry ID for repair issues
             host: Device host for repair issues
+            config_entry: Config entry for accessing options
 
         """
         super().__init__(
@@ -67,9 +82,34 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._repair_issue_created = False
         self._failure_start_time: float | None = None
         self._last_error_type: str | None = None
+        self._recovery_script_executed = False
+        self._script_executed_time: float | None = None
 
         # Device trigger tracking
         self.device_id: str | None = None
+
+        # Repair notification options from config entry
+        if config_entry:
+            self._enable_repair_notification = config_entry.options.get(
+                CONF_ENABLE_REPAIR_NOTIFICATION, DEFAULT_ENABLE_REPAIR_NOTIFICATION
+            )
+            self._failures_threshold = config_entry.options.get(
+                CONF_FAILURES_THRESHOLD, DEFAULT_FAILURES_THRESHOLD
+            )
+            self._recovery_script = config_entry.options.get(
+                CONF_RECOVERY_SCRIPT, DEFAULT_RECOVERY_SCRIPT
+            )
+        else:
+            self._enable_repair_notification = DEFAULT_ENABLE_REPAIR_NOTIFICATION
+            self._failures_threshold = DEFAULT_FAILURES_THRESHOLD
+            self._recovery_script = DEFAULT_RECOVERY_SCRIPT
+
+        _LOGGER.debug(
+            "Repair notification options: enabled=%s, threshold=%s, script=%s",
+            self._enable_repair_notification,
+            self._failures_threshold,
+            self._recovery_script,
+        )
 
     async def _async_update_data(self) -> dict[str, Any]:
         """Fetch data from VSN device.
@@ -134,13 +174,13 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         _LOGGER.debug(
             "Update error (failure %d/%d): %s",
             self._consecutive_failures,
-            DEFAULT_FAILURES_THRESHOLD,
+            self._failures_threshold,
             error,
         )
 
         # Create repair issue after threshold reached
         if (
-            self._consecutive_failures >= DEFAULT_FAILURES_THRESHOLD
+            self._consecutive_failures >= self._failures_threshold
             and not self._repair_issue_created
             and self._entry_id
         ):
@@ -152,24 +192,29 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 error_type,
                 {
                     "error": str(error),
-                    "failures_threshold": DEFAULT_FAILURES_THRESHOLD,
+                    "failures_threshold": self._failures_threshold,
                 },
             )
 
-            # Create repair issue
-            device_name = self._get_device_name()
-            create_connection_issue(
-                self.hass,
-                self._entry_id,
-                device_name,
-                self._host or "unknown",
-            )
-            _LOGGER.info(
-                "Repair issue created after %d consecutive failures",
-                self._consecutive_failures,
-            )
+            # Create repair issue (if enabled)
+            if self._enable_repair_notification:
+                device_name = self._get_device_name()
+                create_connection_issue(
+                    self.hass,
+                    self._entry_id,
+                    device_name,
+                    self._host or "unknown",
+                )
+                _LOGGER.info(
+                    "Repair issue created after %d consecutive failures",
+                    self._consecutive_failures,
+                )
 
             self._repair_issue_created = True
+
+            # Execute recovery script if configured
+            if self._recovery_script:
+                self.hass.async_create_task(self._execute_recovery_script())
 
     async def _handle_recovery(self) -> None:
         """Handle recovery after connection was restored."""
@@ -186,6 +231,13 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 dt_util.utc_from_timestamp(self._failure_start_time)
             ).strftime("%X")
         downtime = self._format_downtime(downtime_seconds)
+
+        # Get script execution time if script was executed
+        script_executed_at = None
+        if self._recovery_script_executed and self._script_executed_time:
+            script_executed_at = dt_util.as_local(
+                dt_util.utc_from_timestamp(self._script_executed_time)
+            ).strftime("%X")
 
         # Fire device_recovered event
         self._fire_device_event(
@@ -204,20 +256,68 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 downtime,
             )
 
-            device_name = self._get_device_name()
-            create_recovery_notification(
-                self.hass,
-                self._entry_id,
-                device_name,
-                started_at=started_at,
-                ended_at=ended_at,
-                downtime=downtime,
-            )
+            # Create recovery notification (if notifications are enabled)
+            if self._enable_repair_notification:
+                device_name = self._get_device_name()
+                create_recovery_notification(
+                    self.hass,
+                    self._entry_id,
+                    device_name,
+                    started_at=started_at,
+                    ended_at=ended_at,
+                    downtime=downtime,
+                    script_name=self._recovery_script if self._recovery_script_executed else None,
+                    script_executed_at=script_executed_at,
+                )
 
         # Reset tracking variables
         self._repair_issue_created = False
         self._failure_start_time = None
         self._last_error_type = None
+        self._recovery_script_executed = False
+        self._script_executed_time = None
+
+    async def _execute_recovery_script(self) -> None:
+        """Execute the configured recovery script."""
+        if not self._recovery_script:
+            return
+
+        try:
+            # Extract script name from entity_id (e.g., "script.restart_wifi" -> "restart_wifi")
+            script_name = self._recovery_script.replace("script.", "")
+
+            _LOGGER.info(
+                "Executing recovery script: %s for device %s",
+                self._recovery_script,
+                self._get_device_name(),
+            )
+
+            # Call the script with device information as variables
+            await self.hass.services.async_call(
+                domain="script",
+                service=script_name,
+                service_data={
+                    "device_name": self._get_device_name(),
+                    "host": self._host or "",
+                    "vsn_model": self.vsn_model or "",
+                    "logger_sn": self.discovery_result.logger_sn if self.discovery_result else "",
+                    "failures_count": self._consecutive_failures,
+                },
+                blocking=False,  # Don't wait for script completion
+            )
+
+            self._recovery_script_executed = True
+            self._script_executed_time = time.time()
+            _LOGGER.info(
+                "Recovery script executed successfully: %s",
+                self._recovery_script,
+            )
+        except HomeAssistantError as err:
+            _LOGGER.warning(
+                "Failed to execute recovery script %s: %s",
+                self._recovery_script,
+                err,
+            )
 
     def _get_device_name(self) -> str:
         """Get a display name for the device."""

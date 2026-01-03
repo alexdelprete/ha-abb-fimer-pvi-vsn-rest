@@ -41,9 +41,12 @@
     "step": {
       "init": {
         "title": "Options ABB/FIMER PVI VSN REST",
-        "description": "Configurez l'intervalle de mise à jour et les préfixes de noms d'appareils personnalisés.\n\nLaissez les champs de préfixe vides pour utiliser la dénomination par défaut.",
+        "description": "Configure update interval, notifications, and custom device name prefixes.\n\nLaissez les champs de préfixe vides pour utiliser la dénomination par défaut.",
         "data": {
           "scan_interval": "Intervalle de balayage (secondes)",
+          "enable_repair_notification": "Enable connection failure notifications",
+          "failures_threshold": "Failures before notification",
+          "recovery_script": "Recovery script (optional)",
           "prefix_inverter": "Nom de l'appareil onduleur",
           "prefix_datalogger": "Nom de l'appareil datalogger",
           "prefix_meter": "Nom de l'appareil compteur",
@@ -52,6 +55,9 @@
         },
         "data_description": {
           "scan_interval": "Fréquence de récupération des données du périphérique VSN. Plage: 30-600 secondes. Par défaut: 60 secondes.",
+          "enable_repair_notification": "Show a notification when the device becomes unreachable and when it recovers.",
+          "failures_threshold": "Number of consecutive failures before creating a notification. Range: 1-10. Default: 3.",
+          "recovery_script": "Script to execute when the device becomes unreachable (e.g., 'script.restart_router'). Leave empty for none.",
           "prefix_inverter": "Nom personnalisé pour les appareils onduleurs. Laisser vide pour la valeur par défaut (e.g., 'Puissance-One Onduleur PVI-10.0-OUTD (077909-3G82-3112)').",
           "prefix_datalogger": "Nom personnalisé pour les appareils datalogger. Laisser vide pour la valeur par défaut.",
           "prefix_meter": "Nom personnalisé pour les appareils compteurs. Laisser vide pour la valeur par défaut.",

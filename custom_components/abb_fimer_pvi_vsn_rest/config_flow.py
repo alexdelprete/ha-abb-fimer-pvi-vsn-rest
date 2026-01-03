@@ -18,7 +18,14 @@ from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
-from homeassistant.helpers.selector import NumberSelector, NumberSelectorConfig, NumberSelectorMode
+from homeassistant.helpers.selector import (
+    NumberSelector,
+    NumberSelectorConfig,
+    NumberSelectorMode,
+    TextSelector,
+    TextSelectorConfig,
+    TextSelectorType,
+)
 from homeassistant.util import slugify
 
 from .abb_fimer_vsn_rest_client.discovery import discover_vsn_device
@@ -29,18 +36,26 @@ from .abb_fimer_vsn_rest_client.exceptions import (
 )
 from .abb_fimer_vsn_rest_client.utils import check_socket_connection
 from .const import (
+    CONF_ENABLE_REPAIR_NOTIFICATION,
+    CONF_FAILURES_THRESHOLD,
     CONF_PREFIX_BATTERY,
     CONF_PREFIX_DATALOGGER,
     CONF_PREFIX_INVERTER,
     CONF_PREFIX_METER,
+    CONF_RECOVERY_SCRIPT,
     CONF_REGENERATE_ENTITY_IDS,
     CONF_REQUIRES_AUTH,
     CONF_SCAN_INTERVAL,
     CONF_VSN_MODEL,
+    DEFAULT_ENABLE_REPAIR_NOTIFICATION,
+    DEFAULT_FAILURES_THRESHOLD,
+    DEFAULT_RECOVERY_SCRIPT,
     DEFAULT_SCAN_INTERVAL,
     DEFAULT_USERNAME,
     DOMAIN,
+    MAX_FAILURES_THRESHOLD,
     MAX_SCAN_INTERVAL,
+    MIN_FAILURES_THRESHOLD,
     MIN_SCAN_INTERVAL,
 )
 
@@ -384,6 +399,42 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
                 )
             ),
         }
+
+        # Repair notification options
+        schema_dict[
+            vol.Optional(
+                CONF_ENABLE_REPAIR_NOTIFICATION,
+                default=current_options.get(
+                    CONF_ENABLE_REPAIR_NOTIFICATION, DEFAULT_ENABLE_REPAIR_NOTIFICATION
+                ),
+            )
+        ] = bool
+
+        schema_dict[
+            vol.Required(
+                CONF_FAILURES_THRESHOLD,
+                default=current_options.get(CONF_FAILURES_THRESHOLD, DEFAULT_FAILURES_THRESHOLD),
+            )
+        ] = NumberSelector(
+            NumberSelectorConfig(
+                min=MIN_FAILURES_THRESHOLD,
+                max=MAX_FAILURES_THRESHOLD,
+                mode=NumberSelectorMode.BOX,
+                step=1,
+            )
+        )
+
+        schema_dict[
+            vol.Optional(
+                CONF_RECOVERY_SCRIPT,
+                default=current_options.get(CONF_RECOVERY_SCRIPT, DEFAULT_RECOVERY_SCRIPT),
+            )
+        ] = TextSelector(
+            TextSelectorConfig(
+                type=TextSelectorType.TEXT,
+                multiline=False,
+            )
+        )
 
         # Only add prefix fields for device types that exist
         if has_inverters:

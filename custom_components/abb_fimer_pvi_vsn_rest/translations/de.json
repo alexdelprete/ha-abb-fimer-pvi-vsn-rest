@@ -41,9 +41,12 @@
     "step": {
       "init": {
         "title": "ABB/FIMER PVI VSN REST Optionen",
-        "description": "Konfigurieren Sie das Aktualisierungsintervall und benutzerdefinierte Gerätenamenpräfixe.\n\nLassen Sie die Präfixfelder leer, um die Standardbenennung zu verwenden.",
+        "description": "Configure update interval, notifications, and custom device name prefixes.\n\nLassen Sie die Präfixfelder leer, um die Standardbenennung zu verwenden.",
         "data": {
           "scan_interval": "Abfrageintervall (Sekunden)",
+          "enable_repair_notification": "Enable connection failure notifications",
+          "failures_threshold": "Failures before notification",
+          "recovery_script": "Recovery script (optional)",
           "prefix_inverter": "Wechselrichter Gerätename",
           "prefix_datalogger": "Datalogger Gerätename",
           "prefix_meter": "Zähler Gerätename",
@@ -52,6 +55,9 @@
         },
         "data_description": {
           "scan_interval": "Wie oft Daten vom VSN-Gerät abgerufen werden. Bereich: 30-600 Sekunden. Standard: 60 Sekunden.",
+          "enable_repair_notification": "Show a notification when the device becomes unreachable and when it recovers.",
+          "failures_threshold": "Number of consecutive failures before creating a notification. Range: 1-10. Default: 3.",
+          "recovery_script": "Script to execute when the device becomes unreachable (e.g., 'script.restart_router'). Leave empty for none.",
           "prefix_inverter": "Benutzerdefinierter Name für Wechselrichtergeräte. Leer lassen für Standard (e.g., 'Leistung-One Wechselrichter PVI-10.0-OUTD (077909-3G82-3112)').",
           "prefix_datalogger": "Benutzerdefinierter Name für Datalogger-Geräte. Leer lassen für Standard.",
           "prefix_meter": "Benutzerdefinierter Name für Zählergeräte. Leer lassen für Standard.",

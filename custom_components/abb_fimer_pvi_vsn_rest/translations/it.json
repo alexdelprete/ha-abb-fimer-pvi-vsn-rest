@@ -41,9 +41,12 @@
     "step": {
       "init": {
         "title": "Opzioni ABB/FIMER PVI VSN REST",
-        "description": "Configura l'intervallo di aggiornamento e i prefissi personalizzati per i nomi dei dispositivi.\n\nLascia i campi prefisso vuoti per usare la denominazione predefinita.",
+        "description": "Configure update interval, notifications, and custom device name prefixes.\n\nLascia i campi prefisso vuoti per usare la denominazione predefinita.",
         "data": {
           "scan_interval": "Intervallo di scansione (secondi)",
+          "enable_repair_notification": "Enable connection failure notifications",
+          "failures_threshold": "Failures before notification",
+          "recovery_script": "Recovery script (optional)",
           "prefix_inverter": "Nome dispositivo inverter",
           "prefix_datalogger": "Nome dispositivo datalogger",
           "prefix_meter": "Nome dispositivo contatore",
@@ -52,6 +55,9 @@
         },
         "data_description": {
           "scan_interval": "Frequenza di recupero dati dal dispositivo VSN. Intervallo: 30-600 secondi. Predefinito: 60 secondi.",
+          "enable_repair_notification": "Show a notification when the device becomes unreachable and when it recovers.",
+          "failures_threshold": "Number of consecutive failures before creating a notification. Range: 1-10. Default: 3.",
+          "recovery_script": "Script to execute when the device becomes unreachable (e.g., 'script.restart_router'). Leave empty for none.",
           "prefix_inverter": "Nome personalizzato per i dispositivi inverter. Lascia vuoto per il valore predefinito (e.g., 'Potenza-One Inverter PVI-10.0-OUTD (077909-3G82-3112)').",
           "prefix_datalogger": "Nome personalizzato per i dispositivi datalogger. Lascia vuoto per il valore predefinito.",
           "prefix_meter": "Nome personalizzato per i dispositivi contatore. Lascia vuoto per il valore predefinito.",

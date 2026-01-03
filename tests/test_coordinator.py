@@ -12,7 +12,15 @@ from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.exceptio
     VSNClientError,
     VSNConnectionError,
 )
-from custom_components.abb_fimer_pvi_vsn_rest.const import DEFAULT_FAILURES_THRESHOLD, DOMAIN
+from custom_components.abb_fimer_pvi_vsn_rest.const import (
+    CONF_ENABLE_REPAIR_NOTIFICATION,
+    CONF_FAILURES_THRESHOLD,
+    CONF_RECOVERY_SCRIPT,
+    DEFAULT_ENABLE_REPAIR_NOTIFICATION,
+    DEFAULT_FAILURES_THRESHOLD,
+    DEFAULT_RECOVERY_SCRIPT,
+    DOMAIN,
+)
 from custom_components.abb_fimer_pvi_vsn_rest.coordinator import ABBFimerPVIVSNRestCoordinator
 from homeassistant.helpers.update_coordinator import UpdateFailed
 
@@ -42,10 +50,24 @@ def coordinator(
 
 
 @pytest.fixture
+def mock_config_entry() -> MagicMock:
+    """Create a mock config entry with options."""
+    entry = MagicMock()
+    entry.entry_id = "test_entry_id"
+    entry.options = {
+        CONF_ENABLE_REPAIR_NOTIFICATION: True,
+        CONF_FAILURES_THRESHOLD: DEFAULT_FAILURES_THRESHOLD,
+        CONF_RECOVERY_SCRIPT: "",
+    }
+    return entry
+
+
+@pytest.fixture
 def coordinator_with_entry_id(
     mock_hass: MagicMock,
     mock_vsn_client: MagicMock,
     mock_discovery_result: MockDiscoveryResult,
+    mock_config_entry: MagicMock,
 ) -> ABBFimerPVIVSNRestCoordinator:
     """Create a coordinator with entry_id for repair issue testing."""
     return ABBFimerPVIVSNRestCoordinator(
@@ -55,6 +77,7 @@ def coordinator_with_entry_id(
         discovery_result=mock_discovery_result,
         entry_id="test_entry_id",
         host=TEST_HOST,
+        config_entry=mock_config_entry,
     )
 
 
@@ -493,3 +516,269 @@ class TestShutdown:
         await coordinator.async_shutdown()
 
         mock_vsn_client.close.assert_called_once()
+
+
+class TestConfigurableOptions:
+    """Tests for configurable notification options."""
+
+    async def test_default_options_without_config_entry(
+        self,
+        mock_hass: MagicMock,
+        mock_vsn_client: MagicMock,
+        mock_discovery_result: MockDiscoveryResult,
+    ) -> None:
+        """Test default options are used when no config_entry is provided."""
+        coordinator = ABBFimerPVIVSNRestCoordinator(
+            hass=mock_hass,
+            client=mock_vsn_client,
+            update_interval=timedelta(seconds=60),
+            discovery_result=mock_discovery_result,
+            entry_id="test_entry",
+            host=TEST_HOST,
+            config_entry=None,
+        )
+
+        assert coordinator._enable_repair_notification == DEFAULT_ENABLE_REPAIR_NOTIFICATION
+        assert coordinator._failures_threshold == DEFAULT_FAILURES_THRESHOLD
+        assert coordinator._recovery_script == DEFAULT_RECOVERY_SCRIPT
+
+    async def test_options_from_config_entry(
+        self,
+        mock_hass: MagicMock,
+        mock_vsn_client: MagicMock,
+        mock_discovery_result: MockDiscoveryResult,
+    ) -> None:
+        """Test options are read from config_entry."""
+        config_entry = MagicMock()
+        config_entry.options = {
+            CONF_ENABLE_REPAIR_NOTIFICATION: False,
+            CONF_FAILURES_THRESHOLD: 5,
+            CONF_RECOVERY_SCRIPT: "script.restart_router",
+        }
+
+        coordinator = ABBFimerPVIVSNRestCoordinator(
+            hass=mock_hass,
+            client=mock_vsn_client,
+            update_interval=timedelta(seconds=60),
+            discovery_result=mock_discovery_result,
+            entry_id="test_entry",
+            host=TEST_HOST,
+            config_entry=config_entry,
+        )
+
+        assert coordinator._enable_repair_notification is False
+        assert coordinator._failures_threshold == 5
+        assert coordinator._recovery_script == "script.restart_router"
+
+    async def test_custom_failures_threshold(
+        self,
+        mock_hass: MagicMock,
+        mock_vsn_client: MagicMock,
+        mock_discovery_result: MockDiscoveryResult,
+    ) -> None:
+        """Test custom failures threshold is used."""
+        config_entry = MagicMock()
+        config_entry.options = {
+            CONF_ENABLE_REPAIR_NOTIFICATION: True,
+            CONF_FAILURES_THRESHOLD: 5,
+            CONF_RECOVERY_SCRIPT: "",
+        }
+
+        coordinator = ABBFimerPVIVSNRestCoordinator(
+            hass=mock_hass,
+            client=mock_vsn_client,
+            update_interval=timedelta(seconds=60),
+            discovery_result=mock_discovery_result,
+            entry_id="test_entry",
+            host=TEST_HOST,
+            config_entry=config_entry,
+        )
+
+        mock_vsn_client.get_normalized_data.side_effect = VSNConnectionError("Failed")
+
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.coordinator.create_connection_issue"
+        ) as mock_create:
+            # Fail 4 times (below threshold of 5)
+            for _ in range(4):
+                with pytest.raises(UpdateFailed):
+                    await coordinator._async_update_data()
+
+            mock_create.assert_not_called()
+
+            # 5th failure reaches threshold
+            with pytest.raises(UpdateFailed):
+                await coordinator._async_update_data()
+
+            mock_create.assert_called_once()
+
+    async def test_notifications_disabled(
+        self,
+        mock_hass: MagicMock,
+        mock_vsn_client: MagicMock,
+        mock_discovery_result: MockDiscoveryResult,
+    ) -> None:
+        """Test repair issue not created when notifications are disabled."""
+        config_entry = MagicMock()
+        config_entry.options = {
+            CONF_ENABLE_REPAIR_NOTIFICATION: False,
+            CONF_FAILURES_THRESHOLD: 3,
+            CONF_RECOVERY_SCRIPT: "",
+        }
+
+        coordinator = ABBFimerPVIVSNRestCoordinator(
+            hass=mock_hass,
+            client=mock_vsn_client,
+            update_interval=timedelta(seconds=60),
+            discovery_result=mock_discovery_result,
+            entry_id="test_entry",
+            host=TEST_HOST,
+            config_entry=config_entry,
+        )
+
+        mock_vsn_client.get_normalized_data.side_effect = VSNConnectionError("Failed")
+
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.coordinator.create_connection_issue"
+        ) as mock_create:
+            for _ in range(5):
+                with pytest.raises(UpdateFailed):
+                    await coordinator._async_update_data()
+
+            # Repair issue should NOT be created when notifications disabled
+            mock_create.assert_not_called()
+            # But internal tracking should still work
+            assert coordinator._repair_issue_created is True
+
+
+class TestRecoveryScript:
+    """Tests for recovery script execution."""
+
+    async def test_recovery_script_executed(
+        self,
+        mock_hass: MagicMock,
+        mock_vsn_client: MagicMock,
+        mock_discovery_result: MockDiscoveryResult,
+    ) -> None:
+        """Test recovery script is executed when configured."""
+        config_entry = MagicMock()
+        config_entry.options = {
+            CONF_ENABLE_REPAIR_NOTIFICATION: True,
+            CONF_FAILURES_THRESHOLD: 3,
+            CONF_RECOVERY_SCRIPT: "script.restart_router",
+        }
+
+        coordinator = ABBFimerPVIVSNRestCoordinator(
+            hass=mock_hass,
+            client=mock_vsn_client,
+            update_interval=timedelta(seconds=60),
+            discovery_result=mock_discovery_result,
+            entry_id="test_entry",
+            host=TEST_HOST,
+            config_entry=config_entry,
+        )
+
+        mock_vsn_client.get_normalized_data.side_effect = VSNConnectionError("Failed")
+        mock_hass.async_create_task = MagicMock()
+
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.coordinator.create_connection_issue"
+        ):
+            for _ in range(3):
+                with pytest.raises(UpdateFailed):
+                    await coordinator._async_update_data()
+
+        # async_create_task should be called to execute recovery script
+        mock_hass.async_create_task.assert_called()
+
+    async def test_no_recovery_script_when_not_configured(
+        self,
+        coordinator_with_entry_id: ABBFimerPVIVSNRestCoordinator,
+        mock_vsn_client: MagicMock,
+        mock_hass: MagicMock,
+    ) -> None:
+        """Test no recovery script execution when not configured."""
+        mock_vsn_client.get_normalized_data.side_effect = VSNConnectionError("Failed")
+        mock_hass.async_create_task = MagicMock()
+
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.coordinator.create_connection_issue"
+        ):
+            for _ in range(DEFAULT_FAILURES_THRESHOLD):
+                with pytest.raises(UpdateFailed):
+                    await coordinator_with_entry_id._async_update_data()
+
+        # async_create_task should NOT be called for recovery script
+        # (but may be called for other purposes, so we check the call args)
+        if mock_hass.async_create_task.called:
+            # Verify none of the calls are for _execute_recovery_script
+            for call in mock_hass.async_create_task.call_args_list:
+                # The coroutine name should not be _execute_recovery_script
+                coro = call[0][0]
+                assert "_execute_recovery_script" not in str(coro)
+
+    async def test_execute_recovery_script_method(
+        self,
+        mock_hass: MagicMock,
+        mock_vsn_client: MagicMock,
+        mock_discovery_result: MockDiscoveryResult,
+    ) -> None:
+        """Test _execute_recovery_script method directly."""
+        config_entry = MagicMock()
+        config_entry.options = {
+            CONF_ENABLE_REPAIR_NOTIFICATION: True,
+            CONF_FAILURES_THRESHOLD: 3,
+            CONF_RECOVERY_SCRIPT: "script.my_script",
+        }
+
+        coordinator = ABBFimerPVIVSNRestCoordinator(
+            hass=mock_hass,
+            client=mock_vsn_client,
+            update_interval=timedelta(seconds=60),
+            discovery_result=mock_discovery_result,
+            entry_id="test_entry",
+            host=TEST_HOST,
+            config_entry=config_entry,
+        )
+
+        mock_hass.services.async_call = AsyncMock()
+
+        await coordinator._execute_recovery_script()
+
+        mock_hass.services.async_call.assert_called_once()
+        call_args = mock_hass.services.async_call.call_args
+        assert call_args[1]["domain"] == "script"
+        assert call_args[1]["service"] == "my_script"
+        assert coordinator._recovery_script_executed is True
+        assert coordinator._script_executed_time is not None
+
+    async def test_execute_recovery_script_empty(
+        self,
+        mock_hass: MagicMock,
+        mock_vsn_client: MagicMock,
+        mock_discovery_result: MockDiscoveryResult,
+    ) -> None:
+        """Test _execute_recovery_script does nothing when script is empty."""
+        config_entry = MagicMock()
+        config_entry.options = {
+            CONF_ENABLE_REPAIR_NOTIFICATION: True,
+            CONF_FAILURES_THRESHOLD: 3,
+            CONF_RECOVERY_SCRIPT: "",
+        }
+
+        coordinator = ABBFimerPVIVSNRestCoordinator(
+            hass=mock_hass,
+            client=mock_vsn_client,
+            update_interval=timedelta(seconds=60),
+            discovery_result=mock_discovery_result,
+            entry_id="test_entry",
+            host=TEST_HOST,
+            config_entry=config_entry,
+        )
+
+        mock_hass.services.async_call = AsyncMock()
+
+        await coordinator._execute_recovery_script()
+
+        mock_hass.services.async_call.assert_not_called()
+        assert coordinator._recovery_script_executed is False

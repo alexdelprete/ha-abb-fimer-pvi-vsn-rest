@@ -12,8 +12,14 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 from custom_components.abb_fimer_pvi_vsn_rest.const import (
+    CONF_ENABLE_REPAIR_NOTIFICATION,
+    CONF_FAILURES_THRESHOLD,
+    CONF_RECOVERY_SCRIPT,
     CONF_SCAN_INTERVAL,
     CONF_VSN_MODEL,
+    DEFAULT_ENABLE_REPAIR_NOTIFICATION,
+    DEFAULT_FAILURES_THRESHOLD,
+    DEFAULT_RECOVERY_SCRIPT,
     DEFAULT_SCAN_INTERVAL,
     DEFAULT_USERNAME,
     DOMAIN,
@@ -82,6 +88,9 @@ def mock_config_entry_options() -> dict:
     """Return mock config entry options."""
     return {
         CONF_SCAN_INTERVAL: TEST_SCAN_INTERVAL,
+        CONF_ENABLE_REPAIR_NOTIFICATION: DEFAULT_ENABLE_REPAIR_NOTIFICATION,
+        CONF_FAILURES_THRESHOLD: DEFAULT_FAILURES_THRESHOLD,
+        CONF_RECOVERY_SCRIPT: DEFAULT_RECOVERY_SCRIPT,
     }
 
 
