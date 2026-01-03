@@ -104,10 +104,12 @@ def create_recovery_notification(
         message_lines.append(f"**Script executed:** {script_executed_at}")
         message_lines.append(f"**Recovery script:** {script_name}")
 
-    message_lines.extend([
-        f"**Recovery time:** {ended_at}",
-        f"**Total downtime:** {downtime}",
-    ])
+    message_lines.extend(
+        [
+            f"**Recovery time:** {ended_at}",
+            f"**Total downtime:** {downtime}",
+        ]
+    )
 
     message = "\n".join(message_lines)
     title = f"{device_name} has recovered"

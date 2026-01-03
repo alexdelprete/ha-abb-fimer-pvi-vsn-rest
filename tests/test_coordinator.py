@@ -681,9 +681,7 @@ class TestRecoveryScript:
         mock_vsn_client.get_normalized_data.side_effect = VSNConnectionError("Failed")
         mock_hass.async_create_task = MagicMock()
 
-        with patch(
-            "custom_components.abb_fimer_pvi_vsn_rest.coordinator.create_connection_issue"
-        ):
+        with patch("custom_components.abb_fimer_pvi_vsn_rest.coordinator.create_connection_issue"):
             for _ in range(3):
                 with pytest.raises(UpdateFailed):
                     await coordinator._async_update_data()
@@ -701,9 +699,7 @@ class TestRecoveryScript:
         mock_vsn_client.get_normalized_data.side_effect = VSNConnectionError("Failed")
         mock_hass.async_create_task = MagicMock()
 
-        with patch(
-            "custom_components.abb_fimer_pvi_vsn_rest.coordinator.create_connection_issue"
-        ):
+        with patch("custom_components.abb_fimer_pvi_vsn_rest.coordinator.create_connection_issue"):
             for _ in range(DEFAULT_FAILURES_THRESHOLD):
                 with pytest.raises(UpdateFailed):
                     await coordinator_with_entry_id._async_update_data()
