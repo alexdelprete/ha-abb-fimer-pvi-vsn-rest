@@ -535,19 +535,20 @@ class TestVSNSensorNativeValue:
         mock_sensor_config_entry: MagicMock,
     ) -> None:
         """Test state codes are translated to text."""
+        # Use "GlobalSt" which matches STATE_ENTITY_MAPPINGS key in const.py
         point_data = {
             "value": 6,  # "Run" in GLOBAL_STATE_MAP
             "ha_display_name": "Global State",
-            "sunspec_name": "GlobState",
+            "sunspec_name": "GlobalSt",  # Must match STATE_ENTITY_MAPPINGS key
         }
 
         mock_coordinator.data = {
             "devices": {
                 TEST_INVERTER_SN: {
                     "points": {
-                        "glob_state": {
+                        "global_st": {
                             "value": 6,
-                            "sunspec_name": "GlobState",
+                            "sunspec_name": "GlobalSt",
                         }
                     }
                 }
@@ -559,7 +560,7 @@ class TestVSNSensorNativeValue:
             config_entry=mock_sensor_config_entry,
             device_id=sample_device.device_id,
             device_type=sample_device.device_type,
-            point_name="glob_state",
+            point_name="global_st",
             point_data=point_data,
         )
 
@@ -573,19 +574,20 @@ class TestVSNSensorNativeValue:
         mock_sensor_config_entry: MagicMock,
     ) -> None:
         """Test unknown state codes show with code."""
+        # Use "GlobalSt" which matches STATE_ENTITY_MAPPINGS key in const.py
         point_data = {
             "value": 999,  # Unknown code
             "ha_display_name": "Global State",
-            "sunspec_name": "GlobState",
+            "sunspec_name": "GlobalSt",  # Must match STATE_ENTITY_MAPPINGS key
         }
 
         mock_coordinator.data = {
             "devices": {
                 TEST_INVERTER_SN: {
                     "points": {
-                        "glob_state": {
+                        "global_st": {
                             "value": 999,
-                            "sunspec_name": "GlobState",
+                            "sunspec_name": "GlobalSt",
                         }
                     }
                 }
@@ -597,7 +599,7 @@ class TestVSNSensorNativeValue:
             config_entry=mock_sensor_config_entry,
             device_id=sample_device.device_id,
             device_type=sample_device.device_type,
-            point_name="glob_state",
+            point_name="global_st",
             point_data=point_data,
         )
 
