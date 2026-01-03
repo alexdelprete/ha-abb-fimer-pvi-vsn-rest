@@ -618,13 +618,7 @@ class TestVSNSensorNativeValue:
         }
 
         mock_coordinator.data = {
-            "devices": {
-                TEST_INVERTER_SN: {
-                    "points": {
-                        "system_load": {"value": 0.12345}
-                    }
-                }
-            }
+            "devices": {TEST_INVERTER_SN: {"points": {"system_load": {"value": 0.12345}}}}
         }
 
         sensor = VSNSensor(
@@ -649,11 +643,7 @@ class TestVSNSensorNativeValue:
             point_data = {"value": 123.7, "ha_display_name": "Cycles"}
 
             mock_coordinator.data = {
-                "devices": {
-                    TEST_INVERTER_SN: {
-                        "points": {point_name: {"value": 123.7}}
-                    }
-                }
+                "devices": {TEST_INVERTER_SN: {"points": {point_name: {"value": 123.7}}}}
             }
 
             sensor = VSNSensor(

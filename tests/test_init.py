@@ -120,9 +120,7 @@ class TestAsyncSetupEntry:
                 "custom_components.abb_fimer_pvi_vsn_rest.ABBFimerPVIVSNRestCoordinator",
                 return_value=mock_coordinator,
             ),
-            patch(
-                "custom_components.abb_fimer_pvi_vsn_rest.async_update_device_registry"
-            ),
+            patch("custom_components.abb_fimer_pvi_vsn_rest.async_update_device_registry"),
         ):
             result = await async_setup_entry(mock_hass, mock_config_entry)
 
@@ -219,9 +217,7 @@ class TestAsyncSetupEntry:
                 "custom_components.abb_fimer_pvi_vsn_rest.ABBFimerPVIVSNRestCoordinator",
                 return_value=mock_coordinator,
             ),
-            patch(
-                "custom_components.abb_fimer_pvi_vsn_rest.async_update_device_registry"
-            ),
+            patch("custom_components.abb_fimer_pvi_vsn_rest.async_update_device_registry"),
         ):
             result = await async_setup_entry(mock_hass, mock_config_entry)
 
@@ -258,9 +254,7 @@ class TestAsyncSetupEntry:
                 "custom_components.abb_fimer_pvi_vsn_rest.ABBFimerPVIVSNRestCoordinator",
                 return_value=mock_coordinator,
             ),
-            patch(
-                "custom_components.abb_fimer_pvi_vsn_rest.async_update_device_registry"
-            ),
+            patch("custom_components.abb_fimer_pvi_vsn_rest.async_update_device_registry"),
         ):
             # First call - startup message should be logged
             await async_setup_entry(mock_hass, mock_config_entry)
@@ -442,9 +436,7 @@ class TestAsyncRemoveConfigEntryDevice:
         mock_device = MagicMock()
         mock_device.identifiers = {(DOMAIN, "111033-3N16-1421")}
 
-        result = await async_remove_config_entry_device(
-            mock_hass, mock_config_entry, mock_device
-        )
+        result = await async_remove_config_entry_device(mock_hass, mock_config_entry, mock_device)
 
         assert result is False
 
@@ -458,9 +450,7 @@ class TestAsyncRemoveConfigEntryDevice:
         mock_device = MagicMock()
         mock_device.identifiers = {("other_domain", "device_123")}
 
-        result = await async_remove_config_entry_device(
-            mock_hass, mock_config_entry, mock_device
-        )
+        result = await async_remove_config_entry_device(mock_hass, mock_config_entry, mock_device)
 
         assert result is True
 
@@ -474,8 +464,6 @@ class TestAsyncRemoveConfigEntryDevice:
         mock_device = MagicMock()
         mock_device.identifiers = set()
 
-        result = await async_remove_config_entry_device(
-            mock_hass, mock_config_entry, mock_device
-        )
+        result = await async_remove_config_entry_device(mock_hass, mock_config_entry, mock_device)
 
         assert result is True

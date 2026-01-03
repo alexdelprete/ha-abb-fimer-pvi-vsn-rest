@@ -86,9 +86,7 @@ class TestValidateConnection:
                 return_value=mock_discovery_result,
             ),
         ):
-            result = await validate_connection(
-                mock_hass, TEST_HOST, TEST_USERNAME, TEST_PASSWORD
-            )
+            result = await validate_connection(mock_hass, TEST_HOST, TEST_USERNAME, TEST_PASSWORD)
 
         assert result["vsn_model"] == TEST_VSN_MODEL
         assert result["logger_sn"] == TEST_LOGGER_SN

@@ -280,9 +280,7 @@ class TestRecovery:
         """Test recovery clears repair issue and creates notification."""
         mock_vsn_client.get_normalized_data.side_effect = VSNConnectionError("Failed")
 
-        with patch(
-            "custom_components.abb_fimer_pvi_vsn_rest.coordinator.create_connection_issue"
-        ):
+        with patch("custom_components.abb_fimer_pvi_vsn_rest.coordinator.create_connection_issue"):
             for _ in range(DEFAULT_FAILURES_THRESHOLD):
                 with pytest.raises(UpdateFailed):
                     await coordinator_with_entry_id._async_update_data()
@@ -318,9 +316,7 @@ class TestRecovery:
         coordinator_with_entry_id.device_id = "test_device"
         mock_vsn_client.get_normalized_data.side_effect = VSNConnectionError("Failed")
 
-        with patch(
-            "custom_components.abb_fimer_pvi_vsn_rest.coordinator.create_connection_issue"
-        ):
+        with patch("custom_components.abb_fimer_pvi_vsn_rest.coordinator.create_connection_issue"):
             for _ in range(DEFAULT_FAILURES_THRESHOLD):
                 with pytest.raises(UpdateFailed):
                     await coordinator_with_entry_id._async_update_data()
@@ -332,9 +328,7 @@ class TestRecovery:
         mock_vsn_client.get_normalized_data.return_value = mock_normalized_data
 
         with (
-            patch(
-                "custom_components.abb_fimer_pvi_vsn_rest.coordinator.delete_connection_issue"
-            ),
+            patch("custom_components.abb_fimer_pvi_vsn_rest.coordinator.delete_connection_issue"),
             patch(
                 "custom_components.abb_fimer_pvi_vsn_rest.coordinator.create_recovery_notification"
             ),
@@ -386,9 +380,7 @@ class TestDeviceEvents:
         """Test event includes extra data."""
         coordinator.device_id = "test_device_id"
 
-        coordinator._fire_device_event(
-            "device_unreachable", {"error": "Connection failed"}
-        )
+        coordinator._fire_device_event("device_unreachable", {"error": "Connection failed"})
 
         call_args = mock_hass.bus.async_fire.call_args
         assert call_args[0][1]["error"] == "Connection failed"

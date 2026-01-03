@@ -325,9 +325,7 @@ class TestNormalize:
         device = result["devices"]["123456-ABCD-1234"]
         assert device["points"]["watts"]["value"] == 3500
 
-    def test_normalize_energy_wh_to_kwh_conversion(
-        self, mock_energy_mapping: PointMapping
-    ) -> None:
+    def test_normalize_energy_wh_to_kwh_conversion(self, mock_energy_mapping: PointMapping) -> None:
         """Test energy sensors are converted from Wh to kWh."""
         mock_loader = MagicMock()
         mock_loader.get_by_vsn300.return_value = mock_energy_mapping
@@ -348,9 +346,7 @@ class TestNormalize:
         assert device["points"]["watthours"]["value"] == 123456.789  # kWh
         assert device["points"]["watthours"]["units"] == "kWh"
 
-    def test_normalize_datalogger_uses_sn_instead_of_mac(
-        self, mock_mapping: PointMapping
-    ) -> None:
+    def test_normalize_datalogger_uses_sn_instead_of_mac(self, mock_mapping: PointMapping) -> None:
         """Test datalogger device uses S/N from data instead of MAC."""
         mock_loader = MagicMock()
         mock_loader.get_by_vsn300.return_value = mock_mapping

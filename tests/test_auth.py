@@ -61,12 +61,8 @@ class TestCalculateDigestResponse:
 
     def test_different_inputs_produce_different_outputs(self) -> None:
         """Test that different inputs produce different digests."""
-        result1 = calculate_digest_response(
-            "user1", "pass1", "realm", "nonce", "GET", "/path"
-        )
-        result2 = calculate_digest_response(
-            "user2", "pass2", "realm", "nonce", "GET", "/path"
-        )
+        result1 = calculate_digest_response("user1", "pass1", "realm", "nonce", "GET", "/path")
+        result2 = calculate_digest_response("user2", "pass2", "realm", "nonce", "GET", "/path")
 
         assert result1 != result2
 
@@ -249,9 +245,7 @@ class TestDetectModelFromStatus:
 
     def test_detect_vsn300_by_many_keys(self) -> None:
         """Test detecting VSN300 by rich status data."""
-        status_data = {
-            "keys": {f"key_{i}": {"value": i} for i in range(15)}
-        }
+        status_data = {"keys": {f"key_{i}": {"value": i} for i in range(15)}}
 
         result = _detect_model_from_status(status_data)
         assert result == "VSN300"
@@ -270,9 +264,7 @@ class TestDetectModelFromStatus:
 
     def test_detect_fails_with_ambiguous_data(self) -> None:
         """Test detection fails with ambiguous data."""
-        status_data = {
-            "keys": {f"key_{i}": {"value": i} for i in range(5)}
-        }
+        status_data = {"keys": {f"key_{i}": {"value": i} for i in range(5)}}
 
         with pytest.raises(VSNDetectionError, match="Could not determine"):
             _detect_model_from_status(status_data)
@@ -286,9 +278,7 @@ class TestGetVSN300DigestHeader:
         """Test successful digest challenge and response."""
         mock_response = MagicMock()
         mock_response.status = 401
-        mock_response.headers = {
-            "WWW-Authenticate": 'Digest realm="vsn300", nonce="abc123"'
-        }
+        mock_response.headers = {"WWW-Authenticate": 'Digest realm="vsn300", nonce="abc123"'}
         mock_response.__aenter__ = AsyncMock(return_value=mock_response)
         mock_response.__aexit__ = AsyncMock(return_value=None)
 
@@ -390,9 +380,7 @@ class TestDetectVSNModel:
         """Test detecting VSN300 from digest authentication."""
         mock_response = MagicMock()
         mock_response.status = 401
-        mock_response.headers = {
-            "WWW-Authenticate": 'Digest realm="vsn300", nonce="abc123"'
-        }
+        mock_response.headers = {"WWW-Authenticate": 'Digest realm="vsn300", nonce="abc123"'}
         mock_response.__aenter__ = AsyncMock(return_value=mock_response)
         mock_response.__aexit__ = AsyncMock(return_value=None)
 
@@ -430,9 +418,7 @@ class TestDetectVSNModel:
         mock_response_200.__aexit__ = AsyncMock(return_value=None)
 
         mock_session = MagicMock()
-        mock_session.get = MagicMock(
-            side_effect=[mock_response_401, mock_response_200]
-        )
+        mock_session.get = MagicMock(side_effect=[mock_response_401, mock_response_200])
 
         with patch(
             "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.auth.check_socket_connection",

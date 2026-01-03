@@ -298,9 +298,7 @@ class TestExtractDevices:
         devices = _extract_devices(livedata, "VSN300", status_data)
 
         # Find the device from livedata (not the synthetic one)
-        livedata_device = next(
-            d for d in devices if d.raw_device_id == "a4:06:e9:7f:42:49"
-        )
+        livedata_device = next(d for d in devices if d.raw_device_id == "a4:06:e9:7f:42:49")
         assert livedata_device.device_id == "111033-3N16-1421"
         assert livedata_device.firmware_version == "1.9.2"
         assert livedata_device.is_datalogger is True
@@ -352,9 +350,7 @@ class TestDiscoverVSNDevice:
                 return_value=livedata_response,
             ),
         ):
-            result = await discover_vsn_device(
-                mock_session, "http://192.168.1.100", "guest", ""
-            )
+            result = await discover_vsn_device(mock_session, "http://192.168.1.100", "guest", "")
 
         assert result.vsn_model == "VSN300"
         assert result.requires_auth is True
@@ -398,9 +394,7 @@ class TestDiscoverVSNDevice:
                 return_value=livedata_response,
             ),
         ):
-            result = await discover_vsn_device(
-                mock_session, "http://192.168.1.100", "guest", ""
-            )
+            result = await discover_vsn_device(mock_session, "http://192.168.1.100", "guest", "")
 
         assert result.vsn_model == "VSN700"
         assert result.requires_auth is False
@@ -418,6 +412,4 @@ class TestDiscoverVSNDevice:
             ),
         ):
             with pytest.raises(VSNConnectionError, match="Connection failed"):
-                await discover_vsn_device(
-                    mock_session, "http://192.168.1.100", "guest", ""
-                )
+                await discover_vsn_device(mock_session, "http://192.168.1.100", "guest", "")

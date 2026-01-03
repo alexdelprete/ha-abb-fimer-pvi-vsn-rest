@@ -174,7 +174,9 @@ class TestABBFimerVSNRestClientGetLivedata:
         mock_response.json = AsyncMock(return_value=sample_livedata)
         mock_response.headers = {}
 
-        mock_session.get = MagicMock(return_value=AsyncMock(__aenter__=AsyncMock(return_value=mock_response)))
+        mock_session.get = MagicMock(
+            return_value=AsyncMock(__aenter__=AsyncMock(return_value=mock_response))
+        )
 
         with (
             patch(
@@ -207,7 +209,9 @@ class TestABBFimerVSNRestClientGetLivedata:
         mock_response.json = AsyncMock(return_value=sample_livedata)
         mock_response.headers = {}
 
-        mock_session.get = MagicMock(return_value=AsyncMock(__aenter__=AsyncMock(return_value=mock_response)))
+        mock_session.get = MagicMock(
+            return_value=AsyncMock(__aenter__=AsyncMock(return_value=mock_response))
+        )
 
         with patch(
             "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.client.check_socket_connection",
@@ -234,7 +238,9 @@ class TestABBFimerVSNRestClientGetLivedata:
         mock_response.json = AsyncMock(return_value=sample_livedata)
         mock_response.headers = {}
 
-        mock_session.get = MagicMock(return_value=AsyncMock(__aenter__=AsyncMock(return_value=mock_response)))
+        mock_session.get = MagicMock(
+            return_value=AsyncMock(__aenter__=AsyncMock(return_value=mock_response))
+        )
 
         with patch(
             "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.client.check_socket_connection",
@@ -257,7 +263,9 @@ class TestABBFimerVSNRestClientGetLivedata:
         mock_response.status = 401
         mock_response.headers = {"WWW-Authenticate": "Digest"}
 
-        mock_session.get = MagicMock(return_value=AsyncMock(__aenter__=AsyncMock(return_value=mock_response)))
+        mock_session.get = MagicMock(
+            return_value=AsyncMock(__aenter__=AsyncMock(return_value=mock_response))
+        )
 
         with (
             patch(
@@ -286,7 +294,9 @@ class TestABBFimerVSNRestClientGetLivedata:
         mock_response.status = 500
         mock_response.headers = {}
 
-        mock_session.get = MagicMock(return_value=AsyncMock(__aenter__=AsyncMock(return_value=mock_response)))
+        mock_session.get = MagicMock(
+            return_value=AsyncMock(__aenter__=AsyncMock(return_value=mock_response))
+        )
 
         with (
             patch(
@@ -335,10 +345,14 @@ class TestABBFimerVSNRestClientGetLivedata:
         mock_response.json = AsyncMock(return_value=sample_data)
         mock_response.headers = {}
 
-        mock_session.get = MagicMock(return_value=AsyncMock(__aenter__=AsyncMock(return_value=mock_response)))
+        mock_session.get = MagicMock(
+            return_value=AsyncMock(__aenter__=AsyncMock(return_value=mock_response))
+        )
 
         with (
-            patch.object(client, "connect", new_callable=AsyncMock, return_value="VSN300") as mock_connect,
+            patch.object(
+                client, "connect", new_callable=AsyncMock, return_value="VSN300"
+            ) as mock_connect,
             patch(
                 "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.client.check_socket_connection",
                 new_callable=AsyncMock,
@@ -400,9 +414,7 @@ class TestABBFimerVSNRestClientGetNormalizedData:
         mock_normalizer.normalize.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_get_normalized_data_connects_if_needed(
-        self, mock_session: MagicMock
-    ) -> None:
+    async def test_get_normalized_data_connects_if_needed(self, mock_session: MagicMock) -> None:
         """Test get_normalized_data connects if normalizer not set."""
         client = ABBFimerVSNRestClient(
             session=mock_session,
@@ -429,9 +441,7 @@ class TestABBFimerVSNRestClientGetNormalizedData:
         assert result == normalized_data
 
     @pytest.mark.asyncio
-    async def test_get_normalized_data_injects_device_type(
-        self, mock_session: MagicMock
-    ) -> None:
+    async def test_get_normalized_data_injects_device_type(self, mock_session: MagicMock) -> None:
         """Test get_normalized_data injects device_type from discovered devices."""
         discovered_devices = [
             DiscoveredDevice(
