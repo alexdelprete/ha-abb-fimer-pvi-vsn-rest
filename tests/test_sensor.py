@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, PropertyMock, patch
 
 import pytest
 
@@ -901,8 +901,9 @@ class TestVSNSensorSysTime:
             "devices": {TEST_INVERTER_SN: {"points": {"sys_time": {"value": aurora_timestamp}}}}
         }
 
-        # Mock hass config with timezone
-        mock_coordinator.hass.config.time_zone = "UTC"
+        # Create mock hass with config.time_zone
+        mock_hass = MagicMock()
+        mock_hass.config.time_zone = "UTC"
 
         sensor = VSNSensor(
             coordinator=mock_coordinator,
@@ -913,12 +914,14 @@ class TestVSNSensorSysTime:
             point_data=point_data,
         )
 
-        # The result should be a formatted datetime string
-        result = sensor.native_value
-        assert result is not None
-        assert isinstance(result, str)
-        # Should contain date format
-        assert "-" in result
+        # Patch the hass property on the sensor instance
+        with patch.object(type(sensor), "hass", new_callable=PropertyMock, return_value=mock_hass):
+            # The result should be a formatted datetime string
+            result = sensor.native_value
+            assert result is not None
+            assert isinstance(result, str)
+            # Should contain date format
+            assert "-" in result
 
     def test_sys_time_invalid_value(
         self,
@@ -1260,7 +1263,8 @@ class TestVSNSensorUnitValidation:
         )
 
         # Device class should be None because MOhm is an exception
-        assert sensor._attr_device_class is None
+        # Use getattr since _attr_device_class may not be set when no valid device class
+        assert getattr(sensor, "_attr_device_class", None) is None
 
 
 class TestVSNSensorCustomPrefix:

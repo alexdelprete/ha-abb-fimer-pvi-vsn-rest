@@ -412,11 +412,11 @@ class TestFetchStatus:
         mock_response.status = 401
         mock_response.headers = {}
 
-        mock_session.get = MagicMock(
-            return_value=AsyncMock(
-                __aenter__=AsyncMock(return_value=mock_response), __aexit__=AsyncMock()
-            )
-        )
+        # Use a proper async context manager mock
+        mock_context = AsyncMock()
+        mock_context.__aenter__.return_value = mock_response
+        mock_context.__aexit__.return_value = None
+        mock_session.get.return_value = mock_context
 
         with (
             patch(
@@ -562,11 +562,11 @@ class TestFetchLivedata:
         mock_response.status = 500
         mock_response.headers = {}
 
-        mock_session.get = MagicMock(
-            return_value=AsyncMock(
-                __aenter__=AsyncMock(return_value=mock_response), __aexit__=AsyncMock()
-            )
-        )
+        # Use a proper async context manager mock
+        mock_context = AsyncMock()
+        mock_context.__aenter__.return_value = mock_response
+        mock_context.__aexit__.return_value = None
+        mock_session.get.return_value = mock_context
 
         with (
             patch(
