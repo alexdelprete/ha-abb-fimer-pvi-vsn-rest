@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.1-beta.1] - 2026-01-03
+
+### Test Coverage Improvements
+
+This beta release focuses on improving test coverage to 97%, matching the quality standards of our other integrations.
+
+**Coverage Statistics**:
+
+- Overall coverage: 95% → **97%**
+- sensor.py coverage: 86% → **97%**
+- Total tests: 416 tests passing
+
+**New Test Classes**:
+
+- `TestAsyncSetupEntry`: Tests for platform setup function
+- `TestVSNSensorNativeValueEdgeCases`: Edge cases for native_value property
+- `TestVSNSensorStateMapping`: State code translation tests
+- `TestVSNSensorDeviceInfoEdgeCases`: Device info edge cases
+- `test_fetch_from_github_success`: GitHub fallback download test
+
+**See**: [v1.3.1-beta.1 Release Notes](docs/releases/v1.3.1-beta.1.md)
+
 ## [1.3.0] - 2025-12-06
 
 ### New Feature: Custom Device Name Prefixes
