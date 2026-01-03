@@ -1836,3 +1836,334 @@ class TestVSNSensorDeviceInfoEdgeCases:
         assert "identifiers" in device_info
         assert "manufacturer" in device_info
         assert device_info["manufacturer"] == "ABB/FIMER"  # Default
+
+
+class TestAsyncSetupEntry:
+    """Tests for async_setup_entry function."""
+
+    @pytest.mark.asyncio
+    async def test_setup_entry_no_data(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test setup entry with no coordinator data."""
+        mock_coordinator.data = None
+        mock_sensor_config_entry.runtime_data = MagicMock()
+        mock_sensor_config_entry.runtime_data.coordinator = mock_coordinator
+
+        mock_hass = MagicMock(spec=HomeAssistant)
+        async_add_entities = MagicMock()
+
+        await async_setup_entry(mock_hass, mock_sensor_config_entry, async_add_entities)
+
+        # Should not add any entities when no data
+        async_add_entities.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_setup_entry_with_devices(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test setup entry creates sensors for devices."""
+        # Setup datalogger device
+        datalogger = MockDiscoveredDevice(
+            device_id=TEST_LOGGER_SN,
+            raw_device_id=TEST_LOGGER_SN,
+            device_type="datalogger",
+            device_model="VSN300",
+            manufacturer="ABB",
+            firmware_version="1.9.2",
+            hardware_version=None,
+            is_datalogger=True,
+        )
+
+        mock_coordinator.discovered_devices = [datalogger]
+        mock_coordinator.data = {
+            "devices": {
+                TEST_LOGGER_SN: {
+                    "device_type": "datalogger",
+                    "points": {
+                        "firmware_version": {
+                            "value": "1.9.2",
+                            "ha_display_name": "Firmware Version",
+                        },
+                        "uptime": {
+                            "value": 3600,
+                            "ha_display_name": "System Uptime",
+                        },
+                    },
+                }
+            }
+        }
+
+        mock_sensor_config_entry.runtime_data = MagicMock()
+        mock_sensor_config_entry.runtime_data.coordinator = mock_coordinator
+
+        mock_hass = MagicMock(spec=HomeAssistant)
+        async_add_entities = MagicMock()
+
+        await async_setup_entry(mock_hass, mock_sensor_config_entry, async_add_entities)
+
+        # Should add entities
+        async_add_entities.assert_called_once()
+        entities = async_add_entities.call_args[0][0]
+        assert len(entities) == 2  # 2 points
+
+    @pytest.mark.asyncio
+    async def test_setup_entry_datalogger_first(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test setup entry adds datalogger sensors before inverter sensors."""
+        # Setup datalogger and inverter devices
+        datalogger = MockDiscoveredDevice(
+            device_id=TEST_LOGGER_SN,
+            raw_device_id=TEST_LOGGER_SN,
+            device_type="datalogger",
+            device_model="VSN300",
+            manufacturer="ABB",
+            firmware_version="1.9.2",
+            hardware_version=None,
+            is_datalogger=True,
+        )
+        inverter = MockDiscoveredDevice(
+            device_id=TEST_INVERTER_SN,
+            raw_device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            device_model="PVI-10.0-OUTD",
+            manufacturer="Power-One",
+            firmware_version="C008",
+            hardware_version=None,
+            is_datalogger=False,
+        )
+
+        mock_coordinator.discovered_devices = [datalogger, inverter]
+        mock_coordinator.data = {
+            "devices": {
+                TEST_LOGGER_SN: {
+                    "device_type": "datalogger",
+                    "points": {
+                        "firmware_version": {"value": "1.9.2", "ha_display_name": "FW"},
+                    },
+                },
+                TEST_INVERTER_SN: {
+                    "device_type": "inverter_3phases",
+                    "points": {
+                        "watts": {"value": 5000, "ha_display_name": "Power AC"},
+                    },
+                },
+            }
+        }
+
+        mock_sensor_config_entry.runtime_data = MagicMock()
+        mock_sensor_config_entry.runtime_data.coordinator = mock_coordinator
+
+        mock_hass = MagicMock(spec=HomeAssistant)
+        async_add_entities = MagicMock()
+
+        await async_setup_entry(mock_hass, mock_sensor_config_entry, async_add_entities)
+
+        # Should add entities with datalogger first
+        async_add_entities.assert_called_once()
+        entities = async_add_entities.call_args[0][0]
+        assert len(entities) == 2
+        # First entity should be datalogger sensor
+        assert entities[0]._device_id == TEST_LOGGER_SN
+        # Second should be inverter sensor
+        assert entities[1]._device_id == TEST_INVERTER_SN
+
+
+class TestVSNSensorNativeValueEdgeCases:
+    """Additional tests for native_value edge cases."""
+
+    def test_native_value_no_coordinator_data(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test native_value returns None when no coordinator data."""
+        point_data = {"value": 100, "ha_display_name": "Test"}
+        mock_coordinator.data = None
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="test",
+            point_data=point_data,
+        )
+
+        assert sensor.native_value is None
+
+    def test_native_value_device_not_found(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test native_value returns None when device not found."""
+        point_data = {"value": 100, "ha_display_name": "Test"}
+        mock_coordinator.data = {"devices": {}}  # Empty devices dict
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="test",
+            point_data=point_data,
+        )
+
+        assert sensor.native_value is None
+
+    def test_native_value_point_not_found(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test native_value returns None when point not found."""
+        point_data = {"value": 100, "ha_display_name": "Test"}
+        mock_coordinator.data = {
+            "devices": {TEST_INVERTER_SN: {"points": {}}}  # Empty points
+        }
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="test",
+            point_data=point_data,
+        )
+
+        assert sensor.native_value is None
+
+    def test_native_value_sys_time_exception(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test sys_time conversion handles exceptions gracefully."""
+        point_data = {"value": -999999999999, "ha_display_name": "System Time"}
+        mock_coordinator.data = {
+            "devices": {TEST_INVERTER_SN: {"points": {"sys_time": {"value": -999999999999}}}}
+        }
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="sys_time",
+            point_data=point_data,
+        )
+
+        # Mock hass with timezone
+        mock_hass = MagicMock()
+        mock_hass.config.time_zone = "UTC"
+
+        with patch.object(type(sensor), "hass", new_callable=PropertyMock, return_value=mock_hass):
+            # Should return None due to invalid timestamp
+            result = sensor.native_value
+            assert result is None
+
+    def test_native_value_system_load_rounding(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test system_load is rounded to 2 decimals."""
+        point_data = {"value": 12.3456789, "ha_display_name": "System Load"}
+        mock_coordinator.data = {
+            "devices": {TEST_INVERTER_SN: {"points": {"system_load": {"value": 12.3456789}}}}
+        }
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="system_load",
+            point_data=point_data,
+        )
+
+        result = sensor.native_value
+        assert result == 12.35
+
+    def test_native_value_count_sensors_rounded_to_int(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test count sensors are rounded to integers."""
+        for point_name in ["chc", "dhc", "cycle_num", "batt_num", "num_of_mppt"]:
+            point_data = {"value": 42.7, "ha_display_name": "Count"}
+            mock_coordinator.data = {
+                "devices": {TEST_INVERTER_SN: {"points": {point_name: {"value": 42.7}}}}
+            }
+
+            sensor = VSNSensor(
+                coordinator=mock_coordinator,
+                config_entry=mock_sensor_config_entry,
+                device_id=TEST_INVERTER_SN,
+                device_type="inverter_3phases",
+                point_name=point_name,
+                point_data=point_data,
+            )
+
+            result = sensor.native_value
+            assert result == 42
+            assert isinstance(result, int)
+
+    def test_native_value_state_sensors_rounded_to_int(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test state/flag sensors are rounded to integers."""
+        for point_name in ["battery_mode", "alarm_state", "clock_state"]:
+            point_data = {"value": 3.9, "ha_display_name": "State"}
+            mock_coordinator.data = {
+                "devices": {TEST_INVERTER_SN: {"points": {point_name: {"value": 3.9}}}}
+            }
+
+            sensor = VSNSensor(
+                coordinator=mock_coordinator,
+                config_entry=mock_sensor_config_entry,
+                device_id=TEST_INVERTER_SN,
+                device_type="inverter_3phases",
+                point_name=point_name,
+                point_data=point_data,
+            )
+
+            result = sensor.native_value
+            assert result == 3
+            assert isinstance(result, int)
+
+
+class TestVSNSensorAvailableEdgeCases:
+    """Additional tests for available property edge cases."""
+
+    def test_unavailable_when_device_missing_from_data(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test sensor is unavailable when device not in data."""
+        point_data = {"value": 100, "ha_display_name": "Test"}
+        mock_coordinator.last_update_success = True
+        mock_coordinator.data = {"devices": {}}  # Device not present
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="test",
+            point_data=point_data,
+        )
+
+        assert sensor.available is False
