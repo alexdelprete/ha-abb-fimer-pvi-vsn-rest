@@ -56,9 +56,7 @@ async def async_setup_entry(
     host: str = config_entry.data[CONF_HOST]
     username: str = config_entry.data.get(CONF_USERNAME, DEFAULT_USERNAME)
     password: str = config_entry.data.get(CONF_PASSWORD, "")
-    scan_interval: int = config_entry.options.get(
-        CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL
-    )
+    scan_interval: int = config_entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
     vsn_model: str | None = config_entry.data.get(CONF_VSN_MODEL)
 
     # Build base URL
@@ -195,9 +193,7 @@ async def async_unload_entry(
 
     # Unload platforms - only cleanup if successful
     # ref.: https://developers.home-assistant.io/blog/2025/02/19/new-config-entry-states/
-    if unload_ok := await hass.config_entries.async_unload_platforms(
-        config_entry, PLATFORMS
-    ):
+    if unload_ok := await hass.config_entries.async_unload_platforms(config_entry, PLATFORMS):
         # Shutdown coordinator and cleanup
         coordinator = config_entry.runtime_data.coordinator
         await coordinator.async_shutdown()
@@ -216,8 +212,6 @@ async def async_remove_config_entry_device(
     Users must remove the integration instead.
     """
     if any(identifier[0] == DOMAIN for identifier in device_entry.identifiers):
-        _LOGGER.error(
-            "Cannot delete device using device delete. Remove the integration instead."
-        )
+        _LOGGER.error("Cannot delete device using device delete. Remove the integration instead.")
         return False
     return True

@@ -54,9 +54,7 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             update_interval=update_interval,
         )
         self.client = client
-        self.vsn_model: str | None = (
-            discovery_result.vsn_model if discovery_result else None
-        )
+        self.vsn_model: str | None = discovery_result.vsn_model if discovery_result else None
         self.discovery_result: DiscoveryResult | None = discovery_result
         self.discovered_devices: list[DiscoveredDevice] = (
             discovery_result.devices if discovery_result else []
@@ -239,9 +237,7 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             return f"{hours}h {mins}m"
         return f"{hours}h"
 
-    def _fire_device_event(
-        self, event_type: str, extra_data: dict[str, Any] | None = None
-    ) -> None:
+    def _fire_device_event(self, event_type: str, extra_data: dict[str, Any] | None = None) -> None:
         """Fire a device event on the HA event bus for device triggers."""
         if not self.device_id:
             _LOGGER.debug(

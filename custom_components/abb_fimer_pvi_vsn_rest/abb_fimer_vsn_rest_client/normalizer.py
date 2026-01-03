@@ -29,7 +29,7 @@ UA_TO_MA_POINTS = {
 # These points report in A but should be mA (multiply by 1000)
 A_TO_MA_POINTS = {
     "IleakInv",  # VSN700 - Inverter leakage current (A → mA)
-    "IleakDC",   # VSN700 - DC leakage current (A → mA)
+    "IleakDC",  # VSN700 - DC leakage current (A → mA)
 }
 
 # Temperature correction registry: Points with incorrect scale factor
@@ -160,9 +160,7 @@ class VSNDataNormalizer:
             return normalized
         return point_name
 
-    def _apply_value_transformations(
-        self, point_name: str, point_value: Any
-    ) -> Any:
+    def _apply_value_transformations(self, point_name: str, point_value: Any) -> Any:
         """Apply unit conversions and value transformations to a point value.
 
         Handles conversions for:
@@ -219,10 +217,7 @@ class VSNDataNormalizer:
             )
 
         # String cleanup - strip dashes
-        if (
-            point_name in STRING_STRIP_POINTS
-            and isinstance(point_value, str)
-        ):
+        if point_name in STRING_STRIP_POINTS and isinstance(point_value, str):
             original_value = point_value
             point_value = point_value.strip("-")
             _LOGGER.debug(
@@ -233,10 +228,7 @@ class VSNDataNormalizer:
             )
 
         # Case normalization - title case
-        if (
-            point_name in TITLE_CASE_POINTS
-            and isinstance(point_value, str)
-        ):
+        if point_name in TITLE_CASE_POINTS and isinstance(point_value, str):
             original_value = point_value
             point_value = point_value.title()
             _LOGGER.debug(

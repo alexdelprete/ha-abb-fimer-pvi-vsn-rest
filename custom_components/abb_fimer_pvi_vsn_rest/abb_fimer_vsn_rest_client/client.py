@@ -164,8 +164,7 @@ class ABBFimerVSNRestClient:
                     data = await response.json()
                     # Count total points across all devices
                     total_points = sum(
-                        len(device_data.get("points", []))
-                        for device_data in data.values()
+                        len(device_data.get("points", [])) for device_data in data.values()
                     )
                     _LOGGER.debug(
                         "[Client] %s livedata fetched successfully: %d devices, %d total points",
@@ -202,9 +201,7 @@ class ABBFimerVSNRestClient:
                     response.status,
                     dict(response.headers),
                 )
-                raise VSNConnectionError(
-                    f"Livedata request failed: HTTP {response.status}"
-                )
+                raise VSNConnectionError(f"Livedata request failed: HTTP {response.status}")
         except aiohttp.ClientError as err:
             _LOGGER.debug(
                 "[Client] Connection error: %s (type=%s)",
@@ -258,8 +255,7 @@ class ABBFimerVSNRestClient:
         if _LOGGER.isEnabledFor(logging.DEBUG):
             normalized_devices = normalized_data.get("devices", {})
             total_normalized = sum(
-                len(device_data.get("points", {}))
-                for device_data in normalized_devices.values()
+                len(device_data.get("points", {})) for device_data in normalized_devices.values()
             )
             _LOGGER.debug(
                 "Normalization complete: %d devices, %d normalized points",

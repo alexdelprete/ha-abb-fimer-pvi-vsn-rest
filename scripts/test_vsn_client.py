@@ -96,7 +96,9 @@ async def test_endpoint(
         raise VSNClientError(f"Request failed: HTTP {response.status}")
 
 
-async def test_client(base_url: str, username: str = "guest", password: str = "", timeout: int = 10) -> None:
+async def test_client(
+    base_url: str, username: str = "guest", password: str = "", timeout: int = 10
+) -> None:
     """Test the VSN REST client.
 
     Args:
@@ -136,7 +138,12 @@ async def test_client(base_url: str, username: str = "guest", password: str = ""
             _LOGGER.info("\n[TEST 2] /v1/status - System Information")
             _LOGGER.info("-" * 80)
             status_data = await test_endpoint(
-                session, base_url, "/v1/status", model, username=username, password=password,
+                session,
+                base_url,
+                "/v1/status",
+                model,
+                username=username,
+                password=password,
                 requires_auth=requires_auth,
             )
             _LOGGER.info("✓ Status endpoint successful")
@@ -155,14 +162,10 @@ async def test_client(base_url: str, username: str = "guest", password: str = ""
                     ]
                     for key in important_keys:
                         if key in keys_data:
-                            _LOGGER.info(
-                                "    - %s: %s", key, keys_data[key].get("value", "N/A")
-                            )
+                            _LOGGER.info("    - %s: %s", key, keys_data[key].get("value", "N/A"))
 
             # Save to file
-            output_file = (
-                Path(__file__).parent / f"test_output_{model.lower()}_status.json"
-            )
+            output_file = Path(__file__).parent / f"test_output_{model.lower()}_status.json"
             with open(output_file, "w", encoding="utf-8") as f:
                 json.dump(status_data, f, indent=2)
             _LOGGER.info("  - Saved to: %s", output_file)
@@ -176,9 +179,7 @@ async def test_client(base_url: str, username: str = "guest", password: str = ""
             _LOGGER.info("  - Device IDs: %s", list(raw_data.keys()))
 
             # Save raw data to file
-            output_file = (
-                Path(__file__).parent / f"test_output_{model.lower()}_livedata.json"
-            )
+            output_file = Path(__file__).parent / f"test_output_{model.lower()}_livedata.json"
             with open(output_file, "w", encoding="utf-8") as f:
                 json.dump(raw_data, f, indent=2)
             _LOGGER.info("  - Saved to: %s", output_file)
@@ -187,7 +188,12 @@ async def test_client(base_url: str, username: str = "guest", password: str = ""
             _LOGGER.info("\n[TEST 4] /v1/feeds - Feed Metadata")
             _LOGGER.info("-" * 80)
             feeds_data = await test_endpoint(
-                session, base_url, "/v1/feeds", model, username=username, password=password,
+                session,
+                base_url,
+                "/v1/feeds",
+                model,
+                username=username,
+                password=password,
                 requires_auth=requires_auth,
             )
             _LOGGER.info("✓ Feeds endpoint successful")
@@ -200,9 +206,7 @@ async def test_client(base_url: str, username: str = "guest", password: str = ""
                 _LOGGER.info("  - Number of feeds: %d", len(feeds_data))
 
             # Save to file
-            output_file = (
-                Path(__file__).parent / f"test_output_{model.lower()}_feeds.json"
-            )
+            output_file = Path(__file__).parent / f"test_output_{model.lower()}_feeds.json"
             with open(output_file, "w", encoding="utf-8") as f:
                 json.dump(feeds_data, f, indent=2)
             _LOGGER.info("  - Saved to: %s", output_file)
@@ -212,14 +216,10 @@ async def test_client(base_url: str, username: str = "guest", password: str = ""
             _LOGGER.info("-" * 80)
             normalized_data = await client.get_normalized_data()
             _LOGGER.info("✓ Normalized data received")
-            _LOGGER.info(
-                "  - Number of devices: %d", len(normalized_data.get("devices", {}))
-            )
+            _LOGGER.info("  - Number of devices: %d", len(normalized_data.get("devices", {})))
 
             # Save normalized data to file
-            output_file = (
-                Path(__file__).parent / f"test_output_{model.lower()}_normalized.json"
-            )
+            output_file = Path(__file__).parent / f"test_output_{model.lower()}_normalized.json"
             with open(output_file, "w", encoding="utf-8") as f:
                 json.dump(normalized_data, f, indent=2)
             _LOGGER.info("  - Saved to: %s", output_file)
@@ -253,10 +253,7 @@ async def test_client(base_url: str, username: str = "guest", password: str = ""
             _LOGGER.info("✓ /v1/feeds endpoint: OK")
             _LOGGER.info(
                 "✓ Data normalization: OK (%d points total)",
-                sum(
-                    len(d.get("points", {}))
-                    for d in normalized_data.get("devices", {}).values()
-                ),
+                sum(len(d.get("points", {})) for d in normalized_data.get("devices", {}).values()),
             )
             _LOGGER.info("=" * 80)
             _LOGGER.info("All tests passed successfully!")
@@ -288,7 +285,9 @@ def main() -> None:
     else:
         base_url = host
 
-    asyncio.run(test_client(base_url, username=args.username, password=args.password, timeout=args.timeout))
+    asyncio.run(
+        test_client(base_url, username=args.username, password=args.password, timeout=args.timeout)
+    )
 
 
 if __name__ == "__main__":

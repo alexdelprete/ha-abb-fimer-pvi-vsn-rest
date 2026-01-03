@@ -52,10 +52,13 @@ async def test_setup_entry_discovery_failure(
     """Test setup fails when discovery fails."""
     mock_config_entry.add_to_hass(hass)
 
-    with patch(
-        "custom_components.abb_fimer_pvi_vsn_rest.discover_vsn_device",
-        side_effect=Exception("Discovery failed"),
-    ), pytest.raises(ConfigEntryNotReady, match="Discovery failed"):
+    with (
+        patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.discover_vsn_device",
+            side_effect=Exception("Discovery failed"),
+        ),
+        pytest.raises(ConfigEntryNotReady, match="Discovery failed"),
+    ):
         await async_setup_entry(hass, mock_config_entry)
 
 
@@ -79,7 +82,8 @@ async def test_setup_entry_first_refresh_failure(
         patch(
             "custom_components.abb_fimer_pvi_vsn_rest.discover_vsn_device",
             mock_discover_vsn_device,
-        ),pytest.raises(ConfigEntryNotReady, match="Failed to fetch data")
+        ),
+        pytest.raises(ConfigEntryNotReady, match="Failed to fetch data"),
     ):
         await async_setup_entry(hass, mock_config_entry)
 

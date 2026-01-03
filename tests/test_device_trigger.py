@@ -83,9 +83,7 @@ async def test_trigger_has_correct_metadata(
     triggers = await async_get_triggers(hass, device_entry.id)
 
     # Find the device_recovered trigger
-    recovered_trigger = next(
-        (t for t in triggers if t["type"] == "device_recovered"), None
-    )
+    recovered_trigger = next((t for t in triggers if t["type"] == "device_recovered"), None)
     assert recovered_trigger is not None
     assert recovered_trigger["platform"] == "device"
     assert recovered_trigger["domain"] == DOMAIN

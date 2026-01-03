@@ -88,9 +88,7 @@ def parse_digest_challenge(www_authenticate: str) -> dict[str, str]:
 
     """
     # Remove 'Digest ' or 'X-Digest ' prefix
-    challenge = re.sub(
-        r"^(Digest|X-Digest)\s+", "", www_authenticate, flags=re.IGNORECASE
-    )
+    challenge = re.sub(r"^(Digest|X-Digest)\s+", "", www_authenticate, flags=re.IGNORECASE)
 
     # Parse key="value" pairs
     params = {}
@@ -151,9 +149,7 @@ def build_digest_header(
             f'cnonce="{cnonce}"',
         ]
     else:
-        response = calculate_digest_response(
-            username, password, realm, nonce, method, uri
-        )
+        response = calculate_digest_response(username, password, realm, nonce, method, uri)
 
         auth_parts = [
             f'username="{username}"',
@@ -273,9 +269,7 @@ async def get_vsn300_digest_header(
                 response.status,
                 dict(response.headers),
             )
-            raise VSNAuthenticationError(
-                f"Expected 401 challenge, got {response.status}"
-            )
+            raise VSNAuthenticationError(f"Expected 401 challenge, got {response.status}")
     except aiohttp.ClientError as err:
         _LOGGER.debug(
             "[VSN300 Auth] Connection error during challenge: %s (type=%s)",
@@ -349,9 +343,7 @@ async def detect_vsn_model(
                 # Log raw WWW-Authenticate header value
                 _LOGGER.debug(
                     "[VSN Detection] WWW-Authenticate header (raw): %s",
-                    repr(www_authenticate_raw)
-                    if www_authenticate_raw
-                    else "NOT PRESENT",
+                    repr(www_authenticate_raw) if www_authenticate_raw else "NOT PRESENT",
                 )
 
                 # Check for digest authentication (VSN300) - unique identifier
@@ -402,9 +394,7 @@ async def detect_vsn_model(
                             "[VSN Detection] Preemptive Basic auth failed with status %d. "
                             "WWW-Authenticate: %s. Device is not compatible.",
                             auth_response.status,
-                            repr(www_authenticate_raw)
-                            if www_authenticate_raw
-                            else "NOT PRESENT",
+                            repr(www_authenticate_raw) if www_authenticate_raw else "NOT PRESENT",
                         )
                         raise VSNDetectionError(
                             f"Device authentication failed. Not VSN300/VSN700 compatible. "
@@ -417,9 +407,7 @@ async def detect_vsn_model(
                         "[VSN Detection] Preemptive Basic auth connection error: %s. "
                         "WWW-Authenticate was: %s",
                         auth_err,
-                        repr(www_authenticate_raw)
-                        if www_authenticate_raw
-                        else "NOT PRESENT",
+                        repr(www_authenticate_raw) if www_authenticate_raw else "NOT PRESENT",
                     )
                     raise VSNDetectionError(
                         f"Device authentication connection failed: {auth_err}"
@@ -493,9 +481,7 @@ def _detect_model_from_status(status_data: dict) -> str:
     board_model = keys.get("logger.board_model", {}).get("value", "")
 
     if board_model == "WIFI LOGGER CARD":
-        _LOGGER.info(
-            "[VSN Detection] Detected VSN300 (board_model='WIFI LOGGER CARD')"
-        )
+        _LOGGER.info("[VSN Detection] Detected VSN300 (board_model='WIFI LOGGER CARD')")
         return "VSN300"
 
     # VSN300 serial number format: XXXXXX-XXXX-XXXX (digits and dashes)
@@ -534,13 +520,11 @@ def _detect_model_from_status(status_data: dict) -> str:
 
     # Cannot determine model
     _LOGGER.error(
-        "[VSN Detection] Could not determine VSN model from status data. "
-        "Keys found: %s",
+        "[VSN Detection] Could not determine VSN model from status data. Keys found: %s",
         list(keys.keys()),
     )
     raise VSNDetectionError(
-        "Could not determine VSN model from status data. "
-        "Enable debug logging for details."
+        "Could not determine VSN model from status data. Enable debug logging for details."
     )
 
 

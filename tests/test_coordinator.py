@@ -74,9 +74,7 @@ async def test_coordinator_update_failure(
     mock_vsn_client: MagicMock,
 ) -> None:
     """Test update failure raises UpdateFailed."""
-    mock_vsn_client.get_normalized_data.side_effect = VSNConnectionError(
-        "Connection failed"
-    )
+    mock_vsn_client.get_normalized_data.side_effect = VSNConnectionError("Connection failed")
 
     with pytest.raises(UpdateFailed, match="Connection failed"):
         await coordinator._async_update_data()
@@ -87,9 +85,7 @@ async def test_coordinator_consecutive_failures_tracking(
     mock_vsn_client: MagicMock,
 ) -> None:
     """Test consecutive failures are tracked."""
-    mock_vsn_client.get_normalized_data.side_effect = VSNConnectionError(
-        "Connection failed"
-    )
+    mock_vsn_client.get_normalized_data.side_effect = VSNConnectionError("Connection failed")
 
     # Simulate multiple failures
     for i in range(DEFAULT_FAILURES_THRESHOLD):
@@ -109,9 +105,7 @@ async def test_coordinator_recovery_resets_failures(
 ) -> None:
     """Test successful update resets failure counter."""
     # Simulate some failures
-    mock_vsn_client.get_normalized_data.side_effect = VSNConnectionError(
-        "Connection failed"
-    )
+    mock_vsn_client.get_normalized_data.side_effect = VSNConnectionError("Connection failed")
 
     for _ in range(2):
         with pytest.raises(UpdateFailed):

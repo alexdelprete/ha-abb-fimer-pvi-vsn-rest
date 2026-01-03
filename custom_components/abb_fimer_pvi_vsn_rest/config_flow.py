@@ -196,9 +196,7 @@ class ABBFimerPVIVSNRestConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore[c
         """Initialize config flow."""
         self._reauth_entry: ConfigEntry | None = None
 
-    async def async_step_user(
-        self, user_input: dict[str, Any] | None = None
-    ) -> ConfigFlowResult:
+    async def async_step_user(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Handle the initial user step."""
         errors: dict[str, str] = {}
 
@@ -311,9 +309,7 @@ class ABBFimerPVIVSNRestConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore[c
             step_id="reconfigure",
             data_schema=vol.Schema(
                 {
-                    vol.Required(
-                        CONF_HOST, default=reconfigure_entry.data.get(CONF_HOST)
-                    ): str,
+                    vol.Required(CONF_HOST, default=reconfigure_entry.data.get(CONF_HOST)): str,
                     vol.Optional(
                         CONF_USERNAME,
                         default=reconfigure_entry.data.get(CONF_USERNAME, DEFAULT_USERNAME),
@@ -331,9 +327,7 @@ class ABBFimerPVIVSNRestConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore[c
 class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
     """Handle options flow for ABB FIMER PVI VSN REST with auto-reload."""
 
-    async def async_step_init(
-        self, user_input: dict[str, Any] | None = None
-    ) -> ConfigFlowResult:
+    async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Manage the options."""
         if user_input is not None:
             # Check if entity ID regeneration was requested (one-time action)
@@ -355,10 +349,7 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
         has_batteries = False
 
         # Access discovered devices from coordinator (if available)
-        if (
-            hasattr(self.config_entry, "runtime_data")
-            and self.config_entry.runtime_data
-        ):
+        if hasattr(self.config_entry, "runtime_data") and self.config_entry.runtime_data:
             coordinator = self.config_entry.runtime_data.coordinator
             discovered_devices = getattr(coordinator, "discovered_devices", None) or []
 
@@ -458,9 +449,7 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
         }
 
         # Get all entities for this config entry
-        entities = er.async_entries_for_config_entry(
-            registry, self.config_entry.entry_id
-        )
+        entities = er.async_entries_for_config_entry(registry, self.config_entry.entry_id)
 
         regenerated_count = 0
         for entity_entry in entities:

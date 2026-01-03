@@ -41,9 +41,7 @@ class PointMapping:
     entity_category: str | None
     available_in_modbus: str
     icon: str = ""  # MDI icon for entity (e.g., "mdi:information-box-outline")
-    suggested_display_precision: int | None = (
-        None  # Suggested decimal precision for display
-    )
+    suggested_display_precision: int | None = None  # Suggested decimal precision for display
 
 
 class VSNMappingLoader:
@@ -110,17 +108,11 @@ class VSNMappingLoader:
                     content = await response.text()
                     # Save to local cache using thread pool to avoid blocking
                     await asyncio.to_thread(self._write_file, file_path, content)
-                    _LOGGER.info(
-                        "Downloaded mapping file from GitHub and cached locally"
-                    )
+                    _LOGGER.info("Downloaded mapping file from GitHub and cached locally")
                 else:
-                    raise FileNotFoundError(
-                        f"Failed to fetch from GitHub: HTTP {response.status}"
-                    )
+                    raise FileNotFoundError(f"Failed to fetch from GitHub: HTTP {response.status}")
         except aiohttp.ClientError as err:
-            raise FileNotFoundError(
-                f"Failed to fetch mapping from GitHub: {err}"
-            ) from err
+            raise FileNotFoundError(f"Failed to fetch mapping from GitHub: {err}") from err
 
     def _write_file(self, file_path: Path, content: str) -> None:
         """Write content to file (runs in thread pool)."""

@@ -103,9 +103,7 @@ async def discover_vsn_device(
     vsn_model, requires_auth = await detect_vsn_model(
         session, base_url, username, password, timeout
     )
-    _LOGGER.info(
-        "Detected VSN model: %s (requires_auth=%s)", vsn_model, requires_auth
-    )
+    _LOGGER.info("Detected VSN model: %s (requires_auth=%s)", vsn_model, requires_auth)
 
     # Step 2: Fetch status data
     status_data = await _fetch_status(
@@ -316,9 +314,7 @@ async def _fetch_livedata(
                 response.status,
                 dict(response.headers),
             )
-            raise VSNConnectionError(
-                f"Failed to fetch livedata: HTTP {response.status}"
-            )
+            raise VSNConnectionError(f"Failed to fetch livedata: HTTP {response.status}")
     except aiohttp.ClientError as err:
         _LOGGER.debug(
             "[Discovery Livedata] Connection error: %s (type=%s)",
@@ -350,9 +346,7 @@ def _extract_logger_info(status_data: dict[str, Any], vsn_model: str) -> dict[st
 
     # For VSN700, logger S/N might be in loggerId field (MAC address)
     if logger_info["logger_sn"] == "Unknown" and vsn_model == "VSN700":
-        logger_info["logger_sn"] = keys.get("logger.loggerId", {}).get(
-            "value", "Unknown"
-        )
+        logger_info["logger_sn"] = keys.get("logger.loggerId", {}).get("value", "Unknown")
 
     return logger_info
 
@@ -450,9 +444,7 @@ def _extract_devices(
             device_model = device_data.get("device_model")
         elif vsn_model == "VSN300":
             # VSN300: Model in status for inverter
-            device_model = (
-                status_data.get("keys", {}).get("device.modelDesc", {}).get("value")
-            )
+            device_model = status_data.get("keys", {}).get("device.modelDesc", {}).get("value")
 
         # Extract useful points: manufacturer, firmware version, hardware version
         manufacturer = None

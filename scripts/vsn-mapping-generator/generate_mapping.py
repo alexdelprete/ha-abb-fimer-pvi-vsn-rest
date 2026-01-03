@@ -370,25 +370,21 @@ VSN_NAME_NORMALIZATION = {
     # VSN700: Riso → Isolation_Ohm1 (normalize to SunSpec name)
     # Result: Single "isolation_ohm1" sensor, both REST names, unit=MOhm, icon=mdi:omega
     "Riso": "Isolation_Ohm1",  # VSN700 → VSN300 (SunSpec) name
-
     # Leakage Current - Inverter (CRITICAL - unit mismatch A vs mA)
     # VSN300: m64061_1_ILeakDcAc → ILeakDcAc (mA, describes DC-to-AC path, canonical)
     # VSN700: IleakInv → ILeakDcAc (A, less specific, normalize to VSN300)
     # Result: Single "ileakdcac" sensor, unit=mA, A→mA conversion in normalizer
     "IleakInv": "ILeakDcAc",  # VSN700 → VSN300 (SunSpec) name
-
     # Leakage Current - DC (CRITICAL - unit mismatch A vs mA)
     # VSN300: m64061_1_ILeakDcDc → ILeakDcDc (mA, describes DC-to-DC path, canonical)
     # VSN700: IleakDC → ILeakDcDc (A, less specific, normalize to VSN300)
     # Result: Single "ileakdcdc" sensor, unit=mA, A→mA conversion in normalizer
     "IleakDC": "ILeakDcDc",  # VSN700 → VSN300 (SunSpec) name
-
     # Voltage - Ground Reference (capitalization only)
     # VSN300: VGnd (V, PascalCase - SunSpec convention, canonical)
     # VSN700: Vgnd (V, lowercase g, normalize to VSN300)
     # Result: Single "vgnd" sensor with both REST names
     "Vgnd": "VGnd",  # VSN700 → VSN300 (SunSpec) name
-
     # Battery State of Charge (naming convention)
     # VSN300: Soc (%, standard SunSpec name, canonical)
     # VSN700: TSoc (%, proprietary prefix, normalize to VSN300)
@@ -2458,9 +2454,7 @@ def load_vsn_status(vsn300_status_path, vsn700_status_path):
 
                     status_points[point_name] = {
                         "source": "VSN300 status",
-                        "label": label
-                        if label
-                        else generate_label_from_name(point_name),
+                        "label": label if label else generate_label_from_name(point_name),
                         "value_example": value,
                         "vsn300": True,
                         "vsn700": False,
@@ -2482,9 +2476,7 @@ def load_vsn_status(vsn300_status_path, vsn700_status_path):
                     else:
                         status_points[point_name] = {
                             "source": "VSN700 status",
-                            "label": label
-                            if label
-                            else generate_label_from_name(point_name),
+                            "label": label if label else generate_label_from_name(point_name),
                             "value_example": value,
                             "vsn300": False,
                             "vsn700": True,
@@ -2835,17 +2827,14 @@ def get_description_with_priority(
     return "Unknown measurement", "Fallback", None
 
 
-def get_comprehensive_category(
-    label, description, model_flags, vsn300_name, vsn700_name
-):
+def get_comprehensive_category(label, description, model_flags, vsn300_name, vsn700_name):
     """Determine category with comprehensive logic."""
     label_lower = (label or "").lower()
     desc_lower = (description or "").lower()
 
     # Energy Counter (highest priority)
     if any(
-        pattern in label_lower
-        for pattern in ["e0", "e1", "e2", "e3", "e4", "e5", "e6", "e7", "e8"]
+        pattern in label_lower for pattern in ["e0", "e1", "e2", "e3", "e4", "e5", "e6", "e7", "e8"]
     ):
         if not any(x in label_lower for x in ["charge", "discharge"]):
             return "Energy Counter"
@@ -2890,10 +2879,7 @@ def get_comprehensive_category(
         return "Device Info"
 
     # Phase-based categorization
-    if any(
-        phase in label_lower
-        for phase in ["phase", "l1", "l2", "l3", "phv", "aph", "wph"]
-    ):
+    if any(phase in label_lower for phase in ["phase", "l1", "l2", "l3", "phv", "aph", "wph"]):
         if model_flags.get("M103") == "YES" or model_flags.get("M160") == "YES":
             return "Inverter"
         if model_flags.get("M203") == "YES":
@@ -2914,10 +2900,7 @@ def get_comprehensive_category(
         return "Inverter"
     if model_flags.get("ABB_Proprietary") == "YES":
         return "System"
-    if (
-        model_flags.get("VSN300_Only") == "YES"
-        or model_flags.get("VSN700_Only") == "YES"
-    ):
+    if model_flags.get("VSN300_Only") == "YES" or model_flags.get("VSN700_Only") == "YES":
         return "Datalogger"
 
     return "Unknown"
@@ -3133,7 +3116,14 @@ def _get_suggested_precision(sunspec_name, device_class, units, state_class, ent
     # Device class fallback for sensors with empty units
     if device_class:
         # Power-related, duration, timestamps, battery percentage: 0 decimals
-        if device_class in ("power", "reactive_power", "apparent_power", "duration", "timestamp", "battery"):
+        if device_class in (
+            "power",
+            "reactive_power",
+            "apparent_power",
+            "duration",
+            "timestamp",
+            "battery",
+        ):
             return 0
         # Voltage and temperature: 1 decimal
         if device_class in ("voltage", "temperature"):
@@ -3256,7 +3246,10 @@ def create_row_with_model_flags(
 
     # 8. Set Suggested Display Precision based on metadata or auto-calculated
     # Check if precision was specified in SUNSPEC_TO_HA_METADATA first (takes priority)
-    if sunspec_name in SUNSPEC_TO_HA_METADATA and "precision" in SUNSPEC_TO_HA_METADATA[sunspec_name]:
+    if (
+        sunspec_name in SUNSPEC_TO_HA_METADATA
+        and "precision" in SUNSPEC_TO_HA_METADATA[sunspec_name]
+    ):
         row["precision"] = SUNSPEC_TO_HA_METADATA[sunspec_name]["precision"]
     else:
         # Auto-calculate precision based on units, device_class, etc.
@@ -3265,7 +3258,7 @@ def create_row_with_model_flags(
             device_class=row["device_class"],
             units=row["units"],
             state_class=row["state_class"],
-            entity_category=row["entity_category"]
+            entity_category=row["entity_category"],
         )
 
     return row
@@ -3285,9 +3278,7 @@ def generate_changelog_sheet(wb):
     ws.append(headers)
 
     # Style headers
-    header_fill = PatternFill(
-        start_color="366092", end_color="366092", fill_type="solid"
-    )
+    header_fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
     header_font = Font(color="FFFFFF", bold=True)
 
     for col_idx in range(1, len(headers) + 1):
@@ -3354,15 +3345,11 @@ def generate_summary_sheet(wb, rows):
     ws.append([])
 
     ws.append(["Category Distribution", ""])
-    for category, count in sorted(
-        category_counts.items(), key=lambda x: x[1], reverse=True
-    ):
+    for category, count in sorted(category_counts.items(), key=lambda x: x[1], reverse=True):
         ws.append([f"  {category}", count])
 
     # Style headers
-    header_fill = PatternFill(
-        start_color="366092", end_color="366092", fill_type="solid"
-    )
+    header_fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
     header_font = Font(color="FFFFFF", bold=True)
 
     for cell in [ws.cell(row=1, column=1), ws.cell(row=1, column=2)]:
@@ -3588,9 +3575,7 @@ def _process_abb_proprietary_points(
     all_rows = []
 
     for point_name in ABB_PROPRIETARY:
-        in_vsn700 = (
-            point_name in vsn700_livedata_points or point_name in vsn700_feeds_points
-        )
+        in_vsn700 = point_name in vsn700_livedata_points or point_name in vsn700_feeds_points
         in_vsn300 = point_name in vsn300_livedata_points
 
         if (in_vsn700 or in_vsn300) and point_name not in processed_points:
@@ -3616,10 +3601,7 @@ def _process_abb_proprietary_points(
                 sunspec_name=point_name,
                 ha_name=ha_name,
                 in_livedata="✓"
-                if (
-                    point_name in vsn700_livedata_points
-                    or point_name in vsn300_livedata_points
-                )
+                if (point_name in vsn700_livedata_points or point_name in vsn300_livedata_points)
                 else "",
                 in_feeds="✓" if point_name in vsn700_feeds_points else "",
                 label=label,
@@ -3695,12 +3677,8 @@ def _process_vsn300_only_points(
                 models = {"VSN300_Only"}
 
             # Determine category
-            model_flags = {
-                flag: "YES" if flag in models else "NO" for flag in MODEL_FLAGS
-            }
-            category = get_comprehensive_category(
-                label, description, model_flags, point_name, None
-            )
+            model_flags = {flag: "YES" if flag in models else "NO" for flag in MODEL_FLAGS}
+            category = get_comprehensive_category(label, description, model_flags, point_name, None)
 
             row = create_row_with_model_flags(
                 vsn700_name="N/A",
@@ -3752,9 +3730,7 @@ def _process_vsn700_only_points(
             for flag in MODEL_FLAGS:
                 if flag != "VSN700_Only":
                     model_flags[flag] = "NO"
-            category = get_comprehensive_category(
-                label, description, model_flags, None, point_name
-            )
+            category = get_comprehensive_category(label, description, model_flags, None, point_name)
 
             # Apply VSN700 name normalization for duplicate detection
             normalized_name = normalize_vsn700_name(point_name)
@@ -3919,9 +3895,7 @@ def _create_excel_workbook(deduplicated_rows, output_dir):
         ws.cell(row=1, column=col_idx, value=header)
 
     # Style headers
-    header_fill = PatternFill(
-        start_color="366092", end_color="366092", fill_type="solid"
-    )
+    header_fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
     header_font = Font(color="FFFFFF", bold=True)
     thin_border = Border(
         left=Side(style="thin"),
@@ -3985,13 +3959,11 @@ def generate_mapping_excel_complete():
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # Load all data sources
-    sunspec_metadata, m64061_metadata, feeds_titles, status_points = _load_data_sources(
-        data_dir
-    )
+    sunspec_metadata, m64061_metadata, feeds_titles, status_points = _load_data_sources(data_dir)
 
     # Extract point sets from VSN data files
-    vsn700_livedata_points, vsn700_feeds_points, vsn300_livedata_points = (
-        _extract_point_sets(data_dir)
+    vsn700_livedata_points, vsn700_feeds_points, vsn300_livedata_points = _extract_point_sets(
+        data_dir
     )
 
     # Process all points
@@ -4051,9 +4023,7 @@ def generate_mapping_excel_complete():
         rows_by_sunspec[sunspec_name].append(row)
 
     deduplicated_rows = merge_duplicate_rows(rows_by_sunspec)
-    print(
-        f"  Deduplicated from {len(all_rows)} to {len(deduplicated_rows)} unique points"
-    )
+    print(f"  Deduplicated from {len(all_rows)} to {len(deduplicated_rows)} unique points")
 
     # Create Excel workbook and save
     output_path = _create_excel_workbook(deduplicated_rows, output_dir)

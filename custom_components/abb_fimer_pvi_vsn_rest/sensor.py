@@ -138,8 +138,18 @@ def _get_precision_from_units(units: str | None) -> int | None:
         return None
 
     if units in (
-        "W", "Wh", "kW", "kWh", "kVAh", "var", "VAR", "VAh",
-        "s", "B", "cycles", "channels",
+        "W",
+        "Wh",
+        "kW",
+        "kWh",
+        "kVAh",
+        "var",
+        "VAR",
+        "VAh",
+        "s",
+        "B",
+        "cycles",
+        "channels",
     ):
         # Power, energy, reactive power, apparent energy, duration, bytes, cycles, counts
         return 0
@@ -330,10 +340,7 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         # Determine if this sensor belongs to datalogger device
         is_datalogger = False
         for discovered_device in coordinator.discovered_devices:
-            if (
-                discovered_device.device_id == device_id
-                and discovered_device.is_datalogger
-            ):
+            if discovered_device.device_id == device_id and discovered_device.is_datalogger:
                 is_datalogger = True
                 break
 
@@ -415,14 +422,8 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         entity_category_str = point_data.get("entity_category")
         if entity_category_str == "diagnostic" or is_datalogger:
             self._attr_entity_category = EntityCategory.DIAGNOSTIC
-            reason = (
-                "mapping"
-                if entity_category_str == "diagnostic"
-                else "datalogger device"
-            )
-            _LOGGER.debug(
-                "Sensor %s set as diagnostic entity (reason: %s)", point_name, reason
-            )
+            reason = "mapping" if entity_category_str == "diagnostic" else "datalogger device"
+            _LOGGER.debug("Sensor %s set as diagnostic entity (reason: %s)", point_name, reason)
 
         # Set custom icon if specified in mapping (e.g., MDI icons for diagnostic entities)
         icon = point_data.get("icon")
@@ -477,9 +478,7 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
             try:
                 self._attr_device_class = SensorDeviceClass(device_class_str)
             except ValueError:
-                _LOGGER.debug(
-                    "Unknown device_class '%s' for %s", device_class_str, point_name
-                )
+                _LOGGER.debug("Unknown device_class '%s' for %s", device_class_str, point_name)
 
         # Set state_class if valid
         state_class_str = point_data.get("state_class")
@@ -487,9 +486,7 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
             try:
                 self._attr_state_class = SensorStateClass(state_class_str)
             except ValueError:
-                _LOGGER.debug(
-                    "Unknown state_class '%s' for %s", state_class_str, point_name
-                )
+                _LOGGER.debug("Unknown state_class '%s' for %s", state_class_str, point_name)
 
         # Validate and apply unit of measurement
         if units:
@@ -636,9 +633,7 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         point_data = points.get(self._point_name)
 
         if not point_data:
-            _LOGGER.debug(
-                "Point %s not found for device %s", self._point_name, self._device_id
-            )
+            _LOGGER.debug("Point %s not found for device %s", self._point_name, self._device_id)
             return None
 
         value = point_data.get("value")
@@ -646,11 +641,7 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         # Convert Aurora timestamps for sys_time sensor
         # Aurora protocol uses Jan 1, 2000 epoch instead of Unix epoch (Jan 1, 1970)
         # Return formatted string to show actual date/time instead of relative time ("X ago")
-        if (
-            self._point_name == "sys_time"
-            and isinstance(value, (int, float))
-            and value > 0
-        ):
+        if self._point_name == "sys_time" and isinstance(value, (int, float)) and value > 0:
             try:
                 # Get HA's configured timezone
                 tz = ZoneInfo(self.hass.config.time_zone)
@@ -738,9 +729,7 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
             "vsn300_rest_name": point_data.get("vsn300_name") or "N/A",
             "vsn700_rest_name": point_data.get("vsn700_name") or "N/A",
             # SunSpec Information
-            "sunspec_model": point_data.get(
-                "model", ""
-            ),  # Now contains comma-separated models
+            "sunspec_model": point_data.get("model", ""),  # Now contains comma-separated models
             "sunspec_name": point_data.get("sunspec_name", ""),
             "description": point_data.get("description", ""),
             # Compatibility Flags (derived from model string)

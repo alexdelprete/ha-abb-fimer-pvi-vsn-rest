@@ -60,9 +60,7 @@ def translate(text: str, translations: dict[str, str]) -> str:
     return result
 
 
-def translate_options_section(
-    options_data: dict, translations_dict: dict[str, str]
-) -> int:
+def translate_options_section(options_data: dict, translations_dict: dict[str, str]) -> int:
     """Translate the options section in-place.
 
     Returns count of translated strings.

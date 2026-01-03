@@ -78,7 +78,5 @@ async def check_socket_connection(
 
     except (OSError, ConnectionRefusedError, ConnectionError) as err:
         msg = f"Cannot connect to {hostname}:{port}"
-        _LOGGER.debug(
-            "[Socket Check] %s - %s (error type=%s)", msg, err, type(err).__name__
-        )
+        _LOGGER.debug("[Socket Check] %s - %s (error type=%s)", msg, err, type(err).__name__)
         raise VSNConnectionError(f"{msg}: {err}") from err
