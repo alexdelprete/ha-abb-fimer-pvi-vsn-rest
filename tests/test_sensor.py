@@ -8,10 +8,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from custom_components.abb_fimer_pvi_vsn_rest.const import DOMAIN
-from custom_components.abb_fimer_pvi_vsn_rest.sensor import (
-    ABBFimerPVIVSNRestSensor,
-    async_setup_entry,
-)
+from custom_components.abb_fimer_pvi_vsn_rest.sensor import VSNSensor, async_setup_entry
 from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
@@ -64,7 +61,7 @@ def test_sensor_attributes(
     mock_coordinator: MagicMock,
 ) -> None:
     """Test sensor has correct attributes."""
-    sensor = ABBFimerPVIVSNRestSensor(
+    sensor = VSNSensor(
         coordinator=mock_coordinator,
         device=sample_device,
         point_name="watts",
@@ -90,7 +87,7 @@ def test_sensor_device_info(
     mock_coordinator: MagicMock,
 ) -> None:
     """Test sensor has correct device info."""
-    sensor = ABBFimerPVIVSNRestSensor(
+    sensor = VSNSensor(
         coordinator=mock_coordinator,
         device=sample_device,
         point_name="watts",
@@ -116,7 +113,7 @@ def test_sensor_native_value(
     # Setup coordinator data
     mock_coordinator.data = mock_normalized_data
 
-    sensor = ABBFimerPVIVSNRestSensor(
+    sensor = VSNSensor(
         coordinator=mock_coordinator,
         device=sample_device,
         point_name="watts",
@@ -135,7 +132,7 @@ def test_sensor_extra_state_attributes(
     mock_coordinator: MagicMock,
 ) -> None:
     """Test sensor has extra state attributes."""
-    sensor = ABBFimerPVIVSNRestSensor(
+    sensor = VSNSensor(
         coordinator=mock_coordinator,
         device=sample_device,
         point_name="watts",
@@ -168,7 +165,7 @@ def test_sensor_diagnostic_entity_category(
         "entity_category": "diagnostic",
     }
 
-    sensor = ABBFimerPVIVSNRestSensor(
+    sensor = VSNSensor(
         coordinator=mock_coordinator,
         device=sample_device,
         point_name="firmware_version",
@@ -187,7 +184,7 @@ def test_sensor_unavailable_when_no_data(
     """Test sensor is unavailable when no data in coordinator."""
     mock_coordinator.data = None
 
-    sensor = ABBFimerPVIVSNRestSensor(
+    sensor = VSNSensor(
         coordinator=mock_coordinator,
         device=sample_device,
         point_name="watts",
@@ -206,7 +203,7 @@ def test_sensor_unavailable_when_device_not_in_data(
     """Test sensor is unavailable when device not in coordinator data."""
     mock_coordinator.data = {"other_device": {}}
 
-    sensor = ABBFimerPVIVSNRestSensor(
+    sensor = VSNSensor(
         coordinator=mock_coordinator,
         device=sample_device,
         point_name="watts",
@@ -243,4 +240,4 @@ async def test_async_setup_entry_creates_sensors(
 
     # Should have sensors for all points in normalized data
     assert len(entities) > 0
-    assert all(isinstance(e, ABBFimerPVIVSNRestSensor) for e in entities)
+    assert all(isinstance(e, VSNSensor) for e in entities)
