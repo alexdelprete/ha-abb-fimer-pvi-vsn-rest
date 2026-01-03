@@ -30,19 +30,26 @@ def mock_add_entities() -> MagicMock:
 
 @pytest.fixture
 def sample_point_data() -> dict:
-    """Return sample point data for a sensor."""
+    """Return sample point data for a sensor.
+
+    Keys must match what sensor.py expects:
+    - device_class (not ha_device_class)
+    - state_class (not ha_state_class)
+    - units (not ha_unit_of_measurement)
+    """
     return {
         "value": 5000,
         "ha_display_name": "Power AC",
-        "ha_unit_of_measurement": "W",
-        "ha_device_class": "power",
-        "ha_state_class": "measurement",
+        "units": "W",
+        "device_class": "power",
+        "state_class": "measurement",
         "label": "AC Power",
         "description": "AC Power output",
-        "vsn300_rest_name": "m103_1_W",
-        "vsn700_rest_name": "Pgrid",
+        "vsn300_name": "m103_1_W",
+        "vsn700_name": "Pgrid",
         "category": "Inverter",
-        "sunspec_model": "M103",
+        "model": "M103",
+        "sunspec_name": "W",
     }
 
 
