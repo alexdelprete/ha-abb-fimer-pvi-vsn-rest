@@ -279,7 +279,9 @@ Users can configure unit display in Home Assistant UI:
 
 ## Conclusion
 
-**The livedata endpoint provides SunSpec specification-compliant values in W and Wh base units.** The integration correctly uses this endpoint. The mapping generator must be verified to ensure it specifies W/Wh units (from SunSpec specs) and not kW/kWh units (from feeds display metadata).
+**The livedata endpoint provides SunSpec specification-compliant values in W and Wh base units.**
+The integration correctly uses this endpoint. The mapping generator must be verified
+to ensure it specifies W/Wh units (from SunSpec specs) and not kW/kWh units (from feeds display metadata).
 
 This ensures:
 
