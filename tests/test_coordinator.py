@@ -170,12 +170,12 @@ async def test_coordinator_no_event_without_device_id(
 async def test_coordinator_format_downtime(
     coordinator: ABBFimerPVIVSNRestCoordinator,
 ) -> None:
-    """Test downtime formatting."""
-    # Test various durations
-    assert coordinator._format_downtime(30) == "30 seconds"
-    assert coordinator._format_downtime(60) == "1 minute"
-    assert coordinator._format_downtime(90) == "1 minute 30 seconds"
-    assert coordinator._format_downtime(3600) == "1 hour"
-    assert coordinator._format_downtime(3661) == "1 hour 1 minute"
-    assert coordinator._format_downtime(7200) == "2 hours"
-    assert coordinator._format_downtime(7261) == "2 hours 1 minute"
+    """Test downtime formatting in compact format."""
+    # Test various durations - coordinator uses compact format (e.g., '5m 23s')
+    assert coordinator._format_downtime(30) == "30s"
+    assert coordinator._format_downtime(60) == "1m"
+    assert coordinator._format_downtime(90) == "1m 30s"
+    assert coordinator._format_downtime(3600) == "1h"
+    assert coordinator._format_downtime(3661) == "1h 1m"
+    assert coordinator._format_downtime(7200) == "2h"
+    assert coordinator._format_downtime(7261) == "2h 1m"
