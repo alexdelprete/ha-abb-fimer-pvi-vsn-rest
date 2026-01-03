@@ -23,7 +23,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
 
-from .conftest import TEST_INVERTER_SN, TEST_LOGGER_SN, MockDiscoveredDevice
+from .conftest import TEST_INVERTER_SN, TEST_LOGGER_SN, MockDiscoveredDevice, MockDiscoveryResult
 
 # Skip reason for tests requiring full integration loading
 SKIP_INTEGRATION_LOADING = (
@@ -1382,3 +1382,452 @@ class TestGetPrecisionFromUnitsAdditional:
         """Test °F has precision 1."""
         result = _get_precision_from_units("°F")
         assert result == 1
+
+
+class TestVSNSensorInvalidDeviceClass:
+    """Tests for handling invalid device_class values."""
+
+    def test_invalid_device_class_is_ignored(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test invalid device_class is silently ignored."""
+        point_data = {
+            "value": 100,
+            "ha_display_name": "Test Sensor",
+            "device_class": "invalid_device_class",  # Not a valid SensorDeviceClass
+            "state_class": "measurement",
+            "units": "W",
+        }
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="test_invalid_dc",
+            point_data=point_data,
+        )
+
+        # Device class should not be set due to ValueError
+        assert getattr(sensor, "_attr_device_class", None) is None
+
+    def test_invalid_state_class_is_ignored(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test invalid state_class is silently ignored."""
+        point_data = {
+            "value": 100,
+            "ha_display_name": "Test Sensor",
+            "device_class": "power",
+            "state_class": "invalid_state_class",  # Not a valid SensorStateClass
+            "units": "W",
+        }
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="test_invalid_sc",
+            point_data=point_data,
+        )
+
+        # State class should not be set due to ValueError
+        assert getattr(sensor, "_attr_state_class", None) is None
+
+
+class TestVSNSensorStateMapping:
+    """Tests for state mapping functionality."""
+
+    def test_state_mapping_unknown_code(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test unknown state code returns formatted string."""
+        point_data = {
+            "value": 999,  # Unknown state code
+            "ha_display_name": "Global State",
+        }
+
+        mock_coordinator.data = {
+            "devices": {TEST_INVERTER_SN: {"points": {"globstate": {"value": 999}}}}
+        }
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="globstate",
+            point_data=point_data,
+        )
+
+        # Unknown code should return "Unknown (code)"
+        result = sensor.native_value
+        assert result == "Unknown (999)"
+
+    def test_state_mapping_known_code(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test known state code returns translated string."""
+        point_data = {
+            "value": 6,  # Known state code for "Run"
+            "ha_display_name": "Global State",
+        }
+
+        mock_coordinator.data = {
+            "devices": {TEST_INVERTER_SN: {"points": {"globstate": {"value": 6}}}}
+        }
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="globstate",
+            point_data=point_data,
+        )
+
+        # State code 6 should be translated via GLOBAL_STATE_MAP
+        result = sensor.native_value
+        assert result == GLOBAL_STATE_MAP[6]
+
+
+class TestVSNSensorExtraStateAttributesEdgeCases:
+    """Additional tests for extra_state_attributes edge cases."""
+
+    def test_extra_state_attributes_with_timestamp(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test extra state attributes include timestamp when available."""
+        point_data = {
+            "value": 5000,
+            "ha_display_name": "Power AC",
+        }
+
+        mock_coordinator.data = {
+            "devices": {
+                TEST_INVERTER_SN: {
+                    "points": {"watts": {"value": 5000}},
+                    "timestamp": "2025-01-01T12:00:00",
+                }
+            }
+        }
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="watts",
+            point_data=point_data,
+        )
+
+        attrs = sensor.extra_state_attributes
+        assert attrs["last_updated"] == "2025-01-01T12:00:00"
+
+    def test_extra_state_attributes_with_state_mapping(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test extra state attributes include raw_state_code for mapped entities."""
+        point_data = {
+            "value": 6,
+            "ha_display_name": "Global State",
+        }
+
+        mock_coordinator.data = {
+            "devices": {TEST_INVERTER_SN: {"points": {"globstate": {"value": 6}}}}
+        }
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="globstate",
+            point_data=point_data,
+        )
+
+        attrs = sensor.extra_state_attributes
+        assert attrs["raw_state_code"] == 6
+
+    def test_extra_state_attributes_system_uptime(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test extra state attributes include formatted uptime for system_uptime."""
+        point_data = {
+            "value": 3661,  # 1 hour, 1 minute, 1 second
+            "ha_display_name": "System Uptime",
+        }
+
+        mock_coordinator.data = {
+            "devices": {TEST_INVERTER_SN: {"points": {"system_uptime": {"value": 3661}}}}
+        }
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="system_uptime",
+            point_data=point_data,
+        )
+
+        attrs = sensor.extra_state_attributes
+        assert "formatted" in attrs
+        # Should contain hours/minutes format
+        assert "1h" in attrs["formatted"] or "1 hour" in attrs["formatted"].lower()
+
+    def test_extra_state_attributes_empty_strings_to_none(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test empty strings in attributes are converted to None."""
+        point_data = {
+            "value": 100,
+            "ha_display_name": "",  # Empty string
+            "label": "",
+            "description": "",
+        }
+
+        mock_coordinator.data = {
+            "devices": {TEST_INVERTER_SN: {"points": {"test": {"value": 100}}}}
+        }
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="test",
+            point_data=point_data,
+        )
+
+        attrs = sensor.extra_state_attributes
+        # Empty strings should be converted to None
+        assert attrs["friendly_name"] is None
+        assert attrs["label"] is None
+
+    def test_extra_state_attributes_no_coordinator_data(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test extra state attributes returns empty dict when no data."""
+        point_data = {
+            "value": 100,
+            "ha_display_name": "Test",
+        }
+
+        mock_coordinator.data = None
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="test",
+            point_data=point_data,
+        )
+
+        attrs = sensor.extra_state_attributes
+        assert attrs == {}
+
+    def test_extra_state_attributes_device_not_found(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test extra state attributes returns empty dict when device not found."""
+        point_data = {
+            "value": 100,
+            "ha_display_name": "Test",
+        }
+
+        mock_coordinator.data = {"devices": {}}
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="test",
+            point_data=point_data,
+        )
+
+        attrs = sensor.extra_state_attributes
+        assert attrs == {}
+
+    def test_extra_state_attributes_point_not_found(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test extra state attributes returns empty dict when point not found."""
+        point_data = {
+            "value": 100,
+            "ha_display_name": "Test",
+        }
+
+        mock_coordinator.data = {"devices": {TEST_INVERTER_SN: {"points": {}}}}
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="test",
+            point_data=point_data,
+        )
+
+        attrs = sensor.extra_state_attributes
+        assert attrs == {}
+
+
+class TestVSNSensorDeviceInfoEdgeCases:
+    """Tests for device_info edge cases."""
+
+    def test_device_info_datalogger_with_hostname(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test device info includes configuration_url for datalogger."""
+        # Create datalogger device
+        datalogger = MockDiscoveredDevice(
+            device_id=TEST_LOGGER_SN,
+            raw_device_id=TEST_LOGGER_SN,
+            device_type="datalogger",
+            device_model="VSN300",
+            manufacturer="ABB",
+            firmware_version="1.9.2",
+            hardware_version=None,
+            is_datalogger=True,
+        )
+
+        mock_coordinator.discovered_devices = [datalogger]
+        mock_coordinator.discovery_result = MockDiscoveryResult(
+            vsn_model="VSN300",
+            logger_sn=TEST_LOGGER_SN,
+            logger_model="VSN300",
+            firmware_version="1.9.2",
+            hostname="abb-vsn300.local",
+            devices=[datalogger],
+        )
+
+        point_data = {
+            "value": "1.9.2",
+            "ha_display_name": "Firmware Version",
+        }
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_LOGGER_SN,
+            device_type="datalogger",
+            point_name="firmware_version",
+            point_data=point_data,
+        )
+
+        device_info = sensor.device_info
+        assert device_info["configuration_url"] == "http://abb-vsn300.local"
+
+    def test_device_info_inverter_via_device(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test device info for inverter includes via_device."""
+        # Create datalogger and inverter
+        datalogger = MockDiscoveredDevice(
+            device_id=TEST_LOGGER_SN,
+            raw_device_id=TEST_LOGGER_SN,
+            device_type="datalogger",
+            device_model="VSN300",
+            manufacturer="ABB",
+            firmware_version="1.9.2",
+            hardware_version=None,
+            is_datalogger=True,
+        )
+        inverter = MockDiscoveredDevice(
+            device_id=TEST_INVERTER_SN,
+            raw_device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            device_model="PVI-10.0-OUTD",
+            manufacturer="Power-One",
+            firmware_version="C008",
+            hardware_version=None,
+            is_datalogger=False,
+        )
+
+        mock_coordinator.discovered_devices = [datalogger, inverter]
+        mock_coordinator.discovery_result = MockDiscoveryResult(
+            vsn_model="VSN300",
+            logger_sn=TEST_LOGGER_SN,
+            logger_model="VSN300",
+            firmware_version="1.9.2",
+            hostname="abb-vsn300.local",
+            devices=[datalogger, inverter],
+        )
+
+        point_data = {
+            "value": 5000,
+            "ha_display_name": "Power AC",
+        }
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="watts",
+            point_data=point_data,
+        )
+
+        device_info = sensor.device_info
+        # Inverter should have via_device pointing to datalogger
+        assert "via_device" in device_info
+        assert device_info["via_device"] == (DOMAIN, TEST_LOGGER_SN)
+
+    def test_device_info_no_discovered_device(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test device info when device not in discovered_devices."""
+        mock_coordinator.discovered_devices = []
+        mock_coordinator.discovery_result = None
+
+        point_data = {
+            "value": 100,
+            "ha_display_name": "Test",
+        }
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id="unknown_device",
+            device_type="inverter_3phases",
+            point_name="test",
+            point_data=point_data,
+        )
+
+        device_info = sensor.device_info
+        # Should still return valid device info with defaults
+        assert "identifiers" in device_info
+        assert "manufacturer" in device_info
+        assert device_info["manufacturer"] == "ABB/FIMER"  # Default

@@ -473,6 +473,36 @@ class TestVSNMappingLoaderGitHubFallback:
                 await loader._fetch_from_github(file_path)
 
     @pytest.mark.asyncio
+    async def test_fetch_from_github_success(self, tmp_path: Path) -> None:
+        """Test _fetch_from_github successfully downloads and caches file."""
+        loader = VSNMappingLoader()
+        file_path = tmp_path / "mapping.json"
+
+        # Mock successful response with valid JSON content
+        mock_response = AsyncMock()
+        mock_response.status = 200
+        mock_response.text = AsyncMock(return_value='[{"key": "value"}]')
+
+        mock_context = AsyncMock()
+        mock_context.__aenter__.return_value = mock_response
+        mock_context.__aexit__.return_value = None
+
+        mock_session = AsyncMock()
+        mock_session.get.return_value = mock_context
+
+        mock_session_context = AsyncMock()
+        mock_session_context.__aenter__.return_value = mock_session
+        mock_session_context.__aexit__.return_value = None
+
+        with patch("aiohttp.ClientSession", return_value=mock_session_context):
+            await loader._fetch_from_github(file_path)
+
+        # Verify file was written
+        assert file_path.exists()
+        content = file_path.read_text()
+        assert content == '[{"key": "value"}]'
+
+    @pytest.mark.asyncio
     async def test_async_load_github_fallback_fails(self, tmp_path: Path) -> None:
         """Test async_load raises error when file missing and GitHub fails."""
         nonexistent_file = tmp_path / "nonexistent.json"
