@@ -146,7 +146,8 @@ When a device returns HTTP 200 (no authentication required), detection failed.
 | `*_e_tot_charge_lifetime` | `*_e_tot_charge_since_restart` |
 | `*_e_tot_discharge_lifetime` | `*_e_tot_discharge_since_restart` |
 
-**Root Cause**: The VSN700 REST API uses `_runtime` suffix (e.g., `E0_runtime`) for "since restart" data, not lifetime. The generator script incorrectly mapped `runtime` → `Lifetime` instead of `runtime` → `Since Restart`.
+**Root Cause**: The VSN700 REST API uses `_runtime` suffix (e.g., `E0_runtime`) for "since restart" data, not lifetime.
+The generator script incorrectly mapped `runtime` → `Lifetime` instead of `runtime` → `Since Restart`.
 
 **Evidence**: `E0_runtime` value (32,821 Wh) is ~400x smaller than `ETotal` (13,341,652 Wh), confirming it resets on device restart.
 
@@ -556,7 +557,8 @@ and providing test data from their PVI-4.2-OUTD single-phase inverter.
 - Dhc → 183048368 (no decimals, no unit)
 - CycleNum → 707 (no decimals, no unit)
 
-**Technical Note**: Manual rounding required because Home Assistant ignores suggested_display_precision for unitless sensors. This is a known limitation already documented in sensor.py for system_load.
+**Technical Note**: Manual rounding required because Home Assistant ignores suggested_display_precision for unitless sensors.
+This is a known limitation already documented in sensor.py for system_load.
 
 **Full release notes**: [v1.1.5](docs/releases/v1.1.5.md)
 
@@ -972,7 +974,9 @@ Thank you to all beta testers who helped make this release possible! 🙏
 
 4. Update all dashboards and automations with new entity IDs
 
-**Why the change from Beta.25**: Technical device names produced ugly UI everywhere. The new entity IDs are still technical (contain manufacturer, model, serial) but slightly friendlier format. The beautiful device names make the integration much more pleasant to use.
+**Why the change from Beta.25**: Technical device names produced ugly UI everywhere.
+The new entity IDs are still technical (contain manufacturer, model, serial) but slightly friendlier format.
+The beautiful device names make the integration much more pleasant to use.
 
 **This is the FINAL entity ID format.** We're now following HA best practices with `has_entity_name=True` + friendly device names.
 
@@ -1005,7 +1009,8 @@ Thank you to all beta testers who helped make this release possible! 🙏
 2. **Migration**: Remove integration via UI (auto-deletes entities) → Reinstall
 3. Update all dashboards and automations with new entity IDs
 
-**Why the change from Beta.24**: After deeper investigation, we discovered `has_entity_name=False` causes HA to ignore `suggested_object_id` entirely. This is the correct implementation based on HA core source code.
+**Why the change from Beta.24**: After deeper investigation, we discovered `has_entity_name=False` causes HA to ignore
+`suggested_object_id` entirely. This is the correct implementation based on HA core source code.
 
 **This is the final entity ID format.** No more changes after this.
 
@@ -1397,7 +1402,7 @@ Thank you to all beta testers who helped make this release possible! 🙏
 
 **Expected Results:**
 
-```
+```text
 Entity ID: sensor.abb_vsn_rest_inverter_0779093g823112_ac_power
 Friendly Name: "abb_vsn_rest_inverter_0779093g823112 AC Power" (auto by HA)
 Device Card Shows: "AC Power" (clean, no prefix)
@@ -1411,7 +1416,7 @@ Attributes:
   category: "Inverter"
   vsn300_compatible: true
   vsn700_compatible: true
-```
+```text
 
 ### Technical Details
 
@@ -1646,7 +1651,10 @@ v1.0.0-beta.7 had a critical bug that prevented mapping rows from loading. All u
   - Added comprehensive unit detection for all VSN points
   - Properly preserve kW/kWh units from VSN feeds (no conversion - HA supports natively)
   - Fixed `HousePInverter` and `PacStandAlone` ABB Proprietary points to show proper units (W)
-  - Commits: [e459ade](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/e459ade), [cb84183](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/cb84183), [1b66995](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/1b66995), [3427585](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/3427585)
+  - Commits: [e459ade](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/e459ade),
+    [cb84183](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/cb84183),
+    [1b66995](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/1b66995),
+    [3427585](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/3427585)
 
 ### Changed
 
@@ -1818,7 +1826,7 @@ v1.0.0-beta.7 had a critical bug that prevented mapping rows from loading. All u
   - Added `async_load()` method to `VSNMappingLoader` for deferred async loading
   - Added `async_load()` method to `VSNDataNormalizer` for deferred async loading
   - File operations now run in thread pool using `Path.read_text()` (HA recommended approach)
-  - Follows HA best practices: https://developers.home-assistant.io/docs/asyncio_blocking_operations/#open
+  - Follows [HA best practices](https://developers.home-assistant.io/docs/asyncio_blocking_operations/#open)
   - Commit: [ab9dc38](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/ab9dc38)
 - **OptionsFlow Deprecation**: Removed manual `self.config_entry` assignment in `config_flow.py` to fix HA 2025.12 deprecation warning
   - Removed `__init__` method from OptionsFlowHandler (lines 301-303)
@@ -1928,7 +1936,7 @@ v1.0.0-beta.7 had a critical bug that prevented mapping rows from loading. All u
 - Ruff linting compliance
 - Home Assistant best practices
 
-### Fixed
+**Additional Fixes:**
 
 - Device naming now includes proper model names instead of generic "VSN Device"
 - Entity IDs now use device model in name (e.g., `sensor.pvi_10_0_outd_...`)

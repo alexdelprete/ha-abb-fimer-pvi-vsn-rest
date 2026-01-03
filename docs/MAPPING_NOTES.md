@@ -14,7 +14,7 @@ All sensor attributes are defined in the generator script:
 
 ```text
 scripts/vsn-mapping-generator/generate_mapping.py
-```
+```text
 
 **NEVER edit the JSON or Excel files directly.** All changes must go through the generator.
 
@@ -57,7 +57,7 @@ scripts/vsn-mapping-generator/generate_mapping.py
 
 ```text
 {domain}_{device_type}_{serial_compact}_{point_name}
-```
+```text
 
 Example: `abb_fimer_pvi_vsn_rest_inverter_0779093g823112_e0_since_restart`
 
@@ -71,7 +71,7 @@ Example: `sensor.abb_fimer_pvi_vsn_rest_inverter_0779093g823112_e0_since_restart
 
 ```text
 [Type] [AC/DC] - [Details] ([Time Period])
-```
+```text
 
 Examples:
 

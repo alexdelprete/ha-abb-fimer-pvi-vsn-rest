@@ -1,6 +1,7 @@
 # VSN-SunSpec Point Mapping Generator
 
-A self-contained tool for generating comprehensive point mappings between VSN300/VSN700 dataloggers and SunSpec models for the ABB FIMER PVI VSN REST Home Assistant integration.
+A self-contained tool for generating comprehensive point mappings between VSN300/VSN700 dataloggers
+and SunSpec models for the ABB FIMER PVI VSN REST Home Assistant integration.
 
 ## Overview
 
@@ -14,7 +15,7 @@ This generator creates a complete mapping file that:
 
 ## Directory Structure
 
-```
+```text
 vsn-mapping-generator/
 ├── generate_mapping.py           # Main mapping generator script
 ├── convert_to_json.py            # Excel to JSON converter
@@ -111,17 +112,20 @@ This will:
 ## Data Sources
 
 ### VSN Data Files
+
 - **livedata.json**: Real-time measurement points from inverters, meters, and batteries
 - **feeds.json**: Metadata including titles, units, and descriptions
 - **status.json**: Device information, firmware versions, network configuration
 
 ### SunSpec Models
+
 - **models_workbook.xlsx**: Official SunSpec Alliance model definitions (M1, M103, M160, etc.)
 - **ABB_SunSpec_Modbus.xlsx**: ABB/FIMER proprietary M64061 model points
 
 ## Features
 
 ### Status Endpoint Processing (v2.0.0+)
+
 The generator now processes `/status` endpoint data, extracting:
 
 - Device information (model, serial number, firmware versions)
@@ -129,6 +133,7 @@ The generator now processes `/status` endpoint data, extracting:
 - Logger information (board model, hostname)
 
 ### Automatic Categorization
+
 Points are automatically categorized into:
 
 - Inverter
@@ -142,6 +147,7 @@ Points are automatically categorized into:
 - Datalogger
 
 ### Data Source Priority
+
 Descriptions are selected using a 4-tier priority system:
 
 1. SunSpec official descriptions
@@ -150,16 +156,20 @@ Descriptions are selected using a 4-tier priority system:
 4. Label fallback
 
 ### Deduplication
-Points with the same SunSpec normalized name are merged, preserving the best available metadata from all sources.
+
+Points with the same SunSpec normalized name are merged, preserving the best available metadata
+from all sources.
 
 ## Updating Data
 
 ### To Update VSN Data
+
 1. Export new data from VSN300/VSN700 devices
 2. Place JSON files in appropriate `data/vsn300/` or `data/vsn700/` directories
 3. Run `generate_mapping.py`
 
 ### To Update SunSpec Models
+
 1. Download latest model workbook from SunSpec Alliance
 2. Replace `data/sunspec/models_workbook.xlsx`
 3. Run `generate_mapping.py`
@@ -168,7 +178,8 @@ Points with the same SunSpec normalized name are merged, preserving the best ava
 
 ### CRITICAL: Understanding the Generator Pipeline
 
-The generator applies corrections in a specific order. **Order matters!** Changes in the wrong order will fail silently.
+The generator applies corrections in a specific order. **Order matters!** Changes in the wrong order
+will fail silently.
 
 ```python
 # Correct order in create_row_with_model_flags():
@@ -181,7 +192,9 @@ The generator applies corrections in a specific order. **Order matters!** Change
 7. Apply SUNSPEC_TO_HA_METADATA
 ```
 
-**WHY THIS MATTERS**: `DEVICE_CLASS_FIXES` is keyed by **label names** (e.g., "Serial Number"), not SunSpec names (e.g., "SN" or "sn"). If you apply device class fixes before label corrections, the fixes won't match and will fail silently.
+**WHY THIS MATTERS**: `DEVICE_CLASS_FIXES` is keyed by **label names** (e.g., "Serial Number"),
+not SunSpec names (e.g., "SN" or "sn"). If you apply device class fixes before label corrections,
+the fixes won't match and will fail silently.
 
 ### Common Metadata Dictionaries
 
@@ -189,12 +202,12 @@ When modifying point metadata in `generate_mapping.py`, use these dictionaries:
 
 | Dictionary | Purpose | Key Type | Line # | Example |
 |------------|---------|----------|--------|---------|
-| `VSN_TO_SUNSPEC_MAP` | Map VSN REST names to SunSpec | VSN REST name | ~78 | `"PF": {"sunspec": "PF", "units": "", ...}` |
-| `SUNSPEC_TO_HA_METADATA` | HA device class, state class, units | SunSpec name | ~444 | `"PF": {"device_class": "power_factor", ...}` |
-| `DESCRIPTION_IMPROVEMENTS` | Override/improve descriptions | SunSpec name | ~579 | `"PF": "Power factor at grid connection"` |
+| `VSN_TO_SUNSPEC_MAP` | Map VSN REST names to SunSpec | VSN REST name | ~78 | `"PF": {"sunspec": "PF", ...}` |
+| `SUNSPEC_TO_HA_METADATA` | HA device class, state class, units | SunSpec name | ~444 | `"PF": {"device_class": ...}` |
+| `DESCRIPTION_IMPROVEMENTS` | Override/improve descriptions | SunSpec name | ~579 | `"PF": "Power factor..."` |
 | `DISPLAY_NAME_CORRECTIONS` | Fix display names | Display name | ~324 | `"Pf": "Power Factor"` |
 | `LABEL_CORRECTIONS` | Fix label text (spacing, capitalization) | Label text | ~396 | `"Sn": "Serial Number"` |
-| `DEVICE_CLASS_FIXES` | Override device class/unit/category | **Label name** | ~378 | `"Serial Number": {"entity_category": "diagnostic"}` |
+| `DEVICE_CLASS_FIXES` | Override device class/unit/category | **Label name** | ~378 | `"Serial Number": {...}` |
 | `UNIT_CORRECTIONS` | Fix incorrect units | SunSpec name | ~409 | `"ILeakDcAc": "mA"` |
 
 ### Adding Diagnostic Categories
@@ -220,24 +233,28 @@ DEVICE_CLASS_FIXES = {
 **Solution**: The point was incorrectly classified. Fix in multiple places:
 
 1. Remove from wrong dictionary:
+
    ```python
    # In SUNSPEC_TO_HA_METADATA, remove:
    # "sn": {"device_class": "apparent_power", ...}  # WRONG - sn is serial number!
    ```
 
-2. Add correct description:
+1. Add correct description:
+
    ```python
    # In DESCRIPTION_IMPROVEMENTS:
    "sn": "Datalogger serial number",
    ```
 
-3. Add correct label:
+1. Add correct label:
+
    ```python
    # In LABEL_CORRECTIONS:
    "Sn": "Serial Number",
    ```
 
-4. Add metadata fixes:
+1. Add metadata fixes:
+
    ```python
    # In DEVICE_CLASS_FIXES (use corrected label!):
    "Serial Number": {"entity_category": "diagnostic"},
@@ -250,27 +267,32 @@ DEVICE_CLASS_FIXES = {
 **Solution**: Fix in TWO places:
 
 1. In `VSN_TO_SUNSPEC_MAP`:
+
    ```python
    "PF": {"sunspec": "PF", "units": "", ...}  # Empty for power_factor
    ```
 
-2. In `SUNSPEC_TO_HA_METADATA`:
+1. In `SUNSPEC_TO_HA_METADATA`:
+
    ```python
    "PF": {"device_class": "power_factor", "unit": ""},  # HA handles formatting
    ```
 
-**Note**: Some device classes (like `power_factor`) handle their own formatting. Use empty string `""`, not `None`.
+**Note**: Some device classes (like `power_factor`) handle their own formatting.
+Use empty string `""`, not `None`.
 
 ## Manual Editing Workflow (v2.0.9+)
 
 You can now manually edit the generated Excel file and backport your changes to the generator:
 
 ### 1. Save a Backup
+
 ```bash
 copy output\vsn-sunspec-point-mapping.xlsx output\vsn-sunspec-point-mapping-original.xlsx
 ```
 
 ### 2. Edit the Excel File
+
 Open `output/vsn-sunspec-point-mapping.xlsx` and edit:
 
 - **Label**: Human-readable label for the point
@@ -278,6 +300,7 @@ Open `output/vsn-sunspec-point-mapping.xlsx` and edit:
 - **HA Display Name**: User-friendly name shown in Home Assistant
 
 ### 3. Extract Changes
+
 ```bash
 python extract_manual_changes.py
 ```
@@ -289,6 +312,7 @@ This will:
 - Generate Python code in `output/manual_changes_backport.txt`
 
 ### 4. Apply Changes to Generator
+
 1. Open `output/manual_changes_backport.txt`
 2. Copy the generated code sections
 3. Paste into the appropriate dictionaries in `generate_mapping.py`:
@@ -297,6 +321,7 @@ This will:
    - `LABEL_CORRECTIONS` (around line 422)
 
 ### 5. Regenerate
+
 ```bash
 python generate_mapping.py && python convert_to_json.py
 ```
@@ -309,38 +334,46 @@ After regenerating mapping files, always verify critical fixes:
 
 ```bash
 # Check specific point metadata
-cd ../.. && grep -i '"Label": "Serial Number"' custom_components/abb_fimer_pvi_vsn_rest/data/vsn-sunspec-point-mapping.json -A 10
+cd ../.. && grep -i '"Label": "Serial Number"' \
+  custom_components/abb_fimer_pvi_vsn_rest/data/vsn-sunspec-point-mapping.json -A 10
 
 # Check power factor unit (should be empty "")
-grep '"HA Device Class": "power_factor"' custom_components/abb_fimer_pvi_vsn_rest/data/vsn-sunspec-point-mapping.json -B 3 -A 3
+grep '"HA Device Class": "power_factor"' \
+  custom_components/abb_fimer_pvi_vsn_rest/data/vsn-sunspec-point-mapping.json -B 3 -A 3
 
 # Verify diagnostic categories
-grep '"Entity Category": "diagnostic"' custom_components/abb_fimer_pvi_vsn_rest/data/vsn-sunspec-point-mapping.json | wc -l
+grep '"Entity Category": "diagnostic"' \
+  custom_components/abb_fimer_pvi_vsn_rest/data/vsn-sunspec-point-mapping.json | wc -l
 ```
 
 ## Common Pitfalls
 
 ### 1. Silent Fix Failures
+
 **Problem**: You add a fix to `DEVICE_CLASS_FIXES` but it doesn't apply.
 **Cause**: The dictionary is keyed by **corrected label names**, but you used the SunSpec name.
 **Solution**: Use the label that appears AFTER `apply_label_corrections()` runs.
 
 ### 2. Execution Order Issues
+
 **Problem**: Fixes work in isolation but not together.
 **Cause**: Corrections applied in wrong order in `create_row_with_model_flags()`.
 **Solution**: Ensure `apply_label_corrections()` runs BEFORE `apply_device_class_fixes()`.
 
 ### 3. Conflicting Metadata
+
 **Problem**: Point has metadata in multiple dictionaries.
 **Cause**: Point was misclassified (e.g., "sn" as apparent power instead of serial number).
 **Solution**: Remove from wrong dictionary, add to correct dictionaries.
 
 ### 4. Unit Display Issues
+
 **Problem**: Power factor shows "1.0%" instead of expected format.
 **Cause**: HA device classes with built-in formatting don't need explicit units.
 **Solution**: Use empty string `""` for units, not `None` or `"%"`.
 
 ### 5. Forgetting to Regenerate JSON
+
 **Problem**: Changes in Python don't appear in integration.
 **Cause**: Forgot to run `convert_to_json.py` after `generate_mapping.py`.
 **Solution**: Always run both: `python generate_mapping.py && python convert_to_json.py`

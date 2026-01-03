@@ -3,32 +3,32 @@
 ## What's Changed
 
 ### 🚀 Features & Improvements
-<!-- List new features and improvements here -->
--
+
+- (List new features and improvements here)
 
 ### 🐛 Bug Fixes
-<!-- List bug fixes here -->
--
+
+- (List bug fixes here)
 
 ### 🔧 Code Quality & Maintainability
-<!-- List code quality improvements, refactoring, etc. -->
--
+
+- (List code quality improvements, refactoring, etc.)
 
 ### ⚠️ Breaking Changes
-<!-- List any breaking changes here, or remove this section if none -->
--
+
+- (List any breaking changes here, or remove this section if none)
 
 ### 📦 Dependencies
-<!-- List dependency updates here -->
--
+
+- (List dependency updates here)
 
 ### 📝 Technical Details
-<!-- Additional technical details, if needed -->
--
+
+- (Additional technical details, if needed)
 
 ### 🧪 Testing
-<!-- Testing notes and recommendations -->
--
+
+- (Testing notes and recommendations)
 
 ---
 

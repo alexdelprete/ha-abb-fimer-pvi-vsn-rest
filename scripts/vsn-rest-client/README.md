@@ -25,7 +25,7 @@ Install aiohttp:
 
 ```bash
 pip install aiohttp
-```
+```text
 
 ## Usage
 
@@ -33,7 +33,7 @@ pip install aiohttp
 
 ```bash
 python vsn_rest_client.py <host> [--username USER] [--password PASS] [--timeout SEC]
-```
+```text
 
 ### Options
 
@@ -50,19 +50,19 @@ Basic usage with IP address:
 
 ```bash
 python vsn_rest_client.py 192.168.1.100
-```
+```text
 
 With custom credentials:
 
 ```bash
 python vsn_rest_client.py 192.168.1.100 --username admin --password mypassword
-```
+```text
 
 With short options:
 
 ```bash
 python vsn_rest_client.py abb-vsn300.local -u admin -p secret -t 15
-```
+```text
 
 The script automatically adds `http://` prefix if not provided.
 
@@ -150,7 +150,7 @@ Output files created:
   - vsn300_normalized.json
   - vsn300_feeds.json
 ================================================================================
-```
+```text
 
 ## Data Normalization
 
@@ -186,7 +186,7 @@ The script automatically normalizes raw VSN data to Home Assistant entity format
     }
   }
 }
-```
+```text
 
 ## Authentication
 
@@ -197,7 +197,7 @@ Use `--username` and `--password` to specify your device's credentials:
 
 ```bash
 python vsn_rest_client.py 192.168.1.100 --username admin --password mypassword
-```
+```text
 
 ### VSN300
 
@@ -217,7 +217,7 @@ Install aiohttp:
 
 ```bash
 pip install aiohttp
-```
+```text
 
 ### Connection Timeout
 

@@ -38,7 +38,7 @@ scripts/generate-translations/
     ├── nb.py   # Norwegian Bokmål
     ├── pt.py   # Portuguese
     └── sv.py   # Swedish
-```
+```text
 
 ### Usage
 
@@ -51,7 +51,7 @@ python scripts/generate-translations/generate_translations.py --language de
 
 # List available languages
 python scripts/generate-translations/generate_translations.py --list
-```
+```text
 
 ### Benefits
 
@@ -80,7 +80,7 @@ The `period_map` dictionary in `generate_mapping.py` incorrectly mapped:
 
 ```python
 "runtime": "Lifetime",  # WRONG - should be "Since Restart"
-```
+```text
 
 The VSN700 REST API uses `_runtime` suffix (e.g., `E0_runtime`, `E1_runtime`) which means
 "since device restart", not "lifetime". The actual lifetime sensors have different names
@@ -245,7 +245,7 @@ VSN_NAME_NORMALIZATION = {
     "Vgnd": "VGnd",
     "TSoc": "Soc",
 }
-```
+```text
 
 **Runtime Conversion (`normalizer.py`):**
 
@@ -253,7 +253,7 @@ VSN_NAME_NORMALIZATION = {
 A_TO_MA_POINTS = {"IleakInv", "IleakDC"}
 if vsn_model == "VSN700" and point_name in A_TO_MA_POINTS:
     point_value = point_value * 1000  # A → mA
-```
+```text
 
 ### Result
 
@@ -362,7 +362,7 @@ class DiscoveryResult:
     hostname: str | None        # ABB-077909-3G82-3112.local
     devices: list[DiscoveredDevice]
     status_data: dict[str, Any]
-```
+```text
 
 #### 2. Integration Updates
 
@@ -422,7 +422,7 @@ VSN300 Datalogger (111033-3N16-1421)
       │   └─ via_device: VSN300
       └─ Battery Storage (if present)
           └─ via_device: VSN300
-```
+```text
 
 ### Files Modified (Discovery)
 
@@ -481,14 +481,14 @@ VSN300 Datalogger (111033-3N16-1421)
 ```text
 Device: "VSN Device 077909-3G82-3112"
 Entity: sensor.vsn_device_077909_3g82_3112_watts
-```
+```text
 
 **After (Proper):**
 
 ```text
 Device: "PVI-10.0-OUTD (077909-3G82-3112)"
 Entity: sensor.pvi_10_0_outd_077909_3g82_3112_watts
-```
+```text
 
 ### Commits (Discovery)
 

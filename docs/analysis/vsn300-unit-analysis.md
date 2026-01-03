@@ -90,15 +90,15 @@ This raised the question: **Which source provides the correct, specification-com
 
 All points show consistent **1000x scaling** between livedata and feeds:
 
-```
+```text
 Measurement Type     | Livedata Unit | Feeds Unit | Ratio
 ---------------------|---------------|------------|-------
 Power (W, DCW)      | W             | kW         | 0.001
 Energy (WH)         | Wh            | kWh        | 0.001
-```
+```text
 
 **Mathematical Verification**:
-```
+```text
 m103_1_WH livedata:  93,348,832 Wh
 m103_1_WH feeds:     93,348.84 kWh
 Conversion:          93,348,832 ÷ 1000 = 93,348.832 kWh ✓
@@ -106,7 +106,7 @@ Conversion:          93,348,832 ÷ 1000 = 93,348.832 kWh ✓
 m103_1_W livedata:   83.83 W
 m103_1_W feeds:      0.077 kW  (different sampling time)
 Expected:            83.83 ÷ 1000 = 0.08383 kW ≈ 0.077 kW ✓
-```
+```text
 
 ---
 
@@ -166,7 +166,7 @@ From `ABB_SunSpec_Modbus.xlsx` Model 64061 specifications:
 
 ### Current Data Flow
 
-```
+```text
 VSN300 Device
     ↓
 /v1/livedata (W, Wh) ← Integration fetches from here
@@ -174,7 +174,7 @@ VSN300 Device
 Normalizer
     ↓
 Home Assistant Entities
-```
+```text
 
 The integration **correctly uses `/v1/livedata`** as its data source, which provides SunSpec-compliant values in base SI units.
 

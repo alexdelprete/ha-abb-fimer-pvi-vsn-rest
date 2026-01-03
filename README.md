@@ -1,21 +1,15 @@
 # ABB/FIMER PVI VSN REST Integration
 
-[![GitHub Release][releases-shield]][releases]
-[![BuyMeCoffee][buymecoffee-shield]][buymecoffee]
-[![Community Forum][forum-shield]][forum]
+[![GitHub Release][releases-shield]][releases] [![BuyMeCoffee][buymecoffee-shield]][buymecoffee] [![Community Forum][forum-shield]][forum]
 
-[![Tests][tests-shield]][tests]
-[![Code Coverage][coverage-shield]][coverage]
-[![Downloads][downloads-shield]][downloads]
+[![Tests][tests-shield]][tests] [![Code Coverage][coverage-shield]][coverage] [![Downloads][downloads-shield]][downloads]
 
 Home Assistant custom integration for ABB/FIMER/Power-One PVI inverters via **VSN300/VSN700 datalogger REST API**.
 
 ## Overview
 
-This integration connects to VSN300 or VSN700 dataloggers to monitor
-ABB/FIMER/Power-One PV inverters. It communicates via the datalogger's REST API
-and normalizes data to SunSpec-compatible format for consistent Home Assistant
-entity creation.
+This integration connects to VSN300 or VSN700 dataloggers to monitor ABB/FIMER/Power-One PV inverters. It communicates via the datalogger's REST API and normalizes data to
+SunSpec-compatible format for consistent Home Assistant entity creation.
 
 ### Features
 
@@ -50,40 +44,40 @@ entity creation.
 
 ### HACS (Recommended)
 
-This integration is available in the official [HACS][hacs] default repository:
+This integration is available in the official [HACS] default repository:
 
 [![Quick installation link](https://my.home-assistant.io/badges/hacs_repository.svg)][my-hacs]
 
 1. Open HACS in Home Assistant
-2. Go to "Integrations"
-3. Search for "ABB FIMER PVI VSN REST"
-4. Click "Download"
-5. Restart Home Assistant
+1. Go to "Integrations"
+1. Search for "ABB FIMER PVI VSN REST"
+1. Click "Download"
+1. Restart Home Assistant
 
 ### Manual Installation
 
 1. Download the latest release from [Releases](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/releases)
-2. Extract and copy `custom_components/abb_fimer_pvi_vsn_rest` to your `config/custom_components/` directory
-3. Restart Home Assistant
+1. Extract and copy `custom_components/abb_fimer_pvi_vsn_rest` to your `config/custom_components/` directory
+1. Restart Home Assistant
 
 ## Configuration
 
 ### Prerequisites
 
 1. VSN300 or VSN700 datalogger connected to your network
-2. Datalogger IP address or hostname
-3. Valid credentials (check your datalogger's web interface for configured users)
+1. Datalogger IP address or hostname
+1. Valid credentials (check your datalogger's web interface for configured users)
 
 ### Setup Steps
 
 1. Go to **Settings** → **Devices & Services**
-2. Click **"+ Add Integration"**
-3. Search for **"ABB FIMER PVI VSN REST"**
-4. Enter configuration:
+1. Click **"+ Add Integration"**
+1. Search for **"ABB FIMER PVI VSN REST"**
+1. Enter configuration:
    - **Host**: IP address or hostname (e.g., `192.168.1.100` or `abb-vsn300.local`)
    - **Username**: Authentication username (commonly `guest`, but check your device)
    - **Password**: Authentication password (may be empty or configured on your device)
-5. Click **"Submit"**
+1. Click **"Submit"**
 
 The integration will:
 
@@ -106,8 +100,8 @@ See [Custom Device Names](#custom-device-names) below for details on customizing
 If you need to change the hostname/IP or credentials:
 
 1. Go to the integration card
-2. Click the three dots menu → **"Reconfigure"**
-3. Enter new settings
+1. Click the three dots menu → **"Reconfigure"**
+1. Enter new settings
 
 ## Entities
 
@@ -148,54 +142,39 @@ The integration uses Home Assistant's modern entity naming pattern (`has_entity_
 
 ### Custom Device Names
 
-You can customize device names for each device type through the integration options. This is useful if you want
-shorter, friendlier names for your devices.
+You can customize device names for each device type through the integration options. This is useful if you want shorter, friendlier names for your devices.
 
 **To configure custom names**:
 
 1. Go to **Settings** → **Devices & Services**
-2. Find the **ABB/FIMER PVI VSN REST** integration card
-3. Click **Configure**
-4. Enter custom names for any device type you want to customize
-5. Leave fields empty to keep default naming
+1. Find the **ABB/FIMER PVI VSN REST** integration card
+1. Click **Configure**
+1. Enter custom names for any device type you want to customize
+1. Leave fields empty to keep default naming
 
 **Example**:
 
-| Setting | Device Name | Entity ID Example |
-|---------|-------------|-------------------|
-| **No prefix (default)** | `Power-One Inverter PVI-10.0-OUTD (077909-3G82-3112)` | `sensor.power_one_inverter_pvi_...` |
-| **Custom: "Solar Inverter"** | `Solar Inverter` | `sensor.solar_inverter_power_ac` |
+| Setting | Device Name | Entity ID Example | |---------|-------------|-------------------| | **No prefix (default)** | `Power-One Inverter PVI-10.0-OUTD (077909-3G82-3112)` |
+`sensor.power_one_inverter_pvi_...` | | **Custom: "Solar Inverter"** | `Solar Inverter` | `sensor.solar_inverter_power_ac` |
 
-**Dynamic Options Form**: The configuration only shows prefix fields for device types that were actually discovered.
-For example, if you only have an inverter and datalogger, you won't see fields for meter or battery.
+**Dynamic Options Form**: The configuration only shows prefix fields for device types that were actually discovered. For example, if you only have an inverter and datalogger, you
+won't see fields for meter or battery.
 
 **Entity ID Behavior**:
 
-| Action | Entity ID | Automations |
-|--------|-----------|-------------|
-| Change device name only | **Preserved** | Keep working ✅ |
-| Change name + check "Regenerate entity IDs" | **Updated** | **Will break** ⚠️ |
+| Action | Entity ID | Automations | |--------|-----------|-------------| | Change device name only | **Preserved** | Keep working ✅ | | Change name + check "Regenerate entity IDs"
+| **Updated** | **Will break** ⚠️ |
 
-**⚠️ Warning**: The "Regenerate entity IDs" checkbox will update all entity IDs to match new device names.
-This **will break** existing automations, scripts, and dashboards that reference these entities.
-Only use this option if you understand the implications and are prepared to update your automations.
+**⚠️ Warning**: The "Regenerate entity IDs" checkbox will update all entity IDs to match new device names. This **will break** existing automations, scripts, and dashboards that
+reference these entities. Only use this option if you understand the implications and are prepared to update your automations.
 
 ### Supported Languages
 
 The integration includes native translations for entity names in 10 European languages:
 
-| Language | Code | Status |
-|----------|------|--------|
-| English | `en` | ✅ Complete (258 sensors) |
-| Italian | `it` | ✅ Complete (258 sensors) |
-| French | `fr` | ✅ Complete (258 sensors) |
-| Spanish | `es` | ✅ Complete (258 sensors) |
-| Portuguese | `pt` | ✅ Complete (258 sensors) |
-| German | `de` | ✅ Complete (258 sensors) |
-| Swedish | `sv` | ✅ Complete (258 sensors) |
-| Norwegian Bokmål | `nb` | ✅ Complete (258 sensors) |
-| Finnish | `fi` | ✅ Complete (258 sensors) |
-| Estonian | `et` | ✅ Complete (258 sensors) |
+| Language | Code | Status | |----------|------|--------| | English | `en` | ✅ Complete (258 sensors) | | Italian | `it` | ✅ Complete (258 sensors) | | French | `fr` | ✅ Complete
+(258 sensors) | | Spanish | `es` | ✅ Complete (258 sensors) | | Portuguese | `pt` | ✅ Complete (258 sensors) | | German | `de` | ✅ Complete (258 sensors) | | Swedish | `sv` | ✅
+Complete (258 sensors) | | Norwegian Bokmål | `nb` | ✅ Complete (258 sensors) | | Finnish | `fi` | ✅ Complete (258 sensors) | | Estonian | `et` | ✅ Complete (258 sensors) |
 
 **Automatic Language Selection**: Home Assistant automatically selects the appropriate language based on your system settings. No configuration needed!
 
@@ -212,15 +191,9 @@ The integration includes native translations for entity names in 10 European lan
 
 Each device includes complete metadata:
 
-| Field | Description | Example |
-|-------|-------------|---------|
-| Name | Device model + Serial | `PVI-10.0-OUTD (077909-3G82-3112)` |
-| Manufacturer | From device data | `Power-One`, `ABB`, `FIMER` |
-| Model | Device model | `PVI-10.0-OUTD` |
-| Serial Number | Device S/N | `077909-3G82-3112` |
-| Firmware | Device firmware | `C008` |
-| Configuration URL | Datalogger only | `http://abb-vsn300.local` |
-| Via Device | Device connection | Linked to datalogger |
+| Field | Description | Example | |-------|-------------|---------| | Name | Device model + Serial | `PVI-10.0-OUTD (077909-3G82-3112)` | | Manufacturer | From device data |
+`Power-One`, `ABB`, `FIMER` | | Model | Device model | `PVI-10.0-OUTD` | | Serial Number | Device S/N | `077909-3G82-3112` | | Firmware | Device firmware | `C008` | | Configuration
+URL | Datalogger only | `http://abb-vsn300.local` | | Via Device | Device connection | Linked to datalogger |
 
 ### Typical Entities (Inverter)
 
@@ -261,32 +234,37 @@ Coordinator
 Sensor Platform
     ↓
 Home Assistant Entities
-```
+```text
 
 ### Key Components
 
 1. **Discovery Module** (`discovery.py`)
+
    - Detects VSN model (VSN300/VSN700)
    - Discovers all connected devices
    - Extracts metadata (model, manufacturer, firmware)
    - Handles device identification (S/N, MAC addresses)
 
-2. **REST Client** (`client.py`)
+1. **REST Client** (`client.py`)
+
    - Authenticates with VSN datalogger
    - Fetches data from REST API endpoints
    - Handles VSN300/VSN700 authentication differences
 
-3. **Normalizer** (`normalizer.py`)
+1. **Normalizer** (`normalizer.py`)
+
    - Transforms VSN proprietary format to SunSpec standard
    - Uses mapping definitions from `mapping/` directory
    - Provides consistent data structure
 
-4. **Coordinator** (`coordinator.py`)
+1. **Coordinator** (`coordinator.py`)
+
    - Manages periodic data polling
    - Handles errors and retries
    - Distributes data to sensors
 
-5. **Config Flow** (`config_flow.py`)
+1. **Config Flow** (`config_flow.py`)
+
    - User interface for setup
    - Connection validation
    - Reconfiguration support
@@ -298,7 +276,7 @@ The integration automatically detects which VSN model you have and uses the appr
 ### Detection Process
 
 1. **Send unauthenticated request** to `/v1/status`
-2. **Examine response**:
+1. **Examine response**:
    - **HTTP 401** with `WWW-Authenticate: X-Digest...` → **VSN300** (auth required)
    - **HTTP 401** without digest → Try preemptive Basic auth → **VSN700** (auth required)
    - **HTTP 200** → Analyze status data → **VSN300 or VSN700** (no auth required)
@@ -308,8 +286,8 @@ The integration automatically detects which VSN model you have and uses the appr
 - **Scheme**: Custom HTTP Digest (X-Digest header)
 - **Process**:
   1. Request challenge from endpoint
-  2. Compute MD5 digest response: `MD5(MD5(username:realm:password):nonce:MD5(method:uri))`
-  3. Send request with `Authorization: X-Digest username="...", realm="...", nonce="...", response="..."`
+  1. Compute MD5 digest response: `MD5(MD5(username:realm:password):nonce:MD5(method:uri))`
+  1. Send request with `Authorization: X-Digest username="...", realm="...", nonce="...", response="..."`
 
 ### VSN700
 
@@ -321,10 +299,8 @@ The integration automatically detects which VSN model you have and uses the appr
 
 Some VSN devices may have authentication disabled. The integration fully supports this:
 
-- When the device returns HTTP 200 (no authentication required), the integration analyzes
-  the status data structure to determine the model
-- **VSN300 indicators**: `logger.board_model = "WIFI LOGGER CARD"`, serial format
-  `XXXXXX-XXXX-XXXX`, or many status keys (>10)
+- When the device returns HTTP 200 (no authentication required), the integration analyzes the status data structure to determine the model
+- **VSN300 indicators**: `logger.board_model = "WIFI LOGGER CARD"`, serial format `XXXXXX-XXXX-XXXX`, or many status keys (>10)
 - **VSN700 indicators**: `logger.loggerId` in MAC address format, or minimal status keys (≤3)
 - All subsequent requests are made without authentication headers
 
@@ -339,9 +315,9 @@ All authentication methods are handled automatically by the integration - no con
 **Solutions**:
 
 1. Verify datalogger IP/hostname is correct
-2. Ensure datalogger is powered on and network-accessible
-3. Check firewall rules allow HTTP (port 80)
-4. Try accessing `http://{host}/v1/status` in browser
+1. Ensure datalogger is powered on and network-accessible
+1. Check firewall rules allow HTTP (port 80)
+1. Try accessing `http://{host}/v1/status` in browser
 
 ### Authentication Issues
 
@@ -350,8 +326,8 @@ All authentication methods are handled automatically by the integration - no con
 **Solutions**:
 
 1. Check your datalogger's web interface for valid credentials
-2. Check credentials in datalogger web interface
-3. Reset datalogger credentials if necessary
+1. Check credentials in datalogger web interface
+1. Reset datalogger credentials if necessary
 
 ### No Entities Created
 
@@ -360,9 +336,9 @@ All authentication methods are handled automatically by the integration - no con
 **Solutions**:
 
 1. Check Home Assistant logs for errors
-2. Verify inverter is connected to datalogger
-3. Check datalogger web interface shows inverter data
-4. Enable debug logging (see below)
+1. Verify inverter is connected to datalogger
+1. Check datalogger web interface shows inverter data
+1. Enable debug logging (see below)
 
 ### Debug Logging
 
@@ -373,7 +349,7 @@ logger:
   default: info
   logs:
     custom_components.abb_fimer_pvi_vsn_rest: debug
-```
+```text
 
 Restart Home Assistant and check logs for detailed information.
 
@@ -386,30 +362,36 @@ If you're experiencing connection or authentication issues, you can use the stan
 The repository includes a standalone diagnostic script that can test your VSN device without installing the integration:
 
 1. **Download the script**:
+
    ```bash
    wget https://raw.githubusercontent.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/master/scripts/vsn-rest-client/vsn_rest_client.py
    ```
 
-2. **Install dependencies**:
+1. **Install dependencies**:
+
    ```bash
    pip install aiohttp
    ```
 
-3. **Run the test**:
+1. **Run the test**:
+
    ```bash
    python vsn_rest_client.py 192.168.1.100
    ```
+
    (Replace `192.168.1.100` with your datalogger's IP address)
 
-4. **Review output**:
+1. **Review output**:
 
    The script will:
+
    - Auto-detect VSN300 vs VSN700
    - Test all REST API endpoints
    - Create JSON output files with raw and normalized data
    - Display comprehensive debug information
 
-5. **When reporting issues**:
+1. **When reporting issues**:
+
    - Include the console output showing device detection and any errors
    - Attach the generated JSON files (especially `vsn300_status.json` or `vsn700_status.json`)
    - Specify your inverter model and VSN datalogger model
@@ -417,23 +399,27 @@ The repository includes a standalone diagnostic script that can test your VSN de
 #### Common Test Results
 
 **Successful VSN300 detection**:
-```
+
+```text
 [VSN Detection] Detected VSN300 (digest auth in WWW-Authenticate: X-Digest realm="...")
 ✓ Device detected: VSN300
-```
+```text
 
 **Successful VSN700 detection**:
-```
+
+```text
 [VSN Detection] Not VSN300. Attempting preemptive Basic authentication for VSN700.
 [VSN Detection] Detected VSN700 (preemptive Basic authentication)
 ✓ Device detected: VSN700
-```
+```text
 
 **Authentication failure**:
-```
+
+```text
 [VSN Detection] Preemptive Basic auth failed with status 401.
 Device authentication failed. Not VSN300/VSN700 compatible.
-```
+```text
+
 If you see this, verify your credentials and ensure the device is a VSN300/VSN700 datalogger.
 
 ## Data Mapping
@@ -465,7 +451,8 @@ The integration includes complete translations for entity names in **10 European
 - 🇫🇮 **Finnish** (`fi.json`) - 258 sensors
 - 🇪🇪 **Estonian** (`et.json`) - 258 sensors
 
-The integration automatically uses the language configured in your Home Assistant instance. All UI strings, error messages, configuration flows, and **entity names** are fully translated.
+The integration automatically uses the language configured in your Home Assistant instance. All UI strings, error messages, configuration flows, and **entity names** are fully
+translated.
 
 ### Contributing Translations
 
@@ -474,9 +461,13 @@ Want to add a new language or improve existing translations? Here's how:
 **For Entity Names** (258 sensors in `entity.sensor` section):
 
 1. Fork the repository
-2. Copy `translations/en.json` to `translations/[language_code].json`
+
+1. Copy `translations/en.json` to `translations/[language_code].json`
+
    - Use [ISO 639-1 language codes](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) (e.g., `nl` for Dutch, `da` for Danish)
-3. Translate the `entity.sensor` section:
+
+1. Translate the `entity.sensor` section:
+
    ```json
    "entity": {
      "sensor": {
@@ -487,9 +478,11 @@ Want to add a new language or improve existing translations? Here's how:
    }
    ```
 
-4. Keep the `config` and `options` sections from `en.json` (or translate those too!)
-5. Test with your Home Assistant instance (set HA language to your new language)
-6. Submit a pull request
+1. Keep the `config` and `options` sections from `en.json` (or translate those too!)
+
+1. Test with your Home Assistant instance (set HA language to your new language)
+
+1. Submit a pull request
 
 **Translation Tips**:
 
@@ -539,15 +532,13 @@ custom_components/abb_fimer_pvi_vsn_rest/
     ├── exceptions.py       # Custom exceptions
     └── data/               # Client library resources
         └── vsn-sunspec-point-mapping.json  # VSN→SunSpec mapping (258 points)
-```
+```text
 
 ## Related Projects
 
-- **[ha-abb-fimer-pvi-sunspec](https://github.com/alexdelprete/ha-abb-fimer-pvi-sunspec)**
-  Direct Modbus/TCP integration (no datalogger required)
+- **[ha-abb-fimer-pvi-sunspec](https://github.com/alexdelprete/ha-abb-fimer-pvi-sunspec)** Direct Modbus/TCP integration (no datalogger required)
 
-- **[ha-abb-powerone-pvi-sunspec](https://github.com/alexdelprete/ha-abb-powerone-pvi-sunspec)**
-  Legacy v4.x integration (Modbus only)
+- **[ha-abb-powerone-pvi-sunspec](https://github.com/alexdelprete/ha-abb-powerone-pvi-sunspec)** Legacy v4.x integration (Modbus only)
 
 ## Support
 
@@ -570,17 +561,17 @@ If you like this integration, I'll gladly accept some quality coffee, but please
 
 [![BuyMeCoffee][buymecoffee-shield]][buymecoffee]
 
-[releases-shield]: https://img.shields.io/github/v/release/alexdelprete/ha-abb-fimer-pvi-vsn-rest?style=for-the-badge&color=darkgreen
-[releases]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/releases
-[hacs]: https://hacs.xyz
-[my-hacs]: https://my.home-assistant.io/redirect/hacs_repository/?owner=alexdelprete&repository=ha-abb-fimer-pvi-vsn-rest&category=integration
 [buymecoffee]: https://www.buymeacoffee.com/alexdelprete
 [buymecoffee-shield]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-white?style=for-the-badge
-[forum-shield]: https://img.shields.io/badge/community-forum-darkred?style=for-the-badge
-[forum]: https://community.home-assistant.io/t/integration-for-abb-fimer-power-one-pvi-inverters-via-vsn300-vsn700-datalogger-rest-api/
-[tests-shield]: https://img.shields.io/github/actions/workflow/status/alexdelprete/ha-abb-fimer-pvi-vsn-rest/test.yml?style=for-the-badge&label=Tests
-[tests]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/actions/workflows/test.yml
-[coverage-shield]: https://img.shields.io/codecov/c/github/alexdelprete/ha-abb-fimer-pvi-vsn-rest?style=for-the-badge
 [coverage]: https://codecov.io/gh/alexdelprete/ha-abb-fimer-pvi-vsn-rest
-[downloads-shield]: https://img.shields.io/github/downloads/alexdelprete/ha-abb-fimer-pvi-vsn-rest/total?style=for-the-badge
+[coverage-shield]: https://img.shields.io/codecov/c/github/alexdelprete/ha-abb-fimer-pvi-vsn-rest?style=for-the-badge
 [downloads]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/releases
+[downloads-shield]: https://img.shields.io/github/downloads/alexdelprete/ha-abb-fimer-pvi-vsn-rest/total?style=for-the-badge
+[forum]: https://community.home-assistant.io/t/integration-for-abb-fimer-power-one-pvi-inverters-via-vsn300-vsn700-datalogger-rest-api/
+[forum-shield]: https://img.shields.io/badge/community-forum-darkred?style=for-the-badge
+[hacs]: https://hacs.xyz
+[my-hacs]: https://my.home-assistant.io/redirect/hacs_repository/?owner=alexdelprete&repository=ha-abb-fimer-pvi-vsn-rest&category=integration
+[releases]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/releases
+[releases-shield]: https://img.shields.io/github/v/release/alexdelprete/ha-abb-fimer-pvi-vsn-rest?style=for-the-badge&color=darkgreen
+[tests]: https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/actions/workflows/test.yml
+[tests-shield]: https://img.shields.io/github/actions/workflow/status/alexdelprete/ha-abb-fimer-pvi-vsn-rest/test.yml?style=for-the-badge&label=Tests

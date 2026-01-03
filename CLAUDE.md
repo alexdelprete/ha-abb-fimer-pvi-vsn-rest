@@ -5,8 +5,8 @@
 **MANDATORY: At the beginning of EVERY session, you MUST:**
 
 1. **Read this entire CLAUDE.md file** - This contains critical project context, architecture decisions, and workflow requirements
-2. **Review recent git commits** - Understand what changed since last session
-3. **Check the current state** - Run `git status` to see uncommitted changes
+1. **Review recent git commits** - Understand what changed since last session
+1. **Check the current state** - Run `git status` to see uncommitted changes
 
 **Failure to read project documentation first leads to:**
 
@@ -48,17 +48,16 @@ Benefits over `gh` CLI:
 The GitHub MCP `get_job_logs` tool is currently broken. To get workflow run logs (e.g., for test coverage):
 
 1. Use MCP to get the run ID: `mcp__GitHub_MCP_Remote__actions_list` with `method: list_workflow_runs`
-2. Use `gh` CLI to fetch logs: `gh run view <run_id> --repo owner/repo --log`
-3. Filter with grep: `gh run view <run_id> --repo owner/repo --log | grep "TOTAL\|coverage"`
+1. Use `gh` CLI to fetch logs: `gh run view <run_id> --repo owner/repo --log`
+1. Filter with grep: `gh run view <run_id> --repo owner/repo --log | grep "TOTAL\|coverage"`
 
 ## Pre-Commit Checks (MANDATORY)
 
-> **⛔ CRITICAL: ALWAYS run pre-commit checks before ANY git commit.**
-> This is a hard rule - no exceptions. Never commit without passing all checks.
+> **⛔ CRITICAL: ALWAYS run pre-commit checks before ANY git commit.** This is a hard rule - no exceptions. Never commit without passing all checks.
 
 ```bash
 uvx pre-commit run --all-files
-```
+```text
 
 All checks must pass before committing. This applies to ALL commits, not just releases.
 
@@ -66,13 +65,8 @@ All checks must pass before committing. This applies to ALL commits, not just re
 
 Linting tools and settings are defined in `.pre-commit-config.yaml`:
 
-| Hook | Tool | Purpose |
-| ---- | ---- | ------- |
-| ruff | `ruff check --no-fix` | Python linting |
-| ruff-format | `ruff format --check` | Python formatting |
-| jsonlint | `uvx --from demjson3 jsonlint` | JSON validation |
-| yamllint | `uvx yamllint -d "{...}"` | YAML linting (inline config) |
-| pymarkdown | `pymarkdown scan` | Markdown linting |
+| Hook | Tool | Purpose | | ---- | ---- | ------- | | ruff | `ruff check --no-fix` | Python linting | | ruff-format | `ruff format --check` | Python formatting | | jsonlint |
+`uvx --from demjson3 jsonlint` | JSON validation | | yamllint | `uvx yamllint -d "{...}"` | YAML linting (inline config) | | pymarkdown | `pymarkdown scan` | Markdown linting |
 
 All hooks use `language: system` (local tools) with `verbose: true` for visibility.
 
@@ -82,7 +76,7 @@ When running shell commands on Windows, stray `nul` files may be created (Window
 
 ```bash
 rm nul  # if it exists
-```
+```text
 
 ## Quality Scale Tracking
 
@@ -91,27 +85,24 @@ This integration tracks [Home Assistant Quality Scale](https://developers.home-a
 **When implementing new features or fixing bugs:**
 
 1. Check if the change affects any quality scale rules
-2. Update `quality_scale.yaml` status accordingly:
+1. Update `quality_scale.yaml` status accordingly:
    - `done` - Rule is fully implemented
    - `todo` - Rule needs implementation
    - `exempt` with `comment` - Rule doesn't apply (explain why)
-3. Aim to complete all Bronze tier rules first, then Silver, Gold, Platinum
+1. Aim to complete all Bronze tier rules first, then Silver, Gold, Platinum
 
 ## Testing Approach
 
-> **⛔ CRITICAL: NEVER modify production code to make tests pass. Always fix the tests instead.**
-> Production code is the source of truth. If tests fail, the tests are wrong - not the production code.
-> The only exception is when production code has an actual bug that tests correctly identified.
+> **⛔ CRITICAL: NEVER modify production code to make tests pass. Always fix the tests instead.** Production code is the source of truth. If tests fail, the tests are wrong - not
+> the production code. The only exception is when production code has an actual bug that tests correctly identified.
 >
-> **📋 RECOMMENDED: Run tests via CI only.**
-> Push commits and let GitHub Actions run the test suite. This ensures consistent test environment
-> and avoids local environment issues. Only run tests locally when debugging specific failures.
+> **📋 RECOMMENDED: Run tests via CI only.** Push commits and let GitHub Actions run the test suite. This ensures consistent test environment and avoids local environment issues.
+> Only run tests locally when debugging specific failures.
 
 ## Project Overview
 
-This is the **ha-abb-fimer-pvi-vsn-rest** integration for Home Assistant.
-It provides monitoring of ABB/FIMER/Power-One PVI inverters through VSN300
-or VSN700 dataloggers via their REST API.
+This is the **ha-abb-fimer-pvi-vsn-rest** integration for Home Assistant. It provides monitoring of ABB/FIMER/Power-One PVI inverters through VSN300 or VSN700 dataloggers via their
+REST API.
 
 **Current Status**: v1.1.7 - Active development
 
@@ -142,7 +133,7 @@ Normalizer (VSN → SunSpec format)
 Coordinator (periodic updates)
     ↓
 Sensor Platform (HA entities)
-```
+```text
 
 ### Key Components
 
@@ -189,7 +180,7 @@ class DiscoveryResult:
     hostname: str | None        # ABB-077909-3G82-3112.local
     devices: list[DiscoveredDevice]
     status_data: dict[str, Any]
-```
+```text
 
 #### 2. REST Client (`abb_fimer_vsn_rest_client/client.py`)
 
@@ -218,9 +209,9 @@ VSN-specific authentication schemes.
 - Custom HTTP Digest with `X-Digest` header
 - Process:
   1. Fetch challenge from `/v1/dgst`
-  2. Compute SHA-256 digest: `user:realm:password`
-  3. Compute final: `method:uri:digest`
-  4. Add header: `Authorization: X-Digest {final_digest}`
+  1. Compute SHA-256 digest: `user:realm:password`
+  1. Compute final: `method:uri:digest`
+  1. Add header: `Authorization: X-Digest {final_digest}`
 
 **VSN700:**
 
@@ -263,7 +254,7 @@ Transforms VSN proprietary format to SunSpec-compatible schema.
   "HA Device Class": "power",
   "models": ["M103", "M802"]
 }
-```
+```text
 
 **Key Mapping Columns (HA-Prefixed):**
 
@@ -275,8 +266,8 @@ Transforms VSN proprietary format to SunSpec-compatible schema.
 **Mapping Workflow:**
 
 1. Edit Excel: `docs/vsn-sunspec-point-mapping.xlsx`
-2. Convert to JSON: `python scripts/convert_excel_to_json.py`
-3. Commit both files (Excel + both JSON copies)
+1. Convert to JSON: `python scripts/convert_excel_to_json.py`
+1. Commit both files (Excel + both JSON copies)
 
 See [docs/MAPPING_FORMAT.md](docs/MAPPING_FORMAT.md) for full documentation.
 
@@ -313,9 +304,9 @@ UI for integration setup and configuration.
 **Validation Process:**
 
 1. Check socket connectivity (port 80)
-2. Run discovery (detect model, find devices)
-3. Set unique_id to logger serial number
-4. Store VSN model in config_entry
+1. Run discovery (detect model, find devices)
+1. Set unique_id to logger serial number
+1. Store VSN model in config_entry
 
 #### 7. Sensor Platform (`sensor.py`)
 
@@ -324,6 +315,7 @@ Creates Home Assistant sensor entities using modern naming pattern.
 **Entity Naming Pattern (has_entity_name=True):**
 
 - **Device Name**: Technical format for predictable entity IDs (v1.0.0-beta.25+)
+
   - Format: `{DOMAIN}_{device_type}_{serial_compact}`
   - Uses DOMAIN constant from manifest.json: `abb_fimer_pvi_vsn_rest`
   - Example: `abb_fimer_pvi_vsn_rest_inverter_0779093g823112`
@@ -331,21 +323,25 @@ Creates Home Assistant sensor entities using modern naming pattern.
   - Serial compacted: remove `-`, `:`, `_` and lowercase
 
 - **Entity Name**: Standardized display name from mapping (v1.0.0-beta.22+)
+
   - Pattern: [Type] [AC/DC] - [Details] - [Time Period]
   - Examples: "Power AC", "Energy AC - Produced Lifetime", "Temperature - Cabinet"
   - From `HA Display Name` field in mapping
   - Displayed as entity name on device page
 
 - **suggested_object_id**: Just the point name (v1.0.0-beta.25+)
+
   - Example: `wlan0_essid`, `ac_power`
   - HA combines with device name to create entity_id
 
 - **Entity ID** (auto-generated by HA):
+
   - Format: `sensor.{slugify(device_name)}_{suggested_object_id}`
   - Example: `sensor.abb_fimer_pvi_vsn_rest_inverter_0779093g823112_wlan0_essid`
   - **Changed in v1.0.0-beta.25**: Correct implementation using has_entity_name=True
 
 - **Unique ID**: Stable identifier (v1.0.0-beta.22+)
+
   - Format: `{domain}_{device_type}_{serial_compact}_{point_name}`
   - Example: `abb_fimer_pvi_vsn_rest_inverter_0779093g823112_wlan0_essid`
   - Never changes once set
@@ -381,7 +377,7 @@ All sensors include rich metadata attributes:
     # Category
     "category": "Inverter"
 }
-```
+```text
 
 **Device Info:**
 
@@ -432,10 +428,10 @@ All HA device info fields populated from discovery:
 Before normalization, duplicate entries existed for 5 sensor pairs:
 
 1. Insulation Resistance: `Isolation_Ohm1` (VSN300) vs `Riso` (VSN700) - different units (MΩ vs MOhm), missing icon
-2. Leakage Current Inverter: `ILeakDcAc` (VSN300, mA) vs `IleakInv` (VSN700, A) - **CRITICAL 1000x unit mismatch**
-3. Leakage Current DC: `ILeakDcDc` (VSN300, mA) vs `IleakDC` (VSN700, A) - **CRITICAL 1000x unit mismatch**
-4. Ground Voltage: `VGnd` (VSN300) vs `Vgnd` (VSN700) - capitalization only
-5. Battery SoC: `Soc` (VSN300) vs `TSoc` (VSN700) - naming convention
+1. Leakage Current Inverter: `ILeakDcAc` (VSN300, mA) vs `IleakInv` (VSN700, A) - **CRITICAL 1000x unit mismatch**
+1. Leakage Current DC: `ILeakDcDc` (VSN300, mA) vs `IleakDC` (VSN700, A) - **CRITICAL 1000x unit mismatch**
+1. Ground Voltage: `VGnd` (VSN300) vs `Vgnd` (VSN700) - capitalization only
+1. Battery SoC: `Soc` (VSN300) vs `TSoc` (VSN700) - naming convention
 
 **Implementation**:
 
@@ -458,7 +454,7 @@ row = create_row_with_model_flags(
     sunspec_name=normalized_name,  # Uses canonical VSN300 name
     ...
 )
-```
+```text
 
 **Runtime Value Conversion** (normalizer.py):
 
@@ -468,7 +464,7 @@ A_TO_MA_POINTS = {"IleakInv", "IleakDC"}
 
 if vsn_model == "VSN700" and point_name in A_TO_MA_POINTS:
     point_value = point_value * 1000  # A → mA
-```
+```text
 
 **Result**:
 
@@ -590,7 +586,7 @@ device_name = _format_device_name(
 # Result: "ABB Datalogger VSN300 (111033-3N16-1421)"
 # Entity ID: sensor.abb_datalogger_vsn300_111033_3n16_1421_firmware_version
 # Friendly Name: "ABB Datalogger VSN300 (111033-3N16-1421) Firmware Version"
-```
+```text
 
 **Breaking Change (beta.26)**: Switched to friendly device names for beautiful UI. Entity IDs changed to slugified friendly format.
 
@@ -646,7 +642,7 @@ DISPLAY_NAME_STANDARDIZATION = {
 
     # ... 187 total entries
 }
-```
+```text
 
 Updated `apply_display_name_corrections()` to apply both corrections and standardization in sequence.
 
@@ -691,7 +687,7 @@ Aurora protocol uses a custom epoch (Jan 1, 2000) instead of Unix epoch (Jan 1, 
 ```python
 # Aurora protocol epoch offset (Jan 1, 2000 00:00:00 UTC)
 AURORA_EPOCH_OFFSET = 946684800  # seconds between Unix and Aurora epochs
-```
+```text
 
 **Implementation (sensor.py):**
 
@@ -704,12 +700,9 @@ AURORA_EPOCH_OFFSET = 946684800  # seconds between Unix and Aurora epochs
 
 Status entities with integer state codes are translated to human-readable text:
 
-| State Map | Description | States | Entities |
-|-----------|-------------|--------|----------|
-| `GLOBAL_STATE_MAP` | System-wide operational states | 42 | GlobState |
-| `DCDC_STATE_MAP` | DC-DC converter states | 20 | DC1State, DC2State |
-| `INVERTER_STATE_MAP` | Inverter operational states | 38 | InvState |
-| `ALARM_STATE_MAP` | Alarm and error codes | 65 | AlarmState, AlarmSt |
+| State Map | Description | States | Entities | |-----------|-------------|--------|----------| | `GLOBAL_STATE_MAP` | System-wide operational states | 42 | GlobState | |
+`DCDC_STATE_MAP` | DC-DC converter states | 20 | DC1State, DC2State | | `INVERTER_STATE_MAP` | Inverter operational states | 38 | InvState | | `ALARM_STATE_MAP` | Alarm and error
+codes | 65 | AlarmState, AlarmSt |
 
 **Entity Configuration:**
 
@@ -722,7 +715,7 @@ STATE_ENTITY_MAPPINGS = {
     "AlarmState": ALARM_STATE_MAP,
     "AlarmSt": ALARM_STATE_MAP,  # VSN300 alarm
 }
-```
+```text
 
 **Implementation (sensor.py):**
 
@@ -745,11 +738,13 @@ The integration supports custom icons for special entity types:
 **Icon Support (generate_mapping.py):**
 
 1. **Energy Icons** (VAh entities):
+
    - 3 VAh apparent energy entities get `mdi:lightning-bolt`
    - Applied via `SUNSPEC_TO_HA_METADATA` dictionary
    - Entities: E2_runtime, E2_7D, E2_30D
 
-2. **Diagnostic Icons** (diagnostic entities):
+1. **Diagnostic Icons** (diagnostic entities):
+
    - All 51 diagnostic entities get `mdi:information-box-outline`
    - Auto-applied when `entity_category == "diagnostic"`
    - Includes: device info, configuration, status entities
@@ -772,7 +767,7 @@ from .abb_fimer_vsn_rest_client.exceptions import (
     VSNConnectionError,
     VSNClientError,
 )
-```
+```text
 
 ### Logging
 
@@ -784,7 +779,7 @@ _LOGGER.debug("Device %s has %d points", device_id, len(points))
 
 # Bad
 _LOGGER.debug(f"Device {device_id} has {len(points)} points")
-```
+```text
 
 Always include context in log messages.
 
@@ -803,7 +798,7 @@ except VSNConnectionError as err:
 except VSNConnectionError as err:
     _LOGGER.warning("Connection error: %s", err)  # ← Don't do this!
     raise UpdateFailed(f"Connection error: {err}") from err
-```
+```text
 
 **ConfigEntryNotReady** - HA handles logging automatically:
 
@@ -816,7 +811,7 @@ except Exception as err:
 except Exception as err:
     _LOGGER.error("Discovery failed: %s", err)  # ← Don't do this!
     raise ConfigEntryNotReady(f"Discovery failed: {err}") from err
-```
+```text
 
 **Why this matters:**
 
@@ -836,7 +831,7 @@ discovery = await discover_vsn_device(session, base_url, username, password)
 # Client methods are async
 data = await client.get_normalized_data()
 await client.close()
-```
+```text
 
 ### Runtime Data
 
@@ -848,7 +843,7 @@ class RuntimeData:
     coordinator: ABBFimerPVIVSNRestCoordinator
 
 type ABBFimerPVIVSNRestConfigEntry = ConfigEntry[RuntimeData]
-```
+```text
 
 Never use `hass.data[DOMAIN]`.
 
@@ -876,7 +871,7 @@ def discover_vsn_device(
     timeout: int = 10,
 ) -> DiscoveryResult:
     """Discover VSN device."""
-```
+```text
 
 ## Testing
 
@@ -946,11 +941,12 @@ Use this data to verify mapping and normalization.
 
 There is **ONE AND ONLY ONE** source of truth for sensor mappings:
 
-```
+```text
 scripts/vsn-mapping-generator/generate_mapping.py
-```
+```text
 
 **NEVER, EVER:**
+
 - ❌ Edit JSON mapping files directly (docs/ or custom_components/ folders)
 - ❌ Edit Excel files directly
 - ❌ Add sensor attribute logic to runtime code (normalizer.py, sensor.py)
@@ -959,21 +955,23 @@ scripts/vsn-mapping-generator/generate_mapping.py
 **Why This Rule Exists:**
 
 1. **Single Source of Truth**: The generator script (`generate_mapping.py`) contains ALL sensor metadata in the `SUNSPEC_TO_HA_METADATA` dictionary
-2. **Regeneration Safety**: When files are regenerated, manual edits to JSON/Excel are LOST
-3. **Consistency**: All 258 sensors follow the same rules and patterns
-4. **Version Control**: Changes to `generate_mapping.py` are tracked, reviewed, and documented
+1. **Regeneration Safety**: When files are regenerated, manual edits to JSON/Excel are LOST
+1. **Consistency**: All 258 sensors follow the same rules and patterns
+1. **Version Control**: Changes to `generate_mapping.py` are tracked, reviewed, and documented
 
 ### The CORRECT Workflow for Sensor Changes
 
 **Adding New Sensor or Modifying Existing Sensor:**
 
 1. **Update the generator script ONLY:**
+
    ```bash
    # Edit: scripts/vsn-mapping-generator/generate_mapping.py
    # Add/modify entry in SUNSPEC_TO_HA_METADATA dictionary
    ```
 
-2. **Regenerate ALL files:**
+1. **Regenerate ALL files:**
+
    ```bash
    # Step 1: Generate Excel from source data
    python scripts/vsn-mapping-generator/generate_mapping.py
@@ -982,13 +980,15 @@ scripts/vsn-mapping-generator/generate_mapping.py
    python scripts/vsn-mapping-generator/convert_to_json.py
    ```
 
-3. **Verify changes:**
+1. **Verify changes:**
+
    ```bash
    # Check that the sensor has correct attributes
    # Test with real VSN device or test data
    ```
 
-4. **Commit generator + generated files:**
+1. **Commit generator + generated files:**
+
    ```bash
    git add scripts/vsn-mapping-generator/generate_mapping.py
    git add scripts/vsn-mapping-generator/output/
@@ -1000,15 +1000,17 @@ scripts/vsn-mapping-generator/generate_mapping.py
 ### Example: Adding Precision to a Sensor
 
 **❌ WRONG (manual edit):**
+
 ```json
 // Editing custom_components/.../data/vsn-sunspec-point-mapping.json
 {
   "SunSpec Normalized Name": "MyNewSensor",
   "Suggested Display Precision": 2  // ← This will be LOST on next regeneration!
 }
-```
+```text
 
 **✅ CORRECT (update generator):**
+
 ```python
 # Edit: scripts/vsn-mapping-generator/generate_mapping.py
 # Add to SUNSPEC_TO_HA_METADATA dictionary:
@@ -1023,7 +1025,7 @@ SUNSPEC_TO_HA_METADATA = {
         "precision": 2,  # ← Source of truth!
     },
 }
-```
+```text
 
 Then regenerate files.
 
@@ -1031,28 +1033,26 @@ Then regenerate files.
 
 All sensor attributes live in `generate_mapping.py`:
 
-| Attribute Type | Location in Generator |
-|----------------|----------------------|
-| Units, device_class, state_class | `SUNSPEC_TO_HA_METADATA` dictionary |
-| Precision values | `SUNSPEC_TO_HA_METADATA` or auto-calculated by `_get_suggested_precision()` |
-| Icons | `SUNSPEC_TO_HA_METADATA` (custom icons like `mdi:omega`) |
-| Entity categories | `SUNSPEC_TO_HA_METADATA` or `DEVICE_CLASS_FIXES` |
-| Display names | `DISPLAY_NAME_STANDARDIZATION` dictionary |
-| Descriptions | `DESCRIPTION_IMPROVEMENTS` dictionary |
+| Attribute Type | Location in Generator | |----------------|----------------------| | Units, device_class, state_class | `SUNSPEC_TO_HA_METADATA` dictionary | | Precision values |
+`SUNSPEC_TO_HA_METADATA` or auto-calculated by `_get_suggested_precision()` | | Icons | `SUNSPEC_TO_HA_METADATA` (custom icons like `mdi:omega`) | | Entity categories |
+`SUNSPEC_TO_HA_METADATA` or `DEVICE_CLASS_FIXES` | | Display names | `DISPLAY_NAME_STANDARDIZATION` dictionary | | Descriptions | `DESCRIPTION_IMPROVEMENTS` dictionary |
 
 ### Runtime Code Guidelines
 
 **Runtime code (normalizer.py, sensor.py) should ONLY:**
+
 - ✅ Apply transformations based on mapping metadata (e.g., state maps, timestamp conversion)
 - ✅ Handle defensive edge cases (e.g., Wh→kWh conversion as safety net)
 - ✅ Apply runtime rounding for specific sensors (documented exceptions only)
 
 **Runtime code should NEVER:**
+
 - ❌ Define sensor attributes (units, device_class, state_class, precision)
 - ❌ Override mapping file metadata
 - ❌ Contain hardcoded sensor lists for attribute assignment
 
-**Exception**: Manual rounding in `sensor.py` is allowed for sensors that require `int()` conversion due to Home Assistant limitations, but this should be documented as a workaround, not the primary solution.
+**Exception**: Manual rounding in `sensor.py` is allowed for sensors that require `int()` conversion due to Home Assistant limitations, but this should be documented as a
+workaround, not the primary solution.
 
 ### Adding New Mapping Points (DEPRECATED - Use Generator Instead)
 
@@ -1061,20 +1061,21 @@ All sensor attributes live in `generate_mapping.py`:
 The old workflow of manually editing Excel files is NO LONGER SUPPORTED. All changes must go through the generator script.
 
 If you need to add raw data sources:
+
 1. Add VSN API data to `scripts/vsn-mapping-generator/data/`
-2. Update the generator script to process the new data
-3. Regenerate all files
+1. Update the generator script to process the new data
+1. Regenerate all files
 
 ### Updating Existing Mappings
 
 **Use the generator script ONLY:**
 
 1. Edit `scripts/vsn-mapping-generator/generate_mapping.py`
-2. Add/modify entry in appropriate dictionary (`SUNSPEC_TO_HA_METADATA`, `DISPLAY_NAME_STANDARDIZATION`, etc.)
-3. Regenerate: `python scripts/vsn-mapping-generator/generate_mapping.py`
-4. Convert: `python scripts/vsn-mapping-generator/convert_to_json.py`
-5. Test changes
-6. Commit generator + all generated files
+1. Add/modify entry in appropriate dictionary (`SUNSPEC_TO_HA_METADATA`, `DISPLAY_NAME_STANDARDIZATION`, etc.)
+1. Regenerate: `python scripts/vsn-mapping-generator/generate_mapping.py`
+1. Convert: `python scripts/vsn-mapping-generator/convert_to_json.py`
+1. Test changes
+1. Commit generator + all generated files
 
 ### Mapping Quality Standards
 
@@ -1088,19 +1089,21 @@ If you need to add raw data sources:
 
 **⚠️ CRITICAL PRINCIPLES:**
 
-> **⛔ STOP: NEVER create git tags or GitHub releases without explicit user command.**
-> This is a hard rule. Always stop after commit/push and wait for user instruction.
+> **⛔ STOP: NEVER create git tags or GitHub releases without explicit user command.** This is a hard rule. Always stop after commit/push and wait for user instruction.
 
 1. **Published releases are FROZEN** - Once a release is published (tagged and on GitHub), its documentation is immutable:
+
    - Never modify `docs/releases/vX.Y.Z.md` for a published version
    - Never change CHANGELOG.md entries for published versions
 
-2. **Master branch = Next Release** - The master branch always represents the NEXT release:
+1. **Master branch = Next Release** - The master branch always represents the NEXT release:
+
    - All new commits go toward the next version
    - All documentation changes go to the next version's release notes
    - Version in `manifest.json` and `const.py` reflects the version being developed
 
-3. **Version Progression** - After publishing vX.Y.Z:
+1. **Version Progression** - After publishing vX.Y.Z:
+
    - Immediately bump to vX.Y.(Z+1) or v(X+1).0.0 or vX.(Y+1).0
    - Create new `docs/releases/vX.Y.(Z+1).md` for ongoing work
    - All changes from that point forward go to the new version's documentation
@@ -1117,31 +1120,21 @@ If you need to add raw data sources:
 **Example workflow:**
 
 1. Current version is 1.3.1 (unreleased, after v1.3.0 was released)
-2. User asks for fix A → Add fix A to v1.3.1, commit, push
-3. User asks for fix B → Add fix B to v1.3.1 (same version!), commit, push
-4. User says "tag and release" → Create v1.3.1 tag and release
-5. After release: Bump version to 1.3.2 for next development cycle
+1. User asks for fix A → Add fix A to v1.3.1, commit, push
+1. User asks for fix B → Add fix B to v1.3.1 (same version!), commit, push
+1. User says "tag and release" → Create v1.3.1 tag and release
+1. After release: Bump version to 1.3.2 for next development cycle
 
 **Complete Release Workflow:**
 
 See [docs/releases/README.md](docs/releases/README.md) for the detailed process.
 
-| Step | Tool | Action |
-| ---- | ---- | ------ |
-| 0 | Verify | **VERIFY TRANSLATIONS**: Ensure translation files match the mapping |
-| 1 | Edit/Write | Create/update release notes in `docs/releases/vX.Y.Z.md` |
-| 2 | Edit | Update `CHANGELOG.md` with version summary |
-| 3 | Edit | Ensure `manifest.json` and `const.py` have correct version |
-| 4 | Bash | Run linting: `uvx pre-commit run --all-files` |
-| 5 | `commit-commands:commit` skill | Stage and commit with proper format |
-| 6 | git CLI | `git push` |
-| 7 | **⏸️ STOP** | Wait for user "tag and release" command |
-| 8 | **Checklist** | Display Release Readiness Checklist (see below) |
-| 9 | git CLI | `git tag -a vX.Y.Z -m "Release vX.Y.Z"` |
-| 10 | git CLI | `git push --tags` |
-| 11 | gh CLI | `gh release create vX.Y.Z --title "vX.Y.Z" --notes-file docs/releases/vX.Y.Z.md` |
-| 12 | GitHub Actions | Validates versions match, then auto-uploads ZIP asset |
-| 13 | Edit | Bump versions in `manifest.json` and `const.py` to next version |
+| Step | Tool | Action | | ---- | ---- | ------ | | 0 | Verify | **VERIFY TRANSLATIONS**: Ensure translation files match the mapping | | 1 | Edit/Write | Create/update release
+notes in `docs/releases/vX.Y.Z.md` | | 2 | Edit | Update `CHANGELOG.md` with version summary | | 3 | Edit | Ensure `manifest.json` and `const.py` have correct version | | 4 | Bash
+| Run linting: `uvx pre-commit run --all-files` | | 5 | `commit-commands:commit` skill | Stage and commit with proper format | | 6 | git CLI | `git push` | | 7 | **⏸️ STOP** | Wait
+for user "tag and release" command | | 8 | **Checklist** | Display Release Readiness Checklist (see below) | | 9 | git CLI | `git tag -a vX.Y.Z -m "Release vX.Y.Z"` | | 10 | git
+CLI | `git push --tags` | | 11 | gh CLI | `gh release create vX.Y.Z --title "vX.Y.Z" --notes-file docs/releases/vX.Y.Z.md` | | 12 | GitHub Actions | Validates versions match, then
+auto-uploads ZIP asset | | 13 | Edit | Bump versions in `manifest.json` and `const.py` to next version |
 
 ### Release Readiness Checklist (MANDATORY)
 
@@ -1160,7 +1153,7 @@ See [docs/releases/README.md](docs/releases/README.md) for the detailed process.
 | Working tree clean | ✅ Clean |
 | Git tag | ✅ vX.Y.Z created/pushed |
 | Commits since last tag | N commits since vX.Y.Z-1 |
-```
+```text
 
 Verify ALL items show ✅ before proceeding with tag creation. If any item fails, fix it first.
 
@@ -1173,7 +1166,9 @@ Verify ALL items show ✅ before proceeding with tag creation. If any item fails
   ```
 
 - Include ALL changes since last stable release
+
 - Review commits: `git log vX.Y.Z..HEAD`
+
 - Include sections: What's Changed, Bug Fixes, Features, Breaking Changes
 
 ### Issue References in Release Notes
@@ -1221,15 +1216,16 @@ The project follows industry best practices for release documentation:
   - `gh release create` commands
   - Any automation that creates tags/releases
 
-**Exception:** You may prepare all release materials (bump versions, update CHANGELOG, create release notes), commit changes, and push commits - but STOP before creating tags or releases unless explicitly instructed.
+**Exception:** You may prepare all release materials (bump versions, update CHANGELOG, create release notes), commit changes, and push commits - but STOP before creating tags or
+releases unless explicitly instructed.
 
 **After Publishing a Release:**
 
 1. The released version's documentation is now FROZEN
-2. Immediately bump version to next version (e.g., v1.0.0-beta.2 → v1.0.0-beta.3)
-3. Create `docs/releases/v(next-version).md` as a stub for ongoing work
-4. All subsequent changes go to CHANGELOG.md under [Unreleased] or [next-version] heading
-5. All bug fixes, features, improvements documented in next version's release notes only
+1. Immediately bump version to next version (e.g., v1.0.0-beta.2 → v1.0.0-beta.3)
+1. Create `docs/releases/v(next-version).md` as a stub for ongoing work
+1. All subsequent changes go to CHANGELOG.md under [Unreleased] or [next-version] heading
+1. All bug fixes, features, improvements documented in next version's release notes only
 
 ### Git Workflow
 
@@ -1255,7 +1251,7 @@ feat(discovery): implement device discovery
 https://claude.com/claude-code
 
 Co-Authored-By: Claude <noreply@anthropic.com>
-```
+```text
 
 **Branches:**
 
@@ -1288,10 +1284,12 @@ From config_entry:
 **Sensors:**
 
 - **Unique ID** (internal): `{device_identifier}_{point_name}`
+
   - Example: `abb_vsn_rest_inverter_0779093g823112_watts`
   - Format: Simplified without model
 
 - **Entity ID** (visible): Auto-generated by HA from device + entity name
+
   - Example: `sensor.abb_vsn_rest_inverter_0779093g823112_ac_power`
   - Pattern: `sensor.{device_name}_{slugified_entity_name}`
 
@@ -1318,11 +1316,11 @@ No external libraries for Modbus or SunSpec - we implement what we need.
 **Before updating any dependency version in `manifest.json`:**
 
 1. Verify the new version exists on PyPI: `https://pypi.org/project/PACKAGE_NAME/`
-2. Check release notes for breaking changes
-3. Test locally if possible
+1. Check release notes for breaking changes
+1. Test locally if possible
 
-> **⚠️ IMPORTANT**: Always verify PyPI availability before committing dependency updates. We've had issues where
-> upstream maintainers created GitHub releases but forgot to publish to PyPI, breaking our integration for users.
+> **⚠️ IMPORTANT**: Always verify PyPI availability before committing dependency updates. We've had issues where upstream maintainers created GitHub releases but forgot to publish
+> to PyPI, breaking our integration for users.
 
 ## Key Files
 
@@ -1371,6 +1369,7 @@ No external libraries for Modbus or SunSpec - we implement what we need.
 ## Don't Do
 
 **🚨 CRITICAL - SENSOR MAPPING:**
+
 - ❌ **NEVER edit JSON mapping files directly** (docs/ or custom_components/ folders)
 - ❌ **NEVER edit Excel mapping files directly**
 - ❌ **NEVER add sensor attributes to runtime code** (normalizer.py, sensor.py)
@@ -1399,6 +1398,7 @@ No external libraries for Modbus or SunSpec - we implement what we need.
 ## Do
 
 **🚨 CRITICAL - SENSOR MAPPING:**
+
 - ✅ **READ CLAUDE.md at the start of EVERY session**
 - ✅ **ALWAYS use generator script** for sensor attribute changes
 - ✅ **Edit `scripts/vsn-mapping-generator/generate_mapping.py`** to modify sensors
@@ -1442,7 +1442,7 @@ All `.md` files must adhere to markdownlint rules for consistency and readabilit
 
 **MD040 - Fenced code blocks should have a language:**
 
-- Always specify language: ` ```python`, ` ```json`, ` ```yaml`, ` ```bash`, ` ```text`
+- Always specify language: ````  ```python ````, ````  ```json ````, ````  ```yaml ````, ````  ```bash ````, ````  ```text ````
 - Use `text` for diagrams, plain output, or non-code content
 
 **MD022/MD024 - Heading formatting:**
@@ -1456,7 +1456,7 @@ All `.md` files must adhere to markdownlint rules for consistency and readabilit
 
 ### Example - Correct Formatting
 
-```markdown
+````markdown
 ### Feature Description
 
 This feature provides data normalization.
@@ -1473,12 +1473,12 @@ The implementation includes:
     ```python
     def example():
         pass
-    ```
+    ```text
 
 More details here.
 ```text
 # End of markdown example
-```
+````
 
 ### Example - Incorrect Formatting
 
@@ -1495,16 +1495,16 @@ The implementation includes:
 def example():
     pass
 More details here.
-```
+```text
 
 ### When Creating/Updating Markdown Files
 
 1. Always add blank lines around lists
-2. Always add blank lines around code blocks
-3. Always specify language for code blocks (use `text` if no language)
-4. Always add blank line after bold headers
-5. Make heading names unique within the file
-6. Run markdownlint before committing (if available)
+1. Always add blank lines around code blocks
+1. Always specify language for code blocks (use `text` if no language)
+1. Always add blank line after bold headers
+1. Make heading names unique within the file
+1. Run markdownlint before committing (if available)
 
 ### Markdownlint Configuration
 
@@ -1524,7 +1524,7 @@ Run linting: `npx markdownlint-cli2 *.md docs/*.md`
 
 This integration is the REST API variant that works through VSN dataloggers.
 
----
+______________________________________________________________________
 
 ## Release History
 

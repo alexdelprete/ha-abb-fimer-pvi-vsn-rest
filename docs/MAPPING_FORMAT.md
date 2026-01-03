@@ -51,7 +51,7 @@ Each mapping entry contains:
   "Model_Notes": "",
   "models": ["M103", "M802"]
 }
-```
+```text
 
 ## Fields
 
@@ -85,14 +85,14 @@ Each mapping entry contains:
 ```bash
 # Edit the source of truth
 scripts/vsn-mapping-generator/generate_mapping.py
-```
+```text
 
 ### Step 2: Regenerate Excel and JSON
 
 ```bash
 python scripts/vsn-mapping-generator/generate_mapping.py
 python scripts/vsn-mapping-generator/convert_to_json.py
-```
+```text
 
 This will:
 
@@ -167,7 +167,7 @@ print(mapping.label)  # Watts
 # Lookup by HA entity name
 mapping = loader.get_by_ha_entity("abb_m103_w")
 print(mapping.units)  # W
-```
+```text
 
 ## Self-Contained Scripts
 

@@ -61,6 +61,7 @@ Each translation file contains:
 ## Sample Translations
 
 ### Example 1: AC Power
+
 | Language | Translation |
 |----------|-------------|
 | EN | Power AC |
@@ -75,6 +76,7 @@ Each translation file contains:
 | ET | AC võimsus |
 
 ### Example 2: Temperature - Cabinet
+
 | Language | Translation |
 |----------|-------------|
 | EN | Temperature - Cabinet |
@@ -89,6 +91,7 @@ Each translation file contains:
 | ET | Temperatuur - Kapp |
 
 ### Example 3: Three-Phase Current
+
 | Language | Translation (Phase A) | Translation (Phase B) | Translation (Phase C) |
 |----------|----------------------|----------------------|----------------------|
 | EN | Current AC - House Phase A | Current AC - House Phase B | Current AC - House Phase C |
@@ -103,6 +106,7 @@ Each translation file contains:
 | ET | AC vool - House Faas A | AC vool - House Faas B | AC vool - House Faas C |
 
 ### Example 4: DC String Parameters
+
 | Language | Voltage DC - String 1 | Power DC - String 2 |
 |----------|----------------------|---------------------|
 | EN | Voltage DC - String 1 | Power DC - String 2 |
@@ -171,7 +175,8 @@ Each translation file contains:
 ### File Locations
 
 All translation files are located in:
-```
+
+```text
 custom_components/abb_fimer_pvi_vsn_rest/translations/
 ├── en.json  (English)
 ├── it.json  (Italian)
@@ -183,7 +188,7 @@ custom_components/abb_fimer_pvi_vsn_rest/translations/
 ├── nb.json  (Norwegian Bokmål)
 ├── fi.json  (Finnish)
 └── et.json  (Estonian)
-```
+```text
 
 ---
 
@@ -230,7 +235,7 @@ scripts/generate-translations/
     ├── nb.py   # Norwegian Bokmål
     ├── pt.py   # Portuguese
     └── sv.py   # Swedish
-```
+```text
 
 **Usage:**
 
@@ -243,7 +248,7 @@ python scripts/generate-translations/generate_translations.py --language de
 
 # List available languages
 python scripts/generate-translations/generate_translations.py --list
-```
+```text
 
 ### Future Maintenance
 

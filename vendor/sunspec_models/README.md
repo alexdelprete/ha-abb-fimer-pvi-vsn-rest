@@ -48,4 +48,4 @@ git log -1 --format="%H %ci" > ../NAMESPACE.info
 
 # Clean up
 rm -rf /tmp/sunspec-models
-```
+```text
