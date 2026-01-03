@@ -319,7 +319,7 @@ class ABBFimerPVIVSNRestConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore[c
             ),
             errors=errors,
             description_placeholders={
-                "current_host": reconfigure_entry.data.get(CONF_HOST),
+                "current_host": str(reconfigure_entry.data.get(CONF_HOST, "")),
             },
         )
 

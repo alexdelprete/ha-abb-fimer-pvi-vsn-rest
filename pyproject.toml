@@ -97,6 +97,18 @@ python-platform = "linux"
 deprecated = "error"
 redundant-cast = "error"
 
+# Ignore unresolved-import in client files that have fallback imports for standalone execution
+[[tool.ty.overrides]]
+path = "custom_components/abb_fimer_pvi_vsn_rest/abb_fimer_vsn_rest_client/*.py"
+[tool.ty.overrides.rules]
+unresolved-import = "ignore"
+
+# Ignore type checking in scripts
+[[tool.ty.overrides]]
+path = "scripts/**/*.py"
+[tool.ty.overrides.rules]
+unresolved-import = "ignore"
+
 [tool.ruff]
 line-length = 100
 indent-width = 4
