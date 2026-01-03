@@ -32,6 +32,7 @@ repos:
         verbose: true
 
       # YAML validation
+      # Note: yamllint only outputs errors, no verbose mode to show checked files
       - id: yamllint
         name: yamllint
         entry: >-
