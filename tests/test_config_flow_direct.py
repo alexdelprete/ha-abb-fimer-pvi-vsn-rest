@@ -817,16 +817,19 @@ class TestOptionsFlow:
     async def test_options_step_init_show_form(self) -> None:
         """Test showing the options form."""
 
-        flow = ABBFimerPVIVSNRestOptionsFlow()
-        flow.hass = MagicMock()
-
         mock_entry = MagicMock()
         mock_entry.options = {"scan_interval": 60}
         mock_entry.runtime_data = None  # No runtime data
 
-        flow.config_entry = mock_entry
+        flow = ABBFimerPVIVSNRestOptionsFlow()
+        flow.hass = MagicMock()
 
-        result = await flow.async_step_init(user_input=None)
+        with patch.object(
+            ABBFimerPVIVSNRestOptionsFlow,
+            "config_entry",
+            new_callable=lambda: property(lambda self: mock_entry),
+        ):
+            result = await flow.async_step_init(user_input=None)
 
         assert result["type"] == "form"
         assert result["step_id"] == "init"
@@ -834,9 +837,6 @@ class TestOptionsFlow:
     @pytest.mark.asyncio
     async def test_options_step_init_with_runtime_data(self) -> None:
         """Test options form with discovered devices."""
-
-        flow = ABBFimerPVIVSNRestOptionsFlow()
-        flow.hass = MagicMock()
 
         # Create mock coordinator with discovered devices
         mock_coordinator = MagicMock()
@@ -870,9 +870,15 @@ class TestOptionsFlow:
         mock_entry.options = {"scan_interval": 60}
         mock_entry.runtime_data = mock_runtime_data
 
-        flow.config_entry = mock_entry
+        flow = ABBFimerPVIVSNRestOptionsFlow()
+        flow.hass = MagicMock()
 
-        result = await flow.async_step_init(user_input=None)
+        with patch.object(
+            ABBFimerPVIVSNRestOptionsFlow,
+            "config_entry",
+            new_callable=lambda: property(lambda self: mock_entry),
+        ):
+            result = await flow.async_step_init(user_input=None)
 
         assert result["type"] == "form"
         assert result["step_id"] == "init"
@@ -881,16 +887,19 @@ class TestOptionsFlow:
     async def test_options_step_init_submit(self) -> None:
         """Test submitting options form."""
 
-        flow = ABBFimerPVIVSNRestOptionsFlow()
-        flow.hass = MagicMock()
-
         mock_entry = MagicMock()
         mock_entry.options = {"scan_interval": 60}
         mock_entry.runtime_data = None
 
-        flow.config_entry = mock_entry
+        flow = ABBFimerPVIVSNRestOptionsFlow()
+        flow.hass = MagicMock()
 
-        result = await flow.async_step_init(user_input={"scan_interval": 120})
+        with patch.object(
+            ABBFimerPVIVSNRestOptionsFlow,
+            "config_entry",
+            new_callable=lambda: property(lambda self: mock_entry),
+        ):
+            result = await flow.async_step_init(user_input={"scan_interval": 120})
 
         assert result["type"] == "create_entry"
         assert result["data"]["scan_interval"] == 120
@@ -898,9 +907,6 @@ class TestOptionsFlow:
     @pytest.mark.asyncio
     async def test_options_step_init_with_meter_device(self) -> None:
         """Test options form with meter device discovered."""
-
-        flow = ABBFimerPVIVSNRestOptionsFlow()
-        flow.hass = MagicMock()
 
         # Create mock coordinator with meter device
         mock_coordinator = MagicMock()
@@ -924,9 +930,15 @@ class TestOptionsFlow:
         mock_entry.options = {"scan_interval": 60}
         mock_entry.runtime_data = mock_runtime_data
 
-        flow.config_entry = mock_entry
+        flow = ABBFimerPVIVSNRestOptionsFlow()
+        flow.hass = MagicMock()
 
-        result = await flow.async_step_init(user_input=None)
+        with patch.object(
+            ABBFimerPVIVSNRestOptionsFlow,
+            "config_entry",
+            new_callable=lambda: property(lambda self: mock_entry),
+        ):
+            result = await flow.async_step_init(user_input=None)
 
         assert result["type"] == "form"
         assert result["step_id"] == "init"
@@ -934,9 +946,6 @@ class TestOptionsFlow:
     @pytest.mark.asyncio
     async def test_options_step_init_with_battery_device(self) -> None:
         """Test options form with battery device discovered."""
-
-        flow = ABBFimerPVIVSNRestOptionsFlow()
-        flow.hass = MagicMock()
 
         # Create mock coordinator with battery device
         mock_coordinator = MagicMock()
@@ -960,9 +969,15 @@ class TestOptionsFlow:
         mock_entry.options = {"scan_interval": 60}
         mock_entry.runtime_data = mock_runtime_data
 
-        flow.config_entry = mock_entry
+        flow = ABBFimerPVIVSNRestOptionsFlow()
+        flow.hass = MagicMock()
 
-        result = await flow.async_step_init(user_input=None)
+        with patch.object(
+            ABBFimerPVIVSNRestOptionsFlow,
+            "config_entry",
+            new_callable=lambda: property(lambda self: mock_entry),
+        ):
+            result = await flow.async_step_init(user_input=None)
 
         assert result["type"] == "form"
         assert result["step_id"] == "init"
@@ -975,17 +990,21 @@ class TestOptionsFlowRegenerateEntityIds:
     async def test_regenerate_entity_ids_no_prefix(self) -> None:
         """Test regenerate entity IDs with no custom prefix does nothing."""
 
-        flow = ABBFimerPVIVSNRestOptionsFlow()
-        flow.hass = MagicMock()
-
         mock_entry = MagicMock()
         mock_entry.entry_id = "test_entry"
-        flow.config_entry = mock_entry
+
+        flow = ABBFimerPVIVSNRestOptionsFlow()
+        flow.hass = MagicMock()
 
         mock_registry = MagicMock()
         mock_registry.async_get = MagicMock(return_value=None)
 
         with (
+            patch.object(
+                ABBFimerPVIVSNRestOptionsFlow,
+                "config_entry",
+                new_callable=lambda: property(lambda self: mock_entry),
+            ),
             patch(
                 "custom_components.abb_fimer_pvi_vsn_rest.config_flow.er.async_get",
                 return_value=mock_registry,
@@ -1003,12 +1022,11 @@ class TestOptionsFlowRegenerateEntityIds:
     async def test_regenerate_entity_ids_with_prefix(self) -> None:
         """Test regenerate entity IDs with custom prefix."""
 
-        flow = ABBFimerPVIVSNRestOptionsFlow()
-        flow.hass = MagicMock()
-
         mock_entry = MagicMock()
         mock_entry.entry_id = "test_entry"
-        flow.config_entry = mock_entry
+
+        flow = ABBFimerPVIVSNRestOptionsFlow()
+        flow.hass = MagicMock()
 
         mock_entity = MagicMock()
         mock_entity.unique_id = "abb_fimer_pvi_vsn_rest_inverter_0779093g823112_watts"
@@ -1019,6 +1037,11 @@ class TestOptionsFlowRegenerateEntityIds:
         mock_registry.async_update_entity = MagicMock()
 
         with (
+            patch.object(
+                ABBFimerPVIVSNRestOptionsFlow,
+                "config_entry",
+                new_callable=lambda: property(lambda self: mock_entry),
+            ),
             patch(
                 "custom_components.abb_fimer_pvi_vsn_rest.config_flow.er.async_get",
                 return_value=mock_registry,
@@ -1036,12 +1059,11 @@ class TestOptionsFlowRegenerateEntityIds:
     async def test_regenerate_entity_ids_target_exists(self) -> None:
         """Test regenerate entity IDs when target already exists."""
 
-        flow = ABBFimerPVIVSNRestOptionsFlow()
-        flow.hass = MagicMock()
-
         mock_entry = MagicMock()
         mock_entry.entry_id = "test_entry"
-        flow.config_entry = mock_entry
+
+        flow = ABBFimerPVIVSNRestOptionsFlow()
+        flow.hass = MagicMock()
 
         mock_entity = MagicMock()
         mock_entity.unique_id = "abb_fimer_pvi_vsn_rest_inverter_0779093g823112_watts"
@@ -1053,6 +1075,11 @@ class TestOptionsFlowRegenerateEntityIds:
         mock_registry.async_update_entity = MagicMock()
 
         with (
+            patch.object(
+                ABBFimerPVIVSNRestOptionsFlow,
+                "config_entry",
+                new_callable=lambda: property(lambda self: mock_entry),
+            ),
             patch(
                 "custom_components.abb_fimer_pvi_vsn_rest.config_flow.er.async_get",
                 return_value=mock_registry,
@@ -1071,12 +1098,11 @@ class TestOptionsFlowRegenerateEntityIds:
     async def test_regenerate_entity_ids_short_unique_id(self) -> None:
         """Test regenerate entity IDs skips entities with short unique_id."""
 
-        flow = ABBFimerPVIVSNRestOptionsFlow()
-        flow.hass = MagicMock()
-
         mock_entry = MagicMock()
         mock_entry.entry_id = "test_entry"
-        flow.config_entry = mock_entry
+
+        flow = ABBFimerPVIVSNRestOptionsFlow()
+        flow.hass = MagicMock()
 
         mock_entity = MagicMock()
         mock_entity.unique_id = "short_id"  # Too short, only 2 parts
@@ -1086,6 +1112,11 @@ class TestOptionsFlowRegenerateEntityIds:
         mock_registry.async_update_entity = MagicMock()
 
         with (
+            patch.object(
+                ABBFimerPVIVSNRestOptionsFlow,
+                "config_entry",
+                new_callable=lambda: property(lambda self: mock_entry),
+            ),
             patch(
                 "custom_components.abb_fimer_pvi_vsn_rest.config_flow.er.async_get",
                 return_value=mock_registry,

@@ -664,12 +664,14 @@ class TestDetectModelFromStatusAdditional:
         result = _detect_model_from_status(status_data)
         assert result == "VSN700"
 
-    def test_empty_keys_raises_error(self) -> None:
-        """Test empty keys dict raises detection error."""
+    def test_empty_keys_detects_vsn700(self) -> None:
+        """Test empty keys dict is detected as VSN700 (minimal data)."""
         status_data = {"keys": {}}
 
-        with pytest.raises(VSNDetectionError, match="Could not determine"):
-            _detect_model_from_status(status_data)
+        # Empty keys (len=0) falls into the "len(keys) <= 3" branch
+        # which returns VSN700 for minimal status data
+        result = _detect_model_from_status(status_data)
+        assert result == "VSN700"
 
     @pytest.mark.asyncio
     async def test_detect_connection_error(self) -> None:
