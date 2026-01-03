@@ -15,22 +15,22 @@ rules:
     comment: Integration does not define any service actions.
 
   # Rule: If it's a polling integration, set an appropriate polling interval
-  appropriate-polling: done  # Configurable scan_interval (30-600s) via options flow
+  appropriate-polling: done # Configurable scan_interval (30-600s) via options flow
 
   # Rule: Has branding assets available for the integration
-  brands: done  # Available in HACS, branding assets submitted
+  brands: done # Available in HACS, branding assets submitted
 
   # Rule: Place common patterns in common modules
-  common-modules: done  # coordinator.py, sensor.py, const.py, client library
+  common-modules: done # coordinator.py, sensor.py, const.py, client library
 
   # Rule: Integration needs to be able to be set up via the UI
-  config-flow: done  # UI setup via config_flow.py
+  config-flow: done # UI setup via config_flow.py
 
   # Rule: Full test coverage for the config flow
-  config-flow-test-coverage: todo  # tests/test_config_flow.py to be created
+  config-flow-test-coverage: todo # tests/test_config_flow.py to be created
 
   # Rule: Dependency transparency
-  dependency-transparency: done  # aiohttp is OSI-licensed, on PyPI
+  dependency-transparency: done # aiohttp is OSI-licensed, on PyPI
 
   # Rule: The documentation describes the provided service actions
   docs-actions:
@@ -38,34 +38,34 @@ rules:
     comment: Integration does not define any service actions.
 
   # Rule: The documentation includes a high-level description
-  docs-high-level-description: done  # README.md describes VSN300/VSN700 integration
+  docs-high-level-description: done # README.md describes VSN300/VSN700 integration
 
   # Rule: The documentation provides step-by-step installation instructions
-  docs-installation-instructions: done  # README.md with HACS instructions
+  docs-installation-instructions: done # README.md with HACS instructions
 
   # Rule: The documentation provides removal instructions
-  docs-removal-instructions: done  # Standard HA removal via integrations page
+  docs-removal-instructions: done # Standard HA removal via integrations page
 
   # Rule: Entity events are subscribed in the correct lifecycle methods
-  entity-event-setup: done  # Uses DataUpdateCoordinator pattern
+  entity-event-setup: done # Uses DataUpdateCoordinator pattern
 
   # Rule: Entities have a unique ID
-  entity-unique-id: done  # Serial number based unique IDs
+  entity-unique-id: done # Serial number based unique IDs
 
   # Rule: Entities use has_entity_name = True
-  has-entity-name: done  # _attr_has_entity_name = True in sensor.py
+  has-entity-name: done # _attr_has_entity_name = True in sensor.py
 
   # Rule: Use ConfigEntry.runtime_data to store runtime data
-  runtime-data: done  # Uses entry.runtime_data with RuntimeData dataclass
+  runtime-data: done # Uses entry.runtime_data with RuntimeData dataclass
 
   # Rule: Test a connection in the config flow
-  test-before-configure: done  # Validates REST API connection before setup
+  test-before-configure: done # Validates REST API connection before setup
 
   # Rule: Check during integration initialization if we can set it up correctly
-  test-before-setup: done  # Raises ConfigEntryNotReady on connection failure
+  test-before-setup: done # Raises ConfigEntryNotReady on connection failure
 
   # Rule: Don't allow the same device or service to be set up twice
-  unique-config-entry: done  # Uses logger serial number as unique_id
+  unique-config-entry: done # Uses logger serial number as unique_id
 
   # ============================================================================
   # SILVER TIER (10 rules) - Enhanced reliability
@@ -77,22 +77,22 @@ rules:
     comment: Integration does not define any service actions.
 
   # Rule: Support config entry unloading
-  config-entry-unloading: done  # async_unload_entry properly cleans up
+  config-entry-unloading: done # async_unload_entry properly cleans up
 
   # Rule: The documentation describes all integration configuration options
-  docs-configuration-parameters: done  # README documents scan_interval, device prefixes
+  docs-configuration-parameters: done # README documents scan_interval, device prefixes
 
   # Rule: The documentation describes all integration installation parameters
-  docs-installation-parameters: done  # README documents host, username, password
+  docs-installation-parameters: done # README documents host, username, password
 
   # Rule: Mark entity unavailable if appropriate
-  entity-unavailable: done  # Coordinator handles availability via UpdateFailed
+  entity-unavailable: done # Coordinator handles availability via UpdateFailed
 
   # Rule: Has an integration owner
-  integration-owner: done  # @alexdelprete in manifest.json codeowners
+  integration-owner: done # @alexdelprete in manifest.json codeowners
 
   # Rule: If unavailable, log once when unavailable and once when back connected
-  log-when-unavailable: done  # DataUpdateCoordinator handles this automatically
+  log-when-unavailable: done # DataUpdateCoordinator handles this automatically
 
   # Rule: Number of parallel updates is specified
   parallel-updates:
@@ -100,20 +100,20 @@ rules:
     comment: Uses DataUpdateCoordinator, PARALLEL_UPDATES not needed.
 
   # Rule: Reauthentication needs to be available via the UI
-  reauthentication-flow: done  # Reconfigure flow allows credential changes
+  reauthentication-flow: done # Reconfigure flow allows credential changes
 
   # Rule: Above 95% test coverage for all integration modules
-  test-coverage: todo  # Tests to be implemented
+  test-coverage: todo # Tests to be implemented
 
   # ============================================================================
   # GOLD TIER (20 rules) - Best user experience
   # ============================================================================
 
   # Rule: The integration creates devices
-  devices: done  # Creates devices for datalogger, inverters, meters, batteries
+  devices: done # Creates devices for datalogger, inverters, meters, batteries
 
   # Rule: Implements diagnostics
-  diagnostics: done  # diagnostics.py provides downloadable debug info
+  diagnostics: done # diagnostics.py provides downloadable debug info
 
   # Rule: Devices can be discovered
   discovery:
@@ -126,25 +126,25 @@ rules:
     comment: No discovery mechanism available for REST API devices.
 
   # Rule: The documentation describes how data is updated
-  docs-data-update: done  # README explains polling via REST API
+  docs-data-update: done # README explains polling via REST API
 
   # Rule: The documentation provides automation examples
-  docs-examples: todo  # Automation examples to be added
+  docs-examples: todo # Automation examples to be added
 
   # Rule: The documentation describes known limitations
-  docs-known-limitations: done  # README documents VSN model differences
+  docs-known-limitations: done # README documents VSN model differences
 
   # Rule: The documentation describes known supported / unsupported devices
-  docs-supported-devices: done  # README specifies VSN300/VSN700 and inverter models
+  docs-supported-devices: done # README specifies VSN300/VSN700 and inverter models
 
   # Rule: The documentation describes the supported functionality
-  docs-supported-functions: done  # README lists 258 sensors
+  docs-supported-functions: done # README lists 258 sensors
 
   # Rule: The documentation provides troubleshooting information
-  docs-troubleshooting: done  # README includes debug logging and test script
+  docs-troubleshooting: done # README includes debug logging and test script
 
   # Rule: The documentation describes use cases
-  docs-use-cases: todo  # Use cases to be documented
+  docs-use-cases: todo # Use cases to be documented
 
   # Rule: Devices added after integration setup
   dynamic-devices:
@@ -152,28 +152,28 @@ rules:
     comment: Device discovery happens during setup, not dynamically.
 
   # Rule: Entities are assigned an appropriate EntityCategory
-  entity-category: done  # Uses EntityCategory.DIAGNOSTIC where appropriate
+  entity-category: done # Uses EntityCategory.DIAGNOSTIC where appropriate
 
   # Rule: Entities use device classes where possible
-  entity-device-class: done  # Uses POWER, ENERGY, VOLTAGE, CURRENT device classes
+  entity-device-class: done # Uses POWER, ENERGY, VOLTAGE, CURRENT device classes
 
   # Rule: Integration disables less popular (or noisy) entities
-  entity-disabled-by-default: done  # Diagnostic entities disabled by default
+  entity-disabled-by-default: done # Diagnostic entities disabled by default
 
   # Rule: Entities have translated names
-  entity-translations: done  # 10 languages: de, en, es, et, fi, fr, it, nb, pt, sv
+  entity-translations: done # 10 languages: de, en, es, et, fi, fr, it, nb, pt, sv
 
   # Rule: Exception messages are translatable
-  exception-translations: todo  # exceptions section to be added to translations
+  exception-translations: todo # exceptions section to be added to translations
 
   # Rule: Entities implement icon translations
-  icon-translations: done  # icons.json defines icons for key sensors
+  icon-translations: done # icons.json defines icons for key sensors
 
   # Rule: Integrations should have a reconfigure flow
-  reconfiguration-flow: done  # Reconfigure flow for host/credential changes
+  reconfiguration-flow: done # Reconfigure flow for host/credential changes
 
   # Rule: Repair issues and repair flows are used when user intervention is needed
-  repair-issues: todo  # Repair issues to be implemented
+  repair-issues: todo # Repair issues to be implemented
 
   # Rule: Stale devices are removed
   stale-devices:
@@ -185,10 +185,10 @@ rules:
   # ============================================================================
 
   # Rule: Dependency is async
-  async-dependency: done  # aiohttp is native async
+  async-dependency: done # aiohttp is native async
 
   # Rule: The integration dependency supports passing in a websession
-  inject-websession: done  # Uses aiohttp session from HA
+  inject-websession: done # Uses aiohttp session from HA
 
   # Rule: Strict typing
-  strict-typing: done  # Full type annotations throughout codebase
+  strict-typing: done # Full type annotations throughout codebase
