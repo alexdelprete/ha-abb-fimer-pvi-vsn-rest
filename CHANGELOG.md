@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.1-beta.2] - 2026-01-03
+
+### New Features
+
+#### Configurable Repair Notifications
+
+- **Enable/disable repair notifications** - Option to turn off failure notifications (default: enabled)
+- **Configurable failures threshold** - Set consecutive failures (1-10) before notification (default: 3)
+- **Recovery script execution** - Configure a Home Assistant script to run when threshold is reached
+
+#### Recovery Script Support
+
+- Execute any HA script on failure (e.g., `script.restart_router`)
+- Script execution time tracked and shown in notification
+- Automate recovery of intermittent network issues
+
+#### Improved Notifications
+
+- Uses `persistent_notification` instead of repair issues
+- Full message with timestamps displayed immediately
+- No duplicate notifications after acknowledging
+
+### Code Quality
+
+- **Ruff formatting** - All Python code formatted
+- **Yamllint compliance** - All YAML files pass linting
+- **Markdown linting** - 60 documentation files pass pymarkdown
+
+**See**: [v1.3.1-beta.2 Release Notes](docs/releases/v1.3.1-beta.2.md)
+
 ## [1.3.1-beta.1] - 2026-01-03
 
 ### Test Coverage Improvements
