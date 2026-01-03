@@ -76,6 +76,14 @@ Linting tools and settings are defined in `.pre-commit-config.yaml`:
 
 All hooks use `language: system` (local tools) with `verbose: true` for visibility.
 
+### Windows Shell Notes
+
+When running shell commands on Windows, stray `nul` files may be created (Windows null device artifact). Check for and delete them after command execution:
+
+```bash
+rm nul  # if it exists
+```
+
 ## Quality Scale Tracking
 
 This integration tracks [Home Assistant Quality Scale](https://developers.home-assistant.io/docs/core/integration-quality-scale/) rules in `quality_scale.yaml`.
@@ -1080,6 +1088,9 @@ If you need to add raw data sources:
 
 **⚠️ CRITICAL PRINCIPLES:**
 
+> **⛔ STOP: NEVER create git tags or GitHub releases without explicit user command.**
+> This is a hard rule. Always stop after commit/push and wait for user instruction.
+
 1. **Published releases are FROZEN** - Once a release is published (tagged and on GitHub), its documentation is immutable:
    - Never modify `docs/releases/vX.Y.Z.md` for a published version
    - Never change CHANGELOG.md entries for published versions
@@ -1093,6 +1104,23 @@ If you need to add raw data sources:
    - Immediately bump to vX.Y.(Z+1) or v(X+1).0.0 or vX.(Y+1).0
    - Create new `docs/releases/vX.Y.(Z+1).md` for ongoing work
    - All changes from that point forward go to the new version's documentation
+
+### Version Bumping Rules
+
+> **⚠️ IMPORTANT: Do NOT bump version during a session. All changes go into the CURRENT unreleased version.**
+
+- The version in `manifest.json` and `const.py` represents the NEXT release being prepared
+- **NEVER bump version until user commands "tag and release"**
+- Multiple features/fixes can be added to the same unreleased version
+- Only bump to a NEW version number AFTER the current version is released
+
+**Example workflow:**
+
+1. Current version is 1.3.1 (unreleased, after v1.3.0 was released)
+2. User asks for fix A → Add fix A to v1.3.1, commit, push
+3. User asks for fix B → Add fix B to v1.3.1 (same version!), commit, push
+4. User says "tag and release" → Create v1.3.1 tag and release
+5. After release: Bump version to 1.3.2 for next development cycle
 
 **Complete Release Workflow:**
 
@@ -1147,6 +1175,38 @@ Verify ALL items show ✅ before proceeding with tag creation. If any item fails
 - Include ALL changes since last stable release
 - Review commits: `git log vX.Y.Z..HEAD`
 - Include sections: What's Changed, Bug Fixes, Features, Breaking Changes
+
+### Issue References in Release Notes
+
+When a release fixes a specific GitHub issue:
+
+- Reference the issue number in release notes (e.g., "Fixes #19")
+- Thank the user who opened the issue by name and GitHub handle
+- **NEVER close the issue** - the user will do it manually
+
+### Release Documentation Structure
+
+The project follows industry best practices for release documentation:
+
+**Stable/Official Release Notes (e.g., v1.3.0):**
+
+- **Scope**: ALL changes since previous stable release
+- **Example**: v1.3.0 includes everything since v1.2.0
+- **Purpose**: Complete picture for users upgrading from last stable
+- **Sections**: Comprehensive - all fixes, features, breaking changes, dependencies
+
+**Beta Release Notes (e.g., v1.3.0-beta.1):**
+
+- **Scope**: Only incremental changes in this beta
+- **Example**: v1.3.0-beta.2 shows only what's new since beta.1
+- **Purpose**: Help beta testers focus on what to test
+- **Sections**: Incremental - new fixes, new features, testing focus
+
+### Documentation Files
+
+- **`CHANGELOG.md`** (root) - Quick overview of all releases based on Keep a Changelog format
+- **`docs/releases/`** - Detailed release notes (one file per version)
+- **`docs/releases/README.md`** - Release directory guide and templates
 
 **⚠️ IMPORTANT - Release Policy:**
 
@@ -1252,6 +1312,17 @@ From `manifest.json`:
 - `aiohttp`: Async HTTP client
 
 No external libraries for Modbus or SunSpec - we implement what we need.
+
+### Dependency Update Checklist
+
+**Before updating any dependency version in `manifest.json`:**
+
+1. Verify the new version exists on PyPI: `https://pypi.org/project/PACKAGE_NAME/`
+2. Check release notes for breaking changes
+3. Test locally if possible
+
+> **⚠️ IMPORTANT**: Always verify PyPI availability before committing dependency updates. We've had issues where
+> upstream maintainers created GitHub releases but forgot to publish to PyPI, breaking our integration for users.
 
 ## Key Files
 
@@ -1452,3 +1523,45 @@ Run linting: `npx markdownlint-cli2 *.md docs/*.md`
 - **ha-abb-powerone-pvi-sunspec**: Legacy v4.x (Modbus only)
 
 This integration is the REST API variant that works through VSN dataloggers.
+
+---
+
+## Release History
+
+### v1.3.0 - CI/CD Alignment & Code Quality
+
+**Date:** January 2026
+
+- Aligned CI/CD workflows with ha-sinapsi-alfa (lint.yml, test.yml, validate.yml, release.yml)
+- Added ty type checker for faster type checking
+- Removed fallback imports from client library for cleaner code
+- Added comprehensive test infrastructure
+- Updated Python requirement to >=3.13.2
+
+### v1.2.0 - Sensor Mapping Overhaul
+
+**Date:** December 2025
+
+- Unified sensor mapping generator script
+- VSN name normalization for duplicate detection
+- Display name standardization (TYPE-first pattern)
+- 253 unique sensor points with comprehensive metadata
+
+### v1.1.0 - Modern Entity Naming
+
+**Date:** November 2025
+
+- Modern `has_entity_name=True` pattern
+- Domain prefix for entity IDs
+- Comprehensive sensor attributes (14+ fields)
+- Aurora protocol integration for timestamps and state mapping
+
+### v1.0.0 - First Stable Release
+
+**Date:** October 2025
+
+- Automatic VSN300/VSN700 detection
+- Multi-device support (inverters, meters, batteries)
+- SunSpec-normalized data schema
+- Custom icon support
+- Human-readable state translations
