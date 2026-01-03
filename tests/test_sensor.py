@@ -877,3 +877,504 @@ async def test_async_setup_entry_creates_sensors(
     entities = mock_add_entities.call_args[0][0]
     assert len(entities) > 0
     assert all(isinstance(e, VSNSensor) for e in entities)
+
+
+class TestVSNSensorSysTime:
+    """Tests for sys_time sensor timestamp conversion."""
+
+    def test_sys_time_conversion(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test sys_time value is converted from Aurora epoch."""
+        # Aurora timestamp: 788918400 (Jan 1, 2025 00:00:00 in Aurora epoch)
+        aurora_timestamp = 788918400
+        # Expected Unix timestamp would be: aurora_timestamp + AURORA_EPOCH_OFFSET
+
+        point_data = {
+            "value": aurora_timestamp,
+            "ha_display_name": "System Time",
+        }
+
+        mock_coordinator.data = {
+            "devices": {TEST_INVERTER_SN: {"points": {"sys_time": {"value": aurora_timestamp}}}}
+        }
+
+        # Mock hass config with timezone
+        mock_coordinator.hass.config.time_zone = "UTC"
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="sys_time",
+            point_data=point_data,
+        )
+
+        # The result should be a formatted datetime string
+        result = sensor.native_value
+        assert result is not None
+        assert isinstance(result, str)
+        # Should contain date format
+        assert "-" in result
+
+    def test_sys_time_invalid_value(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test sys_time handles invalid timestamp gracefully."""
+        point_data = {
+            "value": -1,  # Invalid timestamp
+            "ha_display_name": "System Time",
+        }
+
+        mock_coordinator.data = {
+            "devices": {TEST_INVERTER_SN: {"points": {"sys_time": {"value": -1}}}}
+        }
+
+        mock_coordinator.hass.config.time_zone = "UTC"
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="sys_time",
+            point_data=point_data,
+        )
+
+        # Should return the raw value for invalid timestamps
+        result = sensor.native_value
+        # Negative values should just pass through as-is
+        assert result == -1
+
+
+class TestVSNSensorStateFlags:
+    """Tests for state flag sensors that should be integers."""
+
+    def test_battery_mode_integer(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test battery_mode is converted to integer."""
+        point_data = {"value": 2.5, "ha_display_name": "Battery Mode"}
+
+        mock_coordinator.data = {
+            "devices": {TEST_INVERTER_SN: {"points": {"battery_mode": {"value": 2.5}}}}
+        }
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="battery_mode",
+            point_data=point_data,
+        )
+
+        assert sensor.native_value == 2
+
+    def test_batt_num_integer(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test batt_num is converted to integer."""
+        point_data = {"value": 4.0, "ha_display_name": "Battery Count"}
+
+        mock_coordinator.data = {
+            "devices": {TEST_INVERTER_SN: {"points": {"batt_num": {"value": 4.0}}}}
+        }
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="batt_num",
+            point_data=point_data,
+        )
+
+        assert sensor.native_value == 4
+
+    def test_num_of_mppt_integer(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test num_of_mppt is converted to integer."""
+        point_data = {"value": 2.0, "ha_display_name": "MPPT Count"}
+
+        mock_coordinator.data = {
+            "devices": {TEST_INVERTER_SN: {"points": {"num_of_mppt": {"value": 2.0}}}}
+        }
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="num_of_mppt",
+            point_data=point_data,
+        )
+
+        assert sensor.native_value == 2
+
+    def test_country_std_integer(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test country_std is converted to integer."""
+        point_data = {"value": 50.0, "ha_display_name": "Country Standard"}
+
+        mock_coordinator.data = {
+            "devices": {TEST_INVERTER_SN: {"points": {"country_std": {"value": 50.0}}}}
+        }
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="country_std",
+            point_data=point_data,
+        )
+
+        assert sensor.native_value == 50
+
+
+class TestVSNSensorExtraAttributes:
+    """Additional tests for extra_state_attributes."""
+
+    def test_extra_attributes_uptime_formatted(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test system_uptime has formatted attribute."""
+        point_data = {"value": 86400, "ha_display_name": "System Uptime"}
+
+        mock_coordinator.data = {
+            "devices": {TEST_INVERTER_SN: {"points": {"system_uptime": {"value": 86400}}}}
+        }
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="system_uptime",
+            point_data=point_data,
+        )
+
+        attrs = sensor.extra_state_attributes
+        assert "formatted" in attrs
+        assert "1 day" in attrs["formatted"]
+
+    def test_extra_attributes_state_mapping_raw_code(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test state mapping sensors have raw_state_code attribute."""
+        point_data = {
+            "value": 6,
+            "ha_display_name": "Global State",
+            "sunspec_name": "GlobalSt",
+        }
+
+        mock_coordinator.data = {
+            "devices": {
+                TEST_INVERTER_SN: {
+                    "points": {"global_st": {"value": 6, "sunspec_name": "GlobalSt"}}
+                }
+            }
+        }
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="global_st",
+            point_data=point_data,
+        )
+
+        attrs = sensor.extra_state_attributes
+        assert "raw_state_code" in attrs
+        assert attrs["raw_state_code"] == 6
+
+
+class TestVSNSensorDeviceInfoConfiguration:
+    """Tests for device_info configuration URL."""
+
+    def test_datalogger_has_configuration_url(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test datalogger device has configuration URL."""
+        # Setup datalogger device in discovered_devices
+        datalogger = MockDiscoveredDevice(
+            device_id=TEST_LOGGER_SN,
+            raw_device_id=TEST_LOGGER_SN,
+            device_type="datalogger",
+            device_model="VSN300",
+            manufacturer="ABB",
+            firmware_version="1.9.2",
+            hardware_version=None,
+            is_datalogger=True,
+        )
+        mock_coordinator.discovered_devices = [datalogger]
+        mock_coordinator.discovery_result.hostname = "abb-vsn300.local"
+
+        point_data = {"value": "1.9.2", "ha_display_name": "Firmware"}
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_LOGGER_SN,
+            device_type="datalogger",
+            point_name="firmware",
+            point_data=point_data,
+        )
+
+        device_info = sensor.device_info
+        assert "configuration_url" in device_info
+        assert device_info["configuration_url"] == "http://abb-vsn300.local"
+
+
+class TestVSNSensorPrecision:
+    """Tests for sensor display precision."""
+
+    def test_precision_invalid_value_fallback(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test invalid precision value falls back to unit-based default."""
+        point_data = {
+            "value": 45.123,
+            "ha_display_name": "Voltage",
+            "units": "V",
+            "device_class": "voltage",
+            "state_class": "measurement",
+            "suggested_display_precision": "invalid",  # Invalid
+        }
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="voltage",
+            point_data=point_data,
+        )
+
+        # Should fall back to unit-based precision (1 for V)
+        assert sensor._attr_suggested_display_precision == 1
+
+    def test_precision_negative_value_fallback(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test negative precision value falls back to unit-based default."""
+        point_data = {
+            "value": 45.123,
+            "ha_display_name": "Voltage",
+            "units": "V",
+            "device_class": "voltage",
+            "state_class": "measurement",
+            "suggested_display_precision": -1,  # Negative
+        }
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="voltage",
+            point_data=point_data,
+        )
+
+        # Should fall back to unit-based precision (1 for V)
+        assert sensor._attr_suggested_display_precision == 1
+
+
+class TestVSNSensorUnitValidation:
+    """Tests for unit validation against device class."""
+
+    def test_invalid_unit_for_device_class(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test invalid unit is corrected for device class."""
+        point_data = {
+            "value": 1000,
+            "ha_display_name": "Power",
+            "units": "invalid_unit",  # Invalid unit for power
+            "device_class": "power",
+            "state_class": "measurement",
+        }
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="power_test",
+            point_data=point_data,
+        )
+
+        # Should be corrected to first valid unit (mW)
+        assert sensor.native_unit_of_measurement == "mW"
+
+    def test_exception_unit_removes_device_class(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test exception units remove device class."""
+        point_data = {
+            "value": 100,
+            "ha_display_name": "Insulation Resistance",
+            "units": "MOhm",
+            "device_class": "current",  # Wrong, should be removed
+            "state_class": "measurement",
+        }
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="resistance",
+            point_data=point_data,
+        )
+
+        # Device class should be None because MOhm is an exception
+        assert sensor._attr_device_class is None
+
+
+class TestVSNSensorCustomPrefix:
+    """Tests for custom device name prefix functionality."""
+
+    def test_sensor_with_custom_prefix(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test sensor with custom prefix option."""
+        # Set custom prefix in options
+        mock_sensor_config_entry.options = {"prefix_inverter": "My Solar Inverter"}
+
+        point_data = {
+            "value": 5000,
+            "ha_display_name": "Power AC",
+            "units": "W",
+            "device_class": "power",
+            "state_class": "measurement",
+        }
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="watts",
+            point_data=point_data,
+        )
+
+        device_info = sensor.device_info
+        assert device_info["name"] == "My Solar Inverter"
+
+
+class TestGetPrecisionFromUnitsAdditional:
+    """Additional tests for _get_precision_from_units function."""
+
+    def test_kvah_precision_0(self) -> None:
+        """Test kVAh has precision 0."""
+        result = _get_precision_from_units("kVAh")
+        assert result == 0
+
+    def test_var_precision_0(self) -> None:
+        """Test var has precision 0."""
+        result = _get_precision_from_units("var")
+        assert result == 0
+
+    def test_vah_precision_0(self) -> None:
+        """Test VAh has precision 0."""
+        result = _get_precision_from_units("VAh")
+        assert result == 0
+
+    def test_ah_precision_1(self) -> None:
+        """Test Ah has precision 1."""
+        result = _get_precision_from_units("Ah")
+        assert result == 1
+
+    def test_mohm_precision_2(self) -> None:
+        """Test MOhm has precision 2."""
+        result = _get_precision_from_units("MOhm")
+        assert result == 2
+
+    def test_mohm_unicode_precision_2(self) -> None:
+        """Test MΩ (unicode) has precision 2."""
+        result = _get_precision_from_units("MΩ")
+        assert result == 2
+
+    def test_kohm_precision_2(self) -> None:
+        """Test kΩ has precision 2."""
+        result = _get_precision_from_units("kΩ")
+        assert result == 2
+
+    def test_ohm_precision_0(self) -> None:
+        """Test Ohm has precision 0."""
+        result = _get_precision_from_units("Ohm")
+        assert result == 0
+
+    def test_ohm_symbol_precision_0(self) -> None:
+        """Test Ω has precision 0."""
+        result = _get_precision_from_units("Ω")
+        assert result == 0
+
+    def test_mb_precision_1(self) -> None:
+        """Test MB has precision 1."""
+        result = _get_precision_from_units("MB")
+        assert result == 1
+
+    def test_gb_precision_1(self) -> None:
+        """Test GB has precision 1."""
+        result = _get_precision_from_units("GB")
+        assert result == 1
+
+    def test_cycles_precision_0(self) -> None:
+        """Test cycles has precision 0."""
+        result = _get_precision_from_units("cycles")
+        assert result == 0
+
+    def test_channels_precision_0(self) -> None:
+        """Test channels has precision 0."""
+        result = _get_precision_from_units("channels")
+        assert result == 0
+
+    def test_b_precision_0(self) -> None:
+        """Test B (bytes) has precision 0."""
+        result = _get_precision_from_units("B")
+        assert result == 0
+
+    def test_s_precision_0(self) -> None:
+        """Test s (seconds) has precision 0."""
+        result = _get_precision_from_units("s")
+        assert result == 0
+
+    def test_fahrenheit_precision_1(self) -> None:
+        """Test °F has precision 1."""
+        result = _get_precision_from_units("°F")
+        assert result == 1

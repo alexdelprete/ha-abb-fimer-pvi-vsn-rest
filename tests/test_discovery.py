@@ -13,6 +13,8 @@ from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discover
     DiscoveryResult,
     _extract_devices,
     _extract_logger_info,
+    _fetch_livedata,
+    _fetch_status,
     discover_vsn_device,
 )
 from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.exceptions import (
@@ -302,6 +304,304 @@ class TestExtractDevices:
         assert livedata_device.device_id == "111033-3N16-1421"
         assert livedata_device.firmware_version == "1.9.2"
         assert livedata_device.is_datalogger is True
+
+
+class TestFetchStatus:
+    """Tests for _fetch_status function."""
+
+    @pytest.fixture
+    def mock_session(self) -> MagicMock:
+        """Create mock aiohttp session."""
+        return MagicMock(spec=aiohttp.ClientSession)
+
+    @pytest.mark.asyncio
+    async def test_fetch_status_vsn300_success(self, mock_session: MagicMock) -> None:
+        """Test successful status fetch for VSN300."""
+        status_data = {"keys": {"logger.sn": {"value": "111033-3N16-1421"}}}
+
+        mock_response = AsyncMock()
+        mock_response.status = 200
+        mock_response.headers = {}
+        mock_response.json = AsyncMock(return_value=status_data)
+
+        mock_session.get = MagicMock(
+            return_value=AsyncMock(
+                __aenter__=AsyncMock(return_value=mock_response), __aexit__=AsyncMock()
+            )
+        )
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discovery.check_socket_connection",
+                new_callable=AsyncMock,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discovery.get_vsn300_digest_header",
+                new_callable=AsyncMock,
+                return_value="digest_value",
+            ),
+        ):
+            result = await _fetch_status(
+                mock_session, "http://192.168.1.100", "VSN300", "guest", "", 10, True
+            )
+
+        assert result == status_data
+
+    @pytest.mark.asyncio
+    async def test_fetch_status_vsn700_success(self, mock_session: MagicMock) -> None:
+        """Test successful status fetch for VSN700."""
+        status_data = {"keys": {"logger.loggerId": {"value": "ac:1f:0f:b0:50:b5"}}}
+
+        mock_response = AsyncMock()
+        mock_response.status = 200
+        mock_response.headers = {}
+        mock_response.json = AsyncMock(return_value=status_data)
+
+        mock_session.get = MagicMock(
+            return_value=AsyncMock(
+                __aenter__=AsyncMock(return_value=mock_response), __aexit__=AsyncMock()
+            )
+        )
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discovery.check_socket_connection",
+                new_callable=AsyncMock,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discovery.get_vsn700_basic_auth",
+                return_value="basic_auth_value",
+            ),
+        ):
+            result = await _fetch_status(
+                mock_session, "http://192.168.1.100", "VSN700", "guest", "", 10, True
+            )
+
+        assert result == status_data
+
+    @pytest.mark.asyncio
+    async def test_fetch_status_no_auth_required(self, mock_session: MagicMock) -> None:
+        """Test status fetch without authentication."""
+        status_data = {"keys": {}}
+
+        mock_response = AsyncMock()
+        mock_response.status = 200
+        mock_response.headers = {}
+        mock_response.json = AsyncMock(return_value=status_data)
+
+        mock_session.get = MagicMock(
+            return_value=AsyncMock(
+                __aenter__=AsyncMock(return_value=mock_response), __aexit__=AsyncMock()
+            )
+        )
+
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discovery.check_socket_connection",
+            new_callable=AsyncMock,
+        ):
+            result = await _fetch_status(
+                mock_session, "http://192.168.1.100", "VSN300", "guest", "", 10, False
+            )
+
+        assert result == status_data
+
+    @pytest.mark.asyncio
+    async def test_fetch_status_http_error(self, mock_session: MagicMock) -> None:
+        """Test status fetch with HTTP error."""
+        mock_response = AsyncMock()
+        mock_response.status = 401
+        mock_response.headers = {}
+
+        mock_session.get = MagicMock(
+            return_value=AsyncMock(
+                __aenter__=AsyncMock(return_value=mock_response), __aexit__=AsyncMock()
+            )
+        )
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discovery.check_socket_connection",
+                new_callable=AsyncMock,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discovery.get_vsn300_digest_header",
+                new_callable=AsyncMock,
+                return_value="digest_value",
+            ),
+            pytest.raises(VSNConnectionError, match="HTTP 401"),
+        ):
+            await _fetch_status(
+                mock_session, "http://192.168.1.100", "VSN300", "guest", "", 10, True
+            )
+
+    @pytest.mark.asyncio
+    async def test_fetch_status_client_error(self, mock_session: MagicMock) -> None:
+        """Test status fetch with client error."""
+        mock_session.get = MagicMock(side_effect=aiohttp.ClientError("Connection failed"))
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discovery.check_socket_connection",
+                new_callable=AsyncMock,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discovery.get_vsn300_digest_header",
+                new_callable=AsyncMock,
+                return_value="digest_value",
+            ),
+            pytest.raises(VSNConnectionError, match="Connection failed"),
+        ):
+            await _fetch_status(
+                mock_session, "http://192.168.1.100", "VSN300", "guest", "", 10, True
+            )
+
+
+class TestFetchLivedata:
+    """Tests for _fetch_livedata function."""
+
+    @pytest.fixture
+    def mock_session(self) -> MagicMock:
+        """Create mock aiohttp session."""
+        return MagicMock(spec=aiohttp.ClientSession)
+
+    @pytest.mark.asyncio
+    async def test_fetch_livedata_vsn300_success(self, mock_session: MagicMock) -> None:
+        """Test successful livedata fetch for VSN300."""
+        livedata: dict[str, Any] = {"077909-3G82-3112": {"device_type": "inverter_3phases"}}
+
+        mock_response = AsyncMock()
+        mock_response.status = 200
+        mock_response.headers = {}
+        mock_response.json = AsyncMock(return_value=livedata)
+
+        mock_session.get = MagicMock(
+            return_value=AsyncMock(
+                __aenter__=AsyncMock(return_value=mock_response), __aexit__=AsyncMock()
+            )
+        )
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discovery.check_socket_connection",
+                new_callable=AsyncMock,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discovery.get_vsn300_digest_header",
+                new_callable=AsyncMock,
+                return_value="digest_value",
+            ),
+        ):
+            result = await _fetch_livedata(
+                mock_session, "http://192.168.1.100", "VSN300", "guest", "", 10, True
+            )
+
+        assert result == livedata
+
+    @pytest.mark.asyncio
+    async def test_fetch_livedata_vsn700_success(self, mock_session: MagicMock) -> None:
+        """Test successful livedata fetch for VSN700."""
+        livedata: dict[str, Any] = {"123668-3P81-3821": {"device_type": "inverter_3phases"}}
+
+        mock_response = AsyncMock()
+        mock_response.status = 200
+        mock_response.headers = {}
+        mock_response.json = AsyncMock(return_value=livedata)
+
+        mock_session.get = MagicMock(
+            return_value=AsyncMock(
+                __aenter__=AsyncMock(return_value=mock_response), __aexit__=AsyncMock()
+            )
+        )
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discovery.check_socket_connection",
+                new_callable=AsyncMock,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discovery.get_vsn700_basic_auth",
+                return_value="basic_auth_value",
+            ),
+        ):
+            result = await _fetch_livedata(
+                mock_session, "http://192.168.1.100", "VSN700", "guest", "", 10, True
+            )
+
+        assert result == livedata
+
+    @pytest.mark.asyncio
+    async def test_fetch_livedata_no_auth_required(self, mock_session: MagicMock) -> None:
+        """Test livedata fetch without authentication."""
+        livedata: dict[str, Any] = {}
+
+        mock_response = AsyncMock()
+        mock_response.status = 200
+        mock_response.headers = {}
+        mock_response.json = AsyncMock(return_value=livedata)
+
+        mock_session.get = MagicMock(
+            return_value=AsyncMock(
+                __aenter__=AsyncMock(return_value=mock_response), __aexit__=AsyncMock()
+            )
+        )
+
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discovery.check_socket_connection",
+            new_callable=AsyncMock,
+        ):
+            result = await _fetch_livedata(
+                mock_session, "http://192.168.1.100", "VSN700", "guest", "", 10, False
+            )
+
+        assert result == livedata
+
+    @pytest.mark.asyncio
+    async def test_fetch_livedata_http_error(self, mock_session: MagicMock) -> None:
+        """Test livedata fetch with HTTP error."""
+        mock_response = AsyncMock()
+        mock_response.status = 500
+        mock_response.headers = {}
+
+        mock_session.get = MagicMock(
+            return_value=AsyncMock(
+                __aenter__=AsyncMock(return_value=mock_response), __aexit__=AsyncMock()
+            )
+        )
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discovery.check_socket_connection",
+                new_callable=AsyncMock,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discovery.get_vsn700_basic_auth",
+                return_value="basic_auth_value",
+            ),
+            pytest.raises(VSNConnectionError, match="HTTP 500"),
+        ):
+            await _fetch_livedata(
+                mock_session, "http://192.168.1.100", "VSN700", "guest", "", 10, True
+            )
+
+    @pytest.mark.asyncio
+    async def test_fetch_livedata_client_error(self, mock_session: MagicMock) -> None:
+        """Test livedata fetch with client error."""
+        mock_session.get = MagicMock(side_effect=aiohttp.ClientError("Timeout"))
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discovery.check_socket_connection",
+                new_callable=AsyncMock,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discovery.get_vsn700_basic_auth",
+                return_value="basic_auth_value",
+            ),
+            pytest.raises(VSNConnectionError, match="Timeout"),
+        ):
+            await _fetch_livedata(
+                mock_session, "http://192.168.1.100", "VSN700", "guest", "", 10, True
+            )
 
 
 class TestDiscoverVSNDevice:
