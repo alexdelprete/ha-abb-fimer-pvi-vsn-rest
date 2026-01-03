@@ -4,7 +4,7 @@ version = "1.3.0"
 description = "Home Assistant integration for ABB/FIMER/Power-One PVI inverters via VSN300/VSN700 REST API"
 readme = "README.md"
 license = "MIT"
-requires-python = ">=3.13"
+requires-python = ">=3.13.2"
 authors = [{ name = "alexdelprete" }]
 keywords = ["home-assistant", "abb", "fimer", "power-one", "pvi", "vsn300", "vsn700", "solar", "inverter", "energy", "monitoring"]
 classifiers = [
