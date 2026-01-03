@@ -130,60 +130,86 @@ def mock_discovery_result(
 
 
 @pytest.fixture
-def mock_normalized_data() -> dict[str, dict[str, Any]]:
-    """Return mock normalized data from the client."""
+def mock_normalized_data() -> dict[str, Any]:
+    """Return mock normalized data from the client.
+
+    The coordinator data structure is:
+    {
+        "devices": {
+            "<device_id>": {
+                "points": {
+                    "<point_name>": {"value": ..., ...}
+                }
+            }
+        }
+    }
+    """
     return {
-        TEST_INVERTER_SN: {
-            "watts": {
-                "value": 5000,
-                "ha_display_name": "Power AC",
-                "ha_unit_of_measurement": "W",
-                "ha_device_class": "power",
-                "ha_state_class": "measurement",
-                "label": "AC Power",
-                "description": "AC Power output",
-                "vsn300_rest_name": "m103_1_W",
-                "vsn700_rest_name": "Pgrid",
-                "category": "Inverter",
+        "devices": {
+            TEST_INVERTER_SN: {
+                "points": {
+                    "watts": {
+                        "value": 5000,
+                        "ha_display_name": "Power AC",
+                        "ha_unit_of_measurement": "W",
+                        "ha_device_class": "power",
+                        "ha_state_class": "measurement",
+                        "label": "AC Power",
+                        "description": "AC Power output",
+                        "vsn300_name": "m103_1_W",
+                        "vsn700_name": "Pgrid",
+                        "category": "Inverter",
+                        "model": "M103",
+                        "sunspec_name": "W",
+                    },
+                    "watthours": {
+                        "value": 123456789,
+                        "ha_display_name": "Energy AC - Produced (Lifetime)",
+                        "ha_unit_of_measurement": "Wh",
+                        "ha_device_class": "energy",
+                        "ha_state_class": "total_increasing",
+                        "label": "Lifetime Energy",
+                        "description": "Total energy produced",
+                        "vsn300_name": "m103_1_WH",
+                        "vsn700_name": "Etot",
+                        "category": "Inverter",
+                        "model": "M103",
+                        "sunspec_name": "WH",
+                    },
+                    "cabinet_temperature": {
+                        "value": 45.5,
+                        "ha_display_name": "Temperature - Cabinet",
+                        "ha_unit_of_measurement": "°C",
+                        "ha_device_class": "temperature",
+                        "ha_state_class": "measurement",
+                        "label": "Cabinet Temperature",
+                        "description": "Inverter cabinet temperature",
+                        "vsn300_name": "m64061_1_TmpCab",
+                        "vsn700_name": "Tcab",
+                        "category": "Inverter",
+                        "model": "M64061",
+                        "sunspec_name": "TmpCab",
+                    },
+                },
             },
-            "watthours": {
-                "value": 123456789,
-                "ha_display_name": "Energy AC - Produced (Lifetime)",
-                "ha_unit_of_measurement": "Wh",
-                "ha_device_class": "energy",
-                "ha_state_class": "total_increasing",
-                "label": "Lifetime Energy",
-                "description": "Total energy produced",
-                "vsn300_rest_name": "m103_1_WH",
-                "vsn700_rest_name": "Etot",
-                "category": "Inverter",
-            },
-            "cabinet_temperature": {
-                "value": 45.5,
-                "ha_display_name": "Temperature - Cabinet",
-                "ha_unit_of_measurement": "°C",
-                "ha_device_class": "temperature",
-                "ha_state_class": "measurement",
-                "label": "Cabinet Temperature",
-                "description": "Inverter cabinet temperature",
-                "vsn300_rest_name": "m64061_1_TmpCab",
-                "vsn700_rest_name": "Tcab",
-                "category": "Inverter",
-            },
-        },
-        TEST_LOGGER_SN: {
-            "firmware_version": {
-                "value": "1.9.2",
-                "ha_display_name": "Firmware Version",
-                "ha_unit_of_measurement": None,
-                "ha_device_class": None,
-                "ha_state_class": None,
-                "label": "Firmware Version",
-                "description": "Datalogger firmware version",
-                "vsn300_rest_name": "fw_ver",
-                "vsn700_rest_name": "fw_ver",
-                "category": "System",
-                "entity_category": "diagnostic",
+            TEST_LOGGER_SN: {
+                "points": {
+                    "firmware_version": {
+                        "value": "1.9.2",
+                        "ha_display_name": "Firmware Version",
+                        "ha_unit_of_measurement": None,
+                        "ha_device_class": None,
+                        "ha_state_class": None,
+                        "label": "Firmware Version",
+                        "description": "Datalogger firmware version",
+                        "vsn300_name": "fw_ver",
+                        "vsn700_name": "fw_ver",
+                        "category": "System",
+                        "entity_category": "diagnostic",
+                        "model": "",
+                        "sunspec_name": "fw_ver",
+                    },
+                },
             },
         },
     }

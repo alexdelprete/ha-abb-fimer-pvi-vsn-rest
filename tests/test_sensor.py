@@ -88,9 +88,9 @@ def test_sensor_attributes(
         point_data=sample_point_data,
     )
 
-    # Test entity attributes
+    # Test entity attributes (use _attr_ properties directly to avoid HA platform context)
     assert sensor.has_entity_name is True
-    assert sensor.name == "Power AC"
+    assert sensor._attr_name == "Power AC"  # Direct attribute access
     assert sensor.native_unit_of_measurement == "W"
     assert sensor.device_class == SensorDeviceClass.POWER
     assert sensor.state_class == SensorStateClass.MEASUREMENT
