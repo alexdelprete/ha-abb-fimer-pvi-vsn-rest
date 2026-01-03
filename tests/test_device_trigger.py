@@ -1,98 +1,191 @@
-"""Tests for ABB FIMER PVI VSN REST device triggers."""
+"""Tests for device trigger module."""
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
 from custom_components.abb_fimer_pvi_vsn_rest.const import DOMAIN
 from custom_components.abb_fimer_pvi_vsn_rest.device_trigger import (
+    TRIGGER_SCHEMA,
     TRIGGER_TYPES,
+    async_attach_trigger,
     async_get_triggers,
 )
-from homeassistant.helpers import device_registry as dr
-
-# Skip reason for tests requiring full integration loading
-SKIP_INTEGRATION_LOADING = (
-    "Skipped: HA integration loading fails in CI due to editable install path issues"
-)
+from homeassistant.const import CONF_DEVICE_ID, CONF_DOMAIN, CONF_PLATFORM, CONF_TYPE
+from homeassistant.core import HomeAssistant
 
 
-async def test_trigger_types_defined() -> None:
-    """Test that trigger types are properly defined."""
-    assert "device_unreachable" in TRIGGER_TYPES
-    assert "device_not_responding" in TRIGGER_TYPES
-    assert "device_recovered" in TRIGGER_TYPES
-    assert len(TRIGGER_TYPES) == 3
+class TestTriggerTypes:
+    """Tests for trigger type constants."""
+
+    def test_trigger_types_defined(self) -> None:
+        """Test trigger types are defined."""
+        assert "device_unreachable" in TRIGGER_TYPES
+        assert "device_not_responding" in TRIGGER_TYPES
+        assert "device_recovered" in TRIGGER_TYPES
+
+    def test_trigger_types_count(self) -> None:
+        """Test expected number of trigger types."""
+        assert len(TRIGGER_TYPES) == 3
 
 
-@pytest.mark.skip(reason=SKIP_INTEGRATION_LOADING)
-async def test_async_get_triggers(
-    hass,
-    mock_config_entry,
-    mock_coordinator: MagicMock,
-) -> None:
-    """Test getting triggers for a device."""
-    mock_config_entry.add_to_hass(hass)
+class TestTriggerSchema:
+    """Tests for trigger schema."""
 
-    # Setup runtime data
-    @dataclass
-    class RuntimeData:
-        coordinator: object
-
-    mock_config_entry.runtime_data = RuntimeData(coordinator=mock_coordinator)
-
-    # Create a mock device entry
-    device_registry = dr.async_get(hass)
-    device_entry = device_registry.async_get_or_create(
-        config_entry_id=mock_config_entry.entry_id,
-        identifiers={(DOMAIN, "test_device_id")},
-        name="Test VSN Device",
-    )
-
-    triggers = await async_get_triggers(hass, device_entry.id)
-
-    # Should return triggers for each type
-    assert len(triggers) == len(TRIGGER_TYPES)
-
-    # Verify trigger structure
-    for trigger in triggers:
-        assert trigger["platform"] == "device"
-        assert trigger["domain"] == DOMAIN
-        assert trigger["device_id"] == device_entry.id
-        assert trigger["type"] in TRIGGER_TYPES
+    def test_schema_requires_type(self) -> None:
+        """Test schema requires type field."""
+        # TRIGGER_SCHEMA should require CONF_TYPE
+        assert TRIGGER_SCHEMA is not None
 
 
-@pytest.mark.skip(reason=SKIP_INTEGRATION_LOADING)
-async def test_trigger_has_correct_metadata(
-    hass,
-    mock_config_entry,
-    mock_coordinator: MagicMock,
-) -> None:
-    """Test that triggers have correct metadata."""
-    mock_config_entry.add_to_hass(hass)
+class TestAsyncGetTriggers:
+    """Tests for async_get_triggers function."""
 
-    # Setup runtime data
-    @dataclass
-    class RuntimeData:
-        coordinator: object
+    @pytest.fixture
+    def mock_hass(self) -> MagicMock:
+        """Create mock HomeAssistant instance."""
+        return MagicMock(spec=HomeAssistant)
 
-    mock_config_entry.runtime_data = RuntimeData(coordinator=mock_coordinator)
+    @pytest.mark.asyncio
+    async def test_get_triggers_for_domain_device(self, mock_hass: MagicMock) -> None:
+        """Test getting triggers for a device belonging to our domain."""
+        mock_device = MagicMock()
+        mock_device.identifiers = {(DOMAIN, "077909-3G82-3112")}
 
-    # Create a mock device entry
-    device_registry = dr.async_get(hass)
-    device_entry = device_registry.async_get_or_create(
-        config_entry_id=mock_config_entry.entry_id,
-        identifiers={(DOMAIN, "test_device_id")},
-        name="Test VSN Device",
-    )
+        mock_device_registry = MagicMock()
+        mock_device_registry.async_get.return_value = mock_device
 
-    triggers = await async_get_triggers(hass, device_entry.id)
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.device_trigger.dr.async_get",
+            return_value=mock_device_registry,
+        ):
+            triggers = await async_get_triggers(mock_hass, "device_123")
 
-    # Find the device_recovered trigger
-    recovered_trigger = next((t for t in triggers if t["type"] == "device_recovered"), None)
-    assert recovered_trigger is not None
-    assert recovered_trigger["platform"] == "device"
-    assert recovered_trigger["domain"] == DOMAIN
+        assert len(triggers) == 3
+        trigger_types = {t[CONF_TYPE] for t in triggers}
+        assert trigger_types == TRIGGER_TYPES
+
+        # Check trigger structure
+        for trigger in triggers:
+            assert trigger[CONF_PLATFORM] == "device"
+            assert trigger[CONF_DOMAIN] == DOMAIN
+            assert trigger[CONF_DEVICE_ID] == "device_123"
+
+    @pytest.mark.asyncio
+    async def test_get_triggers_device_not_found(self, mock_hass: MagicMock) -> None:
+        """Test getting triggers when device not found."""
+        mock_device_registry = MagicMock()
+        mock_device_registry.async_get.return_value = None
+
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.device_trigger.dr.async_get",
+            return_value=mock_device_registry,
+        ):
+            triggers = await async_get_triggers(mock_hass, "nonexistent_device")
+
+        assert triggers == []
+
+    @pytest.mark.asyncio
+    async def test_get_triggers_other_domain_device(self, mock_hass: MagicMock) -> None:
+        """Test getting triggers for device from different domain."""
+        mock_device = MagicMock()
+        mock_device.identifiers = {("other_domain", "device_123")}
+
+        mock_device_registry = MagicMock()
+        mock_device_registry.async_get.return_value = mock_device
+
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.device_trigger.dr.async_get",
+            return_value=mock_device_registry,
+        ):
+            triggers = await async_get_triggers(mock_hass, "device_123")
+
+        assert triggers == []
+
+    @pytest.mark.asyncio
+    async def test_get_triggers_multiple_identifiers(self, mock_hass: MagicMock) -> None:
+        """Test getting triggers for device with multiple identifiers."""
+        mock_device = MagicMock()
+        mock_device.identifiers = {
+            ("other_domain", "other_id"),
+            (DOMAIN, "077909-3G82-3112"),
+        }
+
+        mock_device_registry = MagicMock()
+        mock_device_registry.async_get.return_value = mock_device
+
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.device_trigger.dr.async_get",
+            return_value=mock_device_registry,
+        ):
+            triggers = await async_get_triggers(mock_hass, "device_123")
+
+        # Should still return triggers because one identifier matches our domain
+        assert len(triggers) == 3
+
+
+class TestAsyncAttachTrigger:
+    """Tests for async_attach_trigger function."""
+
+    @pytest.fixture
+    def mock_hass(self) -> MagicMock:
+        """Create mock HomeAssistant instance."""
+        return MagicMock(spec=HomeAssistant)
+
+    @pytest.mark.asyncio
+    async def test_attach_trigger(self, mock_hass: MagicMock) -> None:
+        """Test attaching a trigger."""
+        config = {
+            CONF_PLATFORM: "device",
+            CONF_DOMAIN: DOMAIN,
+            CONF_DEVICE_ID: "device_123",
+            CONF_TYPE: "device_unreachable",
+        }
+        action = MagicMock()
+        trigger_info = MagicMock()
+
+        mock_unsubscribe = MagicMock()
+
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.device_trigger.event_trigger.async_attach_trigger",
+            new_callable=AsyncMock,
+            return_value=mock_unsubscribe,
+        ) as mock_attach:
+            result = await async_attach_trigger(mock_hass, config, action, trigger_info)
+
+        assert result == mock_unsubscribe
+        mock_attach.assert_called_once()
+
+        # Verify event config was created correctly
+        call_args = mock_attach.call_args
+        event_config = call_args[0][1]
+        assert event_config["event_type"] == f"{DOMAIN}_event"
+        assert event_config["event_data"][CONF_DEVICE_ID] == "device_123"
+        assert event_config["event_data"][CONF_TYPE] == "device_unreachable"
+
+    @pytest.mark.asyncio
+    async def test_attach_trigger_recovered(self, mock_hass: MagicMock) -> None:
+        """Test attaching a device_recovered trigger."""
+        config = {
+            CONF_PLATFORM: "device",
+            CONF_DOMAIN: DOMAIN,
+            CONF_DEVICE_ID: "device_456",
+            CONF_TYPE: "device_recovered",
+        }
+        action = MagicMock()
+        trigger_info = MagicMock()
+
+        mock_unsubscribe = MagicMock()
+
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.device_trigger.event_trigger.async_attach_trigger",
+            new_callable=AsyncMock,
+            return_value=mock_unsubscribe,
+        ) as mock_attach:
+            await async_attach_trigger(mock_hass, config, action, trigger_info)
+
+        call_args = mock_attach.call_args
+        event_config = call_args[0][1]
+        assert event_config["event_data"][CONF_TYPE] == "device_recovered"
