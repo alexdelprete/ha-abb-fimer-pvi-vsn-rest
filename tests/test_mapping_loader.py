@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 from pathlib import Path
 from typing import Any
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
 
@@ -333,8 +334,6 @@ class TestVSNMappingLoaderLookups:
 
         loader = VSNMappingLoader(mapping_file)
         # Manually load synchronously for fixture
-        import asyncio
-
         asyncio.get_event_loop().run_until_complete(loader.async_load())
         return loader
 

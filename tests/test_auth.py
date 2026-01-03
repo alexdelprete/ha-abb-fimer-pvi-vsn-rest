@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any
+import base64
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import aiohttp
@@ -183,8 +183,6 @@ class TestGetVSN700BasicAuth:
         result = get_vsn700_basic_auth("guest", "password")
 
         # Base64 of "guest:password"
-        import base64
-
         expected = base64.b64encode(b"guest:password").decode("utf-8")
         assert result == expected
 
@@ -192,16 +190,12 @@ class TestGetVSN700BasicAuth:
         """Test basic auth with empty password."""
         result = get_vsn700_basic_auth("guest", "")
 
-        import base64
-
         expected = base64.b64encode(b"guest:").decode("utf-8")
         assert result == expected
 
     def test_basic_auth_special_characters(self) -> None:
         """Test basic auth with special characters."""
         result = get_vsn700_basic_auth("user@domain", "p@ss:word!")
-
-        import base64
 
         expected = base64.b64encode(b"user@domain:p@ss:word!").decode("utf-8")
         assert result == expected

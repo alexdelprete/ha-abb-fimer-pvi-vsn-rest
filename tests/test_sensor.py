@@ -3,18 +3,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime
-from typing import Any
-from unittest.mock import MagicMock, patch
-from zoneinfo import ZoneInfo
+from unittest.mock import MagicMock
 
 import pytest
 
-from custom_components.abb_fimer_pvi_vsn_rest.const import (
-    AURORA_EPOCH_OFFSET,
-    DOMAIN,
-    GLOBAL_STATE_MAP,
-)
+from custom_components.abb_fimer_pvi_vsn_rest.const import DOMAIN, GLOBAL_STATE_MAP
 from custom_components.abb_fimer_pvi_vsn_rest.sensor import (
     DEVICE_CLASS_EXCEPTIONS,
     DEVICE_CLASS_VALID_UNITS,

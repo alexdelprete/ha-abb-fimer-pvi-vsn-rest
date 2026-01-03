@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from datetime import timedelta
-from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -23,7 +22,6 @@ from .conftest import (
     TEST_LOGGER_SN,
     TEST_SCAN_INTERVAL,
     TEST_VSN_MODEL,
-    MockDiscoveredDevice,
     MockDiscoveryResult,
 )
 

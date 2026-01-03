@@ -5,9 +5,6 @@ from __future__ import annotations
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import ConfigEntryNotReady
 
 from custom_components.abb_fimer_pvi_vsn_rest import (
     async_remove_config_entry_device,
@@ -19,11 +16,10 @@ from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discover
     DiscoveredDevice,
     DiscoveryResult,
 )
-from custom_components.abb_fimer_pvi_vsn_rest.const import (
-    CONF_SCAN_INTERVAL,
-    CONF_VSN_MODEL,
-    DOMAIN,
-)
+from custom_components.abb_fimer_pvi_vsn_rest.const import CONF_SCAN_INTERVAL, DOMAIN
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ConfigEntryNotReady
 
 
 class TestAsyncSetupEntry:

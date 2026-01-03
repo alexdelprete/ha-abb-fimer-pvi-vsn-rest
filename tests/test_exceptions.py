@@ -61,40 +61,21 @@ class TestExceptionCatching:
 
     def test_catch_connection_as_client(self) -> None:
         """Test VSNConnectionError can be caught as VSNClientError."""
-        try:
+        with pytest.raises(VSNClientError, match="Connection failed"):
             raise VSNConnectionError("Connection failed")
-        except VSNClientError as err:
-            assert "Connection failed" in str(err)
-        else:
-            pytest.fail("Should have caught VSNConnectionError as VSNClientError")
 
     def test_catch_auth_as_client(self) -> None:
         """Test VSNAuthenticationError can be caught as VSNClientError."""
-        try:
+        with pytest.raises(VSNClientError, match="Invalid auth"):
             raise VSNAuthenticationError("Invalid auth")
-        except VSNClientError as err:
-            assert "Invalid auth" in str(err)
-        else:
-            pytest.fail("Should have caught VSNAuthenticationError as VSNClientError")
 
     def test_catch_detection_as_client(self) -> None:
         """Test VSNDetectionError can be caught as VSNClientError."""
-        try:
+        with pytest.raises(VSNClientError, match="Detection failed"):
             raise VSNDetectionError("Detection failed")
-        except VSNClientError as err:
-            assert "Detection failed" in str(err)
-        else:
-            pytest.fail("Should have caught VSNDetectionError as VSNClientError")
 
     def test_catch_specific_over_general(self) -> None:
         """Test specific exceptions are caught before general."""
-        caught_type = None
-
-        try:
+        # Verify VSNConnectionError is caught as specific type first
+        with pytest.raises(VSNConnectionError, match="Connection failed"):
             raise VSNConnectionError("Connection failed")
-        except VSNConnectionError:
-            caught_type = "connection"
-        except VSNClientError:
-            caught_type = "client"
-
-        assert caught_type == "connection"

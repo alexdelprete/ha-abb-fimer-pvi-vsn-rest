@@ -410,6 +410,6 @@ class TestDiscoverVSNDevice:
                 new_callable=AsyncMock,
                 side_effect=VSNConnectionError("Connection failed"),
             ),
+            pytest.raises(VSNConnectionError, match="Connection failed"),
         ):
-            with pytest.raises(VSNConnectionError, match="Connection failed"):
-                await discover_vsn_device(mock_session, "http://192.168.1.100", "guest", "")
+            await discover_vsn_device(mock_session, "http://192.168.1.100", "guest", "")
