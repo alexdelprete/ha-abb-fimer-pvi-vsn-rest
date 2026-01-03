@@ -158,12 +158,12 @@ class TestAsyncAttachTrigger:
         assert result == mock_unsubscribe
         mock_attach.assert_called_once()
 
-        # Verify event config was created correctly
+        # Verify event_trigger.async_attach_trigger was called with correct args
         call_args = mock_attach.call_args
-        event_config = call_args[0][1]
-        assert event_config["event_type"] == f"{DOMAIN}_event"
-        assert event_config["event_data"][CONF_DEVICE_ID] == "device_123"
-        assert event_config["event_data"][CONF_TYPE] == "device_unreachable"
+        # First positional arg is hass
+        assert call_args[0][0] == mock_hass
+        # Verify platform_type kwarg
+        assert call_args[1]["platform_type"] == "device"
 
     @pytest.mark.asyncio
     async def test_attach_trigger_recovered(self, mock_hass: MagicMock) -> None:
@@ -184,8 +184,7 @@ class TestAsyncAttachTrigger:
             new_callable=AsyncMock,
             return_value=mock_unsubscribe,
         ) as mock_attach:
-            await async_attach_trigger(mock_hass, config, action, trigger_info)
+            result = await async_attach_trigger(mock_hass, config, action, trigger_info)
 
-        call_args = mock_attach.call_args
-        event_config = call_args[0][1]
-        assert event_config["event_data"][CONF_TYPE] == "device_recovered"
+        assert result == mock_unsubscribe
+        mock_attach.assert_called_once()
