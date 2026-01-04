@@ -14,6 +14,7 @@ from homeassistant.config_entries import (
     ConfigFlowResult,
     OptionsFlowWithReload,
 )
+from homeassistant.data_entry_flow import AbortFlow
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_registry as er
@@ -248,6 +249,9 @@ class ABBFimerPVIVSNRestConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore[c
                     },
                 )
 
+            except AbortFlow:
+                # Re-raise AbortFlow exceptions (e.g., already_configured)
+                raise
             except VSNAuthenticationError:
                 errors["base"] = ERROR_INVALID_AUTH
             except VSNConnectionError as err:
@@ -308,6 +312,9 @@ class ABBFimerPVIVSNRestConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore[c
                     },
                 )
 
+            except AbortFlow:
+                # Re-raise AbortFlow exceptions
+                raise
             except VSNAuthenticationError:
                 errors["base"] = ERROR_INVALID_AUTH
             except VSNConnectionError as err:
