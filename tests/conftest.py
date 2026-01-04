@@ -10,6 +10,7 @@ from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.abb_fimer_pvi_vsn_rest.const import (
     CONF_ENABLE_REPAIR_NOTIFICATION,
@@ -26,7 +27,6 @@ from custom_components.abb_fimer_pvi_vsn_rest.const import (
     VSN_MODEL_300,
 )
 from custom_components.abb_fimer_pvi_vsn_rest.coordinator import ABBFimerPVIVSNRestCoordinator
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import CoreState, HomeAssistant
 
@@ -298,20 +298,18 @@ def auto_enable_custom_integrations(
 
 @pytest.fixture
 def mock_config_entry(
-    hass: HomeAssistant,
     mock_config_entry_data: dict,
     mock_config_entry_options: dict,
-) -> MagicMock:
+) -> MockConfigEntry:
     """Create a mock config entry."""
-    entry = MagicMock(spec=ConfigEntry)
-    entry.entry_id = "test_entry_id"
-    entry.domain = DOMAIN
-    entry.data = mock_config_entry_data
-    entry.options = mock_config_entry_options
-    entry.unique_id = TEST_LOGGER_SN.lower()
-    entry.title = f"{TEST_VSN_MODEL} ({TEST_LOGGER_SN})"
-    entry.version = 1
-    return entry
+    return MockConfigEntry(
+        domain=DOMAIN,
+        data=mock_config_entry_data,
+        options=mock_config_entry_options,
+        unique_id=TEST_LOGGER_SN.lower(),
+        title=f"{TEST_VSN_MODEL} ({TEST_LOGGER_SN})",
+        version=1,
+    )
 
 
 @pytest.fixture

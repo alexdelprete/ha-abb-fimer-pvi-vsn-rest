@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
@@ -206,11 +206,15 @@ async def test_form_already_configured(
 async def test_options_flow(
     hass: HomeAssistant,
     mock_config_entry,
-    mock_coordinator,
+    mock_discovered_devices,
 ) -> None:
     """Test options flow."""
     # Add config entry
     mock_config_entry.add_to_hass(hass)
+
+    # Create a mock coordinator with discovered_devices
+    mock_coordinator = MagicMock()
+    mock_coordinator.discovered_devices = mock_discovered_devices
 
     # Mock runtime_data
     @dataclass
