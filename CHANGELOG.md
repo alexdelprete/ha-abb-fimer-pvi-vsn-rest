@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.1] - 2026-01-04
+
+### Bug Fixes
+
+- **Config flow fix** - Fixed "already_configured" detection not working correctly
+  - AbortFlow exceptions were being caught by broad exception handler
+  - Users now correctly see "already_configured" message when adding duplicate devices
+
+### New Features
+
+- **Configurable failure notifications** - Enable/disable repair and startup notifications
+- **Recovery script support** - Configure a script to run when device recovers
+- **Configurable failures threshold** - Set consecutive failures before notification
+
+### UI Improvements
+
+- **Compact options dialog** - Eliminated unnecessary scrollbar on smaller screens
+- **Startup notifications disabled by default** - Reduced notification noise
+
+### Test Infrastructure
+
+- **Full HA integration tests** - Tests now run with complete HA test framework
+- **97% code coverage** - Comprehensive test coverage for all components
+
+**See**: [v1.3.1 Release Notes](docs/releases/v1.3.1.md)
+
 ## [1.3.1-beta.5] - 2026-01-04
 
 ### UI Improvements
