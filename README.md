@@ -87,25 +87,47 @@ The integration will:
 
 ### Configuration Options
 
-After setup, click **"Configure"** on the integration card to adjust:
+After setup, click **"Configure"** on the integration card to access the options dialog. All configuration options are described below:
 
-- **Scan Interval**: How often to poll data (default: 60 seconds, range: 30-600)
-- **Custom Device Names**: Set custom names for each device type (inverter, datalogger, meter, battery)
-- **Regenerate Entity IDs**: Option to update entity IDs to match new device names (use with caution!)
+#### Polling Settings
 
-See [Custom Device Names](#custom-device-names) below for details on customizing device names.
+| Option | Default | Range | Description |
+|--------|---------|-------|-------------|
+| **Scan interval** | 60 | 30-600 sec | How often to fetch data from the VSN device |
+
+#### Failure Notifications
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| **Enable runtime failure notifications** | On | Notify when device becomes unreachable during normal operation |
+| **Enable startup failure notifications** | On | Notify when device is unreachable at Home Assistant startup |
+| **Failures before notification** | 3 (1-10) | Consecutive failures before creating a notification |
+| **Recovery script** | (none) | Script to execute when failures threshold is reached (e.g., `script.restart_router`) |
+
+**Runtime vs Startup Notifications:**
+- **Runtime**: Monitors failures during normal operation after HA is running
+- **Startup**: Monitors failures when HA starts/restarts and can't connect to the device
+
+**Tip for solar-only systems**: If your inverter is offline at night and you restart HA at night,
+disable "Enable startup failure notifications" to avoid unnecessary alerts.
+
+#### Device Name Customization
+
+| Option | Description |
+|--------|-------------|
+| **Inverter device name** | Custom name for inverter devices. Leave empty for default. |
+| **Datalogger device name** | Custom name for datalogger devices. Leave empty for default. |
+| **Meter device name** | Custom name for meter devices. Leave empty for default. |
+| **Battery device name** | Custom name for battery devices. Leave empty for default. |
+| **Regenerate entity IDs** | ⚠️ Update entity IDs to match new names. **Breaks automations!** |
+
+**Note**: Only device types discovered in your system will appear in the options dialog.
+
+See [Custom Device Names](#custom-device-names) below for detailed examples.
 
 ### Connection Failure Notifications
 
 The integration can notify you when the datalogger becomes unreachable and optionally execute a recovery script.
-
-**Configuration Options:**
-
-| Option | Default | Range | Description |
-|--------|---------|-------|-------------|
-| Enable repair notifications | Enabled | On/Off | Show notifications on connection failures |
-| Failures threshold | 3 | 1-10 | Consecutive failures before notification |
-| Recovery script | (none) | Any script entity | Script to execute when threshold is reached |
 
 **How It Works:**
 

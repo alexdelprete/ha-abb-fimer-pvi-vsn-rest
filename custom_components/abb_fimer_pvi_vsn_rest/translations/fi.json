@@ -44,7 +44,8 @@
         "description": "Configure update interval, notifications, and device name prefixes.",
         "data": {
           "scan_interval": "Kyselyväli (sekuntia)",
-          "enable_repair_notification": "Enable connection failure notifications",
+          "enable_repair_notification": "Enable runtime failure notifications",
+          "enable_startup_notification": "Enable startup failure notifications",
           "failures_threshold": "Failures before notification",
           "recovery_script": "Recovery script (optional)",
           "prefix_inverter": "Invertteri laitteen nimi",
@@ -54,15 +55,16 @@
           "regenerate_entity_ids": "Luo entitetti-ID:t uudelleen"
         },
         "data_description": {
-          "scan_interval": "Kuinka usein haetaan tietoja VSN-laitteesta. Alue: 30-600 sekuntia. Oletus: 60 sekuntia.",
-          "enable_repair_notification": "Show a notification when the device becomes unreachable and when it recovers.",
-          "failures_threshold": "Number of consecutive failures before creating a notification. Range: 1-10. Default: 3.",
-          "recovery_script": "Script to execute when the device becomes unreachable (e.g., 'script.restart_router'). Leave empty for none.",
-          "prefix_inverter": "Mukautettu nimi invertterilaitteille. Jätä tyhjäksi oletusarvolle (e.g., 'Teho-One Invertteri PVI-10.0-OUTD (077909-3G82-3112)').",
-          "prefix_datalogger": "Mukautettu nimi datalogger-laitteille. Jätä tyhjäksi oletusarvolle.",
-          "prefix_meter": "Mukautettu nimi mittarilaitteille. Jätä tyhjäksi oletusarvolle.",
-          "prefix_battery": "Mukautettu nimi akkulaitteille. Jätä tyhjäksi oletusarvolle.",
-          "regenerate_entity_ids": "⚠️ VAROITUS: This will update entity IDs and BREAK existing automations!"
+          "scan_interval": "Fetch interval: 30-600 seconds. Default: 60.",
+          "enable_repair_notification": "Notify when device becomes unreachable during operation.",
+          "enable_startup_notification": "Notify when device is unreachable at Home Assistant startup.",
+          "failures_threshold": "Consecutive failures before notification. Range: 1-10. Default: 3.",
+          "recovery_script": "Script to run on failure (e.g., 'script.restart_router'). Leave empty for none.",
+          "prefix_inverter": "Custom inverter name. Jätä tyhjäksi oletusarvolle.",
+          "prefix_datalogger": "Custom datalogger name. Jätä tyhjäksi oletusarvolle.",
+          "prefix_meter": "Custom meter name. Jätä tyhjäksi oletusarvolle.",
+          "prefix_battery": "Custom battery name. Jätä tyhjäksi oletusarvolle.",
+          "regenerate_entity_ids": "⚠️ VAROITUS: This will BREAK existing automations!"
         }
       }
     }

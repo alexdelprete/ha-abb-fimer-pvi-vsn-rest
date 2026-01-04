@@ -44,7 +44,8 @@
         "description": "Configure update interval, notifications, and device name prefixes.",
         "data": {
           "scan_interval": "Intervallo di scansione (secondi)",
-          "enable_repair_notification": "Enable connection failure notifications",
+          "enable_repair_notification": "Enable runtime failure notifications",
+          "enable_startup_notification": "Enable startup failure notifications",
           "failures_threshold": "Failures before notification",
           "recovery_script": "Recovery script (optional)",
           "prefix_inverter": "Nome dispositivo inverter",
@@ -54,15 +55,16 @@
           "regenerate_entity_ids": "Rigenera gli ID entità"
         },
         "data_description": {
-          "scan_interval": "Frequenza di recupero dati dal dispositivo VSN. Intervallo: 30-600 secondi. Predefinito: 60 secondi.",
-          "enable_repair_notification": "Show a notification when the device becomes unreachable and when it recovers.",
-          "failures_threshold": "Number of consecutive failures before creating a notification. Range: 1-10. Default: 3.",
-          "recovery_script": "Script to execute when the device becomes unreachable (e.g., 'script.restart_router'). Leave empty for none.",
-          "prefix_inverter": "Nome personalizzato per i dispositivi inverter. Lascia vuoto per il valore predefinito (e.g., 'Potenza-One Inverter PVI-10.0-OUTD (077909-3G82-3112)').",
-          "prefix_datalogger": "Nome personalizzato per i dispositivi datalogger. Lascia vuoto per il valore predefinito.",
-          "prefix_meter": "Nome personalizzato per i dispositivi contatore. Lascia vuoto per il valore predefinito.",
-          "prefix_battery": "Nome personalizzato per i dispositivi batteria. Lascia vuoto per il valore predefinito.",
-          "regenerate_entity_ids": "⚠️ ATTENZIONE: This will update entity IDs and BREAK existing automations!"
+          "scan_interval": "Fetch interval: 30-600 seconds. Default: 60.",
+          "enable_repair_notification": "Notify when device becomes unreachable during operation.",
+          "enable_startup_notification": "Notify when device is unreachable at Home Assistant startup.",
+          "failures_threshold": "Consecutive failures before notification. Range: 1-10. Default: 3.",
+          "recovery_script": "Script to run on failure (e.g., 'script.restart_router'). Leave empty for none.",
+          "prefix_inverter": "Custom inverter name. Lascia vuoto per il valore predefinito.",
+          "prefix_datalogger": "Custom datalogger name. Lascia vuoto per il valore predefinito.",
+          "prefix_meter": "Custom meter name. Lascia vuoto per il valore predefinito.",
+          "prefix_battery": "Custom battery name. Lascia vuoto per il valore predefinito.",
+          "regenerate_entity_ids": "⚠️ ATTENZIONE: This will BREAK existing automations!"
         }
       }
     }

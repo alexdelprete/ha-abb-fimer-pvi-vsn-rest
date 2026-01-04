@@ -44,7 +44,8 @@
         "description": "Configure update interval, notifications, and device name prefixes.",
         "data": {
           "scan_interval": "Skanningsintervall (sekunder)",
-          "enable_repair_notification": "Enable connection failure notifications",
+          "enable_repair_notification": "Enable runtime failure notifications",
+          "enable_startup_notification": "Enable startup failure notifications",
           "failures_threshold": "Failures before notification",
           "recovery_script": "Recovery script (optional)",
           "prefix_inverter": "Växelriktare enhetsnamn",
@@ -54,15 +55,16 @@
           "regenerate_entity_ids": "Återskapa entitets-IDer"
         },
         "data_description": {
-          "scan_interval": "Hur ofta data hämtas från VSN-enheten. Intervall: 30-600 sekunder. Standard: 60 sekunder.",
-          "enable_repair_notification": "Show a notification when the device becomes unreachable and when it recovers.",
-          "failures_threshold": "Number of consecutive failures before creating a notification. Range: 1-10. Default: 3.",
-          "recovery_script": "Script to execute when the device becomes unreachable (e.g., 'script.restart_router'). Leave empty for none.",
-          "prefix_inverter": "Anpassat namn för växelriktarenheter. Lämna tomt för standardvärde (e.g., 'Effekt-One Växelriktare PVI-10.0-OUTD (077909-3G82-3112)').",
-          "prefix_datalogger": "Anpassat namn för datalogger-enheter. Lämna tomt för standardvärde.",
-          "prefix_meter": "Anpassat namn för mätarenheter. Lämna tomt för standardvärde.",
-          "prefix_battery": "Anpassat namn för batterienheter. Lämna tomt för standardvärde.",
-          "regenerate_entity_ids": "⚠️ VARNING: This will update entity IDs and BREAK existing automations!"
+          "scan_interval": "Fetch interval: 30-600 seconds. Default: 60.",
+          "enable_repair_notification": "Notify when device becomes unreachable during operation.",
+          "enable_startup_notification": "Notify when device is unreachable at Home Assistant startup.",
+          "failures_threshold": "Consecutive failures before notification. Range: 1-10. Default: 3.",
+          "recovery_script": "Script to run on failure (e.g., 'script.restart_router'). Leave empty for none.",
+          "prefix_inverter": "Custom inverter name. Lämna tomt för standardvärde.",
+          "prefix_datalogger": "Custom datalogger name. Lämna tomt för standardvärde.",
+          "prefix_meter": "Custom meter name. Lämna tomt för standardvärde.",
+          "prefix_battery": "Custom battery name. Lämna tomt för standardvärde.",
+          "regenerate_entity_ids": "⚠️ VARNING: This will BREAK existing automations!"
         }
       }
     }

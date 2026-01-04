@@ -32,6 +32,7 @@ CONF_REGENERATE_ENTITY_IDS = "regenerate_entity_ids"
 
 # Repair notification options
 CONF_ENABLE_REPAIR_NOTIFICATION = "enable_repair_notification"
+CONF_ENABLE_STARTUP_NOTIFICATION = "enable_startup_notification"
 CONF_FAILURES_THRESHOLD = "failures_threshold"
 CONF_RECOVERY_SCRIPT = "recovery_script"
 
@@ -42,6 +43,7 @@ MAX_SCAN_INTERVAL = 600
 
 # Failure tracking for repair issues
 DEFAULT_ENABLE_REPAIR_NOTIFICATION = True
+DEFAULT_ENABLE_STARTUP_NOTIFICATION = True
 DEFAULT_FAILURES_THRESHOLD = 3  # Number of consecutive failures before creating repair issue
 DEFAULT_RECOVERY_SCRIPT = ""  # Empty = no script
 MIN_FAILURES_THRESHOLD = 1

@@ -37,6 +37,7 @@ from .abb_fimer_vsn_rest_client.exceptions import (
 from .abb_fimer_vsn_rest_client.utils import check_socket_connection
 from .const import (
     CONF_ENABLE_REPAIR_NOTIFICATION,
+    CONF_ENABLE_STARTUP_NOTIFICATION,
     CONF_FAILURES_THRESHOLD,
     CONF_PREFIX_BATTERY,
     CONF_PREFIX_DATALOGGER,
@@ -48,6 +49,7 @@ from .const import (
     CONF_SCAN_INTERVAL,
     CONF_VSN_MODEL,
     DEFAULT_ENABLE_REPAIR_NOTIFICATION,
+    DEFAULT_ENABLE_STARTUP_NOTIFICATION,
     DEFAULT_FAILURES_THRESHOLD,
     DEFAULT_RECOVERY_SCRIPT,
     DEFAULT_SCAN_INTERVAL,
@@ -406,6 +408,15 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
                 CONF_ENABLE_REPAIR_NOTIFICATION,
                 default=current_options.get(
                     CONF_ENABLE_REPAIR_NOTIFICATION, DEFAULT_ENABLE_REPAIR_NOTIFICATION
+                ),
+            )
+        ] = bool
+
+        schema_dict[
+            vol.Optional(
+                CONF_ENABLE_STARTUP_NOTIFICATION,
+                default=current_options.get(
+                    CONF_ENABLE_STARTUP_NOTIFICATION, DEFAULT_ENABLE_STARTUP_NOTIFICATION
                 ),
             )
         ] = bool

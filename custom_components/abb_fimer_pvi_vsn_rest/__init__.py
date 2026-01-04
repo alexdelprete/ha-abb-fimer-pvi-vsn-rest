@@ -20,11 +20,13 @@ from .abb_fimer_vsn_rest_client.client import ABBFimerVSNRestClient
 from .abb_fimer_vsn_rest_client.discovery import discover_vsn_device
 from .const import (
     CONF_ENABLE_REPAIR_NOTIFICATION,
+    CONF_ENABLE_STARTUP_NOTIFICATION,
     CONF_FAILURES_THRESHOLD,
     CONF_RECOVERY_SCRIPT,
     CONF_SCAN_INTERVAL,
     CONF_VSN_MODEL,
     DEFAULT_ENABLE_REPAIR_NOTIFICATION,
+    DEFAULT_ENABLE_STARTUP_NOTIFICATION,
     DEFAULT_FAILURES_THRESHOLD,
     DEFAULT_RECOVERY_SCRIPT,
     DEFAULT_SCAN_INTERVAL,
@@ -33,11 +35,13 @@ from .const import (
     STARTUP_MESSAGE,
 )
 from .coordinator import ABBFimerPVIVSNRestCoordinator
+from .repairs import create_connection_issue, delete_connection_issue
 
 _LOGGER = logging.getLogger(__name__)
 
 PLATFORMS: list[Platform] = [Platform.SENSOR]
 STARTUP_LOGGED_KEY = f"{DOMAIN}_startup_logged"
+STARTUP_FAILURES_KEY = f"{DOMAIN}_startup_failures"  # Track startup failures per entry
 
 type ABBFimerPVIVSNRestConfigEntry = ConfigEntry[RuntimeData]
 
@@ -57,6 +61,10 @@ async def async_setup_entry(
     if not hass.data.get(STARTUP_LOGGED_KEY):
         _LOGGER.info(STARTUP_MESSAGE)
         hass.data[STARTUP_LOGGED_KEY] = True
+
+    # Initialize startup failures tracking dict
+    if STARTUP_FAILURES_KEY not in hass.data:
+        hass.data[STARTUP_FAILURES_KEY] = {}
 
     # Migrate options for existing entries (add defaults for new options)
     await _async_migrate_options(hass, config_entry)
@@ -85,6 +93,14 @@ async def async_setup_entry(
     # Get aiohttp session
     session = async_get_clientsession(hass)
 
+    # Get startup notification settings
+    enable_startup_notification = config_entry.options.get(
+        CONF_ENABLE_STARTUP_NOTIFICATION, DEFAULT_ENABLE_STARTUP_NOTIFICATION
+    )
+    failures_threshold = config_entry.options.get(
+        CONF_FAILURES_THRESHOLD, DEFAULT_FAILURES_THRESHOLD
+    )
+
     # Perform discovery to get complete device information
     try:
         _LOGGER.debug("Performing device discovery during setup")
@@ -109,8 +125,20 @@ async def async_setup_entry(
                 device.device_type,
                 device.device_model or "Unknown",
             )
+
+        # Clear startup failure tracking on success
+        _clear_startup_failure(hass, config_entry.entry_id)
+
     except Exception as err:
-        # HA handles logging for ConfigEntryNotReady automatically
+        # Track startup failures and create notification if threshold reached
+        _handle_startup_failure(
+            hass,
+            config_entry,
+            host,
+            failures_threshold,
+            enable_startup_notification,
+            err,
+        )
         raise ConfigEntryNotReady(f"Discovery failed: {err}") from err
 
     # Initialize REST client with discovered VSN model and devices
@@ -244,6 +272,10 @@ async def _async_migrate_options(
         options[CONF_ENABLE_REPAIR_NOTIFICATION] = DEFAULT_ENABLE_REPAIR_NOTIFICATION
         updated = True
 
+    if CONF_ENABLE_STARTUP_NOTIFICATION not in options:
+        options[CONF_ENABLE_STARTUP_NOTIFICATION] = DEFAULT_ENABLE_STARTUP_NOTIFICATION
+        updated = True
+
     if CONF_FAILURES_THRESHOLD not in options:
         options[CONF_FAILURES_THRESHOLD] = DEFAULT_FAILURES_THRESHOLD
         updated = True
@@ -255,3 +287,76 @@ async def _async_migrate_options(
     if updated:
         hass.config_entries.async_update_entry(config_entry, options=options)
         _LOGGER.debug("Migrated options with new repair notification defaults")
+
+
+def _handle_startup_failure(
+    hass: HomeAssistant,
+    config_entry: ABBFimerPVIVSNRestConfigEntry,
+    host: str,
+    failures_threshold: int,
+    enable_startup_notification: bool,
+    error: Exception,
+) -> None:
+    """Handle a startup failure and create notification if threshold reached.
+
+    Args:
+        hass: HomeAssistant instance
+        config_entry: Config entry
+        host: Device host
+        failures_threshold: Number of failures before notification
+        enable_startup_notification: Whether startup notifications are enabled
+        error: The exception that occurred
+
+    """
+    entry_id = config_entry.entry_id
+    failures_data = hass.data[STARTUP_FAILURES_KEY]
+
+    # Initialize or increment failure count
+    if entry_id not in failures_data:
+        failures_data[entry_id] = {"count": 0, "notification_created": False}
+
+    failures_data[entry_id]["count"] += 1
+    failure_count = failures_data[entry_id]["count"]
+
+    _LOGGER.debug(
+        "Startup failure %d/%d for %s: %s",
+        failure_count,
+        failures_threshold,
+        host,
+        error,
+    )
+
+    # Create notification if threshold reached and not already created
+    if (
+        failure_count >= failures_threshold
+        and not failures_data[entry_id]["notification_created"]
+        and enable_startup_notification
+    ):
+        device_name = config_entry.title or f"VSN Device ({host})"
+        create_connection_issue(hass, entry_id, device_name, host)
+        failures_data[entry_id]["notification_created"] = True
+        _LOGGER.info(
+            "Startup notification created after %d consecutive failures for %s",
+            failure_count,
+            host,
+        )
+
+
+def _clear_startup_failure(hass: HomeAssistant, entry_id: str) -> None:
+    """Clear startup failure tracking for an entry.
+
+    Args:
+        hass: HomeAssistant instance
+        entry_id: Config entry ID
+
+    """
+    failures_data = hass.data.get(STARTUP_FAILURES_KEY, {})
+
+    if entry_id in failures_data:
+        # If notification was created, delete it
+        if failures_data[entry_id].get("notification_created"):
+            delete_connection_issue(hass, entry_id)
+            _LOGGER.info("Startup notification cleared - device is now online")
+
+        # Reset tracking
+        del failures_data[entry_id]
