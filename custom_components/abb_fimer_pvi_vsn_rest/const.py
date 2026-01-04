@@ -43,7 +43,7 @@ MAX_SCAN_INTERVAL = 600
 
 # Failure tracking for repair issues
 DEFAULT_ENABLE_REPAIR_NOTIFICATION = True
-DEFAULT_ENABLE_STARTUP_NOTIFICATION = True
+DEFAULT_ENABLE_STARTUP_NOTIFICATION = False
 DEFAULT_FAILURES_THRESHOLD = 3  # Number of consecutive failures before creating repair issue
 DEFAULT_RECOVERY_SCRIPT = ""  # Empty = no script
 MIN_FAILURES_THRESHOLD = 1
