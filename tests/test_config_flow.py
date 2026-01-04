@@ -189,26 +189,27 @@ async def test_form_already_configured(
     mock_check_socket_connection: AsyncMock,
 ) -> None:
     """Test we abort if already configured."""
-    # Create and add existing entry with matching unique_id
-    existing_entry = MockConfigEntry(
-        domain=DOMAIN,
-        data={
-            CONF_HOST: TEST_HOST,
-            CONF_USERNAME: TEST_USERNAME,
-            CONF_PASSWORD: TEST_PASSWORD,
-            CONF_VSN_MODEL: TEST_VSN_MODEL,
-        },
-        unique_id=TEST_LOGGER_SN.lower(),
-        title=f"{TEST_VSN_MODEL} ({TEST_LOGGER_SN})",
-    )
-    existing_entry.add_to_hass(hass)
-
+    # First, complete a successful flow to create an entry
     result = await hass.config_entries.flow.async_init(
         DOMAIN, context={"source": config_entries.SOURCE_USER}
     )
-
-    result2 = await hass.config_entries.flow.async_configure(
+    result = await hass.config_entries.flow.async_configure(
         result["flow_id"],
+        {
+            CONF_HOST: TEST_HOST,
+            CONF_USERNAME: TEST_USERNAME,
+            CONF_PASSWORD: TEST_PASSWORD,
+        },
+    )
+    await hass.async_block_till_done()
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+
+    # Now try to configure again with the same device - should abort
+    result2 = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
+    result2 = await hass.config_entries.flow.async_configure(
+        result2["flow_id"],
         {
             CONF_HOST: TEST_HOST,
             CONF_USERNAME: TEST_USERNAME,
