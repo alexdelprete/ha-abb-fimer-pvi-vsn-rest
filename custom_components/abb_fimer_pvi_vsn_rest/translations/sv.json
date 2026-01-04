@@ -41,7 +41,7 @@
     "step": {
       "init": {
         "title": "ABB/FIMER PVI VSN REST Alternativ",
-        "description": "Configure update interval, notifications, and device name prefixes.",
+        "description": "",
         "data": {
           "scan_interval": "Skanningsintervall (sekunder)",
           "enable_repair_notification": "Enable runtime failure notifications",
@@ -64,7 +64,7 @@
           "prefix_datalogger": "Custom datalogger name. Lämna tomt för standardvärde.",
           "prefix_meter": "Custom meter name. Lämna tomt för standardvärde.",
           "prefix_battery": "Custom battery name. Lämna tomt för standardvärde.",
-          "regenerate_entity_ids": "⚠️ VARNING: This will BREAK existing automations!"
+          "regenerate_entity_ids": ""
         }
       }
     }

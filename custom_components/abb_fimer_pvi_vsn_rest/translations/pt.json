@@ -41,7 +41,7 @@
     "step": {
       "init": {
         "title": "Opções ABB/FIMER PVI VSN REST",
-        "description": "Configure update interval, notifications, and device name prefixes.",
+        "description": "",
         "data": {
           "scan_interval": "Intervalo de varredura (segundos)",
           "enable_repair_notification": "Enable runtime failure notifications",
@@ -64,7 +64,7 @@
           "prefix_datalogger": "Custom datalogger name. Deixe vazio para o valor padrão.",
           "prefix_meter": "Custom meter name. Deixe vazio para o valor padrão.",
           "prefix_battery": "Custom battery name. Deixe vazio para o valor padrão.",
-          "regenerate_entity_ids": "⚠️ AVISO: This will BREAK existing automations!"
+          "regenerate_entity_ids": ""
         }
       }
     }
