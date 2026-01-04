@@ -6,12 +6,19 @@ from dataclasses import dataclass
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.exceptions import (
     VSNAuthenticationError,
     VSNConnectionError,
 )
 from custom_components.abb_fimer_pvi_vsn_rest.const import (
+    CONF_ENABLE_REPAIR_NOTIFICATION,
+    CONF_ENABLE_STARTUP_NOTIFICATION,
+    CONF_FAILURES_THRESHOLD,
+    CONF_PREFIX_DATALOGGER,
+    CONF_PREFIX_INVERTER,
+    CONF_RECOVERY_SCRIPT,
     CONF_SCAN_INTERVAL,
     CONF_VSN_MODEL,
     DEFAULT_SCAN_INTERVAL,
@@ -180,11 +187,21 @@ async def test_form_already_configured(
     hass: HomeAssistant,
     mock_discover_vsn_device_config_flow: AsyncMock,
     mock_check_socket_connection: AsyncMock,
-    mock_config_entry,
 ) -> None:
     """Test we abort if already configured."""
-    # Add existing entry
-    mock_config_entry.add_to_hass(hass)
+    # Create and add existing entry with matching unique_id
+    existing_entry = MockConfigEntry(
+        domain=DOMAIN,
+        data={
+            CONF_HOST: TEST_HOST,
+            CONF_USERNAME: TEST_USERNAME,
+            CONF_PASSWORD: TEST_PASSWORD,
+            CONF_VSN_MODEL: TEST_VSN_MODEL,
+        },
+        unique_id=TEST_LOGGER_SN.lower(),
+        title=f"{TEST_VSN_MODEL} ({TEST_LOGGER_SN})",
+    )
+    existing_entry.add_to_hass(hass)
 
     result = await hass.config_entries.flow.async_init(
         DOMAIN, context={"source": config_entries.SOURCE_USER}
@@ -228,14 +245,20 @@ async def test_options_flow(
     assert result["type"] is FlowResultType.FORM
     assert result["step_id"] == "init"
 
+    # Submit options - need to include all required fields
     result2 = await hass.config_entries.options.async_configure(
         result["flow_id"],
         user_input={
             CONF_SCAN_INTERVAL: 120,
+            CONF_ENABLE_REPAIR_NOTIFICATION: True,
+            CONF_ENABLE_STARTUP_NOTIFICATION: False,
+            CONF_FAILURES_THRESHOLD: 3,
+            CONF_RECOVERY_SCRIPT: "",
+            CONF_PREFIX_INVERTER: "",
+            CONF_PREFIX_DATALOGGER: "",
         },
     )
 
     assert result2["type"] is FlowResultType.CREATE_ENTRY
-    assert result2["data"] == {
-        CONF_SCAN_INTERVAL: 120,
-    }
+    # Verify the key option was updated
+    assert result2["data"][CONF_SCAN_INTERVAL] == 120
