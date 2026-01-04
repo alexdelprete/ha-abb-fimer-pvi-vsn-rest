@@ -100,7 +100,7 @@ After setup, click **"Configure"** on the integration card to access the options
 | Option | Default | Description |
 |--------|---------|-------------|
 | **Enable runtime failure notifications** | On | Notify when device becomes unreachable during normal operation |
-| **Enable startup failure notifications** | On | Notify when device is unreachable at Home Assistant startup |
+| **Enable startup failure notifications** | Off | Notify when device is unreachable at Home Assistant startup |
 | **Failures before notification** | 3 (1-10) | Consecutive failures before creating a notification |
 | **Recovery script** | (none) | Script to execute when failures threshold is reached (e.g., `script.restart_router`) |
 
