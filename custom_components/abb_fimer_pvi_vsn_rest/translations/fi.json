@@ -41,7 +41,7 @@
     "step": {
       "init": {
         "title": "ABB/FIMER PVI VSN REST Asetukset",
-        "description": "Configure update interval, notifications, and custom device name prefixes.\n\nJätä etuliitekentät tyhjiksi käyttääksesi oletusnimeämistä.",
+        "description": "Configure update interval, notifications, and device name prefixes.",
         "data": {
           "scan_interval": "Kyselyväli (sekuntia)",
           "enable_repair_notification": "Enable connection failure notifications",
@@ -62,7 +62,7 @@
           "prefix_datalogger": "Mukautettu nimi datalogger-laitteille. Jätä tyhjäksi oletusarvolle.",
           "prefix_meter": "Mukautettu nimi mittarilaitteille. Jätä tyhjäksi oletusarvolle.",
           "prefix_battery": "Mukautettu nimi akkulaitteille. Jätä tyhjäksi oletusarvolle.",
-          "regenerate_entity_ids": "⚠️ VAROITUS: Päivitä kaikki entitetti-ID:t vastaamaan uusia laitenimiä. Tämä RIKKOO olemassa olevat automaatiot, skriptit ja kojelaudat, jotka viittaavat näihin entiteetteihin!"
+          "regenerate_entity_ids": "⚠️ VAROITUS: This will update entity IDs and BREAK existing automations!"
         }
       }
     }

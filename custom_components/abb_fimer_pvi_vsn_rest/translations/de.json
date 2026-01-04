@@ -41,7 +41,7 @@
     "step": {
       "init": {
         "title": "ABB/FIMER PVI VSN REST Optionen",
-        "description": "Configure update interval, notifications, and custom device name prefixes.\n\nLassen Sie die Präfixfelder leer, um die Standardbenennung zu verwenden.",
+        "description": "Configure update interval, notifications, and device name prefixes.",
         "data": {
           "scan_interval": "Abfrageintervall (Sekunden)",
           "enable_repair_notification": "Enable connection failure notifications",
@@ -62,7 +62,7 @@
           "prefix_datalogger": "Benutzerdefinierter Name für Datalogger-Geräte. Leer lassen für Standard.",
           "prefix_meter": "Benutzerdefinierter Name für Zählergeräte. Leer lassen für Standard.",
           "prefix_battery": "Benutzerdefinierter Name für Batteriegeräte. Leer lassen für Standard.",
-          "regenerate_entity_ids": "⚠️ WARNUNG: Alle Entitäts-IDs aktualisieren, um den neuen Gerätenamen zu entsprechen. Dies WIRD bestehende Automatisierungen, Skripte und Dashboards UNTERBRECHEN, die auf diese Entitäten verweisen!"
+          "regenerate_entity_ids": "⚠️ WARNUNG: This will update entity IDs and BREAK existing automations!"
         }
       }
     }

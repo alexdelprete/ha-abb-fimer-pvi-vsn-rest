@@ -41,7 +41,7 @@
     "step": {
       "init": {
         "title": "Opciones ABB/FIMER PVI VSN REST",
-        "description": "Configure update interval, notifications, and custom device name prefixes.\n\nDeje los campos de prefijo vacíos para usar la nomenclatura predeterminada.",
+        "description": "Configure update interval, notifications, and device name prefixes.",
         "data": {
           "scan_interval": "Intervalo de escaneo (segundos)",
           "enable_repair_notification": "Enable connection failure notifications",
@@ -62,7 +62,7 @@
           "prefix_datalogger": "Nombre personalizado para dispositivos datalogger. Dejar vacío para valor predeterminado.",
           "prefix_meter": "Nombre personalizado para dispositivos medidores. Dejar vacío para valor predeterminado.",
           "prefix_battery": "Nombre personalizado para dispositivos de batería. Dejar vacío para valor predeterminado.",
-          "regenerate_entity_ids": "⚠️ ADVERTENCIA: Actualizar todos los IDs de entidades para coincidir con los nuevos nombres de dispositivos. ¡Esto ROMPERÁ las automatizaciones, scripts y paneles existentes que hacen referencia a estas entidades!"
+          "regenerate_entity_ids": "⚠️ ADVERTENCIA: This will update entity IDs and BREAK existing automations!"
         }
       }
     }

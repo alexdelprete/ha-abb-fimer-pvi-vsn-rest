@@ -41,7 +41,7 @@
     "step": {
       "init": {
         "title": "ABB/FIMER PVI VSN REST Valikud",
-        "description": "Configure update interval, notifications, and custom device name prefixes.\n\nJätke eesliite väljad tühjaks vaikenimede kasutamiseks.",
+        "description": "Configure update interval, notifications, and device name prefixes.",
         "data": {
           "scan_interval": "Päringuintervall (sekundites)",
           "enable_repair_notification": "Enable connection failure notifications",
@@ -62,7 +62,7 @@
           "prefix_datalogger": "Kohandatud nimi datalogger seadmetele. Jäta tühjaks vaikeväärtuse jaoks.",
           "prefix_meter": "Kohandatud nimi arvesti seadmetele. Jäta tühjaks vaikeväärtuse jaoks.",
           "prefix_battery": "Kohandatud nimi aku seadmetele. Jäta tühjaks vaikeväärtuse jaoks.",
-          "regenerate_entity_ids": "⚠️ HOIATUS: Värskenda kõik olemi ID-d, et need vastaksid uutele seadmenimedele. See RIKUB olemasolevad automatiseerimised, skriptid ja juhtpaneelid, mis viitavad nendele olemitele!"
+          "regenerate_entity_ids": "⚠️ HOIATUS: This will update entity IDs and BREAK existing automations!"
         }
       }
     }
