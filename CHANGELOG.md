@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.1-beta.3] - 2026-01-04
+
+### Documentation
+
+- **README updated** - Added documentation for connection failure notifications and recovery scripts
+
+### UI Improvements
+
+- **Compact options dialog** - Shortened description text to single line
+- **Shorter warning text** - Regenerate entity IDs warning is now more concise
+
+### Code Quality
+
+- **Test updates** - Updated repair tests for notification-based recovery pattern
+- **Markdown fixes** - Fixed line length issues in documentation
+
+**See**: [v1.3.1-beta.3 Release Notes](docs/releases/v1.3.1-beta.3.md)
+
 ## [1.3.1-beta.2] - 2026-01-03
 
 ### New Features
