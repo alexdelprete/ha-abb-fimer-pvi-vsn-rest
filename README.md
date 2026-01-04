@@ -143,7 +143,38 @@ The integration can notify you when the datalogger becomes unreachable and optio
 - Send alerts via external services
 - Trigger any Home Assistant automation
 
-**Example**: Configure `script.power_cycle_datalogger` to turn off a smart plug, wait 10 seconds, then turn it back on.
+**Recovery Script Variables:**
+
+When your recovery script is called, the integration passes these variables that you can use:
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `device_name` | Full device name | `VSN300 (111033-3N16-1421)` |
+| `host` | Device hostname/IP | `192.168.1.100` |
+| `vsn_model` | Datalogger model | `VSN300` or `VSN700` |
+| `logger_sn` | Logger serial number | `111033-3N16-1421` |
+| `failures_count` | Number of consecutive failures | `3` |
+
+**Example Script:**
+
+```yaml
+# scripts.yaml
+power_cycle_datalogger:
+  alias: "Power Cycle Datalogger"
+  sequence:
+    - service: switch.turn_off
+      target:
+        entity_id: switch.datalogger_plug
+    - delay:
+        seconds: 10
+    - service: switch.turn_on
+      target:
+        entity_id: switch.datalogger_plug
+    - service: notify.mobile_app
+      data:
+        title: "Datalogger Recovery"
+        message: "Power cycled {{ device_name }} after {{ failures_count }} failures"
+```
 
 ### Reconfiguration
 
