@@ -217,6 +217,11 @@ async def test_form_already_configured(
         },
     )
 
+    # Debug: if we got a FORM back, check what errors occurred
+    if result2["type"] is FlowResultType.FORM:
+        errors = result2.get("errors", {})
+        assert False, f"Expected ABORT but got FORM with errors: {errors}"
+
     assert result2["type"] is FlowResultType.ABORT
     assert result2["reason"] == "already_configured"
 
