@@ -95,6 +95,34 @@ After setup, click **"Configure"** on the integration card to adjust:
 
 See [Custom Device Names](#custom-device-names) below for details on customizing device names.
 
+### Connection Failure Notifications
+
+The integration can notify you when the datalogger becomes unreachable and optionally execute a recovery script.
+
+**Configuration Options:**
+
+| Option | Default | Range | Description |
+|--------|---------|-------|-------------|
+| Enable repair notifications | Enabled | On/Off | Show notifications on connection failures |
+| Failures threshold | 3 | 1-10 | Consecutive failures before notification |
+| Recovery script | (none) | Any script entity | Script to execute when threshold is reached |
+
+**How It Works:**
+
+1. When the datalogger fails to respond, the integration tracks consecutive failures
+2. After reaching the threshold (default: 3), a persistent notification appears
+3. If configured, a recovery script executes automatically (e.g., `script.restart_router`)
+4. When connection recovers, a recovery notification shows downtime details
+
+**Recovery Script Use Cases:**
+
+- Restart router/network equipment via smart plug
+- Power cycle the datalogger
+- Send alerts via external services
+- Trigger any Home Assistant automation
+
+**Example**: Configure `script.power_cycle_datalogger` to turn off a smart plug, wait 10 seconds, then turn it back on.
+
 ### Reconfiguration
 
 If you need to change the hostname/IP or credentials:
