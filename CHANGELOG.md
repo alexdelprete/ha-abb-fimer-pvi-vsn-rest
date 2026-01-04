@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.1-beta.5] - 2026-01-04
+
+### UI Improvements
+
+- **Compact options dialog** - Removed unnecessary text to eliminate scrollbar
+  - Removed dialog description text at top
+  - Removed regenerate entity IDs warning text
+  - Kept checkbox descriptions for clarity
+
+**See**: [v1.3.1-beta.5 Release Notes](docs/releases/v1.3.1-beta.5.md)
+
 ## [1.3.1-beta.4] - 2026-01-04
 
 ### New Features
