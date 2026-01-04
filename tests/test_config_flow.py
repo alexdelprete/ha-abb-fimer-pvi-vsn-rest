@@ -185,45 +185,49 @@ async def test_form_timeout_error(
 
 async def test_form_already_configured(
     hass: HomeAssistant,
-    mock_discover_vsn_device_config_flow: AsyncMock,
+    mock_discovery_result,
     mock_check_socket_connection: AsyncMock,
 ) -> None:
     """Test we abort if already configured."""
-    # First, complete a successful flow to create an entry
-    result = await hass.config_entries.flow.async_init(
-        DOMAIN, context={"source": config_entries.SOURCE_USER}
-    )
-    result = await hass.config_entries.flow.async_configure(
-        result["flow_id"],
-        {
-            CONF_HOST: TEST_HOST,
-            CONF_USERNAME: TEST_USERNAME,
-            CONF_PASSWORD: TEST_PASSWORD,
-        },
-    )
-    await hass.async_block_till_done()
-    assert result["type"] is FlowResultType.CREATE_ENTRY
+    # Patch discover_vsn_device for this specific test to allow multiple calls
+    with patch(
+        "custom_components.abb_fimer_pvi_vsn_rest.config_flow.discover_vsn_device",
+        return_value=mock_discovery_result,
+    ):
+        # First, complete a successful flow to create an entry
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN, context={"source": config_entries.SOURCE_USER}
+        )
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            {
+                CONF_HOST: TEST_HOST,
+                CONF_USERNAME: TEST_USERNAME,
+                CONF_PASSWORD: TEST_PASSWORD,
+            },
+        )
+        await hass.async_block_till_done()
+        assert result["type"] is FlowResultType.CREATE_ENTRY
 
-    # Now try to configure again with the same device - should abort
-    result2 = await hass.config_entries.flow.async_init(
-        DOMAIN, context={"source": config_entries.SOURCE_USER}
-    )
-    result2 = await hass.config_entries.flow.async_configure(
-        result2["flow_id"],
-        {
-            CONF_HOST: TEST_HOST,
-            CONF_USERNAME: TEST_USERNAME,
-            CONF_PASSWORD: TEST_PASSWORD,
-        },
-    )
+        # Verify entry was created
+        entries = hass.config_entries.async_entries(DOMAIN)
+        assert len(entries) == 1
 
-    # Debug: if we got a FORM back, check what errors occurred
-    if result2["type"] is FlowResultType.FORM:
-        errors = result2.get("errors", {})
-        assert False, f"Expected ABORT but got FORM with errors: {errors}"
+        # Now try to configure again with the same device - should abort
+        result2 = await hass.config_entries.flow.async_init(
+            DOMAIN, context={"source": config_entries.SOURCE_USER}
+        )
+        result2 = await hass.config_entries.flow.async_configure(
+            result2["flow_id"],
+            {
+                CONF_HOST: TEST_HOST,
+                CONF_USERNAME: TEST_USERNAME,
+                CONF_PASSWORD: TEST_PASSWORD,
+            },
+        )
 
-    assert result2["type"] is FlowResultType.ABORT
-    assert result2["reason"] == "already_configured"
+        assert result2["type"] is FlowResultType.ABORT
+        assert result2["reason"] == "already_configured"
 
 
 async def test_options_flow(
