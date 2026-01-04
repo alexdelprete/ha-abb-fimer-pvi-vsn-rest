@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.1-beta.4] - 2026-01-04
+
+### New Features
+
+- **Startup failure notifications** - New option to notify when device is unreachable at HA startup/restart
+- **Separate runtime vs startup notifications** - Users can enable/disable each type independently
+
+### Configuration Changes
+
+- **Renamed option**: "Enable connection failure notifications" → "Enable runtime failure notifications"
+- **New option**: "Enable startup failure notifications" (default: disabled)
+- **Compact UI**: All option descriptions shortened to single lines
+
+### Documentation
+
+- **README updated** with comprehensive Configuration Options section
+
+**See**: [v1.3.1-beta.4 Release Notes](docs/releases/v1.3.1-beta.4.md)
+
 ## [1.3.1-beta.3] - 2026-01-04
 
 ### Documentation
