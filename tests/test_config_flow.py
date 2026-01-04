@@ -24,18 +24,21 @@ from homeassistant.data_entry_flow import FlowResultType
 
 from .conftest import TEST_HOST, TEST_LOGGER_SN, TEST_PASSWORD, TEST_USERNAME, TEST_VSN_MODEL
 
-# Skip reason for tests requiring full integration loading
-SKIP_INTEGRATION_LOADING = (
-    "Skipped: HA integration loading fails in CI due to editable install path issues"
-)
+
+@pytest.fixture(name="integration_setup", autouse=True)
+def integration_setup_fixture():
+    """Mock integration entry setup to avoid loading the full integration."""
+    with patch(
+        "custom_components.abb_fimer_pvi_vsn_rest.async_setup_entry",
+        return_value=True,
+    ):
+        yield
 
 
-@pytest.mark.skip(reason=SKIP_INTEGRATION_LOADING)
 async def test_form_user(
     hass: HomeAssistant,
     mock_discover_vsn_device_config_flow: AsyncMock,
     mock_check_socket_connection: AsyncMock,
-    mock_setup_entry: AsyncMock,
 ) -> None:
     """Test we get the user form."""
     result = await hass.config_entries.flow.async_init(
@@ -67,10 +70,8 @@ async def test_form_user(
     assert result2["options"] == {
         CONF_SCAN_INTERVAL: DEFAULT_SCAN_INTERVAL,
     }
-    assert len(mock_setup_entry.mock_calls) == 1
 
 
-@pytest.mark.skip(reason=SKIP_INTEGRATION_LOADING)
 async def test_form_cannot_connect(
     hass: HomeAssistant,
     mock_check_socket_connection: AsyncMock,
@@ -97,7 +98,6 @@ async def test_form_cannot_connect(
     assert result2["errors"]["base"] == "unknown"
 
 
-@pytest.mark.skip(reason=SKIP_INTEGRATION_LOADING)
 async def test_form_invalid_auth(
     hass: HomeAssistant,
     mock_check_socket_connection: AsyncMock,
@@ -124,7 +124,6 @@ async def test_form_invalid_auth(
     assert result2["errors"]["base"] == "invalid_auth"
 
 
-@pytest.mark.skip(reason=SKIP_INTEGRATION_LOADING)
 async def test_form_connection_error(
     hass: HomeAssistant,
     mock_check_socket_connection: AsyncMock,
@@ -151,7 +150,6 @@ async def test_form_connection_error(
     assert result2["errors"]["base"] == "cannot_connect"
 
 
-@pytest.mark.skip(reason=SKIP_INTEGRATION_LOADING)
 async def test_form_timeout_error(
     hass: HomeAssistant,
     mock_check_socket_connection: AsyncMock,
@@ -178,7 +176,6 @@ async def test_form_timeout_error(
     assert result2["errors"]["base"] == "timeout"
 
 
-@pytest.mark.skip(reason=SKIP_INTEGRATION_LOADING)
 async def test_form_already_configured(
     hass: HomeAssistant,
     mock_discover_vsn_device_config_flow: AsyncMock,
@@ -206,7 +203,6 @@ async def test_form_already_configured(
     assert result2["reason"] == "already_configured"
 
 
-@pytest.mark.skip(reason=SKIP_INTEGRATION_LOADING)
 async def test_options_flow(
     hass: HomeAssistant,
     mock_config_entry,

@@ -30,6 +30,9 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import CoreState, HomeAssistant
 
+# Register pytest-homeassistant-custom-component plugin
+pytest_plugins = ["pytest_homeassistant_custom_component"]
+
 # Test configuration values
 TEST_HOST = "192.168.1.100"
 TEST_USERNAME = DEFAULT_USERNAME
