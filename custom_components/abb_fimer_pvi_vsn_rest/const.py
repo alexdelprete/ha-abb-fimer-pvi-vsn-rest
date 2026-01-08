@@ -38,7 +38,7 @@ CONF_RECOVERY_SCRIPT = "recovery_script"
 
 DEFAULT_USERNAME = "guest"
 DEFAULT_SCAN_INTERVAL = 60
-MIN_SCAN_INTERVAL = 30
+MIN_SCAN_INTERVAL = 10
 MAX_SCAN_INTERVAL = 600
 
 # Failure tracking for repair issues

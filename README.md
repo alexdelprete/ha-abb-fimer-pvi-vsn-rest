@@ -93,7 +93,7 @@ After setup, click **"Configure"** on the integration card to access the options
 
 | Option | Default | Range | Description |
 |--------|---------|-------|-------------|
-| **Scan interval** | 60 | 30-600 sec | How often to fetch data from the VSN device |
+| **Scan interval** | 60 | 10-600 sec | How often to fetch data from the VSN device |
 
 #### Failure Notifications
 
@@ -423,16 +423,61 @@ All authentication methods are handled automatically by the integration - no con
 
 ### Debug Logging
 
-Add to `configuration.yaml`:
+To enable debug logging for this integration, add the following to your `configuration.yaml`:
 
 ```yaml
 logger:
   default: info
   logs:
     custom_components.abb_fimer_pvi_vsn_rest: debug
-```text
+```
 
-Restart Home Assistant and check logs for detailed information.
+After adding this configuration:
+
+1. **Restart Home Assistant** to apply the logging configuration
+2. **Reproduce the issue** you're experiencing
+3. **Download the full logs** using one of these methods:
+
+#### Method 1: Home Assistant UI (Recommended)
+
+1. Go to **Settings** → **System** → **Logs**
+2. Click **"Download Full Log"** button in the top right
+3. The downloaded file contains all log entries including debug messages
+
+#### Method 2: Direct File Access
+
+If you have access to your Home Assistant configuration directory:
+
+```bash
+# The log file is located at:
+config/home-assistant.log
+
+# To filter only this integration's logs:
+grep "abb_fimer_pvi_vsn_rest" home-assistant.log > integration_debug.log
+```
+
+#### Method 3: SSH/Terminal Access
+
+```bash
+# View live logs filtered by integration:
+ha core logs | grep "abb_fimer_pvi_vsn_rest"
+
+# Or for Docker installations:
+docker logs homeassistant 2>&1 | grep "abb_fimer_pvi_vsn_rest"
+```
+
+#### What to Include When Reporting Issues
+
+When opening a GitHub issue, please include:
+
+1. **Full debug log** (downloaded via Method 1 above)
+2. **Integration version** (found in HACS or Settings → Devices & Services)
+3. **Home Assistant version** (Settings → About)
+4. **VSN datalogger model** (VSN300 or VSN700)
+5. **Inverter model** (e.g., PVI-10.0-OUTD, REACT2-3.6-TL)
+6. **Steps to reproduce** the issue
+
+**Privacy Note**: Debug logs may contain your device's IP address and serial numbers. Review the log before sharing and redact sensitive information if needed.
 
 ### Testing and Reporting Issues
 
