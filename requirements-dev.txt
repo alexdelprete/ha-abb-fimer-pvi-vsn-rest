@@ -9,7 +9,7 @@ mdformat
 mdformat-gfm
 pre-commit
 pymarkdownlnt
-ruff>=0.8.0
+ruff>=0.14.11
 ty
 pytest>=8.0.0
 pytest-asyncio>=0.23.0
