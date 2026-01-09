@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.2] - 2026-01-09
+
+### Breaking Changes
+
+- **Home Assistant 2026.1.0 Required** - Minimum HA version updated to 2026.1.0 (first version with security-patched aiohttp)
+
+### Security
+
+- **aiohttp Updated** - Updated to `>=3.13.3` to address Dependabot security vulnerabilities
+
+### Maintenance
+
+- **Removed urllib3** - Removed from manifest.json (transitive dependency managed by HA)
+- **Ruff Updated** - Standardized to `>=0.14.11` across all configuration files
+
+**See**: [v1.3.2 Release Notes](docs/releases/v1.3.2.md)
+
 ## [1.3.1] - 2026-01-04
 
 ### Bug Fixes
