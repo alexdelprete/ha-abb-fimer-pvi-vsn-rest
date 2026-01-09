@@ -1,8 +1,9 @@
 # Dev dependencies (excluding pytest-homeassistant-custom-component which is installed separately)
 # pytest-homeassistant-custom-component is installed first, then these are layered on top
-aiohttp>=3.9.0
+aiohttp>=3.13.3
+urllib3>=2.6.3
 colorlog>=6.10.0
-homeassistant>=2025.10.0
+homeassistant>=2026.1.0
 homeassistant-stubs
 mdformat
 mdformat-gfm

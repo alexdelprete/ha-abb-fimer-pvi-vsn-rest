@@ -1,6 +1,6 @@
 {
   "name": "ABB FIMER PVI VSN REST",
-  "homeassistant": "2025.10.0",
+  "homeassistant": "2026.1.0",
   "content_in_root": false,
   "render_readme": true,
   "zip_release": true,
