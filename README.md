@@ -687,6 +687,8 @@ If you like this integration, I'll gladly accept some quality coffee, but please
 
 [![BuyMeCoffee][buymecoffee-shield]][buymecoffee]
 
+<!-- Reference Links -->
+
 [buymecoffee]: https://www.buymeacoffee.com/alexdelprete
 [buymecoffee-shield]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-white?style=for-the-badge
 [coverage]: https://codecov.io/gh/alexdelprete/ha-abb-fimer-pvi-vsn-rest
