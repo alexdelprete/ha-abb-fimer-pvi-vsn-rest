@@ -21,7 +21,12 @@ import time
 import aiohttp
 
 from .constants import ENDPOINT_LIVEDATA, ENDPOINT_STATUS
-from .exceptions import VSNAuthenticationError, VSNConnectionError, VSNDetectionError
+from .exceptions import (
+    VSNAuthenticationError,
+    VSNConnectionError,
+    VSNDetectionError,
+    VSNUnsupportedDeviceError,
+)
 from .utils import check_socket_connection
 
 _LOGGER = logging.getLogger(__name__)
@@ -428,6 +433,19 @@ async def detect_vsn_model(
                     ) from parse_err
                 else:
                     return (model, False)  # No auth required
+
+            # HTTP 404 - REST API endpoints not found (unsupported device)
+            if response.status == 404:
+                _LOGGER.error(
+                    "[VSN Detection] HTTP 404 - REST API endpoints not found. "
+                    "Device at %s does not support VSN REST API. "
+                    "This integration requires VSN300 or VSN700 dataloggers.",
+                    base_url,
+                )
+                raise VSNUnsupportedDeviceError(
+                    f"Device at {base_url} returned 404 - REST API not available. "
+                    "This integration requires VSN300 or VSN700 dataloggers."
+                )
 
             # Got unexpected response status
             _LOGGER.error(

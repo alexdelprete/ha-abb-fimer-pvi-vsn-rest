@@ -34,6 +34,7 @@ from .abb_fimer_vsn_rest_client.exceptions import (
     VSNAuthenticationError,
     VSNClientError,
     VSNConnectionError,
+    VSNUnsupportedDeviceError,
 )
 from .abb_fimer_vsn_rest_client.utils import check_socket_connection
 from .const import (
@@ -69,6 +70,7 @@ ERROR_CANNOT_CONNECT = "cannot_connect"
 ERROR_INVALID_AUTH = "invalid_auth"
 ERROR_UNKNOWN = "unknown"
 ERROR_TIMEOUT = "timeout"
+ERROR_UNSUPPORTED_DEVICE = "unsupported_device"
 
 
 async def validate_connection(
@@ -177,6 +179,12 @@ async def validate_connection(
                 "for detailed connection diagnostics"
             )
         raise
+    except VSNUnsupportedDeviceError as err:
+        _LOGGER.error(
+            "Unsupported device: %s - Device does not have VSN REST API endpoints",
+            err,
+        )
+        raise
     except VSNClientError as err:
         err_str = str(err)
         _LOGGER.error("Client error: %s", err)
@@ -259,6 +267,8 @@ class ABBFimerPVIVSNRestConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore[c
                     errors["base"] = ERROR_TIMEOUT
                 else:
                     errors["base"] = ERROR_CANNOT_CONNECT
+            except VSNUnsupportedDeviceError:
+                errors["base"] = ERROR_UNSUPPORTED_DEVICE
             except VSNClientError:
                 errors["base"] = ERROR_UNKNOWN
             except Exception:  # pylint: disable=broad-except
@@ -322,6 +332,8 @@ class ABBFimerPVIVSNRestConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore[c
                     errors["base"] = ERROR_TIMEOUT
                 else:
                     errors["base"] = ERROR_CANNOT_CONNECT
+            except VSNUnsupportedDeviceError:
+                errors["base"] = ERROR_UNSUPPORTED_DEVICE
             except VSNClientError:
                 errors["base"] = ERROR_UNKNOWN
             except Exception:  # pylint: disable=broad-except

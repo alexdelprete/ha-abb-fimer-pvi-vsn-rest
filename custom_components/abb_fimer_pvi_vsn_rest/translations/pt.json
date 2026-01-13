@@ -29,7 +29,8 @@
       "cannot_connect": "Failed to connect to the device. Please check:\n• Device is powered on\n• IP address or hostname is correct\n• Device is accessible on your network\n• Port 80 is not blocked by firewall",
       "invalid_auth": "Authentication failed. Please check your username and password.\n\nVerify credentials in your datalogger's web interface.",
       "timeout": "Connection timeout. The device is not responding.\n\nPlease check:\n• Device is powered on and booted\n• Network connection is stable\n• No firewall is blocking access",
-      "unknown": "Unexpected error occurred. Please check the logs for more details."
+      "unknown": "Unexpected error occurred. Please check the logs for more details.",
+      "unsupported_device": "Este dispositivo não suporta a API REST. Esta integração requer um datalogger VSN300 ou VSN700 com a API REST ativada.\n\nO dispositivo retornou HTTP 404 (Não encontrado) para o endpoint /v1/status.\n\nSe você tem um inversor ABB/FIMER/Power-One sem datalogger VSN, considere usar a integração Modbus."
     },
     "abort": {
       "already_configured": "This device is already configured",

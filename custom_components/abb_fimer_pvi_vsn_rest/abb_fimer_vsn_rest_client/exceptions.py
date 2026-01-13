@@ -15,3 +15,7 @@ class VSNAuthenticationError(VSNClientError):
 
 class VSNDetectionError(VSNClientError):
     """VSN model detection error."""
+
+
+class VSNUnsupportedDeviceError(VSNDetectionError):
+    """Device doesn't support VSN REST API (404 response)."""
