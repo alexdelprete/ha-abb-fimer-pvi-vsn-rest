@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.3] - 2026-01-13
+
+### Bug Fixes
+
+- **Unsupported Device Error Handling** - Added user-friendly error for devices without VSN REST API (Fixes #31)
+  - New `VSNUnsupportedDeviceError` exception for HTTP 404 responses
+  - Clear error message explaining device requirements (VSN300/VSN700 dataloggers)
+  - Suggests Modbus integration as alternative for unsupported devices
+
+### Improvements
+
+- **Debug Logging** - Added error logging for unsupported device detection in config flow
+- **Translations** - Added `unsupported_device` error message in all 10 languages
+
+**See**: [v1.3.3 Release Notes](docs/releases/v1.3.3.md)
+
 ## [1.3.2] - 2026-01-09
 
 ### Breaking Changes
