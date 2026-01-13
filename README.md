@@ -319,7 +319,7 @@ Coordinator
 Sensor Platform
     ↓
 Home Assistant Entities
-```text
+```
 
 ### Key Components
 
@@ -533,7 +533,7 @@ The repository includes a standalone diagnostic script that can test your VSN de
 ```text
 [VSN Detection] Detected VSN300 (digest auth in WWW-Authenticate: X-Digest realm="...")
 ✓ Device detected: VSN300
-```text
+```
 
 **Successful VSN700 detection**:
 
@@ -541,14 +541,14 @@ The repository includes a standalone diagnostic script that can test your VSN de
 [VSN Detection] Not VSN300. Attempting preemptive Basic authentication for VSN700.
 [VSN Detection] Detected VSN700 (preemptive Basic authentication)
 ✓ Device detected: VSN700
-```text
+```
 
 **Authentication failure**:
 
 ```text
 [VSN Detection] Preemptive Basic auth failed with status 401.
 Device authentication failed. Not VSN300/VSN700 compatible.
-```text
+```
 
 If you see this, verify your credentials and ensure the device is a VSN300/VSN700 datalogger.
 
@@ -662,7 +662,7 @@ custom_components/abb_fimer_pvi_vsn_rest/
     ├── exceptions.py       # Custom exceptions
     └── data/               # Client library resources
         └── vsn-sunspec-point-mapping.json  # VSN→SunSpec mapping (258 points)
-```text
+```
 
 ## Related Projects
 
