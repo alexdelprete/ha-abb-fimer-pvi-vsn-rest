@@ -239,16 +239,20 @@ You can customize device names for each device type through the integration opti
 
 **Example**:
 
-| Setting | Device Name | Entity ID Example | |---------|-------------|-------------------| | **No prefix (default)** | `Power-One Inverter PVI-10.0-OUTD (077909-3G82-3112)` |
-`sensor.power_one_inverter_pvi_...` | | **Custom: "Solar Inverter"** | `Solar Inverter` | `sensor.solar_inverter_power_ac` |
+| Setting | Device Name | Entity ID Example |
+|---------|-------------|-------------------|
+| **No prefix (default)** | `Power-One Inverter PVI-10.0-OUTD (077909-3G82-3112)` | `sensor.power_one_inverter_pvi_...` |
+| **Custom: "Solar Inverter"** | `Solar Inverter` | `sensor.solar_inverter_power_ac` |
 
 **Dynamic Options Form**: The configuration only shows prefix fields for device types that were actually discovered. For example, if you only have an inverter and datalogger, you
 won't see fields for meter or battery.
 
 **Entity ID Behavior**:
 
-| Action | Entity ID | Automations | |--------|-----------|-------------| | Change device name only | **Preserved** | Keep working ✅ | | Change name + check "Regenerate entity IDs"
-| **Updated** | **Will break** ⚠️ |
+| Action | Entity ID | Automations |
+|--------|-----------|-------------|
+| Change device name only | **Preserved** | Keep working ✅ |
+| Change name + check "Regenerate entity IDs" | **Updated** | **Will break** ⚠️ |
 
 **⚠️ Warning**: The "Regenerate entity IDs" checkbox will update all entity IDs to match new device names. This **will break** existing automations, scripts, and dashboards that
 reference these entities. Only use this option if you understand the implications and are prepared to update your automations.
@@ -257,9 +261,18 @@ reference these entities. Only use this option if you understand the implication
 
 The integration includes native translations for entity names in 10 European languages:
 
-| Language | Code | Status | |----------|------|--------| | English | `en` | ✅ Complete (258 sensors) | | Italian | `it` | ✅ Complete (258 sensors) | | French | `fr` | ✅ Complete
-(258 sensors) | | Spanish | `es` | ✅ Complete (258 sensors) | | Portuguese | `pt` | ✅ Complete (258 sensors) | | German | `de` | ✅ Complete (258 sensors) | | Swedish | `sv` | ✅
-Complete (258 sensors) | | Norwegian Bokmål | `nb` | ✅ Complete (258 sensors) | | Finnish | `fi` | ✅ Complete (258 sensors) | | Estonian | `et` | ✅ Complete (258 sensors) |
+| Language | Code | Status |
+|----------|------|--------|
+| English | `en` | ✅ Complete (258 sensors) |
+| Italian | `it` | ✅ Complete (258 sensors) |
+| French | `fr` | ✅ Complete (258 sensors) |
+| Spanish | `es` | ✅ Complete (258 sensors) |
+| Portuguese | `pt` | ✅ Complete (258 sensors) |
+| German | `de` | ✅ Complete (258 sensors) |
+| Swedish | `sv` | ✅ Complete (258 sensors) |
+| Norwegian Bokmål | `nb` | ✅ Complete (258 sensors) |
+| Finnish | `fi` | ✅ Complete (258 sensors) |
+| Estonian | `et` | ✅ Complete (258 sensors) |
 
 **Automatic Language Selection**: Home Assistant automatically selects the appropriate language based on your system settings. No configuration needed!
 
@@ -276,9 +289,15 @@ Complete (258 sensors) | | Norwegian Bokmål | `nb` | ✅ Complete (258 sensors)
 
 Each device includes complete metadata:
 
-| Field | Description | Example | |-------|-------------|---------| | Name | Device model + Serial | `PVI-10.0-OUTD (077909-3G82-3112)` | | Manufacturer | From device data |
-`Power-One`, `ABB`, `FIMER` | | Model | Device model | `PVI-10.0-OUTD` | | Serial Number | Device S/N | `077909-3G82-3112` | | Firmware | Device firmware | `C008` | | Configuration
-URL | Datalogger only | `http://abb-vsn300.local` | | Via Device | Device connection | Linked to datalogger |
+| Field | Description | Example |
+|-------|-------------|---------|
+| Name | Device model + Serial | `PVI-10.0-OUTD (077909-3G82-3112)` |
+| Manufacturer | From device data | `Power-One`, `ABB`, `FIMER` |
+| Model | Device model | `PVI-10.0-OUTD` |
+| Serial Number | Device S/N | `077909-3G82-3112` |
+| Firmware | Device firmware | `C008` |
+| Configuration URL | Datalogger only | `http://abb-vsn300.local` |
+| Via Device | Device connection | Linked to datalogger |
 
 ### Typical Entities (Inverter)
 
