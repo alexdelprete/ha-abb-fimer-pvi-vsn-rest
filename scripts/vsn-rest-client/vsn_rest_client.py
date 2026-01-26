@@ -504,7 +504,6 @@ async def load_mapping_from_url(session: aiohttp.ClientSession) -> dict[str, Any
                 for mapping in mappings_data:
                     vsn300_name = mapping.get("REST Name (VSN300)")
                     vsn700_name = mapping.get("REST Name (VSN700)")
-                    mapping.get("HA Entity Name")
 
                     if vsn300_name and vsn300_name != "N/A":
                         vsn300_index[vsn300_name] = mapping
@@ -569,7 +568,7 @@ def normalize_livedata(
                 continue
 
             mapping = index[point_name]
-            ha_entity = mapping.get("HA Entity Name")
+            ha_entity = mapping.get("HA Name")
             point_value = point.get("value")
 
             # Get metadata from mapping
