@@ -685,8 +685,6 @@ custom_components/abb_fimer_pvi_vsn_rest/
 
 ## Related Projects
 
-- **[ha-abb-fimer-pvi-sunspec](https://github.com/alexdelprete/ha-abb-fimer-pvi-sunspec)** Direct Modbus/TCP integration (no datalogger required)
-
 - **[ha-abb-powerone-pvi-sunspec](https://github.com/alexdelprete/ha-abb-powerone-pvi-sunspec)** Legacy v4.x integration (Modbus only)
 
 ## Support
