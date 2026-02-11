@@ -135,7 +135,7 @@ class TestCheckSocketConnection:
             await check_socket_connection("http://192.168.1.100", timeout=10)
 
         # Check timeout was passed as kwarg
-        call_kwargs = mock_create.call_args[1] if mock_create.call_args[1] else {}
+        call_kwargs = mock_create.call_args[1] or {}
         # Or passed as positional arg
         if not call_kwargs.get("timeout"):
             # Socket create_connection signature: (address, timeout=...)

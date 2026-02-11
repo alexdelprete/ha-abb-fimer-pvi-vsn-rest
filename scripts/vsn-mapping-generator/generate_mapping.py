@@ -2454,7 +2454,7 @@ def load_vsn_status(vsn300_status_path, vsn700_status_path):
 
                     status_points[point_name] = {
                         "source": "VSN300 status",
-                        "label": label if label else generate_label_from_name(point_name),
+                        "label": label or generate_label_from_name(point_name),
                         "value_example": value,
                         "vsn300": True,
                         "vsn700": False,
@@ -2476,7 +2476,7 @@ def load_vsn_status(vsn300_status_path, vsn700_status_path):
                     else:
                         status_points[point_name] = {
                             "source": "VSN700 status",
-                            "label": label if label else generate_label_from_name(point_name),
+                            "label": label or generate_label_from_name(point_name),
                             "value_example": value,
                             "vsn300": False,
                             "vsn700": True,
@@ -3459,7 +3459,7 @@ def _process_sunspec_points(
             or vsn_name in vsn700_feeds_points
             or vsn_name in vsn300_livedata_points
         ):
-            sunspec_name = mapping["sunspec"] if mapping["sunspec"] else vsn_name
+            sunspec_name = mapping["sunspec"] or vsn_name
             model = mapping["model"]
 
             # Lookup from SunSpec metadata
@@ -3768,11 +3768,7 @@ def _process_status_points(status_points, processed_points):
 
     for point_name, status_info in status_points.items():
         if point_name not in processed_points:
-            label = (
-                status_info["label"]
-                if status_info["label"]
-                else generate_label_from_name(point_name)
-            )
+            label = status_info["label"] or generate_label_from_name(point_name)
             ha_name = generate_simplified_point_name(label, "Status")
 
             # Get description with priority
