@@ -58,7 +58,7 @@ class TestABBFimerVSNRestClientInit:
             session=session,
             base_url="http://192.168.1.100/",  # Trailing slash
             username="admin",
-            password="secret",
+            password="secret",  # noqa: S106
             vsn_model="VSN300",
             timeout=30,
             discovered_devices=discovered_devices,
@@ -66,7 +66,7 @@ class TestABBFimerVSNRestClientInit:
         )
         assert client.base_url == "http://192.168.1.100"  # Trailing slash stripped
         assert client.username == "admin"
-        assert client.password == "secret"
+        assert client.password == "secret"  # noqa: S105
         assert client.vsn_model == "VSN300"
         assert client.timeout == 30
         assert client.requires_auth is False

@@ -1,12 +1,15 @@
 # ABB/FIMER PVI VSN REST Integration
 
-[![GitHub Release][releases-shield]][releases]
-[![BuyMeCoffee][buymecoffee-shield]][buymecoffee]
-[![Community Forum][forum-shield]][forum]
+<!-- BEGIN SHARED:repo-sync:badges -->
+<!-- Synced by repo-sync on 2026-02-11 -->
 
-[![Tests][tests-shield]][tests]
-[![Code Coverage][coverage-shield]][coverage]
-[![Downloads][downloads-shield]][downloads]
+[![GitHub Release](https://img.shields.io/github/v/release/alexdelprete/ha-abb-fimer-pvi-vsn-rest?style=for-the-badge)](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/releases)
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-donate-yellow?style=for-the-badge&logo=buy-me-a-coffee)](https://www.buymeacoffee.com/alexdelprete)
+[![Tests](https://img.shields.io/github/actions/workflow/status/alexdelprete/ha-abb-fimer-pvi-vsn-rest/test.yml?style=for-the-badge&label=Tests)](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/actions/workflows/test.yml)
+[![Coverage](https://img.shields.io/codecov/c/github/alexdelprete/ha-abb-fimer-pvi-vsn-rest?style=for-the-badge)](https://codecov.io/gh/alexdelprete/ha-abb-fimer-pvi-vsn-rest)
+[![GitHub Downloads](https://img.shields.io/github/downloads/alexdelprete/ha-abb-fimer-pvi-vsn-rest/total?style=for-the-badge)](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/releases)
+
+<!-- END SHARED:repo-sync:badges -->
 
 Home Assistant custom integration for ABB/FIMER/Power-One PVI inverters via **VSN300/VSN700 datalogger REST API**.
 
@@ -44,25 +47,29 @@ SunSpec-compatible format for consistent Home Assistant entity creation.
 - Energy meters
 - Battery storage systems
 
+<!-- BEGIN SHARED:repo-sync:installation -->
+<!-- Synced by repo-sync on 2026-02-11 -->
+
 ## Installation
 
 ### HACS (Recommended)
 
-This integration is available in the official [HACS] default repository:
-
-[![Quick installation link](https://my.home-assistant.io/badges/hacs_repository.svg)][my-hacs]
-
-1. Open HACS in Home Assistant
-1. Go to "Integrations"
-1. Search for "ABB FIMER PVI VSN REST"
-1. Click "Download"
+1. Open HACS in your Home Assistant instance
+1. Click on "Integrations"
+1. Click the three dots menu in the top right corner
+1. Select "Custom repositories"
+1. Add `https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest` as an Integration
+1. Click "Download" and install the integration
 1. Restart Home Assistant
 
 ### Manual Installation
 
-1. Download the latest release from [Releases](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/releases)
-1. Extract and copy `custom_components/abb_fimer_pvi_vsn_rest` to your `config/custom_components/` directory
+1. Download the latest release from [GitHub Releases](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/releases)
+1. Extract the `custom_components/abb_fimer_pvi_vsn_rest` folder
+1. Copy it to your Home Assistant `config/custom_components/` directory
 1. Restart Home Assistant
+
+<!-- END SHARED:repo-sync:installation -->
 
 ## Configuration
 
@@ -692,15 +699,39 @@ custom_components/abb_fimer_pvi_vsn_rest/
 - **Issues**: [GitHub Issues](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/discussions)
 
+<!-- BEGIN SHARED:repo-sync:license -->
+<!-- Synced by repo-sync on 2026-02-11 -->
+
 ## License
 
-This project is licensed under the MIT License - see [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+<!-- END SHARED:repo-sync:license -->
 
 ## Credits
 
 Developed by [Alessandro Del Prete](https://github.com/alexdelprete)
 
 SunSpec model definitions from [SunSpec Models Repository](https://github.com/sunspec/models) (Apache-2.0 license)
+
+<!-- BEGIN SHARED:repo-sync:contributing -->
+<!-- Synced by repo-sync on 2026-02-11 -->
+
+## Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository
+1. Create a feature branch (`git checkout -b feature/my-feature`)
+1. Make your changes
+1. Run linting: `uvx pre-commit run --all-files`
+1. Commit your changes (`git commit -m "feat: add my feature"`)
+1. Push to your branch (`git push origin feature/my-feature`)
+1. Open a Pull Request
+
+Please ensure all CI checks pass before requesting a review.
+
+<!-- END SHARED:repo-sync:contributing -->
 
 ## Coffee
 

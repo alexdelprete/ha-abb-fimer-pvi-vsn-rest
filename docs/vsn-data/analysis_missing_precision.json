@@ -1,0 +1,1522 @@
+[
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_dynamic_feed_in_ctrl",
+    "friendly_name": "ABB/FIMER Meter MeterSN Dynamic Feed In Ctrl",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_current_ac_house_phase_a",
+    "friendly_name": "ABB/FIMER Meter MeterSN Current AC - House Phase A",
+    "state": "",
+    "unit": "A",
+    "device_class": "current",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_current_ac_house_phase_b",
+    "friendly_name": "ABB/FIMER Meter MeterSN Current AC - House Phase B",
+    "state": "",
+    "unit": "A",
+    "device_class": "current",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_current_ac_house_phase_c",
+    "friendly_name": "ABB/FIMER Meter MeterSN Current AC - House Phase C",
+    "state": "",
+    "unit": "A",
+    "device_class": "current",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_power_ac_house_phase_a",
+    "friendly_name": "ABB/FIMER Meter MeterSN Power AC - House Phase A",
+    "state": "",
+    "unit": "W",
+    "device_class": "power",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_power_ac_house_phase_b",
+    "friendly_name": "ABB/FIMER Meter MeterSN Power AC - House Phase B",
+    "state": "",
+    "unit": "W",
+    "device_class": "power",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_power_ac_house_phase_c",
+    "friendly_name": "ABB/FIMER Meter MeterSN Power AC - House Phase C",
+    "state": "",
+    "unit": "W",
+    "device_class": "power",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_power_ac_house_load_total",
+    "friendly_name": "ABB/FIMER Meter MeterSN Power AC - House Load Total",
+    "state": "",
+    "unit": "W",
+    "device_class": "power",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_power_home_pv",
+    "friendly_name": "ABB/FIMER Meter MeterSN Power - Home PV",
+    "state": "",
+    "unit": "W",
+    "device_class": "power",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_voltage_ac_meter_phase_a",
+    "friendly_name": "ABB/FIMER Meter MeterSN Voltage AC - Meter Phase A",
+    "state": "",
+    "unit": "V",
+    "device_class": "voltage",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_voltage_ac_meter_phase_b",
+    "friendly_name": "ABB/FIMER Meter MeterSN Voltage AC - Meter Phase B",
+    "state": "",
+    "unit": "V",
+    "device_class": "voltage",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_voltage_ac_meter_phase_c",
+    "friendly_name": "ABB/FIMER Meter MeterSN Voltage AC - Meter Phase C",
+    "state": "",
+    "unit": "V",
+    "device_class": "voltage",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_current_ac_meter_phase_a",
+    "friendly_name": "ABB/FIMER Meter MeterSN Current AC - Meter Phase A",
+    "state": "",
+    "unit": "A",
+    "device_class": "current",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_current_ac_meter_phase_b",
+    "friendly_name": "ABB/FIMER Meter MeterSN Current AC - Meter Phase B",
+    "state": "",
+    "unit": "A",
+    "device_class": "current",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_current_ac_meter_phase_c",
+    "friendly_name": "ABB/FIMER Meter MeterSN Current AC - Meter Phase C",
+    "state": "",
+    "unit": "A",
+    "device_class": "current",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_power_ac_meter_phase_a",
+    "friendly_name": "ABB/FIMER Meter MeterSN Power AC - Meter Phase A",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_power_ac_meter_phase_b",
+    "friendly_name": "ABB/FIMER Meter MeterSN Power AC - Meter Phase B",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_power_ac_meter_phase_c",
+    "friendly_name": "ABB/FIMER Meter MeterSN Power AC - Meter Phase C",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_power_ac_meter_total",
+    "friendly_name": "ABB/FIMER Meter MeterSN Power AC - Meter Total",
+    "state": "",
+    "unit": "W",
+    "device_class": "power",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_reactive_power_ac_meter_phase_a",
+    "friendly_name": "ABB/FIMER Meter MeterSN Reactive Power AC - Meter Phase A",
+    "state": "",
+    "unit": "var",
+    "device_class": "reactive_power",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_reactive_power_ac_meter_phase_b",
+    "friendly_name": "ABB/FIMER Meter MeterSN Reactive Power AC - Meter Phase B",
+    "state": "",
+    "unit": "var",
+    "device_class": "reactive_power",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_reactive_power_ac_meter_phase_c",
+    "friendly_name": "ABB/FIMER Meter MeterSN Reactive Power AC - Meter Phase C",
+    "state": "",
+    "unit": "var",
+    "device_class": "reactive_power",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_reactive_power_ac_meter_total",
+    "friendly_name": "ABB/FIMER Meter MeterSN Reactive Power AC - Meter Total",
+    "state": "",
+    "unit": "var",
+    "device_class": "reactive_power",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_frequency_ac_meter",
+    "friendly_name": "ABB/FIMER Meter MeterSN Frequency AC - Meter",
+    "state": "",
+    "unit": "Hz",
+    "device_class": "frequency",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_commissioning_freeze",
+    "friendly_name": "ABB/FIMER Meter MeterSN Commissioning Freeze",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_energy_ac_grid_export_since_restart",
+    "friendly_name": "ABB/FIMER Meter MeterSN Energy AC - Grid Export Since Restart",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_energy_ac_grid_export_last_7_days",
+    "friendly_name": "ABB/FIMER Meter MeterSN Energy AC - Grid Export Last 7 Days",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_energy_ac_grid_export_last_30_days",
+    "friendly_name": "ABB/FIMER Meter MeterSN Energy AC - Grid Export Last 30 Days",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_energy_house_from_inverter_since_restart",
+    "friendly_name": "ABB/FIMER Meter MeterSN Energy - House from Inverter Since Restart",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_energy_house_from_inverter_last_7_days",
+    "friendly_name": "ABB/FIMER Meter MeterSN Energy - House from Inverter Last 7 Days",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_energy_house_from_inverter_last_30_days",
+    "friendly_name": "ABB/FIMER Meter MeterSN Energy - House from Inverter Last 30 Days",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_energy_house_consumption_since_restart",
+    "friendly_name": "ABB/FIMER Meter MeterSN Energy - House Consumption Since Restart",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_energy_house_consumption_last_7_days",
+    "friendly_name": "ABB/FIMER Meter MeterSN Energy - House Consumption Last 7 Days",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_energy_house_consumption_last_30_days",
+    "friendly_name": "ABB/FIMER Meter MeterSN Energy - House Consumption Last 30 Days",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_energy_ac_grid_import_since_restart",
+    "friendly_name": "ABB/FIMER Meter MeterSN Energy AC - Grid Import Since Restart",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_energy_ac_grid_import_last_7_days",
+    "friendly_name": "ABB/FIMER Meter MeterSN Energy AC - Grid Import Last 7 Days",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_energy_ac_grid_import_last_30_days",
+    "friendly_name": "ABB/FIMER Meter MeterSN Energy AC - Grid Import Last 30 Days",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_energy_ac_grid_import_lifetime",
+    "friendly_name": "ABB/FIMER Meter MeterSN Energy AC - Grid Import Lifetime",
+    "state": "",
+    "unit": "kWh",
+    "device_class": "energy",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_meter_MeterSN_energy_ac_grid_export_lifetime",
+    "friendly_name": "ABB/FIMER Meter MeterSN Energy AC - Grid Export Lifetime",
+    "state": "",
+    "unit": "kWh",
+    "device_class": "energy",
+    "device_type": "meter"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery1SN_number_of_battery_cells_or_modules",
+    "friendly_name": "ABB/FIMER Battery Battery1SN Number of battery cells or modules",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery1SN_current_battery",
+    "friendly_name": "ABB/FIMER Battery Battery1SN Current - Battery",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery1SN_voltage_battery",
+    "friendly_name": "ABB/FIMER Battery Battery1SN Voltage - Battery",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery1SN_power_battery_total",
+    "friendly_name": "ABB/FIMER Battery Battery1SN Power - Battery Total",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery1SN_temperature_battery",
+    "friendly_name": "ABB/FIMER Battery Battery1SN Temperature - Battery",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery1SN_state_of_charge",
+    "friendly_name": "ABB/FIMER Battery Battery1SN State of Charge",
+    "state": "",
+    "unit": "%",
+    "device_class": "battery",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery1SN_voltage_battery_cell_max",
+    "friendly_name": "ABB/FIMER Battery Battery1SN Voltage - Battery Cell Max",
+    "state": "",
+    "unit": "V",
+    "device_class": "voltage",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery1SN_voltage_battery_cell_min",
+    "friendly_name": "ABB/FIMER Battery Battery1SN Voltage - Battery Cell Min",
+    "state": "",
+    "unit": "V",
+    "device_class": "voltage",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery1SN_temperature_cabinet_max",
+    "friendly_name": "ABB/FIMER Battery Battery1SN Temperature - Cabinet Max",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery1SN_temperature_cabinet_min",
+    "friendly_name": "ABB/FIMER Battery Battery1SN Temperature - Cabinet Min",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery1SN_state_of_health",
+    "friendly_name": "ABB/FIMER Battery Battery1SN State of Health",
+    "state": "",
+    "unit": "%",
+    "device_class": "battery",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery1SN_voltage_shunt",
+    "friendly_name": "ABB/FIMER Battery Battery1SN Voltage - Shunt",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery1SN_power_battery_charge",
+    "friendly_name": "ABB/FIMER Battery Battery1SN Power - Battery Charge",
+    "state": "",
+    "unit": "W",
+    "device_class": "power",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery1SN_power_battery_discharge",
+    "friendly_name": "ABB/FIMER Battery Battery1SN Power - Battery Discharge",
+    "state": "",
+    "unit": "W",
+    "device_class": "power",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery1SN_battery_charge_cycles_counter",
+    "friendly_name": "ABB/FIMER Battery Battery1SN Battery charge cycles counter",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery1SN_battery_discharge_cycles_counter",
+    "friendly_name": "ABB/FIMER Battery Battery1SN Battery discharge cycles counter",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery1SN_central_controller_frequency",
+    "friendly_name": "ABB/FIMER Battery Battery1SN Central controller frequency",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery1SN_total_energy_from_current_transformer_ct",
+    "friendly_name": "ABB/FIMER Battery Battery1SN Total energy from current transformer (CT)",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery1SN_total_energy_from_direct_transducer_dt",
+    "friendly_name": "ABB/FIMER Battery Battery1SN Total energy from direct transducer (DT)",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery1SN_energy_battery_discharge_since_restart",
+    "friendly_name": "ABB/FIMER Battery Battery1SN Energy - Battery Discharge Since Restart",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery1SN_energy_battery_discharge_last_7_days",
+    "friendly_name": "ABB/FIMER Battery Battery1SN Energy - Battery Discharge Last 7 Days",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery1SN_energy_battery_discharge_last_30_days",
+    "friendly_name": "ABB/FIMER Battery Battery1SN Energy - Battery Discharge Last 30 Days",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery1SN_energy_battery_discharge_lifetime",
+    "friendly_name": "ABB/FIMER Battery Battery1SN Energy - Battery Discharge Lifetime",
+    "state": "",
+    "unit": "kWh",
+    "device_class": "energy",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery1SN_energy_battery_charge_since_restart",
+    "friendly_name": "ABB/FIMER Battery Battery1SN Energy - Battery Charge Since Restart",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery1SN_energy_battery_charge_last_7_days",
+    "friendly_name": "ABB/FIMER Battery Battery1SN Energy - Battery Charge Last 7 Days",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery1SN_energy_battery_charge_last_30_days",
+    "friendly_name": "ABB/FIMER Battery Battery1SN Energy - Battery Charge Last 30 Days",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery1SN_energy_battery_charge_lifetime",
+    "friendly_name": "ABB/FIMER Battery Battery1SN Energy - Battery Charge Lifetime",
+    "state": "",
+    "unit": "kWh",
+    "device_class": "energy",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery1SN_count_battery_cycles",
+    "friendly_name": "ABB/FIMER Battery Battery1SN Count - Battery Cycles",
+    "state": "",
+    "unit": "cycles",
+    "device_class": "None",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery2SN_number_of_battery_cells_or_modules",
+    "friendly_name": "ABB/FIMER Battery Battery2SN Number of battery cells or modules",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery2SN_current_battery",
+    "friendly_name": "ABB/FIMER Battery Battery2SN Current - Battery",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery2SN_voltage_battery",
+    "friendly_name": "ABB/FIMER Battery Battery2SN Voltage - Battery",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery2SN_power_battery_total",
+    "friendly_name": "ABB/FIMER Battery Battery2SN Power - Battery Total",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery2SN_temperature_battery",
+    "friendly_name": "ABB/FIMER Battery Battery2SN Temperature - Battery",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery2SN_state_of_charge",
+    "friendly_name": "ABB/FIMER Battery Battery2SN State of Charge",
+    "state": "",
+    "unit": "%",
+    "device_class": "battery",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery2SN_voltage_battery_cell_max",
+    "friendly_name": "ABB/FIMER Battery Battery2SN Voltage - Battery Cell Max",
+    "state": "",
+    "unit": "V",
+    "device_class": "voltage",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery2SN_voltage_battery_cell_min",
+    "friendly_name": "ABB/FIMER Battery Battery2SN Voltage - Battery Cell Min",
+    "state": "",
+    "unit": "V",
+    "device_class": "voltage",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery2SN_temperature_cabinet_max",
+    "friendly_name": "ABB/FIMER Battery Battery2SN Temperature - Cabinet Max",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery2SN_temperature_cabinet_min",
+    "friendly_name": "ABB/FIMER Battery Battery2SN Temperature - Cabinet Min",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery2SN_state_of_health",
+    "friendly_name": "ABB/FIMER Battery Battery2SN State of Health",
+    "state": "",
+    "unit": "%",
+    "device_class": "battery",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery2SN_voltage_shunt",
+    "friendly_name": "ABB/FIMER Battery Battery2SN Voltage - Shunt",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery2SN_power_battery_charge",
+    "friendly_name": "ABB/FIMER Battery Battery2SN Power - Battery Charge",
+    "state": "",
+    "unit": "W",
+    "device_class": "power",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery2SN_power_battery_discharge",
+    "friendly_name": "ABB/FIMER Battery Battery2SN Power - Battery Discharge",
+    "state": "",
+    "unit": "W",
+    "device_class": "power",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery2SN_battery_charge_cycles_counter",
+    "friendly_name": "ABB/FIMER Battery Battery2SN Battery charge cycles counter",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery2SN_battery_discharge_cycles_counter",
+    "friendly_name": "ABB/FIMER Battery Battery2SN Battery discharge cycles counter",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery2SN_central_controller_frequency",
+    "friendly_name": "ABB/FIMER Battery Battery2SN Central controller frequency",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery2SN_total_energy_from_current_transformer_ct",
+    "friendly_name": "ABB/FIMER Battery Battery2SN Total energy from current transformer (CT)",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery2SN_total_energy_from_direct_transducer_dt",
+    "friendly_name": "ABB/FIMER Battery Battery2SN Total energy from direct transducer (DT)",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery2SN_energy_battery_discharge_since_restart",
+    "friendly_name": "ABB/FIMER Battery Battery2SN Energy - Battery Discharge Since Restart",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery2SN_energy_battery_discharge_last_7_days",
+    "friendly_name": "ABB/FIMER Battery Battery2SN Energy - Battery Discharge Last 7 Days",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery2SN_energy_battery_discharge_last_30_days",
+    "friendly_name": "ABB/FIMER Battery Battery2SN Energy - Battery Discharge Last 30 Days",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery2SN_energy_battery_discharge_lifetime",
+    "friendly_name": "ABB/FIMER Battery Battery2SN Energy - Battery Discharge Lifetime",
+    "state": "",
+    "unit": "kWh",
+    "device_class": "energy",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery2SN_energy_battery_charge_since_restart",
+    "friendly_name": "ABB/FIMER Battery Battery2SN Energy - Battery Charge Since Restart",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery2SN_energy_battery_charge_last_7_days",
+    "friendly_name": "ABB/FIMER Battery Battery2SN Energy - Battery Charge Last 7 Days",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery2SN_energy_battery_charge_last_30_days",
+    "friendly_name": "ABB/FIMER Battery Battery2SN Energy - Battery Charge Last 30 Days",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery2SN_energy_battery_charge_lifetime",
+    "friendly_name": "ABB/FIMER Battery Battery2SN Energy - Battery Charge Lifetime",
+    "state": "",
+    "unit": "kWh",
+    "device_class": "energy",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_battery_Battery2SN_count_battery_cycles",
+    "friendly_name": "ABB/FIMER Battery Battery2SN Count - Battery Cycles",
+    "state": "",
+    "unit": "cycles",
+    "device_class": "None",
+    "device_type": "battery"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_country_grid_standard_setting",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Country grid standard setting",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_input_mode",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Input Mode",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_count_mppt_channels",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Count - MPPT Channels",
+    "state": "",
+    "unit": "channels",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_power_rating",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Power - Rating",
+    "state": "",
+    "unit": "W",
+    "device_class": "power",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_current_dc_string_1",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Current DC - String 1",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_voltage_dc_input_1",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Voltage DC - Input 1",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_power_dc_string_1",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Power DC - String 1",
+    "state": "",
+    "unit": "W",
+    "device_class": "power",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_current_dc_string_2",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Current DC - String 2",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_voltage_dc_input_2",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Voltage DC - Input 2",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_power_dc_string_2",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Power DC - String 2",
+    "state": "",
+    "unit": "W",
+    "device_class": "power",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_power_dc_input_total",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Power DC - Input Total",
+    "state": "",
+    "unit": "W",
+    "device_class": "power",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_current_ac",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Current AC",
+    "state": "",
+    "unit": "A",
+    "device_class": "current",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_power_ac",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Power AC",
+    "state": "",
+    "unit": "W",
+    "device_class": "power",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_voltage_ac_phase_a_n",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Voltage AC - Phase A-N",
+    "state": "",
+    "unit": "V",
+    "device_class": "voltage",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_reactive_power_grid_connection",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Reactive Power - Grid Connection",
+    "state": "",
+    "unit": "var",
+    "device_class": "reactive_power",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_frequency_ac_grid",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Frequency AC - Grid",
+    "state": "",
+    "unit": "Hz",
+    "device_class": "frequency",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_power_peak",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Power - Peak",
+    "state": "",
+    "unit": "W",
+    "device_class": "power",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_power_factor",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Power Factor",
+    "state": "",
+    "unit": "None",
+    "device_class": "power_factor",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_split_phase_configuration_flag",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Split-phase configuration flag",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_voltage_ac_phase_a_n_2",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Voltage AC - Phase A-N",
+    "state": "",
+    "unit": "V",
+    "device_class": "voltage",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_voltage_ac_phase_b_n",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Voltage AC - Phase B-N",
+    "state": "",
+    "unit": "V",
+    "device_class": "voltage",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_power_ac_export_to_grid",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Power AC - Export to Grid",
+    "state": "",
+    "unit": "W",
+    "device_class": "power",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_power_ac_stand_alone_mode",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Power AC - Stand Alone Mode",
+    "state": "",
+    "unit": "W",
+    "device_class": "power",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_temperature_sensor_1",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Temperature - Sensor 1",
+    "state": "",
+    "unit": "\u00b0F",
+    "device_class": "temperature",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_temperature_inverter",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Temperature - Inverter",
+    "state": "",
+    "unit": "\u00b0F",
+    "device_class": "temperature",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_temperature_booster",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Temperature - Booster",
+    "state": "",
+    "unit": "\u00b0F",
+    "device_class": "temperature",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_voltage_dc_bulk_capacitor",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Voltage DC - Bulk Capacitor",
+    "state": "",
+    "unit": "V",
+    "device_class": "voltage",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_voltage_dc_bus_midpoint",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Voltage DC - Bus Midpoint",
+    "state": "",
+    "unit": "V",
+    "device_class": "voltage",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_resistance_insulation",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Resistance - Insulation",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_current_inverter_leakage",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Current - Inverter Leakage",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_current_dc_leakage",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Current DC - Leakage",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_voltage_ground",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Voltage - Ground",
+    "state": "",
+    "unit": "V",
+    "device_class": "voltage",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_system_time",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) System Time",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_global_operational_state",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Global operational state",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_alarm_state",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Alarm State",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_dc_input_1_state",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) DC Input 1 State",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_dc_input_2_state",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) DC Input 2 State",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_inverter_state",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Inverter State",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_warning_flags",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Warning Flags",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_ac_power_derating_flags",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) AC Power Derating Flags",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_reactive_power_derating",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Reactive Power Derating",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_apparent_power_derating",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Apparent Power Derating",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_fault_ride_through_frt_status",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Fault Ride Through (FRT) status",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_clock_state",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Clock State",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_model_126_enabled",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Model 126 Enabled",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_model_132_enabled",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Model 132 Enabled",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_speed_fan_1",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Speed - Fan 1",
+    "state": "",
+    "unit": "RPM",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_speed_fan_2",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Speed - Fan 2",
+    "state": "",
+    "unit": "RPM",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_ac_produced_since_restart",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy AC - Produced Since Restart",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_ac_produced_last_7_days",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy AC - Produced Last 7 Days",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_ac_produced_last_30_days",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy AC - Produced Last 30 Days",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_ac_produced_last_year",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy AC - Produced Last Year",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_ac_absorbed_since_restart",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy AC - Absorbed Since Restart",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_ac_absorbed_last_7_days",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy AC - Absorbed Last 7 Days",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_ac_absorbed_last_30_days",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy AC - Absorbed Last 30 Days",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_ac_apparent_since_restart",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy AC Apparent - Since Restart",
+    "state": "",
+    "unit": "VAh",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_ac_apparent_last_7_days",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy AC Apparent - Last 7 Days",
+    "state": "",
+    "unit": "VAh",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_ac_apparent_last_30_days",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy AC Apparent - Last 30 Days",
+    "state": "",
+    "unit": "VAh",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_self_consumed_energy_since_restart",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Self-consumed energy - Since Restart",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_self_consumed_energy_last_7_days",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Self-consumed energy - Last 7 Days",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_self_consumed_energy_last_30_days",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Self-consumed energy - Last 30 Days",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_battery_charge_since_restart",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy - Battery Charge Since Restart",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_battery_charge_last_7_days",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy - Battery Charge Last 7 Days",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_battery_charge_last_30_days",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy - Battery Charge Last 30 Days",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_ac_backup_output_since_restart",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy AC - Backup Output Since Restart",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_ac_backup_output_last_7_days",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy AC - Backup Output Last 7 Days",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_ac_backup_output_last_30_days",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy AC - Backup Output Last 30 Days",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_dc_pv_input_since_restart",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy DC - PV Input Since Restart",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_dc_pv_input_last_7_days",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy DC - PV Input Last 7 Days",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_dc_pv_input_last_30_days",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy DC - PV Input Last 30 Days",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_dc_pv_input_lifetime",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy DC - PV Input Lifetime",
+    "state": "",
+    "unit": "kWh",
+    "device_class": "energy",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_ac_produced_lifetime",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy AC - Produced Lifetime",
+    "state": "",
+    "unit": "kWh",
+    "device_class": "energy",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_ac_absorbed_lifetime",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy AC - Absorbed Lifetime",
+    "state": "",
+    "unit": "kWh",
+    "device_class": "energy",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_ac_apparent_lifetime",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy AC Apparent - Lifetime",
+    "state": "",
+    "unit": "kVAh",
+    "device_class": "energy",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_dc_energy_string_1_lifetime",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) DC energy (String 1) - Lifetime",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_dc_energy_string_2_lifetime",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) DC energy (String 2) - Lifetime",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_ac_backup_output_lifetime",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy AC - Backup Output Lifetime",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_detected_battery_number",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Detected Battery Number",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_power_battery_total",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Power - Battery Total",
+    "state": "",
+    "unit": "W",
+    "device_class": "power",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_battery_state_of_charge",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Battery State of Charge",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_policy",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy Policy",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_battery_mode",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Battery Mode",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_battery_discharge_total_since_restart",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy - Battery Discharge Total Since Restart",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_battery_discharge_total_last_7_days",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy - Battery Discharge Total Last 7 Days",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_battery_discharge_total_last_30_days",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy - Battery Discharge Total Last 30 Days",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_battery_charge_total_since_restart",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy - Battery Charge Total Since Restart",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_battery_charge_total_last_7_days",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy - Battery Charge Total Last 7 Days",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_battery_charge_total_last_30_days",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy - Battery Charge Total Last 30 Days",
+    "state": "",
+    "unit": "Wh",
+    "device_class": "energy",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_digital_input_0_mode",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Digital Input 0 Mode",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_digital_input_1_mode",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Digital Input 1 Mode",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_digital_input_status",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Digital Input Status",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_grid_external_control_state",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Grid External Control State",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_grid_external_control_enabled",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Grid External Control Enabled",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_battery_control_state",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Battery Control State",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  },
+  {
+    "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_battery_control_enabled",
+    "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Battery Control Enabled",
+    "state": "",
+    "unit": "None",
+    "device_class": "None",
+    "device_type": "inverter_1phase"
+  }
+]

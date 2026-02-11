@@ -1,0 +1,227 @@
+{
+  "159948-3G79-3515": {
+    "device_id": "159948-3G79-3515",
+    "device_type": "inverter_1phase",
+    "timestamp": "2025-11-19T12:50:55-0800",
+    "points": [
+      {
+        "name": "C_Mn",
+        "value": "Power-One"
+      },
+      {
+        "name": "C_Md",
+        "value": "-3G79-"
+      },
+      {
+        "name": "C_Opt",
+        "value": "4"
+      },
+      {
+        "name": "C_SN",
+        "value": "159948-3G79-3515"
+      },
+      {
+        "name": "C_Vr",
+        "value": "C041"
+      },
+      {
+        "name": "C_DA",
+        "value": 2
+      },
+      {
+        "name": "CountryStd",
+        "value": 65
+      },
+      {
+        "name": "m160_1_DCA_1",
+        "value": 6.451244831085205
+      },
+      {
+        "name": "m160_1_DCV_1",
+        "value": 242.87139892578125
+      },
+      {
+        "name": "m160_1_DCW_1",
+        "value": 1523.796630859375
+      },
+      {
+        "name": "m160_1_DCA_2",
+        "value": 6.470579147338867
+      },
+      {
+        "name": "m160_1_DCV_2",
+        "value": 245.12802124023438
+      },
+      {
+        "name": "m160_1_DCW_2",
+        "value": 1556.144287109375
+      },
+      {
+        "name": "m101_1_DCW",
+        "value": 3079.94091796875
+      },
+      {
+        "name": "m101_1_A",
+        "value": 12.511956214904785
+      },
+      {
+        "name": "m101_1_W",
+        "value": 2986.3203125
+      },
+      {
+        "name": "m101_1_PhVphA",
+        "value": 240.6618194580078
+      },
+      {
+        "name": "m101_1_Hz",
+        "value": 59.972171783447266
+      },
+      {
+        "name": "m101_1_PowerPeakToday",
+        "value": 3475.985107421875
+      },
+      {
+        "name": "m101_1_PowerPeakAbs",
+        "value": 4572.17431640625
+      },
+      {
+        "name": "m101_1_PF",
+        "value": 6.162975822039155e-33
+      },
+      {
+        "name": "m101_1_TmpCab",
+        "value": 6.162975822039155e-33
+      },
+      {
+        "name": "m101_1_TmpOt",
+        "value": 48.02609634399414
+      },
+      {
+        "name": "m64061_1_Booster_Tmp",
+        "value": 45.99826431274414
+      },
+      {
+        "name": "m64061_1_VBulk",
+        "value": 384.2380676269531
+      },
+      {
+        "name": "m64061_1_VBulkMid",
+        "value": 189.60768127441406
+      },
+      {
+        "name": "m64061_1_Isolation_Ohm1",
+        "value": 7.097191333770752
+      },
+      {
+        "name": "m64061_1_ILeakDcAc",
+        "value": 0.0
+      },
+      {
+        "name": "m64061_1_ILeakDcDc",
+        "value": 0.0
+      },
+      {
+        "name": "m64061_1_SysTime",
+        "value": 816871851
+      },
+      {
+        "name": "m64061_1_DayWH",
+        "value": 11654.0
+      },
+      {
+        "name": "m64061_1_WeekWH",
+        "value": 47390.0
+      },
+      {
+        "name": "m64061_1_MonthWH",
+        "value": 251483.0
+      },
+      {
+        "name": "m64061_1_YearWH",
+        "value": 6164793.0
+      },
+      {
+        "name": "m101_1_WH",
+        "value": 63151796.0
+      },
+      {
+        "name": "m64061_1_GlobalSt",
+        "value": 6
+      },
+      {
+        "name": "m64061_1_AlarmSt",
+        "value": 0
+      },
+      {
+        "name": "m64061_1_DcSt1",
+        "value": 2
+      },
+      {
+        "name": "m64061_1_DcSt2",
+        "value": 2
+      },
+      {
+        "name": "m64061_1_InverterSt",
+        "value": 2
+      }
+    ]
+  },
+  "54:4a:16:22:49:f9": {
+    "device_id": "54:4a:16:22:49:f9",
+    "timestamp": "2025-11-19T12:51:09-0800",
+    "points": [
+      {
+        "name": "type",
+        "value": "WIFI LOGGER CARD"
+      },
+      {
+        "name": "sn",
+        "value": "615319-3N16-4315"
+      },
+      {
+        "name": "pn",
+        "value": "-3N16-"
+      },
+      {
+        "name": "fw_ver",
+        "value": "1.9.2"
+      },
+      {
+        "name": "uptime",
+        "value": 23285.0
+      },
+      {
+        "name": "sys_load",
+        "value": 0.28662109375
+      },
+      {
+        "name": "free_ram",
+        "value": 7749632.0
+      },
+      {
+        "name": "flash_free",
+        "value": 3348017152.0
+      },
+      {
+        "name": "store_size",
+        "value": 7428096.0
+      },
+      {
+        "name": "wlan0_mode",
+        "value": 1
+      },
+      {
+        "name": "wlan0_ipaddr_local",
+        "value": "192.168.1.234"
+      },
+      {
+        "name": "wlan0_essid",
+        "value": "Chill Vibes and WiFi"
+      },
+      {
+        "name": "wlan0_link_quality",
+        "value": 52
+      }
+    ]
+  }
+}

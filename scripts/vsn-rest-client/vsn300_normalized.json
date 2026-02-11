@@ -1,0 +1,536 @@
+{
+  "devices": {
+    "077909-3G82-3112": {
+      "device_type": "inverter_3phases",
+      "timestamp": "2026-01-26T12:11:30+0100",
+      "points": {
+        "manufacturer": {
+          "value": "Power-One",
+          "units": "",
+          "label": "Manufacturer",
+          "description": "Manufacturer name",
+          "device_class": "",
+          "state_class": ""
+        },
+        "model": {
+          "value": "-3G82-",
+          "units": "",
+          "label": "Model",
+          "description": "Model identifier",
+          "device_class": "",
+          "state_class": ""
+        },
+        "options": {
+          "value": "X",
+          "units": "",
+          "label": "Options",
+          "description": "Configuration options",
+          "device_class": "",
+          "state_class": ""
+        },
+        "serial_number": {
+          "value": "077909-3G82-3112",
+          "units": "",
+          "label": "Serial Number",
+          "description": "Device serial number",
+          "device_class": "",
+          "state_class": ""
+        },
+        "version": {
+          "value": "C008",
+          "units": "",
+          "label": "Version",
+          "description": "Firmware version",
+          "device_class": "",
+          "state_class": ""
+        },
+        "device_address": {
+          "value": 2,
+          "units": "",
+          "label": "Device Address",
+          "description": "Device Modbus address",
+          "device_class": "",
+          "state_class": ""
+        },
+        "country_std": {
+          "value": 106,
+          "units": "",
+          "label": "Country Std",
+          "description": "Country grid standard setting",
+          "device_class": "",
+          "state_class": ""
+        },
+        "dc_current_1": {
+          "value": 1.5216064453125,
+          "units": "A",
+          "label": "DC Current #1",
+          "description": "DC Current (String 1)",
+          "device_class": "current",
+          "state_class": "measurement"
+        },
+        "dc_voltage_1": {
+          "value": 406.469970703125,
+          "units": "V",
+          "label": "DC Voltage #1",
+          "description": "DC Voltage (String 1)",
+          "device_class": "voltage",
+          "state_class": "measurement"
+        },
+        "dc_power_1": {
+          "value": 631.3095703125,
+          "units": "W",
+          "label": "DC Power #1",
+          "description": "DC Power (String 1)",
+          "device_class": "power",
+          "state_class": "measurement"
+        },
+        "dc_current_2": {
+          "value": 1.50421142578125,
+          "units": "A",
+          "label": "DC Current #2",
+          "description": "DC Current (String 2)",
+          "device_class": "current",
+          "state_class": "measurement"
+        },
+        "dc_voltage_2": {
+          "value": 395.06878662109375,
+          "units": "V",
+          "label": "DC Voltage #2",
+          "description": "DC Voltage (String 2)",
+          "device_class": "voltage",
+          "state_class": "measurement"
+        },
+        "dc_power_2": {
+          "value": 595.83251953125,
+          "units": "W",
+          "label": "DC Power #2",
+          "description": "DC Power (String 2)",
+          "device_class": "power",
+          "state_class": "measurement"
+        },
+        "dc_watts": {
+          "value": 1227.14208984375,
+          "units": "W",
+          "label": "DC Watts",
+          "description": "DC Power",
+          "device_class": "power",
+          "state_class": "measurement"
+        },
+        "amps": {
+          "value": 1.4314712285995483,
+          "units": "A",
+          "label": "Amps",
+          "description": "AC Current",
+          "device_class": "current",
+          "state_class": "measurement"
+        },
+        "amps_phasea": {
+          "value": 1.4314712285995483,
+          "units": "A",
+          "label": "Amps PhaseA",
+          "description": "Phase A Current",
+          "device_class": "current",
+          "state_class": "measurement"
+        },
+        "amps_phaseb": {
+          "value": 1.79444420337677,
+          "units": "A",
+          "label": "Amps PhaseB",
+          "description": "Phase B Current",
+          "device_class": "current",
+          "state_class": "measurement"
+        },
+        "amps_phasec": {
+          "value": 1.9357024431228638,
+          "units": "A",
+          "label": "Amps PhaseC",
+          "description": "Phase C Current",
+          "device_class": "current",
+          "state_class": "measurement"
+        },
+        "watts": {
+          "value": 1209.7041015625,
+          "units": "W",
+          "label": "Watts",
+          "description": "AC Power",
+          "device_class": "power",
+          "state_class": "measurement"
+        },
+        "phase_voltage_an": {
+          "value": 237.64208984375,
+          "units": "V",
+          "label": "Phase Voltage AN",
+          "description": "AC Voltage Phase A-N",
+          "device_class": "voltage",
+          "state_class": "measurement"
+        },
+        "phase_voltage_bn": {
+          "value": 240.9521026611328,
+          "units": "V",
+          "label": "Phase Voltage BN",
+          "description": "Phase Voltage BN",
+          "device_class": "voltage",
+          "state_class": "measurement"
+        },
+        "phase_voltage_cn": {
+          "value": 238.63519287109375,
+          "units": "V",
+          "label": "Phase Voltage CN",
+          "description": "Phase Voltage CN",
+          "device_class": "voltage",
+          "state_class": "measurement"
+        },
+        "ph_vph_a_b": {
+          "value": 419.4676208496094,
+          "units": "V",
+          "label": "Ph Vph A B",
+          "description": "AC Voltage Phase A-B",
+          "device_class": "voltage",
+          "state_class": "measurement"
+        },
+        "ph_vph_b_c": {
+          "value": 415.74615478515625,
+          "units": "V",
+          "label": "Ph Vph B C",
+          "description": "AC Voltage Phase B-C",
+          "device_class": "voltage",
+          "state_class": "measurement"
+        },
+        "ph_vph_c_a": {
+          "value": 416.81024169921875,
+          "units": "V",
+          "label": "Ph Vph C A",
+          "description": "AC Voltage Phase C-A",
+          "device_class": "voltage",
+          "state_class": "measurement"
+        },
+        "hz": {
+          "value": 49.99800109863281,
+          "units": "Hz",
+          "label": "Hz",
+          "description": "Grid frequency",
+          "device_class": "frequency",
+          "state_class": "measurement"
+        },
+        "hz_a": {
+          "value": 49.99700164794922,
+          "units": "Hz",
+          "label": "Hz A",
+          "description": "AC Frequency Phase A",
+          "device_class": "frequency",
+          "state_class": "measurement"
+        },
+        "hz_b": {
+          "value": 49.99700164794922,
+          "units": "Hz",
+          "label": "Hz B",
+          "description": "AC Frequency Phase B",
+          "device_class": "frequency",
+          "state_class": "measurement"
+        },
+        "hz_c": {
+          "value": 49.99700164794922,
+          "units": "Hz",
+          "label": "Hz C",
+          "description": "AC Frequency Phase C",
+          "device_class": "frequency",
+          "state_class": "measurement"
+        },
+        "power_peak_today": {
+          "value": 3150.529052734375,
+          "units": "W",
+          "label": "Power Peak Today",
+          "description": "Peak Output Power - Today",
+          "device_class": "power",
+          "state_class": "measurement"
+        },
+        "power_peak_abs": {
+          "value": 7548.298828125,
+          "units": "W",
+          "label": "Power Peak Abs",
+          "description": "Peak Output Power - Lifetime",
+          "device_class": "power",
+          "state_class": "measurement"
+        },
+        "pf": {
+          "value": 1.0,
+          "units": "",
+          "label": "PF",
+          "description": "Power factor",
+          "device_class": "power_factor",
+          "state_class": "measurement"
+        },
+        "cabinet_temperature": {
+          "value": 240.74948120117188,
+          "units": "\u00b0C",
+          "label": "Cabinet Temperature",
+          "description": "Cabinet Temperature",
+          "device_class": "temperature",
+          "state_class": "measurement"
+        },
+        "booster_tmp": {
+          "value": 23.45482063293457,
+          "units": "\u00b0C",
+          "label": "Booster Tmp",
+          "description": "Booster stage temperature",
+          "device_class": "temperature",
+          "state_class": "measurement"
+        },
+        "other_temperature": {
+          "value": 21.8747615814209,
+          "units": "\u00b0C",
+          "label": "Other Temperature",
+          "description": "Other Temperature",
+          "device_class": "temperature",
+          "state_class": "measurement"
+        },
+        "v_gnd": {
+          "value": 1.4364330768585205,
+          "units": "V",
+          "label": "V Gnd",
+          "description": "Voltage to ground reference",
+          "device_class": "voltage",
+          "state_class": "measurement"
+        },
+        "v_bulk": {
+          "value": 616.9974365234375,
+          "units": "V",
+          "label": "V Bulk",
+          "description": "DC Voltage (Bulk Capacitor)",
+          "device_class": "voltage",
+          "state_class": "measurement"
+        },
+        "v_bulk_mid": {
+          "value": 310.254150390625,
+          "units": "V",
+          "label": "V Bulk Mid",
+          "description": "DC bus bulk capacitor midpoint voltage",
+          "device_class": "voltage",
+          "state_class": "measurement"
+        },
+        "isolation_ohm1": {
+          "value": 1.0209808349609375,
+          "units": "MOhm",
+          "label": "Isolation Ohm1",
+          "description": "DC insulation resistance to ground",
+          "device_class": "",
+          "state_class": "measurement"
+        },
+        "i_leak_dc_ac": {
+          "value": 0.0,
+          "units": "mA",
+          "label": "I Leak Dc Ac",
+          "description": "DC-to-AC ground leakage current",
+          "device_class": "current",
+          "state_class": "measurement"
+        },
+        "i_leak_dc_dc": {
+          "value": 0.0,
+          "units": "mA",
+          "label": "I Leak Dc Dc",
+          "description": "DC-to-DC ground leakage current",
+          "device_class": "current",
+          "state_class": "measurement"
+        },
+        "sys_time": {
+          "value": 822744685,
+          "units": "",
+          "label": "Sys Time",
+          "description": "Inverter system timestamp",
+          "device_class": "",
+          "state_class": ""
+        },
+        "day_wh": {
+          "value": 2.872,
+          "units": "kWh",
+          "label": "Day Wh",
+          "description": "Energy AC - Produced (Today)",
+          "device_class": "energy",
+          "state_class": "total"
+        },
+        "week_wh": {
+          "value": 13.072,
+          "units": "kWh",
+          "label": "Week Wh",
+          "description": "Energy - Week",
+          "device_class": "energy",
+          "state_class": "total"
+        },
+        "month_wh": {
+          "value": 186.429,
+          "units": "kWh",
+          "label": "Month Wh",
+          "description": "Energy - Month",
+          "device_class": "energy",
+          "state_class": "total"
+        },
+        "year_wh": {
+          "value": 186.429,
+          "units": "kWh",
+          "label": "Year Wh",
+          "description": "Energy - Year",
+          "device_class": "energy",
+          "state_class": "total"
+        },
+        "watthours": {
+          "value": 109554.472,
+          "units": "kWh",
+          "label": "WattHours",
+          "description": "AC Energy",
+          "device_class": "energy",
+          "state_class": "total_increasing"
+        },
+        "global_st": {
+          "value": 6,
+          "units": "",
+          "label": "Global St",
+          "description": "Global inverter status",
+          "device_class": "",
+          "state_class": ""
+        },
+        "alarm_st": {
+          "value": 0,
+          "units": "",
+          "label": "Alarm St",
+          "description": "Current alarm status code",
+          "device_class": "",
+          "state_class": ""
+        },
+        "dc_st1": {
+          "value": 2,
+          "units": "",
+          "label": "Dc St1",
+          "description": "DC string 1 connection status",
+          "device_class": "",
+          "state_class": ""
+        },
+        "dc_st2": {
+          "value": 2,
+          "units": "",
+          "label": "Dc St2",
+          "description": "DC string 2 connection status",
+          "device_class": "",
+          "state_class": ""
+        },
+        "inverter_st": {
+          "value": 2,
+          "units": "",
+          "label": "Inverter St",
+          "description": "Inverter status",
+          "device_class": "",
+          "state_class": ""
+        }
+      }
+    },
+    "a4:06:e9:7f:42:49": {
+      "device_type": "unknown",
+      "timestamp": "2026-01-26T12:11:45+0100",
+      "points": {
+        "type": {
+          "value": "WIFI LOGGER CARD",
+          "units": "",
+          "label": "Type",
+          "description": "Type",
+          "device_class": "",
+          "state_class": ""
+        },
+        "sn": {
+          "value": "111033-3N16-1421",
+          "units": "",
+          "label": "Serial Number",
+          "description": "Serial number",
+          "device_class": "",
+          "state_class": ""
+        },
+        "pn": {
+          "value": "-3N16-",
+          "units": "",
+          "label": "Product Number",
+          "description": "Product number",
+          "device_class": "",
+          "state_class": ""
+        },
+        "firmware_version": {
+          "value": "1.9.2",
+          "units": "",
+          "label": "Firmware Version",
+          "description": "Version",
+          "device_class": "",
+          "state_class": ""
+        },
+        "system_uptime": {
+          "value": 1229.0,
+          "units": "s",
+          "label": "System Uptime",
+          "description": "System Uptime",
+          "device_class": "duration",
+          "state_class": "total_increasing"
+        },
+        "system_load": {
+          "value": 1.044921875,
+          "units": "",
+          "label": "System Load",
+          "description": "System load average",
+          "device_class": "",
+          "state_class": ""
+        },
+        "free_ram": {
+          "value": 4214784.0,
+          "units": "MB",
+          "label": "Free RAM",
+          "description": "Available RAM",
+          "device_class": "data_size",
+          "state_class": "measurement"
+        },
+        "flash_memory_free": {
+          "value": 3323092992.0,
+          "units": "MB",
+          "label": "Flash Memory Free",
+          "description": "Available flash storage",
+          "device_class": "data_size",
+          "state_class": "measurement"
+        },
+        "storage_size": {
+          "value": 13094912.0,
+          "units": "MB",
+          "label": "Storage Size",
+          "description": "Flash storage used",
+          "device_class": "data_size",
+          "state_class": "measurement"
+        },
+        "wlan0_mode": {
+          "value": 1,
+          "units": "",
+          "label": "Wlan0 Mode",
+          "description": "WiFi operating mode (client/AP)",
+          "device_class": "",
+          "state_class": ""
+        },
+        "wlan0_ipaddr_local": {
+          "value": "10.1.10.162",
+          "units": "",
+          "label": "Wlan0 Ipaddr Local",
+          "description": "WiFi local IP address",
+          "device_class": "",
+          "state_class": ""
+        },
+        "wlan0_essid": {
+          "value": "NetStumbling?",
+          "units": "",
+          "label": "Wlan0 Essid",
+          "description": "WiFi network name (SSID)",
+          "device_class": "",
+          "state_class": ""
+        },
+        "wlan0_link_quality": {
+          "value": 70,
+          "units": "%",
+          "label": "Wlan0 Link Quality",
+          "description": "WiFi link quality percentage",
+          "device_class": "",
+          "state_class": "measurement"
+        }
+      }
+    }
+  }
+}

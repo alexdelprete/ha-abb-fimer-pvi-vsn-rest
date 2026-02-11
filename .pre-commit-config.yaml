@@ -25,14 +25,13 @@ repos:
       # JSON validation
       - id: jsonlint
         name: jsonlint
-        entry: uvx --from demjson3 jsonlint --allow=non-portable
+        entry: uvx --from demjson3 jsonlint -S
         language: system
         types: [json]
         exclude: ^\.vscode/
         verbose: true
 
       # YAML validation
-      # Note: yamllint only outputs errors, no verbose mode to show checked files
       - id: yamllint
         name: yamllint
         entry: >-

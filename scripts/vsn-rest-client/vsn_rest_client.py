@@ -73,10 +73,10 @@ def calculate_digest_response(
 ) -> str:
     """Calculate HTTP Digest authentication response."""
     # Calculate HA1 = MD5(username:realm:password)
-    ha1 = hashlib.md5(f"{username}:{realm}:{password}".encode()).hexdigest()
+    ha1 = hashlib.md5(f"{username}:{realm}:{password}".encode()).hexdigest()  # noqa: S324
 
     # Calculate HA2 = MD5(method:uri)
-    ha2 = hashlib.md5(f"{method}:{uri}".encode()).hexdigest()
+    ha2 = hashlib.md5(f"{method}:{uri}".encode()).hexdigest()  # noqa: S324
 
     # Calculate response
     if qop and nc and cnonce:
@@ -84,7 +84,7 @@ def calculate_digest_response(
     else:
         response_str = f"{ha1}:{nonce}:{ha2}"
 
-    return hashlib.md5(response_str.encode()).hexdigest()
+    return hashlib.md5(response_str.encode()).hexdigest()  # noqa: S324
 
 
 def parse_digest_challenge(www_authenticate: str) -> dict[str, str]:
@@ -117,7 +117,7 @@ def build_digest_header(
         nc = "00000001"
         # Generate cnonce like stdlib: H(nonce:time:random)
         cnonce_input = f"{nonce}:{time.time()}:{os.urandom(8).hex()}"
-        cnonce = hashlib.md5(cnonce_input.encode()).hexdigest()[:16]
+        cnonce = hashlib.md5(cnonce_input.encode()).hexdigest()[:16]  # noqa: S324
         response = calculate_digest_response(
             username, password, realm, nonce, method, uri, qop, nc, cnonce
         )

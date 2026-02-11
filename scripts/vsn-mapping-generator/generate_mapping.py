@@ -14,7 +14,7 @@ Date: 2024-11-02
 """
 
 from collections import defaultdict
-from datetime import datetime
+from datetime import UTC, datetime
 import json
 from pathlib import Path
 import re
@@ -25,7 +25,7 @@ from openpyxl.utils import get_column_letter
 
 # Script metadata
 SCRIPT_VERSION = "2.0.9"
-SCRIPT_DATE = datetime.now().strftime("%Y-%m-%d")
+SCRIPT_DATE = datetime.now(tz=UTC).strftime("%Y-%m-%d")
 
 # Get script directory for relative paths
 SCRIPT_DIR = Path(__file__).parent
@@ -2643,7 +2643,7 @@ def generate_label_from_name(point_name):
     if "_" in point_name and point_name.startswith("m"):
         match = re.match(r"m(\d+)_(\d+)_(.+)", point_name)
         if match:
-            model_num, instance, point = match.groups()
+            _model_num, _instance, point = match.groups()
             base_label = generate_label_from_name(point)
             if "_" in point and point.split("_")[-1].isdigit():
                 return base_label
@@ -3082,16 +3082,16 @@ def _get_suggested_precision(sunspec_name, device_class, units, state_class, ent
     # State sensors with state mappings should NOT have precision at all (they display text, not numbers)
     # These sensors have integer state codes mapped to human-readable strings in const.py
     # Return None so they don't get a precision field in the mapping
-    STATE_SENSORS = {"GlobalSt", "DcSt1", "DcSt2", "InverterSt", "AlarmState", "AlarmSt"}
-    if sunspec_name in STATE_SENSORS:
+    state_sensors = {"GlobalSt", "DcSt1", "DcSt2", "InverterSt", "AlarmState", "AlarmSt"}
+    if sunspec_name in state_sensors:
         return None  # No precision field - these are text-based sensors
 
     # Timestamp sensors that return formatted strings should NOT have precision
     # Raw values from API are integers (Aurora epoch timestamps), but sensor.py converts
     # them to formatted datetime strings (e.g., "2025-11-17 14:30:13")
     # Having precision makes HA think it's numeric, causing ValueError
-    TIMESTAMP_SENSORS = {"SysTime"}
-    if sunspec_name in TIMESTAMP_SENSORS:
+    timestamp_sensors = {"SysTime"}
+    if sunspec_name in timestamp_sensors:
         return None  # No precision field - these return formatted date strings
 
     # Special case: system_load gets 2 decimals despite no unit (float value 0.00-100.00)
@@ -3644,7 +3644,7 @@ def _process_vsn300_only_points(
                 # Standard pattern m{model}_{instance}_{point}
                 match = re.match(r"m(\d+)_(\d+)_(.+)", point_name)
                 if match:
-                    model_num, instance, sunspec_point = match.groups()
+                    model_num, _instance, sunspec_point = match.groups()
                     model = f"M{model_num}"
                     sunspec_name = sunspec_point
 
@@ -3776,7 +3776,7 @@ def _process_status_points(status_points, processed_points):
             ha_name = generate_simplified_point_name(label, "Status")
 
             # Get description with priority
-            description, data_source, _ = get_description_with_priority(
+            description, _data_source, _ = get_description_with_priority(
                 point_name, point_name, "Status", label, "", None
             )
 
@@ -3959,7 +3959,7 @@ def generate_mapping_excel_complete():
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # Load all data sources
-    sunspec_metadata, m64061_metadata, feeds_titles, status_points = _load_data_sources(data_dir)
+    sunspec_metadata, _m64061_metadata, feeds_titles, status_points = _load_data_sources(data_dir)
 
     # Extract point sets from VSN data files
     vsn700_livedata_points, vsn700_feeds_points, vsn300_livedata_points = _extract_point_sets(

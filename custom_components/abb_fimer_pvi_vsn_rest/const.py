@@ -16,7 +16,7 @@ VERSION = "1.3.3"
 # Configuration
 CONF_HOST = "host"
 CONF_USERNAME = "username"
-CONF_PASSWORD = "password"
+CONF_PASSWORD = "password"  # noqa: S105
 CONF_SCAN_INTERVAL = "scan_interval"
 CONF_VSN_MODEL = "vsn_model"  # Cached detection result
 CONF_REQUIRES_AUTH = "requires_auth"  # Whether device requires authentication

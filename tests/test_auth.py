@@ -31,7 +31,7 @@ class TestCalculateDigestResponse:
         """Test digest calculation without qop."""
         result = calculate_digest_response(
             username="guest",
-            password="password",
+            password="password",  # noqa: S106
             realm="vsn300",
             nonce="abc123",
             method="GET",
@@ -46,7 +46,7 @@ class TestCalculateDigestResponse:
         """Test digest calculation with qop."""
         result = calculate_digest_response(
             username="guest",
-            password="password",
+            password="password",  # noqa: S106
             realm="vsn300",
             nonce="abc123",
             method="GET",
@@ -122,7 +122,7 @@ class TestBuildDigestHeader:
 
         result = build_digest_header(
             username="guest",
-            password="password",
+            password="password",  # noqa: S106
             challenge_params=challenge_params,
             method="GET",
             uri="/v1/livedata",
@@ -144,7 +144,7 @@ class TestBuildDigestHeader:
 
         result = build_digest_header(
             username="guest",
-            password="password",
+            password="password",  # noqa: S106
             challenge_params=challenge_params,
             method="GET",
             uri="/v1/livedata",
@@ -166,7 +166,7 @@ class TestBuildDigestHeader:
 
         result = build_digest_header(
             username="guest",
-            password="password",
+            password="password",  # noqa: S106
             challenge_params=challenge_params,
             method="GET",
             uri="/v1/livedata",
@@ -287,7 +287,7 @@ class TestGetVSN300DigestHeader:
                 session=mock_session,
                 base_url="http://192.168.1.100",
                 username="guest",
-                password="password",
+                password="password",  # noqa: S106
             )
 
         assert 'username="guest"' in result
@@ -316,7 +316,7 @@ class TestGetVSN300DigestHeader:
                 session=mock_session,
                 base_url="http://192.168.1.100",
                 username="guest",
-                password="password",
+                password="password",  # noqa: S106
             )
 
     @pytest.mark.asyncio
@@ -342,7 +342,7 @@ class TestGetVSN300DigestHeader:
                 session=mock_session,
                 base_url="http://192.168.1.100",
                 username="guest",
-                password="password",
+                password="password",  # noqa: S106
             )
 
     @pytest.mark.asyncio
@@ -362,7 +362,7 @@ class TestGetVSN300DigestHeader:
                 session=mock_session,
                 base_url="http://192.168.1.100",
                 username="guest",
-                password="password",
+                password="password",  # noqa: S106
             )
 
 
@@ -389,7 +389,7 @@ class TestDetectVSNModel:
                 session=mock_session,
                 base_url="http://192.168.1.100",
                 username="guest",
-                password="password",
+                password="password",  # noqa: S106
             )
 
         assert model == "VSN300"
@@ -422,7 +422,7 @@ class TestDetectVSNModel:
                 session=mock_session,
                 base_url="http://192.168.1.100",
                 username="guest",
-                password="password",
+                password="password",  # noqa: S106
             )
 
         assert model == "VSN700"
@@ -455,7 +455,7 @@ class TestDetectVSNModel:
                 session=mock_session,
                 base_url="http://192.168.1.100",
                 username="guest",
-                password="password",
+                password="password",  # noqa: S106
             )
 
         assert model == "VSN300"
@@ -484,7 +484,7 @@ class TestDetectVSNModel:
                 session=mock_session,
                 base_url="http://192.168.1.100",
                 username="guest",
-                password="password",
+                password="password",  # noqa: S106
             )
 
     @pytest.mark.asyncio
@@ -517,7 +517,7 @@ class TestDetectVSNModel:
                 session=mock_session,
                 base_url="http://192.168.1.100",
                 username="guest",
-                password="password",
+                password="password",  # noqa: S106
             )
 
     @pytest.mark.asyncio
@@ -547,7 +547,7 @@ class TestDetectVSNModel:
                 session=mock_session,
                 base_url="http://192.168.1.100",
                 username="guest",
-                password="password",
+                password="password",  # noqa: S106
             )
 
     @pytest.mark.asyncio
@@ -574,7 +574,7 @@ class TestDetectVSNModel:
                 session=mock_session,
                 base_url="http://192.168.1.100",
                 username="guest",
-                password="password",
+                password="password",  # noqa: S106
             )
 
     @pytest.mark.asyncio
@@ -597,7 +597,7 @@ class TestDetectVSNModel:
                 session=mock_session,
                 base_url="http://192.168.1.100",
                 username="guest",
-                password="password",
+                password="password",  # noqa: S106
             )
 
         assert model == "VSN300"
@@ -630,7 +630,7 @@ class TestDetectVSNModel:
                 session=mock_session,
                 base_url="http://192.168.1.100",
                 username="guest",
-                password="password",
+                password="password",  # noqa: S106
             )
 
         assert model == "VSN700"
@@ -690,5 +690,5 @@ class TestDetectModelFromStatusAdditional:
                 session=mock_session,
                 base_url="http://192.168.1.100",
                 username="guest",
-                password="password",
+                password="password",  # noqa: S106
             )

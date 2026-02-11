@@ -332,7 +332,7 @@ def main():
         sys.exit(1)
 
     # Update the mapping
-    updated_mapping, stats = update_mapping_file(mapping_path)
+    _updated_mapping, stats = update_mapping_file(mapping_path)
 
     print("\nMapping file updated successfully!")
     print(f"Updated {stats['updated_device_class']} device_class fields")

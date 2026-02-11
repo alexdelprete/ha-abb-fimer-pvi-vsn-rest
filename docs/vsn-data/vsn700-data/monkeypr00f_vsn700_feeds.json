@@ -1,0 +1,3522 @@
+{
+  "feeds": {
+    "0:64:33:db:0a:7d:9f": {
+      "feedIntervals": [
+        "raw"
+      ],
+      "description": "http://power-one.com/device/aurora/universal_logger/v1/",
+      "datastreams": {
+        "flash_free": {
+          "data": [
+            {
+              "value": 2020524032.0,
+              "timestamp": "2025-12-04T13:20:06"
+            },
+            {
+              "value": 2020524032.0,
+              "timestamp": "2025-12-04T13:15:06"
+            },
+            {
+              "value": 2020524032.0,
+              "timestamp": "2025-12-04T13:10:06"
+            },
+            {
+              "value": 2020528128.0,
+              "timestamp": "2025-12-04T13:05:06"
+            },
+            {
+              "value": 2020528128.0,
+              "timestamp": "2025-12-04T13:00:06"
+            },
+            {
+              "value": 2020528128.0,
+              "timestamp": "2025-12-04T12:55:06"
+            },
+            {
+              "value": 2020528128.0,
+              "timestamp": "2025-12-04T12:50:06"
+            },
+            {
+              "value": 2020528128.0,
+              "timestamp": "2025-12-04T12:45:06"
+            },
+            {
+              "value": 2020528128.0,
+              "timestamp": "2025-12-04T12:40:06"
+            },
+            {
+              "value": 2020528128.0,
+              "timestamp": "2025-12-04T12:35:06"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "flash free",
+          "units": "bytes",
+          "class": "statistics",
+          "priority": 0
+        },
+        "free_ram": {
+          "data": [
+            {
+              "value": 64864256.0,
+              "timestamp": "2025-12-04T13:20:06"
+            },
+            {
+              "value": 64737280.0,
+              "timestamp": "2025-12-04T13:15:06"
+            },
+            {
+              "value": 64872448.0,
+              "timestamp": "2025-12-04T13:10:06"
+            },
+            {
+              "value": 64864256.0,
+              "timestamp": "2025-12-04T13:05:06"
+            },
+            {
+              "value": 65118208.0,
+              "timestamp": "2025-12-04T13:00:06"
+            },
+            {
+              "value": 64864256.0,
+              "timestamp": "2025-12-04T12:55:06"
+            },
+            {
+              "value": 65372160.0,
+              "timestamp": "2025-12-04T12:50:06"
+            },
+            {
+              "value": 65499136.0,
+              "timestamp": "2025-12-04T12:45:06"
+            },
+            {
+              "value": 65634304.0,
+              "timestamp": "2025-12-04T12:40:06"
+            },
+            {
+              "value": 65499136.0,
+              "timestamp": "2025-12-04T12:35:06"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "ram free",
+          "units": "bytes",
+          "class": "other",
+          "priority": 0
+        },
+        "fw_ver": {
+          "data": [
+            {
+              "value": "1.2.9",
+              "timestamp": "2025-12-04T13:20:06"
+            },
+            {
+              "value": "1.2.9",
+              "timestamp": "2025-12-04T13:15:06"
+            },
+            {
+              "value": "1.2.9",
+              "timestamp": "2025-12-04T13:10:06"
+            },
+            {
+              "value": "1.2.9",
+              "timestamp": "2025-12-04T13:05:06"
+            },
+            {
+              "value": "1.2.9",
+              "timestamp": "2025-12-04T13:00:06"
+            },
+            {
+              "value": "1.2.9",
+              "timestamp": "2025-12-04T12:55:06"
+            },
+            {
+              "value": "1.2.9",
+              "timestamp": "2025-12-04T12:50:06"
+            },
+            {
+              "value": "1.2.9",
+              "timestamp": "2025-12-04T12:45:06"
+            },
+            {
+              "value": "1.2.9",
+              "timestamp": "2025-12-04T12:40:06"
+            },
+            {
+              "value": "1.2.9",
+              "timestamp": "2025-12-04T12:35:06"
+            }
+          ],
+          "title": "Version",
+          "units": "",
+          "class": "other",
+          "priority": 0
+        },
+        "store_size": {
+          "data": [
+            {
+              "value": 42987520.0,
+              "timestamp": "2025-12-04T13:20:06"
+            },
+            {
+              "value": 42987520.0,
+              "timestamp": "2025-12-04T13:15:06"
+            },
+            {
+              "value": 42987520.0,
+              "timestamp": "2025-12-04T13:10:06"
+            },
+            {
+              "value": 42987520.0,
+              "timestamp": "2025-12-04T13:05:06"
+            },
+            {
+              "value": 42987520.0,
+              "timestamp": "2025-12-04T13:00:06"
+            },
+            {
+              "value": 42987520.0,
+              "timestamp": "2025-12-04T12:55:06"
+            },
+            {
+              "value": 42987520.0,
+              "timestamp": "2025-12-04T12:50:06"
+            },
+            {
+              "value": 42987520.0,
+              "timestamp": "2025-12-04T12:45:06"
+            },
+            {
+              "value": 42987520.0,
+              "timestamp": "2025-12-04T12:40:06"
+            },
+            {
+              "value": 42987520.0,
+              "timestamp": "2025-12-04T12:35:06"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "flash used",
+          "units": "bytes",
+          "class": "statistics",
+          "priority": 0
+        },
+        "sys_load": {
+          "data": [
+            {
+              "value": 0.1875,
+              "timestamp": "2025-12-04T13:20:06"
+            },
+            {
+              "value": 0.19482421875,
+              "timestamp": "2025-12-04T13:15:06"
+            },
+            {
+              "value": 0.23046875,
+              "timestamp": "2025-12-04T13:10:06"
+            },
+            {
+              "value": 0.2607421875,
+              "timestamp": "2025-12-04T13:05:06"
+            },
+            {
+              "value": 0.27197265625,
+              "timestamp": "2025-12-04T13:00:06"
+            },
+            {
+              "value": 0.27685546875,
+              "timestamp": "2025-12-04T12:55:06"
+            },
+            {
+              "value": 0.23486328125,
+              "timestamp": "2025-12-04T12:50:06"
+            },
+            {
+              "value": 0.26513671875,
+              "timestamp": "2025-12-04T12:45:06"
+            },
+            {
+              "value": 0.2158203125,
+              "timestamp": "2025-12-04T12:40:06"
+            },
+            {
+              "value": 0.24658203125,
+              "timestamp": "2025-12-04T12:35:06"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "system load",
+          "units": "none",
+          "class": "other",
+          "priority": 0
+        },
+        "uptime": {
+          "data": [
+            {
+              "value": 8436166.0,
+              "timestamp": "2025-12-04T13:20:06"
+            },
+            {
+              "value": 8435866.0,
+              "timestamp": "2025-12-04T13:15:06"
+            },
+            {
+              "value": 8435566.0,
+              "timestamp": "2025-12-04T13:10:06"
+            },
+            {
+              "value": 8435266.0,
+              "timestamp": "2025-12-04T13:05:06"
+            },
+            {
+              "value": 8434966.0,
+              "timestamp": "2025-12-04T13:00:06"
+            },
+            {
+              "value": 8434666.0,
+              "timestamp": "2025-12-04T12:55:06"
+            },
+            {
+              "value": 8434366.0,
+              "timestamp": "2025-12-04T12:50:06"
+            },
+            {
+              "value": 8434066.0,
+              "timestamp": "2025-12-04T12:45:06"
+            },
+            {
+              "value": 8433766.0,
+              "timestamp": "2025-12-04T12:40:06"
+            },
+            {
+              "value": 8433466.0,
+              "timestamp": "2025-12-04T12:35:06"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "uptime",
+          "units": "s",
+          "class": "other",
+          "priority": 0
+        }
+      }
+    },
+    "ser4:100784-3N52-4720": {
+      "feedIntervals": [
+        "raw"
+      ],
+      "description": "http://www.abb.com/device/meter/v1/",
+      "datastreams": {
+        "E3_30D": {
+          "data": [
+            {
+              "value": 1436.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 1436.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 1436.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 1436.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 1436.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 1436.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 1436.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 1436.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 1436.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 1436.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "E3 - Energy to the Grid - 30D",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "E3_7D": {
+          "data": [
+            {
+              "value": 93.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 93.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 93.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 93.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 93.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 93.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 93.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 93.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 93.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 93.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "E3 - Energy to the Grid - 7D",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "E3_runtime": {
+          "data": [
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "E3 - Energy to the Grid - runtime",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "E6_30D": {
+          "data": [
+            {
+              "value": 123903.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 123888.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 123874.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 123858.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 123842.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 123825.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 123806.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 123789.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 123771.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 123748.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "E6 - Consumed Energy from Inverter - 30D",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "E6_7D": {
+          "data": [
+            {
+              "value": 26425.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 26410.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 26396.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 26380.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 26364.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 26347.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 26328.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 26311.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 26293.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 26270.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "E6 - Consumed Energy from Inverter - 7D",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "E6_runtime": {
+          "data": [
+            {
+              "value": 966.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 951.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 937.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 921.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 905.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 888.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 869.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 852.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 834.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 811.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "E6 - Consumed Energy from Inverter - runtime",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "E6_total": {
+          "data": [
+            {
+              "value": 16413845.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 16413830.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 16413816.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 16413800.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 16413784.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 16413767.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 16413748.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 16413731.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 16413713.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 16413690.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "E6 - Consumed Energy from Inverter - Total",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "E7_30D": {
+          "data": [
+            {
+              "value": 978558.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 978468.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 978404.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 978314.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 978224.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 978138.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 978058.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 977993.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 977928.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 977864.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "E7 - Consumed Energy - 30D",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "E7_7D": {
+          "data": [
+            {
+              "value": 265773.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 265683.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 265619.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 265529.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 265439.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 265353.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 265273.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 265208.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 265143.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 265079.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "E7 - Consumed Energy - 7D",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "E7_runtime": {
+          "data": [
+            {
+              "value": 16406.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 16316.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 16252.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 16162.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 16072.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 15986.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 15906.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 15841.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 15776.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 15712.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "E7 - Consumed Energy - runtime",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "E7_total": {
+          "data": [
+            {
+              "value": 40435177.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 40435087.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 40435023.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 40434933.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 40434843.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 40434757.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 40434677.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 40434612.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 40434547.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 40434483.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "E7 - Consumed Energy - Total",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "E8_30D": {
+          "data": [
+            {
+              "value": 854655.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 854580.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 854530.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 854456.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 854382.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 854313.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 854252.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 854204.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 854157.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 854116.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "E8 - Energy from the Grid - 30D",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "E8_7D": {
+          "data": [
+            {
+              "value": 239348.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 239273.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 239223.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 239149.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 239075.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 239006.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 238945.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 238897.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 238850.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 238809.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "E8 - Energy from the Grid - 7D",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "E8_runtime": {
+          "data": [
+            {
+              "value": 15440.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 15365.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 15315.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 15241.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 15167.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 15098.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 15037.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 14989.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 14942.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 14901.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "E8 - Energy from the Grid - runtime",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "EGridExport": {
+          "data": [
+            {
+              "value": 3151853.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 3151853.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 3151853.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 3151853.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 3151853.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 3151853.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 3151853.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 3151853.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 3151853.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 3151853.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "E3 - Energy to the Grid - Total",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "EGridImport": {
+          "data": [
+            {
+              "value": 24021332.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 24021257.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 24021207.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 24021133.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 24021059.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 24020990.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 24020929.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 24020881.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 24020834.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 24020793.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "E8 - Energy from the Grid - Total",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "HousePInverter": {
+          "data": [
+            {
+              "value": 199.6026153564453,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 175.0869903564453,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 168.50692749023438,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 185.53985595703125,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 210.31100463867188,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 213.56544494628906,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 222.50704956054688,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 194.1666259765625,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 230.30227661132812,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 286.85479736328125,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "Home PV Power",
+          "units": "W",
+          "class": "other",
+          "priority": 0
+        },
+        "HousePgrid_Tot": {
+          "data": [
+            {
+              "value": 868.5225830078125,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 1183.1070556640625,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 775.2769775390625,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 1130.349853515625,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 1074.071044921875,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 1069.075439453125,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 791.3470458984375,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 791.2466430664062,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 779.4923095703125,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 810.3648071289062,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "Load Active Power - total",
+          "units": "W",
+          "class": "other",
+          "priority": 0
+        },
+        "MeterPgrid_Tot": {
+          "data": [
+            {
+              "value": -668.9000244140625,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": -1008.02001953125,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": -606.77001953125,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": -944.8099975585938,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": -863.760009765625,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": -855.510009765625,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": -568.8400268554688,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": -597.0800170898438,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": -549.1900024414062,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": -523.510009765625,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "Active Power - total",
+          "units": "W",
+          "class": "other",
+          "priority": 0
+        }
+      }
+    },
+    "ser4:117570-3P88-4120": {
+      "feedIntervals": [
+        "raw"
+      ],
+      "description": "http://power-one.com/device/inverter/v2/",
+      "datastreams": {
+        "E0_1Y": {
+          "data": [
+            {
+              "value": 4854237.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 4854222.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 4854208.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 4854192.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 4854176.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 4854159.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 4854140.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 4854123.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 4854105.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 4854082.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "E0 - Inverter Produced Energy - 1Y",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "E0_30D": {
+          "data": [
+            {
+              "value": 125339.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 125324.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 125310.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 125294.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 125278.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 125261.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 125242.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 125225.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 125207.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 125184.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "E0 - Inverter Produced Energy - 30D",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "E0_7D": {
+          "data": [
+            {
+              "value": 26518.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 26503.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 26489.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 26473.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 26457.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 26440.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 26421.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 26404.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 26386.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 26363.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "E0 - Inverter Produced Energy - 7D",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "E0_runtime": {
+          "data": [
+            {
+              "value": 966.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 951.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 937.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 921.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 905.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 888.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 869.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 852.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 834.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 811.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "E0 - Inverter Produced Energy - runtime",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "E15_30D": {
+          "data": [
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "E15 - Inverter Backup Output Energy - 30D",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "E15_7D": {
+          "data": [
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "E15 - Inverter Backup Output Energy - 7D",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "E15_runtime": {
+          "data": [
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "E15 - Inverter Backup Output Energy - runtime",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "E1_30D": {
+          "data": [
+            {
+              "value": 317.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 317.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 317.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 317.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 317.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 317.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 317.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 317.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 317.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 317.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "E1 - Inverter Absorbed AC Energy - 30D",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "E1_7D": {
+          "data": [
+            {
+              "value": 46.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 46.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 46.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 46.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 46.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 46.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 46.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 46.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 46.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 46.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "E1 - Inverter Absorbed AC Energy - 7D",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "E1_runtime": {
+          "data": [
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "E1 - Inverter Absorbed AC Energy - runtime",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "E2_30D": {
+          "data": [
+            {
+              "value": 125889.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 125874.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 125860.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 125844.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 125828.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 125811.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 125793.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 125775.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 125758.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 125734.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "E2 - Inverter Apparent AC Energy - 30D",
+          "units": "VAh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "E2_7D": {
+          "data": [
+            {
+              "value": 26613.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 26598.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 26584.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 26568.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 26552.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 26535.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 26517.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 26499.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 26482.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 26458.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "E2 - Inverter Apparent AC Energy - 7D",
+          "units": "VAh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "E2_runtime": {
+          "data": [
+            {
+              "value": 970.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 955.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 941.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 925.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 909.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 892.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 874.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 856.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 839.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 815.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "E2 - Inverter Apparent AC Energy - runtime",
+          "units": "VAh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "ETotCharge": {
+          "data": [
+            {
+              "value": 7040255.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 7040255.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 7040255.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 7040255.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 7040255.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 7040255.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 7040255.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 7040255.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 7040255.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 7040255.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "Total Battery Charge Energy - Total",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "ETotCharge_30D": {
+          "data": [
+            {
+              "value": 12466.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 12466.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 12466.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 12466.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 12466.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 12466.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 12466.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 12466.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 12466.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 12466.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "Total Battery Charge Energy - 30D",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "ETotCharge_7D": {
+          "data": [
+            {
+              "value": 522.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 522.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 522.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 522.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 522.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 522.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 522.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 522.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 522.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 522.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "Total Battery Charge Energy - 7D",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "ETotCharge_runtime": {
+          "data": [
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "Total Battery Charge Energy - runtime",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "ETotDischarge": {
+          "data": [
+            {
+              "value": 6610506.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 6610506.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 6610506.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 6610506.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 6610506.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 6610506.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 6610506.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 6610506.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 6610506.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 6610506.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "Total Battery Discharge Energy - Total",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "ETotDischarge_30D": {
+          "data": [
+            {
+              "value": 13285.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 13285.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 13285.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 13285.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 13285.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 13285.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 13285.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 13285.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 13285.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 13285.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "Total Battery Discharge Energy - 30D",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "ETotDischarge_7D": {
+          "data": [
+            {
+              "value": 720.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 720.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 720.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 720.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 720.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 720.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 720.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 720.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 720.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 720.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "Total Battery Discharge Energy - 7D",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "ETotDischarge_runtime": {
+          "data": [
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "Total Battery Discharge Energy - runtime",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "ETotal": {
+          "data": [
+            {
+              "value": 19565698.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 19565684.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 19565668.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 19565652.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 19565636.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 19565620.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 19565600.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 19565584.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 19565566.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 19565544.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "E0 - Inverter Produced Energy - Total",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "Ein": {
+          "data": [
+            {
+              "value": 20648913.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 20648898.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 20648884.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 20648869.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 20648852.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 20648836.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 20648817.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 20648800.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 20648781.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 20648758.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "Ein - Inverter PV Energy - Total",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "Ein_30D": {
+          "data": [
+            {
+              "value": 129426.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 129411.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 129397.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 129382.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 129365.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 129349.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 129330.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 129313.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 129294.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 129271.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "Ein - Inverter PV Energy - 30D",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "Ein_7D": {
+          "data": [
+            {
+              "value": 27089.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 27074.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 27060.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 27045.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 27028.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 27012.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 26993.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 26976.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 26957.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 26934.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "Ein - Inverter PV Energy - 7D",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "Ein_runtime": {
+          "data": [
+            {
+              "value": 975.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 960.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 946.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 931.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 914.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 898.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 879.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 862.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 843.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 820.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "Ein - Inverter PV Energy - runtime",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "PbaT": {
+          "data": [
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "Battery Power - total",
+          "units": "W",
+          "class": "other",
+          "priority": 0
+        },
+        "Pgrid": {
+          "data": [
+            {
+              "value": 199.83953857421875,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 175.0869903564453,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 168.5587615966797,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 185.53985595703125,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 210.31100463867188,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 213.56544494628906,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 223.46646118164062,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 194.65663146972656,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 230.30227661132812,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 287.05828857421875,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "Pgrid",
+          "units": "W",
+          "class": "out",
+          "priority": 0
+        },
+        "Pin": {
+          "data": [
+            {
+              "value": 199.32763671875,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 173.21449279785156,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 166.22866821289062,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 183.97914123535156,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 211.3048095703125,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 213.5724639892578,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 224.3256378173828,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 193.25250244140625,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 232.6936492919922,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 290.84027099609375,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 1,
+          "title": "Pin",
+          "units": "W",
+          "class": "in",
+          "priority": 0
+        },
+        "Pin1": {
+          "data": [
+            {
+              "value": 83.18781280517578,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 71.97209930419922,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 69.68638610839844,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 76.48768615722656,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 88.27241516113281,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 89.48223876953125,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 95.04943084716797,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 80.9507064819336,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 97.88867950439453,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 121.96957397460938,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 1,
+          "title": "Pin1",
+          "units": "W",
+          "class": "in",
+          "priority": 0
+        },
+        "Pin2": {
+          "data": [
+            {
+              "value": 115.59576416015625,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 100.89263916015625,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 97.17749786376953,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 107.79503631591797,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 121.9450454711914,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 123.67086791992188,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 130.1287384033203,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 112.96736145019531,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 134.55902099609375,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 167.5689697265625,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 1,
+          "title": "Pin2",
+          "units": "W",
+          "class": "in",
+          "priority": 0
+        },
+        "Qgrid": {
+          "data": [
+            {
+              "value": -7.983760833740234,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": -7.806722164154053,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": -7.562994003295898,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": -7.9594926834106445,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": -7.920895099639893,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": -7.96160888671875,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": -7.908989906311035,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": -8.107107162475586,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": -7.924009323120117,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": -8.069506645202637,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "Qgrid",
+          "units": "VAR",
+          "class": "out",
+          "priority": 0
+        },
+        "Temp1": {
+          "data": [
+            {
+              "value": 20.26580810546875,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 20.26580810546875,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 20.26580810546875,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 20.26580810546875,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 20.22076416015625,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 20.22076416015625,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 20.13115692138672,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 20.13115692138672,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 20.13115692138672,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 20.13115692138672,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "Temp1",
+          "units": "degC",
+          "class": "statistics",
+          "priority": 5
+        },
+        "cosPhi": {
+          "data": [
+            {
+              "value": 1.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 1.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 1.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 1.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 1.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 1.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 1.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 1.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 1.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 1.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "Cos phi",
+          "units": "",
+          "class": "out",
+          "priority": 0
+        }
+      }
+    },
+    "ser4:121807-3P72-5020": {
+      "feedIntervals": [
+        "raw"
+      ],
+      "description": "http://www.abb.com/device/battery/v1/",
+      "datastreams": {
+        "ECharge_30D": {
+          "data": [
+            {
+              "value": 6233.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 6233.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 6233.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 6233.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 6233.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 6233.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 6233.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 6233.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 6233.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 6233.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "Battery Charge Energy - 30D",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "ECharge_7D": {
+          "data": [
+            {
+              "value": 261.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 261.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 261.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 261.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 261.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 261.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 261.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 261.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 261.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 261.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "Battery Charge Energy - 7D",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "ECharge_runtime": {
+          "data": [
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "Battery Charge Energy - runtime",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "EDischarge_30D": {
+          "data": [
+            {
+              "value": 6473.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 6473.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 6473.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 6473.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 6473.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 6473.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 6473.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 6473.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 6473.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 6473.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "Battery Discharge Energy - 30D",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "EDischarge_7D": {
+          "data": [
+            {
+              "value": 334.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 334.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 334.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 334.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 334.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 334.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 334.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 334.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 334.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 334.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "Battery Discharge Energy - 7D",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "EDischarge_runtime": {
+          "data": [
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "Battery Discharge Energy - runtime",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        }
+      }
+    },
+    "ser4:121813-3P72-5020": {
+      "feedIntervals": [
+        "raw"
+      ],
+      "description": "http://www.abb.com/device/battery/v1/",
+      "datastreams": {
+        "ECharge_30D": {
+          "data": [
+            {
+              "value": 6233.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 6233.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 6233.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 6233.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 6233.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 6233.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 6233.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 6233.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 6233.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 6233.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "Battery Charge Energy - 30D",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "ECharge_7D": {
+          "data": [
+            {
+              "value": 261.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 261.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 261.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 261.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 261.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 261.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 261.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 261.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 261.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 261.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "Battery Charge Energy - 7D",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "ECharge_runtime": {
+          "data": [
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "Battery Charge Energy - runtime",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "EDischarge_30D": {
+          "data": [
+            {
+              "value": 6812.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 6812.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 6812.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 6812.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 6812.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 6812.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 6812.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 6812.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 6812.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 6812.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "Battery Discharge Energy - 30D",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "EDischarge_7D": {
+          "data": [
+            {
+              "value": 386.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 386.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 386.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 386.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 386.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 386.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 386.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 386.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 386.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 386.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "Battery Discharge Energy - 7D",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        },
+        "EDischarge_runtime": {
+          "data": [
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:25:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:20:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:15:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:10:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:05:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T13:00:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:55:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:50:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:45:00"
+            },
+            {
+              "value": 0.0,
+              "timestamp": "2025-12-04T12:40:00"
+            }
+          ],
+          "decimal_precision": 2,
+          "title": "Battery Discharge Energy - runtime",
+          "units": "Wh",
+          "class": "statistics",
+          "priority": 0
+        }
+      }
+    }
+  }
+}

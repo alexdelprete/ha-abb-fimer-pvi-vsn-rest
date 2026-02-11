@@ -1,0 +1,2587 @@
+[
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_meter_MeterSN_dynamic_feed_in_ctrl",
+      "friendly_name": "ABB/FIMER Meter MeterSN Dynamic Feed In Ctrl",
+      "point_name": "dynamic_feed_in_ctrl",
+      "vsn700_rest_name": "DynamicFeedInCtrl",
+      "sunspec_name": "DynamicFeedInCtrl",
+      "device_class": "None",
+      "device_type": "meter"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "DynamicFeedInCtrl",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "DynamicFeedInCtrl",
+      "HA Name": "dynamic_feed_in_ctrl",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Dynamic Feed In Ctrl",
+      "Description": "Dynamic Feed In Ctrl",
+      "HA Display Name": "Dynamic Feed In Ctrl",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Generated from Label",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_meter_MeterSN_power_ac_meter_phase_a",
+      "friendly_name": "ABB/FIMER Meter MeterSN Power AC - Meter Phase A",
+      "point_name": "meter_pgrid_l1",
+      "vsn700_rest_name": "MeterPgrid_L1",
+      "sunspec_name": "MeterPgrid_L1",
+      "device_class": "None",
+      "device_type": "meter"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "MeterPgrid_L1",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "MeterPgrid_L1",
+      "HA Name": "meter_pgrid_l1",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Meter Pgrid L1",
+      "Description": "Meter Power Phase A",
+      "HA Display Name": "Power AC - Meter Phase A",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_meter_MeterSN_power_ac_meter_phase_b",
+      "friendly_name": "ABB/FIMER Meter MeterSN Power AC - Meter Phase B",
+      "point_name": "meter_pgrid_l2",
+      "vsn700_rest_name": "MeterPgrid_L2",
+      "sunspec_name": "MeterPgrid_L2",
+      "device_class": "None",
+      "device_type": "meter"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "MeterPgrid_L2",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "MeterPgrid_L2",
+      "HA Name": "meter_pgrid_l2",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Meter Pgrid L2",
+      "Description": "Meter Power Phase B",
+      "HA Display Name": "Power AC - Meter Phase B",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_meter_MeterSN_power_ac_meter_phase_c",
+      "friendly_name": "ABB/FIMER Meter MeterSN Power AC - Meter Phase C",
+      "point_name": "meter_pgrid_l3",
+      "vsn700_rest_name": "MeterPgrid_L3",
+      "sunspec_name": "MeterPgrid_L3",
+      "device_class": "None",
+      "device_type": "meter"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "MeterPgrid_L3",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "MeterPgrid_L3",
+      "HA Name": "meter_pgrid_l3",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Meter Pgrid L3",
+      "Description": "Meter Power Phase C",
+      "HA Display Name": "Power AC - Meter Phase C",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_meter_MeterSN_commissioning_freeze",
+      "friendly_name": "ABB/FIMER Meter MeterSN Commissioning Freeze",
+      "point_name": "commissioning_freeze",
+      "vsn700_rest_name": "CommissioningFreeze",
+      "sunspec_name": "CommissioningFreeze",
+      "device_class": "None",
+      "device_type": "meter"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "CommissioningFreeze",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "CommissioningFreeze",
+      "HA Name": "commissioning_freeze",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Commissioning Freeze",
+      "Description": "Commissioning Freeze",
+      "HA Display Name": "Commissioning Freeze",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Generated from Label",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_battery_Battery1SN_number_of_battery_cells_or_modules",
+      "friendly_name": "ABB/FIMER Battery Battery1SN Number of battery cells or modules",
+      "point_name": "batt_num",
+      "vsn700_rest_name": "BattNum",
+      "sunspec_name": "BattNum",
+      "device_class": "None",
+      "device_type": "battery"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "BattNum",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "BattNum",
+      "HA Name": "batt_num",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Batt Num",
+      "Description": "Number of battery cells or modules",
+      "HA Display Name": "Number of battery cells or modules",
+      "Category": "System",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "ABB/FIMER proprietary",
+      "models": [
+        "ABB Proprietary"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_battery_Battery1SN_current_battery",
+      "friendly_name": "ABB/FIMER Battery Battery1SN Current - Battery",
+      "point_name": "iba",
+      "vsn700_rest_name": "Iba",
+      "sunspec_name": "Iba",
+      "device_class": "None",
+      "device_type": "battery"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "Iba",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "Iba",
+      "HA Name": "iba",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Iba",
+      "Description": "Battery DC current flow",
+      "HA Display Name": "Current - Battery",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_battery_Battery1SN_voltage_battery",
+      "friendly_name": "ABB/FIMER Battery Battery1SN Voltage - Battery",
+      "point_name": "vba",
+      "vsn700_rest_name": "Vba",
+      "sunspec_name": "Vba",
+      "device_class": "None",
+      "device_type": "battery"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "Vba",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "Vba",
+      "HA Name": "vba",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Vba",
+      "Description": "Battery pack voltage",
+      "HA Display Name": "Voltage - Battery",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_battery_Battery1SN_power_battery_total",
+      "friendly_name": "ABB/FIMER Battery Battery1SN Power - Battery Total",
+      "point_name": "pba",
+      "vsn700_rest_name": "Pba",
+      "sunspec_name": "Pba",
+      "device_class": "None",
+      "device_type": "battery"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "Pba",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "Pba",
+      "HA Name": "pba",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Pba",
+      "Description": "Battery charge/discharge power",
+      "HA Display Name": "Power - Battery Total",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_battery_Battery1SN_temperature_battery",
+      "friendly_name": "ABB/FIMER Battery Battery1SN Temperature - Battery",
+      "point_name": "tba",
+      "vsn700_rest_name": "Tba",
+      "sunspec_name": "Tba",
+      "device_class": "None",
+      "device_type": "battery"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "Tba",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "Tba",
+      "HA Name": "tba",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Tba",
+      "Description": "Battery pack temperature",
+      "HA Display Name": "Temperature - Battery",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_battery_Battery1SN_temperature_cabinet_max",
+      "friendly_name": "ABB/FIMER Battery Battery1SN Temperature - Cabinet Max",
+      "point_name": "tc_max",
+      "vsn700_rest_name": "TcMax",
+      "sunspec_name": "TcMax",
+      "device_class": "None",
+      "device_type": "battery"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "TcMax",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "TcMax",
+      "HA Name": "tc_max",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Tc Max",
+      "Description": "Maximum cabinet temperature recorded",
+      "HA Display Name": "Temperature - Cabinet Max",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_battery_Battery1SN_temperature_cabinet_min",
+      "friendly_name": "ABB/FIMER Battery Battery1SN Temperature - Cabinet Min",
+      "point_name": "tc_min",
+      "vsn700_rest_name": "TcMin",
+      "sunspec_name": "TcMin",
+      "device_class": "None",
+      "device_type": "battery"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "TcMin",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "TcMin",
+      "HA Name": "tc_min",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Tc Min",
+      "Description": "Minimum cabinet temperature recorded",
+      "HA Display Name": "Temperature - Cabinet Min",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_battery_Battery1SN_voltage_shunt",
+      "friendly_name": "ABB/FIMER Battery Battery1SN Voltage - Shunt",
+      "point_name": "sh_u",
+      "vsn700_rest_name": "ShU",
+      "sunspec_name": "ShU",
+      "device_class": "None",
+      "device_type": "battery"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "ShU",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "ShU",
+      "HA Name": "sh_u",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Sh U",
+      "Description": "Current shunt voltage",
+      "HA Display Name": "Voltage - Shunt",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_battery_Battery1SN_battery_charge_cycles_counter",
+      "friendly_name": "ABB/FIMER Battery Battery1SN Battery charge cycles counter",
+      "point_name": "chc",
+      "vsn700_rest_name": "Chc",
+      "sunspec_name": "Chc",
+      "device_class": "None",
+      "device_type": "battery"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "Chc",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "Chc",
+      "HA Name": "chc",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Chc",
+      "Description": "Battery charge cycles counter",
+      "HA Display Name": "Battery charge cycles counter",
+      "Category": "System",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "ABB/FIMER proprietary",
+      "models": [
+        "ABB Proprietary"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_battery_Battery1SN_battery_discharge_cycles_counter",
+      "friendly_name": "ABB/FIMER Battery Battery1SN Battery discharge cycles counter",
+      "point_name": "dhc",
+      "vsn700_rest_name": "Dhc",
+      "sunspec_name": "Dhc",
+      "device_class": "None",
+      "device_type": "battery"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "Dhc",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "Dhc",
+      "HA Name": "dhc",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Dhc",
+      "Description": "Battery discharge cycles counter",
+      "HA Display Name": "Battery discharge cycles counter",
+      "Category": "System",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "ABB/FIMER proprietary",
+      "models": [
+        "ABB Proprietary"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_battery_Battery1SN_central_controller_frequency",
+      "friendly_name": "ABB/FIMER Battery Battery1SN Central controller frequency",
+      "point_name": "fcc",
+      "vsn700_rest_name": "Fcc",
+      "sunspec_name": "Fcc",
+      "device_class": "None",
+      "device_type": "battery"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "Fcc",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "Fcc",
+      "HA Name": "fcc",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Fcc",
+      "Description": "Central controller frequency",
+      "HA Display Name": "Central controller frequency",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_battery_Battery1SN_total_energy_from_current_transformer_ct",
+      "friendly_name": "ABB/FIMER Battery Battery1SN Total energy from current transformer (CT)",
+      "point_name": "e_ct",
+      "vsn700_rest_name": "ECt",
+      "sunspec_name": "ECt",
+      "device_class": "None",
+      "device_type": "battery"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "ECt",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "ECt",
+      "HA Name": "e_ct",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "E Ct",
+      "Description": "Total energy from current transformer (CT)",
+      "HA Display Name": "Total energy from current transformer (CT)",
+      "Category": "Energy Counter",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_battery_Battery1SN_total_energy_from_direct_transducer_dt",
+      "friendly_name": "ABB/FIMER Battery Battery1SN Total energy from direct transducer (DT)",
+      "point_name": "e_dt",
+      "vsn700_rest_name": "EDt",
+      "sunspec_name": "EDt",
+      "device_class": "None",
+      "device_type": "battery"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "EDt",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "EDt",
+      "HA Name": "e_dt",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "E Dt",
+      "Description": "Total energy from direct transducer (DT)",
+      "HA Display Name": "Total energy from direct transducer (DT)",
+      "Category": "Energy Counter",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_battery_Battery2SN_number_of_battery_cells_or_modules",
+      "friendly_name": "ABB/FIMER Battery Battery2SN Number of battery cells or modules",
+      "point_name": "batt_num",
+      "vsn700_rest_name": "BattNum",
+      "sunspec_name": "BattNum",
+      "device_class": "None",
+      "device_type": "battery"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "BattNum",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "BattNum",
+      "HA Name": "batt_num",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Batt Num",
+      "Description": "Number of battery cells or modules",
+      "HA Display Name": "Number of battery cells or modules",
+      "Category": "System",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "ABB/FIMER proprietary",
+      "models": [
+        "ABB Proprietary"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_battery_Battery2SN_current_battery",
+      "friendly_name": "ABB/FIMER Battery Battery2SN Current - Battery",
+      "point_name": "iba",
+      "vsn700_rest_name": "Iba",
+      "sunspec_name": "Iba",
+      "device_class": "None",
+      "device_type": "battery"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "Iba",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "Iba",
+      "HA Name": "iba",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Iba",
+      "Description": "Battery DC current flow",
+      "HA Display Name": "Current - Battery",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_battery_Battery2SN_voltage_battery",
+      "friendly_name": "ABB/FIMER Battery Battery2SN Voltage - Battery",
+      "point_name": "vba",
+      "vsn700_rest_name": "Vba",
+      "sunspec_name": "Vba",
+      "device_class": "None",
+      "device_type": "battery"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "Vba",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "Vba",
+      "HA Name": "vba",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Vba",
+      "Description": "Battery pack voltage",
+      "HA Display Name": "Voltage - Battery",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_battery_Battery2SN_power_battery_total",
+      "friendly_name": "ABB/FIMER Battery Battery2SN Power - Battery Total",
+      "point_name": "pba",
+      "vsn700_rest_name": "Pba",
+      "sunspec_name": "Pba",
+      "device_class": "None",
+      "device_type": "battery"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "Pba",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "Pba",
+      "HA Name": "pba",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Pba",
+      "Description": "Battery charge/discharge power",
+      "HA Display Name": "Power - Battery Total",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_battery_Battery2SN_temperature_battery",
+      "friendly_name": "ABB/FIMER Battery Battery2SN Temperature - Battery",
+      "point_name": "tba",
+      "vsn700_rest_name": "Tba",
+      "sunspec_name": "Tba",
+      "device_class": "None",
+      "device_type": "battery"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "Tba",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "Tba",
+      "HA Name": "tba",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Tba",
+      "Description": "Battery pack temperature",
+      "HA Display Name": "Temperature - Battery",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_battery_Battery2SN_temperature_cabinet_max",
+      "friendly_name": "ABB/FIMER Battery Battery2SN Temperature - Cabinet Max",
+      "point_name": "tc_max",
+      "vsn700_rest_name": "TcMax",
+      "sunspec_name": "TcMax",
+      "device_class": "None",
+      "device_type": "battery"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "TcMax",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "TcMax",
+      "HA Name": "tc_max",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Tc Max",
+      "Description": "Maximum cabinet temperature recorded",
+      "HA Display Name": "Temperature - Cabinet Max",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_battery_Battery2SN_temperature_cabinet_min",
+      "friendly_name": "ABB/FIMER Battery Battery2SN Temperature - Cabinet Min",
+      "point_name": "tc_min",
+      "vsn700_rest_name": "TcMin",
+      "sunspec_name": "TcMin",
+      "device_class": "None",
+      "device_type": "battery"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "TcMin",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "TcMin",
+      "HA Name": "tc_min",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Tc Min",
+      "Description": "Minimum cabinet temperature recorded",
+      "HA Display Name": "Temperature - Cabinet Min",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_battery_Battery2SN_voltage_shunt",
+      "friendly_name": "ABB/FIMER Battery Battery2SN Voltage - Shunt",
+      "point_name": "sh_u",
+      "vsn700_rest_name": "ShU",
+      "sunspec_name": "ShU",
+      "device_class": "None",
+      "device_type": "battery"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "ShU",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "ShU",
+      "HA Name": "sh_u",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Sh U",
+      "Description": "Current shunt voltage",
+      "HA Display Name": "Voltage - Shunt",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_battery_Battery2SN_battery_charge_cycles_counter",
+      "friendly_name": "ABB/FIMER Battery Battery2SN Battery charge cycles counter",
+      "point_name": "chc",
+      "vsn700_rest_name": "Chc",
+      "sunspec_name": "Chc",
+      "device_class": "None",
+      "device_type": "battery"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "Chc",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "Chc",
+      "HA Name": "chc",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Chc",
+      "Description": "Battery charge cycles counter",
+      "HA Display Name": "Battery charge cycles counter",
+      "Category": "System",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "ABB/FIMER proprietary",
+      "models": [
+        "ABB Proprietary"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_battery_Battery2SN_battery_discharge_cycles_counter",
+      "friendly_name": "ABB/FIMER Battery Battery2SN Battery discharge cycles counter",
+      "point_name": "dhc",
+      "vsn700_rest_name": "Dhc",
+      "sunspec_name": "Dhc",
+      "device_class": "None",
+      "device_type": "battery"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "Dhc",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "Dhc",
+      "HA Name": "dhc",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Dhc",
+      "Description": "Battery discharge cycles counter",
+      "HA Display Name": "Battery discharge cycles counter",
+      "Category": "System",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "ABB/FIMER proprietary",
+      "models": [
+        "ABB Proprietary"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_battery_Battery2SN_central_controller_frequency",
+      "friendly_name": "ABB/FIMER Battery Battery2SN Central controller frequency",
+      "point_name": "fcc",
+      "vsn700_rest_name": "Fcc",
+      "sunspec_name": "Fcc",
+      "device_class": "None",
+      "device_type": "battery"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "Fcc",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "Fcc",
+      "HA Name": "fcc",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Fcc",
+      "Description": "Central controller frequency",
+      "HA Display Name": "Central controller frequency",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_battery_Battery2SN_total_energy_from_current_transformer_ct",
+      "friendly_name": "ABB/FIMER Battery Battery2SN Total energy from current transformer (CT)",
+      "point_name": "e_ct",
+      "vsn700_rest_name": "ECt",
+      "sunspec_name": "ECt",
+      "device_class": "None",
+      "device_type": "battery"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "ECt",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "ECt",
+      "HA Name": "e_ct",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "E Ct",
+      "Description": "Total energy from current transformer (CT)",
+      "HA Display Name": "Total energy from current transformer (CT)",
+      "Category": "Energy Counter",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_battery_Battery2SN_total_energy_from_direct_transducer_dt",
+      "friendly_name": "ABB/FIMER Battery Battery2SN Total energy from direct transducer (DT)",
+      "point_name": "e_dt",
+      "vsn700_rest_name": "EDt",
+      "sunspec_name": "EDt",
+      "device_class": "None",
+      "device_type": "battery"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "EDt",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "EDt",
+      "HA Name": "e_dt",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "E Dt",
+      "Description": "Total energy from direct transducer (DT)",
+      "HA Display Name": "Total energy from direct transducer (DT)",
+      "Category": "Energy Counter",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_country_grid_standard_setting",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Country grid standard setting",
+      "point_name": "country_std",
+      "vsn700_rest_name": "CountryStd",
+      "sunspec_name": "CountryStd",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "CountryStd",
+      "REST Name (VSN300)": "CountryStd",
+      "SunSpec Normalized Name": "CountryStd",
+      "HA Name": "country_std",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Country Std",
+      "Description": "Country grid standard setting",
+      "HA Display Name": "Country grid standard setting",
+      "Category": "System",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "mdi:information-box-outline",
+      "Entity Category": "diagnostic",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "ABB/FIMER proprietary",
+      "models": [
+        "ABB Proprietary"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_input_mode",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Input Mode",
+      "point_name": "input_mode",
+      "vsn700_rest_name": "InputMode",
+      "sunspec_name": "InputMode",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "InputMode",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "InputMode",
+      "HA Name": "input_mode",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Input Mode",
+      "Description": "Input Mode",
+      "HA Display Name": "Input Mode",
+      "Category": "System Monitoring",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Generated from Label",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_current_dc_string_1",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Current DC - String 1",
+      "point_name": "iin1",
+      "vsn700_rest_name": "Iin1",
+      "sunspec_name": "Iin1",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "Iin1",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "Iin1",
+      "HA Name": "iin1",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Iin1",
+      "Description": "DC Current (String 1)",
+      "HA Display Name": "Current DC - String 1",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_voltage_dc_input_1",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Voltage DC - Input 1",
+      "point_name": "vin1",
+      "vsn700_rest_name": "Vin1",
+      "sunspec_name": "Vin1",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "Vin1",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "Vin1",
+      "HA Name": "vin1",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Vin1",
+      "Description": "DC string 1 input voltage",
+      "HA Display Name": "Voltage DC - Input 1",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_current_dc_string_2",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Current DC - String 2",
+      "point_name": "iin2",
+      "vsn700_rest_name": "Iin2",
+      "sunspec_name": "Iin2",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "Iin2",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "Iin2",
+      "HA Name": "iin2",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Iin2",
+      "Description": "DC Current (String 2)",
+      "HA Display Name": "Current DC - String 2",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_voltage_dc_input_2",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Voltage DC - Input 2",
+      "point_name": "vin2",
+      "vsn700_rest_name": "Vin2",
+      "sunspec_name": "Vin2",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "Vin2",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "Vin2",
+      "HA Name": "vin2",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Vin2",
+      "Description": "DC string 2 input voltage",
+      "HA Display Name": "Voltage DC - Input 2",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_power_factor",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Power Factor",
+      "point_name": "cos_phi",
+      "vsn700_rest_name": "cosPhi",
+      "sunspec_name": "cosPhi",
+      "device_class": "power_factor",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "cosPhi",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "cosPhi",
+      "HA Name": "cos_phi",
+      "In /livedata": "\u2713",
+      "In /feeds": "\u2713",
+      "Label": "Cos Phi",
+      "Description": "Power factor (cosine phi)",
+      "HA Display Name": "Power Factor",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "measurement",
+      "HA Device Class": "power_factor",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_split_phase_configuration_flag",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Split-phase configuration flag",
+      "point_name": "split_phase",
+      "vsn700_rest_name": "SplitPhase",
+      "sunspec_name": "SplitPhase",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "SplitPhase",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "SplitPhase",
+      "HA Name": "split_phase",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Split Phase",
+      "Description": "Split-phase configuration flag",
+      "HA Display Name": "Split-phase configuration flag",
+      "Category": "System",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "ABB/FIMER proprietary",
+      "models": [
+        "ABB Proprietary"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_resistance_insulation",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Resistance - Insulation",
+      "point_name": "riso",
+      "vsn700_rest_name": "Riso",
+      "sunspec_name": "Riso",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "Riso",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "Riso",
+      "HA Name": "riso",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Riso",
+      "Description": "DC insulation resistance to ground",
+      "HA Display Name": "Resistance - Insulation",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_current_inverter_leakage",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Current - Inverter Leakage",
+      "point_name": "ileak_inv",
+      "vsn700_rest_name": "IleakInv",
+      "sunspec_name": "IleakInv",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "IleakInv",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "IleakInv",
+      "HA Name": "ileak_inv",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Ileak Inv",
+      "Description": "Inverter ground fault leakage current",
+      "HA Display Name": "Current - Inverter Leakage",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_current_dc_leakage",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Current DC - Leakage",
+      "point_name": "ileak_d_c",
+      "vsn700_rest_name": "IleakDC",
+      "sunspec_name": "IleakDC",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "IleakDC",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "IleakDC",
+      "HA Name": "ileak_d_c",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Ileak D C",
+      "Description": "DC side ground fault leakage current",
+      "HA Display Name": "Current DC - Leakage",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_system_time",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) System Time",
+      "point_name": "sys_time",
+      "vsn700_rest_name": "SysTime",
+      "sunspec_name": "SysTime",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "SysTime",
+      "REST Name (VSN300)": "m64061_1_SysTime",
+      "SunSpec Normalized Name": "SysTime",
+      "HA Name": "sys_time",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Sys Time",
+      "Description": "Inverter system timestamp",
+      "HA Display Name": "System Time",
+      "Category": "System",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "mdi:information-box-outline",
+      "Entity Category": "diagnostic",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "ABB/FIMER proprietary",
+      "models": [
+        "M64061",
+        "ABB Proprietary"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_global_operational_state",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Global operational state",
+      "point_name": "glob_state",
+      "vsn700_rest_name": "GlobState",
+      "sunspec_name": "GlobState",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "GlobState",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "GlobState",
+      "HA Name": "glob_state",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Glob State",
+      "Description": "Global operational state",
+      "HA Display Name": "Global operational state",
+      "Category": "Status",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_alarm_state",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Alarm State",
+      "point_name": "alarm_state",
+      "vsn700_rest_name": "AlarmState",
+      "sunspec_name": "AlarmState",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "AlarmState",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "AlarmState",
+      "HA Name": "alarm_state",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Alarm State",
+      "Description": "Alarm State",
+      "HA Display Name": "Alarm State",
+      "Category": "Status",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Generated from Label",
+      "Model_Notes": "ABB/FIMER proprietary model 64061",
+      "models": [
+        "M64061"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_dc_input_1_state",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) DC Input 1 State",
+      "point_name": "d_c1_state",
+      "vsn700_rest_name": "DC1State",
+      "sunspec_name": "DC1State",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "DC1State",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "DC1State",
+      "HA Name": "d_c1_state",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "DC1 State",
+      "Description": "DC string 1 operating state",
+      "HA Display Name": "DC Input 1 State",
+      "Category": "Status",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_dc_input_2_state",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) DC Input 2 State",
+      "point_name": "d_c2_state",
+      "vsn700_rest_name": "DC2State",
+      "sunspec_name": "DC2State",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "DC2State",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "DC2State",
+      "HA Name": "d_c2_state",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "DC2 State",
+      "Description": "DC string 2 operating state",
+      "HA Display Name": "DC Input 2 State",
+      "Category": "Status",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_inverter_state",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Inverter State",
+      "point_name": "inv_state",
+      "vsn700_rest_name": "InvState",
+      "sunspec_name": "InvState",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "InvState",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "InvState",
+      "HA Name": "inv_state",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Inv State",
+      "Description": "Current operational state of inverter",
+      "HA Display Name": "Inverter State",
+      "Category": "Status",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_warning_flags",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Warning Flags",
+      "point_name": "warning_flags",
+      "vsn700_rest_name": "WarningFlags",
+      "sunspec_name": "WarningFlags",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "WarningFlags",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "WarningFlags",
+      "HA Name": "warning_flags",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Warning Flags",
+      "Description": "Active warning condition flags",
+      "HA Display Name": "Warning Flags",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_ac_power_derating_flags",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) AC Power Derating Flags",
+      "point_name": "pac_derating_flags",
+      "vsn700_rest_name": "PACDeratingFlags",
+      "sunspec_name": "PACDeratingFlags",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "PACDeratingFlags",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "PACDeratingFlags",
+      "HA Name": "pac_derating_flags",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "PAC Derating Flags",
+      "Description": "AC power derating active condition flags",
+      "HA Display Name": "AC Power Derating Flags",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_reactive_power_derating",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Reactive Power Derating",
+      "point_name": "qac_derating_flags",
+      "vsn700_rest_name": "QACDeratingFlags",
+      "sunspec_name": "QACDeratingFlags",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "QACDeratingFlags",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "QACDeratingFlags",
+      "HA Name": "qac_derating_flags",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "QAC Derating Flags",
+      "Description": "Reactive power AC derating flags",
+      "HA Display Name": "Reactive Power Derating",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_apparent_power_derating",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Apparent Power Derating",
+      "point_name": "sac_derating_flags",
+      "vsn700_rest_name": "SACDeratingFlags",
+      "sunspec_name": "SACDeratingFlags",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "SACDeratingFlags",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "SACDeratingFlags",
+      "HA Name": "sac_derating_flags",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "SAC Derating Flags",
+      "Description": "Apparent power AC derating flags",
+      "HA Display Name": "Apparent Power Derating",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_fault_ride_through_frt_status",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Fault Ride Through (FRT) status",
+      "point_name": "frt_state",
+      "vsn700_rest_name": "FRT_state",
+      "sunspec_name": "FRT_state",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "FRT_state",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "FRT_state",
+      "HA Name": "frt_state",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "FRT State",
+      "Description": "Fault Ride Through (FRT) status",
+      "HA Display Name": "Fault Ride Through (FRT) status",
+      "Category": "Status",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_clock_state",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Clock State",
+      "point_name": "clock_state",
+      "vsn700_rest_name": "ClockState",
+      "sunspec_name": "ClockState",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "ClockState",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "ClockState",
+      "HA Name": "clock_state",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Clock State",
+      "Description": "Clock State",
+      "HA Display Name": "Clock State",
+      "Category": "Status",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Generated from Label",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_model_126_enabled",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Model 126 Enabled",
+      "point_name": "m126_mod_ena",
+      "vsn700_rest_name": "m126Mod_Ena",
+      "sunspec_name": "m126Mod_Ena",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "m126Mod_Ena",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "m126Mod_Ena",
+      "HA Name": "m126_mod_ena",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "M126 Mod Ena",
+      "Description": "SunSpec Model 126 module enabled",
+      "HA Display Name": "Model 126 Enabled",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_model_132_enabled",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Model 132 Enabled",
+      "point_name": "m132_mod_ena",
+      "vsn700_rest_name": "m132Mod_Ena",
+      "sunspec_name": "m132Mod_Ena",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "m132Mod_Ena",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "m132Mod_Ena",
+      "HA Name": "m132_mod_ena",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "M132 Mod Ena",
+      "Description": "SunSpec Model 132 module enabled",
+      "HA Display Name": "Model 132 Enabled",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_self_consumed_energy_since_restart",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Self-consumed energy - Since Restart",
+      "point_name": "e4_lifetime",
+      "vsn700_rest_name": "E4_runtime",
+      "sunspec_name": "E4_runtime",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "E4_runtime",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "E4_runtime",
+      "HA Name": "e4_lifetime",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "E4 Lifetime",
+      "Description": "Self-consumed energy - Since Restart",
+      "HA Display Name": "Self-consumed energy - Since Restart",
+      "Category": "Energy Counter",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_self_consumed_energy_last_7_days",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Self-consumed energy - Last 7 Days",
+      "point_name": "e4_last_week",
+      "vsn700_rest_name": "E4_7D",
+      "sunspec_name": "E4_7D",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "E4_7D",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "E4_7D",
+      "HA Name": "e4_last_week",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "E4 Last Week",
+      "Description": "Self-consumed energy - Last 7 Days",
+      "HA Display Name": "Self-consumed energy - Last 7 Days",
+      "Category": "Energy Counter",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_self_consumed_energy_last_30_days",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Self-consumed energy - Last 30 Days",
+      "point_name": "e4_last_month",
+      "vsn700_rest_name": "E4_30D",
+      "sunspec_name": "E4_30D",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "E4_30D",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "E4_30D",
+      "HA Name": "e4_last_month",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "E4 Last Month",
+      "Description": "Self-consumed energy - Last 30 Days",
+      "HA Display Name": "Self-consumed energy - Last 30 Days",
+      "Category": "Energy Counter",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_battery_charge_since_restart",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy - Battery Charge Since Restart",
+      "point_name": "e5_lifetime",
+      "vsn700_rest_name": "E5_runtime",
+      "sunspec_name": "E5_runtime",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "E5_runtime",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "E5_runtime",
+      "HA Name": "e5_lifetime",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "E5 Lifetime",
+      "Description": "Battery charge energy - Since Restart",
+      "HA Display Name": "Energy - Battery Charge Since Restart",
+      "Category": "Energy Counter",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_battery_charge_last_7_days",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy - Battery Charge Last 7 Days",
+      "point_name": "e5_last_week",
+      "vsn700_rest_name": "E5_7D",
+      "sunspec_name": "E5_7D",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "E5_7D",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "E5_7D",
+      "HA Name": "e5_last_week",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "E5 Last Week",
+      "Description": "Battery charge energy - Last 7 Days",
+      "HA Display Name": "Energy - Battery Charge Last 7 Days",
+      "Category": "Energy Counter",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_battery_charge_last_30_days",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy - Battery Charge Last 30 Days",
+      "point_name": "e5_last_month",
+      "vsn700_rest_name": "E5_30D",
+      "sunspec_name": "E5_30D",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "E5_30D",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "E5_30D",
+      "HA Name": "e5_last_month",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "E5 Last Month",
+      "Description": "Battery charge energy - Last 30 Days",
+      "HA Display Name": "Energy - Battery Charge Last 30 Days",
+      "Category": "Energy Counter",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_dc_energy_string_1_lifetime",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) DC energy (String 1) - Lifetime",
+      "point_name": "ein1",
+      "vsn700_rest_name": "Ein1",
+      "sunspec_name": "Ein1",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "Ein1",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "Ein1",
+      "HA Name": "ein1",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Ein1",
+      "Description": "DC energy (String 1) - Lifetime",
+      "HA Display Name": "DC energy (String 1) - Lifetime",
+      "Category": "Energy Counter",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_dc_energy_string_2_lifetime",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) DC energy (String 2) - Lifetime",
+      "point_name": "ein2",
+      "vsn700_rest_name": "Ein2",
+      "sunspec_name": "Ein2",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "Ein2",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "Ein2",
+      "HA Name": "ein2",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Ein2",
+      "Description": "DC energy (String 2) - Lifetime",
+      "HA Display Name": "DC energy (String 2) - Lifetime",
+      "Category": "Energy Counter",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_ac_backup_output_lifetime",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy AC - Backup Output Lifetime",
+      "point_name": "e_backup",
+      "vsn700_rest_name": "EBackup",
+      "sunspec_name": "EBackup",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "EBackup",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "EBackup",
+      "HA Name": "e_backup",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "E Backup",
+      "Description": "Inverter backup output energy - Lifetime",
+      "HA Display Name": "Energy AC - Backup Output Lifetime",
+      "Category": "Energy Counter",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_detected_battery_number",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Detected Battery Number",
+      "point_name": "detected_battery_number",
+      "vsn700_rest_name": "DetectedBatteryNumber",
+      "sunspec_name": "DetectedBatteryNumber",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "DetectedBatteryNumber",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "DetectedBatteryNumber",
+      "HA Name": "detected_battery_number",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Detected Battery Number",
+      "Description": "Detected Battery Number",
+      "HA Display Name": "Detected Battery Number",
+      "Category": "Battery",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Generated from Label",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_battery_state_of_charge",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Battery State of Charge",
+      "point_name": "t_soc",
+      "vsn700_rest_name": "TSoc",
+      "sunspec_name": "TSoc",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "TSoc",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "TSoc",
+      "HA Name": "t_soc",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "T Soc",
+      "Description": "Battery state of charge percentage",
+      "HA Display Name": "Battery State of Charge",
+      "Category": "Battery",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_energy_policy",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy Policy",
+      "point_name": "energy_policy",
+      "vsn700_rest_name": "EnergyPolicy",
+      "sunspec_name": "EnergyPolicy",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "EnergyPolicy",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "EnergyPolicy",
+      "HA Name": "energy_policy",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Energy Policy",
+      "Description": "Energy Policy",
+      "HA Display Name": "Energy Policy",
+      "Category": "Energy Counter",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Generated from Label",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_battery_mode",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Battery Mode",
+      "point_name": "battery_mode",
+      "vsn700_rest_name": "BatteryMode",
+      "sunspec_name": "BatteryMode",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "BatteryMode",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "BatteryMode",
+      "HA Name": "battery_mode",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Battery Mode",
+      "Description": "Battery Mode",
+      "HA Display Name": "Battery Mode",
+      "Category": "Status",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Generated from Label",
+      "Model_Notes": "ABB/FIMER proprietary model 64061",
+      "models": [
+        "M64061"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_digital_input_0_mode",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Digital Input 0 Mode",
+      "point_name": "di0_mode",
+      "vsn700_rest_name": "DI0_mode",
+      "sunspec_name": "DI0_mode",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "DI0_mode",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "DI0_mode",
+      "HA Name": "di0_mode",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "DI0 Mode",
+      "Description": "Operating mode configuration for digital input 0",
+      "HA Display Name": "Digital Input 0 Mode",
+      "Category": "System Monitoring",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_digital_input_1_mode",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Digital Input 1 Mode",
+      "point_name": "di1_mode",
+      "vsn700_rest_name": "DI1_mode",
+      "sunspec_name": "DI1_mode",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "DI1_mode",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "DI1_mode",
+      "HA Name": "di1_mode",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "DI1 Mode",
+      "Description": "Operating mode configuration for digital input 1",
+      "HA Display Name": "Digital Input 1 Mode",
+      "Category": "System Monitoring",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_digital_input_status",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Digital Input Status",
+      "point_name": "di_status",
+      "vsn700_rest_name": "DI_status",
+      "sunspec_name": "DI_status",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "DI_status",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "DI_status",
+      "HA Name": "di_status",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "DI Status",
+      "Description": "Digital input status register",
+      "HA Display Name": "Digital Input Status",
+      "Category": "Status",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_grid_external_control_state",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Grid External Control State",
+      "point_name": "grid_ext_ctrl_state",
+      "vsn700_rest_name": "gridExtCtrlState",
+      "sunspec_name": "gridExtCtrlState",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "gridExtCtrlState",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "gridExtCtrlState",
+      "HA Name": "grid_ext_ctrl_state",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Grid Ext Ctrl State",
+      "Description": "External grid control current state",
+      "HA Display Name": "Grid External Control State",
+      "Category": "Status",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_grid_external_control_enabled",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Grid External Control Enabled",
+      "point_name": "grid_ext_ctrl_ena",
+      "vsn700_rest_name": "gridExtCtrlEna",
+      "sunspec_name": "gridExtCtrlEna",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "gridExtCtrlEna",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "gridExtCtrlEna",
+      "HA Name": "grid_ext_ctrl_ena",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Grid Ext Ctrl Ena",
+      "Description": "External grid control enabled status",
+      "HA Display Name": "Grid External Control Enabled",
+      "Category": "Datalogger",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_battery_control_state",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Battery Control State",
+      "point_name": "batt_ext_ctrl_state",
+      "vsn700_rest_name": "BattExtCtrlState",
+      "sunspec_name": "BattExtCtrlState",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "BattExtCtrlState",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "BattExtCtrlState",
+      "HA Name": "batt_ext_ctrl_state",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Batt Ext Ctrl State",
+      "Description": "Battery external control state",
+      "HA Display Name": "Battery Control State",
+      "Category": "Battery",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  },
+  {
+    "sensor": {
+      "entity_id": "sensor.abb_fimer_inverter_react2_5_0_tl_InverterSN_battery_control_enabled",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Battery Control Enabled",
+      "point_name": "batt_ext_ctrl_ena",
+      "vsn700_rest_name": "BattExtCtrlEna",
+      "sunspec_name": "BattExtCtrlEna",
+      "device_class": "None",
+      "device_type": "inverter_1phase"
+    },
+    "mapping": {
+      "REST Name (VSN700)": "BattExtCtrlEna",
+      "REST Name (VSN300)": "N/A",
+      "SunSpec Normalized Name": "BattExtCtrlEna",
+      "HA Name": "batt_ext_ctrl_ena",
+      "In /livedata": "\u2713",
+      "In /feeds": "",
+      "Label": "Batt Ext Ctrl Ena",
+      "Description": "Battery external control enabled flag",
+      "HA Display Name": "Battery Control Enabled",
+      "Category": "Battery",
+      "HA Unit of Measurement": "",
+      "HA State Class": "",
+      "HA Device Class": "",
+      "HA Icon": "",
+      "Entity Category": "",
+      "Available in Modbus": false,
+      "Data Source": "Curated Improvement",
+      "Model_Notes": "VSN700-specific point",
+      "models": [
+        "VSN700-only"
+      ]
+    }
+  }
+]

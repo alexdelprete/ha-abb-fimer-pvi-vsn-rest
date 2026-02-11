@@ -1,48 +1,85 @@
-# artifacts
-__pycache__
-.pytest*
-*.egg-info
-*/build/*
-*/dist/*
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
 
+# C extensions
+*.so
 
-# misc
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
 .coverage
-.vscode
-.zed
+.coverage.*
+.cache
+nosetests.xml
 coverage.xml
-enforce_branch_protection.sh
-settings.local.json
-.claude/settings.local.json
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+pytest*.xml
+
+# Translations
+*.mo
+*.pot
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.zed/
 
 # Home Assistant configuration
 config/*
 !config/configuration.yaml
 
-# Test output files
-scripts/vsn300_*.json
-scripts/vsn700_*.json
-scripts/*_output.json
-scripts/*_test_*.json
-scripts/test_output_*.json
+# OS files
+.DS_Store
+Thumbs.db
 
-# VSN data samples
-docs/vsn-data/
-
-# Backup files
-*.backup
-*.bak
-*~
-
-# Excel temporary files
-~$*.xlsx
-~$*.xls
-*.xlsx.tmp
-*.xls.tmp
-
-# Mapping file backups and temporary versions
-docs/vsn-sunspec-point-mapping-backup-*.xlsx
-docs/vsn-sunspec-point-mapping-*-fixed.xlsx
-docs/vsn-sunspec-point-mapping-*.xlsx
-!docs/vsn-sunspec-point-mapping.xlsx
-venv/
+# Project specific
+*.log
+.ruff_cache/
+settings.local.json
+uv.lock
+nul
+.claude/

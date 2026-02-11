@@ -1,0 +1,796 @@
+{
+  "100784-3N52-4720": {
+    "device_id": "100784-3N52-4720",
+    "device_type": "meter",
+    "timestamp": "2025-12-04T13:25:00+0100",
+    "points": [
+      {
+        "name": "DynamicFeedInCtrl",
+        "value": 0.0
+      },
+      {
+        "name": "HouseIgrid_L1",
+        "value": 3.8319990634918213
+      },
+      {
+        "name": "HouseIgrid_L2",
+        "value": 0.0
+      },
+      {
+        "name": "HouseIgrid_L3",
+        "value": 0.0
+      },
+      {
+        "name": "HousePgrid_L1",
+        "value": 868.5225830078125
+      },
+      {
+        "name": "HousePgrid_L2",
+        "value": 0.0
+      },
+      {
+        "name": "HousePgrid_L3",
+        "value": 0.0
+      },
+      {
+        "name": "HousePgrid_Tot",
+        "value": 868.5225830078125
+      },
+      {
+        "name": "HousePInverter",
+        "value": 199.6026153564453
+      },
+      {
+        "name": "MeterVgrid_L1",
+        "value": 226.61000061035156
+      },
+      {
+        "name": "MeterVgrid_L2",
+        "value": 0.0
+      },
+      {
+        "name": "MeterVgrid_L3",
+        "value": 0.0
+      },
+      {
+        "name": "MeterIgrid_L1",
+        "value": 4.314000129699707
+      },
+      {
+        "name": "MeterIgrid_L2",
+        "value": 0.0
+      },
+      {
+        "name": "MeterIgrid_L3",
+        "value": 0.0
+      },
+      {
+        "name": "MeterPgrid_L1",
+        "value": -668.9000244140625
+      },
+      {
+        "name": "MeterPgrid_L2",
+        "value": 0.0
+      },
+      {
+        "name": "MeterPgrid_L3",
+        "value": 0.0
+      },
+      {
+        "name": "MeterPgrid_Tot",
+        "value": -668.9000244140625
+      },
+      {
+        "name": "MeterQgrid_L1",
+        "value": 579.47998046875
+      },
+      {
+        "name": "MeterQgrid_L2",
+        "value": 0.0
+      },
+      {
+        "name": "MeterQgrid_L3",
+        "value": 0.0
+      },
+      {
+        "name": "MeterQgrid_Tot",
+        "value": 579.47998046875
+      },
+      {
+        "name": "MeterFgrid",
+        "value": 49.97999954223633
+      },
+      {
+        "name": "CommissioningFreeze",
+        "value": 0.0
+      },
+      {
+        "name": "E3_runtime",
+        "value": 0.0
+      },
+      {
+        "name": "E3_7D",
+        "value": 93.0
+      },
+      {
+        "name": "E3_30D",
+        "value": 1436.0
+      },
+      {
+        "name": "E6_runtime",
+        "value": 966.0
+      },
+      {
+        "name": "E6_7D",
+        "value": 26425.0
+      },
+      {
+        "name": "E6_30D",
+        "value": 123903.0
+      },
+      {
+        "name": "E7_runtime",
+        "value": 16406.0
+      },
+      {
+        "name": "E7_7D",
+        "value": 265773.0
+      },
+      {
+        "name": "E7_30D",
+        "value": 978558.0
+      },
+      {
+        "name": "E8_runtime",
+        "value": 15440.0
+      },
+      {
+        "name": "E8_7D",
+        "value": 239348.0
+      },
+      {
+        "name": "E8_30D",
+        "value": 854655.0
+      },
+      {
+        "name": "EGridImport",
+        "value": 24021332.0
+      },
+      {
+        "name": "EGridExport",
+        "value": 3151853.0
+      }
+    ]
+  },
+  "117570-3P88-4120": {
+    "device_id": "117570-3P88-4120",
+    "device_type": "inverter_1phase",
+    "device_model": "REACT2-3.6-TL",
+    "timestamp": "2025-12-04T13:25:00+0100",
+    "points": [
+      {
+        "name": "CountryStd",
+        "value": 105.0
+      },
+      {
+        "name": "InputMode",
+        "value": 0.0
+      },
+      {
+        "name": "NumOfMPPT",
+        "value": 2.0
+      },
+      {
+        "name": "WRtg",
+        "value": 3636.0
+      },
+      {
+        "name": "Iin1",
+        "value": 0.43109625577926636
+      },
+      {
+        "name": "Vin1",
+        "value": 197.1670379638672
+      },
+      {
+        "name": "Pin1",
+        "value": 83.18781280517578
+      },
+      {
+        "name": "Iin2",
+        "value": 0.44487714767456055
+      },
+      {
+        "name": "Vin2",
+        "value": 264.4100341796875
+      },
+      {
+        "name": "Pin2",
+        "value": 115.59576416015625
+      },
+      {
+        "name": "Pin",
+        "value": 199.32763671875
+      },
+      {
+        "name": "Igrid",
+        "value": 0.9092876315116882
+      },
+      {
+        "name": "Pgrid",
+        "value": 199.83953857421875
+      },
+      {
+        "name": "Vgrid",
+        "value": 226.0609588623047
+      },
+      {
+        "name": "Qgrid",
+        "value": -7.983760833740234
+      },
+      {
+        "name": "Fgrid",
+        "value": 49.984561920166016
+      },
+      {
+        "name": "Ppeak",
+        "value": 616.4381103515625
+      },
+      {
+        "name": "cosPhi",
+        "value": 1.0
+      },
+      {
+        "name": "SplitPhase",
+        "value": 0.0
+      },
+      {
+        "name": "VgridL1_N",
+        "value": 113.0954360961914
+      },
+      {
+        "name": "VgridL2_N",
+        "value": 112.7424087524414
+      },
+      {
+        "name": "PacTogrid",
+        "value": 199.6026153564453
+      },
+      {
+        "name": "PacStandAlone",
+        "value": 0.0
+      },
+      {
+        "name": "Temp1",
+        "value": 20.26580810546875
+      },
+      {
+        "name": "TempInv",
+        "value": 20.873016357421875
+      },
+      {
+        "name": "TempBst",
+        "value": 22.210153579711914
+      },
+      {
+        "name": "VBulk",
+        "value": 360.0572814941406
+      },
+      {
+        "name": "VBulkMid",
+        "value": 175.579833984375
+      },
+      {
+        "name": "Riso",
+        "value": 20.0
+      },
+      {
+        "name": "IleakInv",
+        "value": 6989.17919921875
+      },
+      {
+        "name": "IleakDC",
+        "value": 6940.55224609375
+      },
+      {
+        "name": "Vgnd",
+        "value": 255.12916564941406
+      },
+      {
+        "name": "SysTime",
+        "value": 818169856.0
+      },
+      {
+        "name": "GlobState",
+        "value": 6.0
+      },
+      {
+        "name": "AlarmState",
+        "value": 0.0
+      },
+      {
+        "name": "DC1State",
+        "value": 2.0
+      },
+      {
+        "name": "DC2State",
+        "value": 2.0
+      },
+      {
+        "name": "InvState",
+        "value": 2.0
+      },
+      {
+        "name": "WarningFlags",
+        "value": 64.0
+      },
+      {
+        "name": "PACDeratingFlags",
+        "value": 0.0
+      },
+      {
+        "name": "QACDeratingFlags",
+        "value": 0.0
+      },
+      {
+        "name": "SACDeratingFlags",
+        "value": 0.0
+      },
+      {
+        "name": "FRT_state",
+        "value": 0.0
+      },
+      {
+        "name": "ClockState",
+        "value": 0.0
+      },
+      {
+        "name": "m126Mod_Ena",
+        "value": 0.0
+      },
+      {
+        "name": "m132Mod_Ena",
+        "value": 0.0
+      },
+      {
+        "name": "Fan1rpm",
+        "value": 0.0
+      },
+      {
+        "name": "Fan2rpm",
+        "value": 0.0
+      },
+      {
+        "name": "E0_runtime",
+        "value": 966.0
+      },
+      {
+        "name": "E0_7D",
+        "value": 26518.0
+      },
+      {
+        "name": "E0_30D",
+        "value": 125339.0
+      },
+      {
+        "name": "E0_1Y",
+        "value": 4854237.0
+      },
+      {
+        "name": "E1_runtime",
+        "value": 0.0
+      },
+      {
+        "name": "E1_7D",
+        "value": 46.0
+      },
+      {
+        "name": "E1_30D",
+        "value": 317.0
+      },
+      {
+        "name": "E2_runtime",
+        "value": 970.0
+      },
+      {
+        "name": "E2_7D",
+        "value": 26613.0
+      },
+      {
+        "name": "E2_30D",
+        "value": 125889.0
+      },
+      {
+        "name": "E4_runtime",
+        "value": 408.0
+      },
+      {
+        "name": "E4_7D",
+        "value": 10189.0
+      },
+      {
+        "name": "E4_30D",
+        "value": 46388.0
+      },
+      {
+        "name": "E5_runtime",
+        "value": 567.0
+      },
+      {
+        "name": "E5_7D",
+        "value": 16900.0
+      },
+      {
+        "name": "E5_30D",
+        "value": 83038.0
+      },
+      {
+        "name": "E15_runtime",
+        "value": 0.0
+      },
+      {
+        "name": "E15_7D",
+        "value": 0.0
+      },
+      {
+        "name": "E15_30D",
+        "value": 0.0
+      },
+      {
+        "name": "Ein_runtime",
+        "value": 975.0
+      },
+      {
+        "name": "Ein_7D",
+        "value": 27089.0
+      },
+      {
+        "name": "Ein_30D",
+        "value": 129426.0
+      },
+      {
+        "name": "Ein",
+        "value": 20648912.0
+      },
+      {
+        "name": "ETotal",
+        "value": 19565698.0
+      },
+      {
+        "name": "ETotalAbsorbed",
+        "value": 21590.0
+      },
+      {
+        "name": "ETotalApparent",
+        "value": 19596792.0
+      },
+      {
+        "name": "Ein1",
+        "value": 7640085.0
+      },
+      {
+        "name": "Ein2",
+        "value": 13008828.0
+      },
+      {
+        "name": "EBackup",
+        "value": 0.0
+      },
+      {
+        "name": "DetectedBatteryNumber",
+        "value": 2.0
+      },
+      {
+        "name": "PbaT",
+        "value": 0.0
+      },
+      {
+        "name": "TSoc",
+        "value": 20.0
+      },
+      {
+        "name": "EnergyPolicy",
+        "value": 1.0
+      },
+      {
+        "name": "BatteryMode",
+        "value": 0.0
+      },
+      {
+        "name": "ETotDischarge_runtime",
+        "value": 0.0
+      },
+      {
+        "name": "ETotDischarge_7D",
+        "value": 720.0
+      },
+      {
+        "name": "ETotDischarge_30D",
+        "value": 13285.0
+      },
+      {
+        "name": "ETotCharge_runtime",
+        "value": 0.0
+      },
+      {
+        "name": "ETotCharge_7D",
+        "value": 522.0
+      },
+      {
+        "name": "ETotCharge_30D",
+        "value": 12466.0
+      },
+      {
+        "name": "DI0_mode",
+        "value": 2.0
+      },
+      {
+        "name": "DI1_mode",
+        "value": 1.0
+      },
+      {
+        "name": "DI_status",
+        "value": 3.0
+      },
+      {
+        "name": "gridExtCtrlState",
+        "value": 1.0
+      },
+      {
+        "name": "gridExtCtrlEna",
+        "value": 0.0
+      },
+      {
+        "name": "BattExtCtrlState",
+        "value": 1.0
+      },
+      {
+        "name": "BattExtCtrlEna",
+        "value": 0.0
+      }
+    ]
+  },
+  "121807-3P72-5020": {
+    "device_id": "121807-3P72-5020",
+    "device_type": "battery",
+    "timestamp": "2025-12-04T13:25:00+0100",
+    "points": [
+      {
+        "name": "BattNum",
+        "value": 2.0
+      },
+      {
+        "name": "Iba",
+        "value": 0.27326372265815735
+      },
+      {
+        "name": "Vba",
+        "value": 199.4857940673828
+      },
+      {
+        "name": "Pba",
+        "value": 0.0
+      },
+      {
+        "name": "Tba",
+        "value": 18.06818199157715
+      },
+      {
+        "name": "Soc",
+        "value": 20.0
+      },
+      {
+        "name": "VcMax",
+        "value": 3.566999912261963
+      },
+      {
+        "name": "VcMin",
+        "value": 3.553999900817871
+      },
+      {
+        "name": "TcMax",
+        "value": 10.0
+      },
+      {
+        "name": "TcMin",
+        "value": 9.0
+      },
+      {
+        "name": "Soh",
+        "value": 88.0
+      },
+      {
+        "name": "ShU",
+        "value": 1757128704.0
+      },
+      {
+        "name": "PCh",
+        "value": 1767.0
+      },
+      {
+        "name": "PDh",
+        "value": 2189.0
+      },
+      {
+        "name": "Chc",
+        "value": 99782048.0
+      },
+      {
+        "name": "Dhc",
+        "value": 147102352.0
+      },
+      {
+        "name": "Fcc",
+        "value": 17.349000930786133
+      },
+      {
+        "name": "ECt",
+        "value": 3496624.0
+      },
+      {
+        "name": "EDt",
+        "value": 3308717.0
+      },
+      {
+        "name": "EDischarge_runtime",
+        "value": 0.0
+      },
+      {
+        "name": "EDischarge_7D",
+        "value": 334.0
+      },
+      {
+        "name": "EDischarge_30D",
+        "value": 6473.0
+      },
+      {
+        "name": "EDischarge",
+        "value": 3315689.0
+      },
+      {
+        "name": "ECharge_runtime",
+        "value": 0.0
+      },
+      {
+        "name": "ECharge_7D",
+        "value": 261.0
+      },
+      {
+        "name": "ECharge_30D",
+        "value": 6233.0
+      },
+      {
+        "name": "ECharge",
+        "value": 3514524.0
+      },
+      {
+        "name": "CycleNum",
+        "value": 827.0
+      }
+    ]
+  },
+  "121813-3P72-5020": {
+    "device_id": "121813-3P72-5020",
+    "device_type": "battery",
+    "timestamp": "2025-12-04T13:25:00+0100",
+    "points": [
+      {
+        "name": "BattNum",
+        "value": 1.0
+      },
+      {
+        "name": "Iba",
+        "value": 0.4117429256439209
+      },
+      {
+        "name": "Vba",
+        "value": 200.07357788085938
+      },
+      {
+        "name": "Pba",
+        "value": 0.0
+      },
+      {
+        "name": "Tba",
+        "value": 18.773054122924805
+      },
+      {
+        "name": "Soc",
+        "value": 20.0
+      },
+      {
+        "name": "VcMax",
+        "value": 3.572000026702881
+      },
+      {
+        "name": "VcMin",
+        "value": 3.561000108718872
+      },
+      {
+        "name": "TcMax",
+        "value": 11.0
+      },
+      {
+        "name": "TcMin",
+        "value": 10.0
+      },
+      {
+        "name": "Soh",
+        "value": 91.0
+      },
+      {
+        "name": "ShU",
+        "value": 1722649088.0
+      },
+      {
+        "name": "PCh",
+        "value": 1745.0
+      },
+      {
+        "name": "PDh",
+        "value": 2152.0
+      },
+      {
+        "name": "Chc",
+        "value": 96596792.0
+      },
+      {
+        "name": "Dhc",
+        "value": 148216512.0
+      },
+      {
+        "name": "Fcc",
+        "value": 17.860000610351562
+      },
+      {
+        "name": "ECt",
+        "value": 3498226.0
+      },
+      {
+        "name": "EDt",
+        "value": 3312387.0
+      },
+      {
+        "name": "EDischarge_runtime",
+        "value": 0.0
+      },
+      {
+        "name": "EDischarge_7D",
+        "value": 386.0
+      },
+      {
+        "name": "EDischarge_30D",
+        "value": 6812.0
+      },
+      {
+        "name": "EDischarge",
+        "value": 3294817.0
+      },
+      {
+        "name": "ECharge_runtime",
+        "value": 0.0
+      },
+      {
+        "name": "ECharge_7D",
+        "value": 261.0
+      },
+      {
+        "name": "ECharge_30D",
+        "value": 6233.0
+      },
+      {
+        "name": "ECharge",
+        "value": 3525731.0
+      },
+      {
+        "name": "CycleNum",
+        "value": 828.0
+      }
+    ]
+  },
+  "64:33:db:0a:7d:9f": {
+    "device_id": "64:33:db:0a:7d:9f",
+    "timestamp": "2025-12-04T13:24:56+0100",
+    "points": []
+  }
+}

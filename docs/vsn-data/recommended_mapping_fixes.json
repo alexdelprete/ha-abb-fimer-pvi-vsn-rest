@@ -1,0 +1,1055 @@
+{
+  "meter": [
+    {
+      "vsn700_name": "DynamicFeedInCtrl",
+      "point_name": "dynamic_feed_in_ctrl",
+      "friendly_name": "ABB/FIMER Meter MeterSN Dynamic Feed In Ctrl",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      }
+    },
+    {
+      "vsn700_name": "MeterPgrid_L1",
+      "point_name": "meter_pgrid_l1",
+      "friendly_name": "ABB/FIMER Meter MeterSN Power AC - Meter Phase A",
+      "suggested_device_class": "power",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "power",
+      "recommended_unit": "W",
+      "recommended_state_class": "measurement"
+    },
+    {
+      "vsn700_name": "MeterPgrid_L2",
+      "point_name": "meter_pgrid_l2",
+      "friendly_name": "ABB/FIMER Meter MeterSN Power AC - Meter Phase B",
+      "suggested_device_class": "power",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "power",
+      "recommended_unit": "W",
+      "recommended_state_class": "measurement"
+    },
+    {
+      "vsn700_name": "MeterPgrid_L3",
+      "point_name": "meter_pgrid_l3",
+      "friendly_name": "ABB/FIMER Meter MeterSN Power AC - Meter Phase C",
+      "suggested_device_class": "power",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "power",
+      "recommended_unit": "W",
+      "recommended_state_class": "measurement"
+    },
+    {
+      "vsn700_name": "CommissioningFreeze",
+      "point_name": "commissioning_freeze",
+      "friendly_name": "ABB/FIMER Meter MeterSN Commissioning Freeze",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      }
+    }
+  ],
+  "battery": [
+    {
+      "vsn700_name": "BattNum",
+      "point_name": "batt_num",
+      "friendly_name": "ABB/FIMER Battery Battery1SN Number of battery cells or modules",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      }
+    },
+    {
+      "vsn700_name": "Iba",
+      "point_name": "iba",
+      "friendly_name": "ABB/FIMER Battery Battery1SN Current - Battery",
+      "suggested_device_class": "current",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "current",
+      "recommended_unit": "A",
+      "recommended_state_class": "measurement"
+    },
+    {
+      "vsn700_name": "Vba",
+      "point_name": "vba",
+      "friendly_name": "ABB/FIMER Battery Battery1SN Voltage - Battery",
+      "suggested_device_class": "voltage",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "voltage",
+      "recommended_unit": "V",
+      "recommended_state_class": "measurement"
+    },
+    {
+      "vsn700_name": "Pba",
+      "point_name": "pba",
+      "friendly_name": "ABB/FIMER Battery Battery1SN Power - Battery Total",
+      "suggested_device_class": "power",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "power",
+      "recommended_unit": "W",
+      "recommended_state_class": "measurement"
+    },
+    {
+      "vsn700_name": "Tba",
+      "point_name": "tba",
+      "friendly_name": "ABB/FIMER Battery Battery1SN Temperature - Battery",
+      "suggested_device_class": "temperature",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "temperature",
+      "recommended_unit": "\u00b0C",
+      "recommended_state_class": "measurement"
+    },
+    {
+      "vsn700_name": "TcMax",
+      "point_name": "tc_max",
+      "friendly_name": "ABB/FIMER Battery Battery1SN Temperature - Cabinet Max",
+      "suggested_device_class": "temperature",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "temperature",
+      "recommended_unit": "\u00b0C",
+      "recommended_state_class": "measurement"
+    },
+    {
+      "vsn700_name": "TcMin",
+      "point_name": "tc_min",
+      "friendly_name": "ABB/FIMER Battery Battery1SN Temperature - Cabinet Min",
+      "suggested_device_class": "temperature",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "temperature",
+      "recommended_unit": "\u00b0C",
+      "recommended_state_class": "measurement"
+    },
+    {
+      "vsn700_name": "ShU",
+      "point_name": "sh_u",
+      "friendly_name": "ABB/FIMER Battery Battery1SN Voltage - Shunt",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "voltage",
+      "recommended_unit": "V",
+      "recommended_state_class": "measurement"
+    },
+    {
+      "vsn700_name": "Chc",
+      "point_name": "chc",
+      "friendly_name": "ABB/FIMER Battery Battery1SN Battery charge cycles counter",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      }
+    },
+    {
+      "vsn700_name": "Dhc",
+      "point_name": "dhc",
+      "friendly_name": "ABB/FIMER Battery Battery1SN Battery discharge cycles counter",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      }
+    },
+    {
+      "vsn700_name": "Fcc",
+      "point_name": "fcc",
+      "friendly_name": "ABB/FIMER Battery Battery1SN Central controller frequency",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "frequency",
+      "recommended_unit": "Hz",
+      "recommended_state_class": "measurement"
+    },
+    {
+      "vsn700_name": "ECt",
+      "point_name": "e_ct",
+      "friendly_name": "ABB/FIMER Battery Battery1SN Total energy from current transformer (CT)",
+      "suggested_device_class": "energy",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "energy",
+      "recommended_unit": "Wh",
+      "recommended_state_class": "total_increasing"
+    },
+    {
+      "vsn700_name": "EDt",
+      "point_name": "e_dt",
+      "friendly_name": "ABB/FIMER Battery Battery1SN Total energy from direct transducer (DT)",
+      "suggested_device_class": "energy",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "energy",
+      "recommended_unit": "Wh",
+      "recommended_state_class": "total_increasing"
+    },
+    {
+      "vsn700_name": "CycleNum",
+      "point_name": "cycle_num",
+      "friendly_name": "ABB/FIMER Battery Battery1SN Count - Battery Cycles",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "cycles",
+        "state_class": "total"
+      }
+    },
+    {
+      "vsn700_name": "BattNum",
+      "point_name": "batt_num",
+      "friendly_name": "ABB/FIMER Battery Battery2SN Number of battery cells or modules",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      }
+    },
+    {
+      "vsn700_name": "Iba",
+      "point_name": "iba",
+      "friendly_name": "ABB/FIMER Battery Battery2SN Current - Battery",
+      "suggested_device_class": "current",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "current",
+      "recommended_unit": "A",
+      "recommended_state_class": "measurement"
+    },
+    {
+      "vsn700_name": "Vba",
+      "point_name": "vba",
+      "friendly_name": "ABB/FIMER Battery Battery2SN Voltage - Battery",
+      "suggested_device_class": "voltage",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "voltage",
+      "recommended_unit": "V",
+      "recommended_state_class": "measurement"
+    },
+    {
+      "vsn700_name": "Pba",
+      "point_name": "pba",
+      "friendly_name": "ABB/FIMER Battery Battery2SN Power - Battery Total",
+      "suggested_device_class": "power",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "power",
+      "recommended_unit": "W",
+      "recommended_state_class": "measurement"
+    },
+    {
+      "vsn700_name": "Tba",
+      "point_name": "tba",
+      "friendly_name": "ABB/FIMER Battery Battery2SN Temperature - Battery",
+      "suggested_device_class": "temperature",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "temperature",
+      "recommended_unit": "\u00b0C",
+      "recommended_state_class": "measurement"
+    },
+    {
+      "vsn700_name": "TcMax",
+      "point_name": "tc_max",
+      "friendly_name": "ABB/FIMER Battery Battery2SN Temperature - Cabinet Max",
+      "suggested_device_class": "temperature",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "temperature",
+      "recommended_unit": "\u00b0C",
+      "recommended_state_class": "measurement"
+    },
+    {
+      "vsn700_name": "TcMin",
+      "point_name": "tc_min",
+      "friendly_name": "ABB/FIMER Battery Battery2SN Temperature - Cabinet Min",
+      "suggested_device_class": "temperature",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "temperature",
+      "recommended_unit": "\u00b0C",
+      "recommended_state_class": "measurement"
+    },
+    {
+      "vsn700_name": "ShU",
+      "point_name": "sh_u",
+      "friendly_name": "ABB/FIMER Battery Battery2SN Voltage - Shunt",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "voltage",
+      "recommended_unit": "V",
+      "recommended_state_class": "measurement"
+    },
+    {
+      "vsn700_name": "Chc",
+      "point_name": "chc",
+      "friendly_name": "ABB/FIMER Battery Battery2SN Battery charge cycles counter",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      }
+    },
+    {
+      "vsn700_name": "Dhc",
+      "point_name": "dhc",
+      "friendly_name": "ABB/FIMER Battery Battery2SN Battery discharge cycles counter",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      }
+    },
+    {
+      "vsn700_name": "Fcc",
+      "point_name": "fcc",
+      "friendly_name": "ABB/FIMER Battery Battery2SN Central controller frequency",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "frequency",
+      "recommended_unit": "Hz",
+      "recommended_state_class": "measurement"
+    },
+    {
+      "vsn700_name": "ECt",
+      "point_name": "e_ct",
+      "friendly_name": "ABB/FIMER Battery Battery2SN Total energy from current transformer (CT)",
+      "suggested_device_class": "energy",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "energy",
+      "recommended_unit": "Wh",
+      "recommended_state_class": "total_increasing"
+    },
+    {
+      "vsn700_name": "EDt",
+      "point_name": "e_dt",
+      "friendly_name": "ABB/FIMER Battery Battery2SN Total energy from direct transducer (DT)",
+      "suggested_device_class": "energy",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "energy",
+      "recommended_unit": "Wh",
+      "recommended_state_class": "total_increasing"
+    },
+    {
+      "vsn700_name": "CycleNum",
+      "point_name": "cycle_num",
+      "friendly_name": "ABB/FIMER Battery Battery2SN Count - Battery Cycles",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "cycles",
+        "state_class": "total"
+      }
+    }
+  ],
+  "inverter_1phase": [
+    {
+      "vsn700_name": "CountryStd",
+      "point_name": "country_std",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Country grid standard setting",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      }
+    },
+    {
+      "vsn700_name": "InputMode",
+      "point_name": "input_mode",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Input Mode",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      }
+    },
+    {
+      "vsn700_name": "NumOfMPPT",
+      "point_name": "num_of_mppt",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Count - MPPT Channels",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "channels",
+        "state_class": "measurement"
+      }
+    },
+    {
+      "vsn700_name": "Iin1",
+      "point_name": "iin1",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Current DC - String 1",
+      "suggested_device_class": "current",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "current",
+      "recommended_unit": "A",
+      "recommended_state_class": "measurement"
+    },
+    {
+      "vsn700_name": "Vin1",
+      "point_name": "vin1",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Voltage DC - Input 1",
+      "suggested_device_class": "voltage",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "voltage",
+      "recommended_unit": "V",
+      "recommended_state_class": "measurement"
+    },
+    {
+      "vsn700_name": "Iin2",
+      "point_name": "iin2",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Current DC - String 2",
+      "suggested_device_class": "current",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "current",
+      "recommended_unit": "A",
+      "recommended_state_class": "measurement"
+    },
+    {
+      "vsn700_name": "Vin2",
+      "point_name": "vin2",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Voltage DC - Input 2",
+      "suggested_device_class": "voltage",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "voltage",
+      "recommended_unit": "V",
+      "recommended_state_class": "measurement"
+    },
+    {
+      "vsn700_name": "SplitPhase",
+      "point_name": "split_phase",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Split-phase configuration flag",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      }
+    },
+    {
+      "vsn700_name": "Riso",
+      "point_name": "riso",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Resistance - Insulation",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      }
+    },
+    {
+      "vsn700_name": "IleakInv",
+      "point_name": "ileak_inv",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Current - Inverter Leakage",
+      "suggested_device_class": "current",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "current",
+      "recommended_unit": "A",
+      "recommended_state_class": "measurement"
+    },
+    {
+      "vsn700_name": "IleakDC",
+      "point_name": "ileak_d_c",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Current DC - Leakage",
+      "suggested_device_class": "current",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "current",
+      "recommended_unit": "A",
+      "recommended_state_class": "measurement"
+    },
+    {
+      "vsn700_name": "SysTime",
+      "point_name": "sys_time",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) System Time",
+      "suggested_device_class": "timestamp",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "timestamp"
+    },
+    {
+      "vsn700_name": "GlobState",
+      "point_name": "glob_state",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Global operational state",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      }
+    },
+    {
+      "vsn700_name": "AlarmState",
+      "point_name": "alarm_state",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Alarm State",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      }
+    },
+    {
+      "vsn700_name": "DC1State",
+      "point_name": "d_c1_state",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) DC Input 1 State",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      }
+    },
+    {
+      "vsn700_name": "DC2State",
+      "point_name": "d_c2_state",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) DC Input 2 State",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      }
+    },
+    {
+      "vsn700_name": "InvState",
+      "point_name": "inv_state",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Inverter State",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      }
+    },
+    {
+      "vsn700_name": "WarningFlags",
+      "point_name": "warning_flags",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Warning Flags",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      }
+    },
+    {
+      "vsn700_name": "PACDeratingFlags",
+      "point_name": "pac_derating_flags",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) AC Power Derating Flags",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "power",
+      "recommended_unit": "W",
+      "recommended_state_class": "measurement"
+    },
+    {
+      "vsn700_name": "QACDeratingFlags",
+      "point_name": "qac_derating_flags",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Reactive Power Derating",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "power",
+      "recommended_unit": "W",
+      "recommended_state_class": "measurement"
+    },
+    {
+      "vsn700_name": "SACDeratingFlags",
+      "point_name": "sac_derating_flags",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Apparent Power Derating",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      }
+    },
+    {
+      "vsn700_name": "FRT_state",
+      "point_name": "frt_state",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Fault Ride Through (FRT) status",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      }
+    },
+    {
+      "vsn700_name": "ClockState",
+      "point_name": "clock_state",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Clock State",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      }
+    },
+    {
+      "vsn700_name": "m126Mod_Ena",
+      "point_name": "m126_mod_ena",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Model 126 Enabled",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      }
+    },
+    {
+      "vsn700_name": "m132Mod_Ena",
+      "point_name": "m132_mod_ena",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Model 132 Enabled",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      }
+    },
+    {
+      "vsn700_name": "Fan1rpm",
+      "point_name": "fan1rpm",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Speed - Fan 1",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "RPM",
+        "state_class": "measurement"
+      }
+    },
+    {
+      "vsn700_name": "Fan2rpm",
+      "point_name": "fan2rpm",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Speed - Fan 2",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "RPM",
+        "state_class": "measurement"
+      }
+    },
+    {
+      "vsn700_name": "E2_runtime",
+      "point_name": "e2_lifetime",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy AC Apparent - Since Restart",
+      "suggested_device_class": "energy",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "VAh",
+        "state_class": "total_increasing"
+      },
+      "recommended_device_class": "apparent_power",
+      "recommended_unit": "VAh",
+      "recommended_state_class": "total_increasing"
+    },
+    {
+      "vsn700_name": "E2_7D",
+      "point_name": "e2_last_week",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy AC Apparent - Last 7 Days",
+      "suggested_device_class": "energy",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "VAh",
+        "state_class": "total"
+      },
+      "recommended_device_class": "apparent_power",
+      "recommended_unit": "VAh",
+      "recommended_state_class": "total_increasing"
+    },
+    {
+      "vsn700_name": "E2_30D",
+      "point_name": "e2_last_month",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy AC Apparent - Last 30 Days",
+      "suggested_device_class": "energy",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "VAh",
+        "state_class": "total"
+      },
+      "recommended_device_class": "apparent_power",
+      "recommended_unit": "VAh",
+      "recommended_state_class": "total_increasing"
+    },
+    {
+      "vsn700_name": "E4_runtime",
+      "point_name": "e4_lifetime",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Self-consumed energy - Since Restart",
+      "suggested_device_class": "energy",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "energy",
+      "recommended_unit": "Wh",
+      "recommended_state_class": "total_increasing"
+    },
+    {
+      "vsn700_name": "E4_7D",
+      "point_name": "e4_last_week",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Self-consumed energy - Last 7 Days",
+      "suggested_device_class": "energy",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "energy",
+      "recommended_unit": "Wh",
+      "recommended_state_class": "total_increasing"
+    },
+    {
+      "vsn700_name": "E4_30D",
+      "point_name": "e4_last_month",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Self-consumed energy - Last 30 Days",
+      "suggested_device_class": "energy",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "energy",
+      "recommended_unit": "Wh",
+      "recommended_state_class": "total_increasing"
+    },
+    {
+      "vsn700_name": "E5_runtime",
+      "point_name": "e5_lifetime",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy - Battery Charge Since Restart",
+      "suggested_device_class": "energy",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "energy",
+      "recommended_unit": "Wh",
+      "recommended_state_class": "total_increasing"
+    },
+    {
+      "vsn700_name": "E5_7D",
+      "point_name": "e5_last_week",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy - Battery Charge Last 7 Days",
+      "suggested_device_class": "energy",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "energy",
+      "recommended_unit": "Wh",
+      "recommended_state_class": "total_increasing"
+    },
+    {
+      "vsn700_name": "E5_30D",
+      "point_name": "e5_last_month",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy - Battery Charge Last 30 Days",
+      "suggested_device_class": "energy",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "energy",
+      "recommended_unit": "Wh",
+      "recommended_state_class": "total_increasing"
+    },
+    {
+      "vsn700_name": "Ein1",
+      "point_name": "ein1",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) DC energy (String 1) - Lifetime",
+      "suggested_device_class": "energy",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "energy",
+      "recommended_unit": "Wh",
+      "recommended_state_class": "total_increasing"
+    },
+    {
+      "vsn700_name": "Ein2",
+      "point_name": "ein2",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) DC energy (String 2) - Lifetime",
+      "suggested_device_class": "energy",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "energy",
+      "recommended_unit": "Wh",
+      "recommended_state_class": "total_increasing"
+    },
+    {
+      "vsn700_name": "EBackup",
+      "point_name": "e_backup",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy AC - Backup Output Lifetime",
+      "suggested_device_class": "energy",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "energy",
+      "recommended_unit": "Wh",
+      "recommended_state_class": "total_increasing"
+    },
+    {
+      "vsn700_name": "DetectedBatteryNumber",
+      "point_name": "detected_battery_number",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Detected Battery Number",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      }
+    },
+    {
+      "vsn700_name": "TSoc",
+      "point_name": "t_soc",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Battery State of Charge",
+      "suggested_device_class": "battery",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "battery"
+    },
+    {
+      "vsn700_name": "EnergyPolicy",
+      "point_name": "energy_policy",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Energy Policy",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      },
+      "recommended_device_class": "energy",
+      "recommended_unit": "Wh",
+      "recommended_state_class": "total_increasing"
+    },
+    {
+      "vsn700_name": "BatteryMode",
+      "point_name": "battery_mode",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Battery Mode",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      }
+    },
+    {
+      "vsn700_name": "DI0_mode",
+      "point_name": "di0_mode",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Digital Input 0 Mode",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      }
+    },
+    {
+      "vsn700_name": "DI1_mode",
+      "point_name": "di1_mode",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Digital Input 1 Mode",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      }
+    },
+    {
+      "vsn700_name": "DI_status",
+      "point_name": "di_status",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Digital Input Status",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      }
+    },
+    {
+      "vsn700_name": "gridExtCtrlState",
+      "point_name": "grid_ext_ctrl_state",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Grid External Control State",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      }
+    },
+    {
+      "vsn700_name": "gridExtCtrlEna",
+      "point_name": "grid_ext_ctrl_ena",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Grid External Control Enabled",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      }
+    },
+    {
+      "vsn700_name": "BattExtCtrlState",
+      "point_name": "batt_ext_ctrl_state",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Battery Control State",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      }
+    },
+    {
+      "vsn700_name": "BattExtCtrlEna",
+      "point_name": "batt_ext_ctrl_ena",
+      "friendly_name": "ABB/FIMER Inverter REACT2-5.0-TL (InverterSN) Battery Control Enabled",
+      "suggested_device_class": "",
+      "current_mapping": {
+        "device_class": "",
+        "unit": "",
+        "state_class": ""
+      }
+    }
+  ]
+}
