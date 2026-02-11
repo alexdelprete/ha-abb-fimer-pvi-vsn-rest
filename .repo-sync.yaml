@@ -37,7 +37,21 @@ vars:
   ruff_extend_exclude: ["vendor", "build", "dist"]
   ruff_lint_extra_ignores: ["ASYNC109", "ASYNC110", "PLW1641", "TC006", "UP046", "UP047", "UP049"]
   ruff_lint_extra_perfile_ignores:
-    "scripts/*.py": ["T201", "T20", "PTH123", "D103", "D401", "ASYNC230", "BLE001", "PLC0415", "G003", "G201", "TRY002", "TRY301", "PT028", "PERF401"]
+    "scripts/*.py":
+      - "T201"
+      - "T20"
+      - "PTH123"
+      - "D103"
+      - "D401"
+      - "ASYNC230"
+      - "BLE001"
+      - "PLC0415"
+      - "G003"
+      - "G201"
+      - "TRY002"
+      - "TRY301"
+      - "PT028"
+      - "PERF401"
   ruff_tests_extra_ignores: ["INP001"]
   pymarkdown_line_length: 180
   pymarkdown_strict_md013: true
