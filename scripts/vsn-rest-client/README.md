@@ -1,287 +1,144 @@
-# VSN REST Client - Self-Contained Testing Script
+# VSN REST Client - Standalone Testing Tool
 
-## Overview
+A standalone Python script for testing and debugging VSN300/VSN700 datalogger REST APIs.
+This tool mirrors the integration's client library features but runs independently of
+Home Assistant.
 
-`vsn_rest_client.py` is a self-contained Python script for testing ABB/FIMER VSN300
-and VSN700 dataloggers without needing to install the full Home Assistant
-integration.
+## Purpose
 
-## Features
+This tool allows you to:
 
-✅ **Self-contained** - All code in a single file
-✅ **Minimal dependencies** - Only requires Python standard library + aiohttp
-✅ **Auto-detection** - Automatically detects VSN300 or VSN700
-✅ **All endpoints** - Tests /v1/status, /v1/livedata, and /v1/feeds
-✅ **Data normalization** - Transforms VSN data to Home Assistant format using SunSpec mapping
-✅ **Easy to share** - Send single file to users for testing
+- Test connectivity to VSN300/VSN700 dataloggers
+- Verify authentication (X-Digest for VSN300, Basic Auth for VSN700)
+- Run full device discovery (logger metadata, inverters, meters, batteries)
+- Fetch and inspect raw API responses (status, livedata, feeds)
+- Normalize data with SunSpec mapping (downloaded from GitHub)
+- Translate Aurora protocol state codes to human-readable text
+- Export all data to JSON files for analysis
 
-## Requirements
+## Prerequisites
 
-- **Python 3.9 or higher**
-- **aiohttp** library
-- **Internet connection** (required for data normalization feature)
+- Python 3.11+
+- `aiohttp` library
+- Network access to the VSN datalogger
 
-Install aiohttp:
+## Installation
 
 ```bash
 pip install aiohttp
-```text
+```
 
 ## Usage
 
 ### Basic Usage
 
 ```bash
-python vsn_rest_client.py <host> [--username USER] [--password PASS] [--timeout SEC]
-```text
+# Auto-detect VSN model, run discovery, normalize data
+python vsn_rest_client.py --host 192.168.1.100
 
-### Options
+# With custom credentials
+python vsn_rest_client.py --host 192.168.1.100 --username admin --password mypass
 
-| Option | Short | Default | Description |
-|--------|-------|---------|-------------|
-| `host` | - | (required) | IP address or hostname of VSN device |
-| `--username` | `-u` | `guest` | Authentication username |
-| `--password` | `-p` | (empty) | Authentication password |
-| `--timeout` | `-t` | `10` | Request timeout in seconds |
+# With verbose output (shows raw status data)
+python vsn_rest_client.py --host 192.168.1.100 -v
 
-### Examples
+# Debug mode (shows all internal logging)
+python vsn_rest_client.py --host 192.168.1.100 --debug
+```
 
-Basic usage with IP address:
+### Command Line Options
 
-```bash
-python vsn_rest_client.py 192.168.1.100
-```text
+| Option | Default | Description |
+|--------|---------|-------------|
+| `--host` | (required) | IP address or hostname of the datalogger |
+| `--username` | `guest` | Authentication username |
+| `--password` | `""` | Authentication password |
+| `--timeout` | `10` | Request timeout in seconds |
+| `-v, --verbose` | `False` | Show full raw API response data |
+| `--debug` | `False` | Enable debug logging |
 
-With custom credentials:
+## Features
 
-```bash
-python vsn_rest_client.py 192.168.1.100 --username admin --password mypassword
-```text
+### Device Discovery
 
-With short options:
+Automatically detects VSN model and discovers all connected devices:
 
-```bash
-python vsn_rest_client.py abb-vsn300.local -u admin -p secret -t 15
-```text
+- **Logger metadata**: Serial number, model, firmware, hostname
+- **Connected devices**: Inverters, meters, batteries with manufacturer and firmware info
+- **Synthetic datalogger device**: Created from status data (not in livedata)
 
-The script automatically adds `http://` prefix if not provided.
+### Data Normalization
 
-## What It Tests
+Downloads the SunSpec mapping from GitHub and normalizes all sensor data:
 
-The script performs 5 tests:
+- **Point name normalization**: M101/M102 -> M103 (VSN300), TSoc -> Soc (VSN700)
+- **Unit conversions**: uA -> mA, A -> mA (VSN700 leakage), Wh -> kWh, bytes -> MB
+- **Temperature correction**: Scale factor fix when value > 70 degrees
+- **String cleanup**: Strip dashes from product numbers, title case normalization
+- **Energy conversion**: All energy sensors converted Wh -> kWh (by device_class)
 
-1. **Device Detection** - Identifies if device is VSN300 or VSN700
-2. **System Information** (/v1/status) - Retrieves device info, firmware version, network config
-3. **Live Data** (/v1/livedata) - Fetches real-time measurements from inverters
-4. **Data Normalization** - Transforms raw VSN data to Home Assistant entity format (requires internet)
-5. **Feed Metadata** (/v1/feeds) - Gets feed definitions and configuration
+### Aurora State Translation
 
-## Output
+Status entities are translated to human-readable text:
 
-The script creates up to 4 JSON files in the current directory:
+- **Global State** (42 states): "Run", "Ground Fault", "Recovery", etc.
+- **DC-DC State** (20 states): "MPPT", "Input OV", "Ramp Start", etc.
+- **Inverter State** (38 states): "Stand By", "Checking Grid", "Run", etc.
+- **Alarm State** (65 states): "No Alarm", "Over Temp.", "Grid Fail", etc.
 
-- `vsn300_status.json` or `vsn700_status.json` - System information
-- `vsn300_livedata.json` or `vsn700_livedata.json` - Raw live sensor data
-- `vsn300_normalized.json` or `vsn700_normalized.json` - Normalized HA entity data (if internet available)
-- `vsn300_feeds.json` or `vsn700_feeds.json` - Feed metadata
+### Error Handling
 
-## Example Output
+Custom exception hierarchy matching the integration:
 
-```text
-================================================================================
-VSN REST Client - Device Test
-Host: abb-vsn300.axel.dom
-Base URL: http://abb-vsn300.axel.dom
-Username: guest
-Password: (empty)
-Timeout: 10 seconds
-================================================================================
+- `VSNClientError` (base)
+- `VSNConnectionError` - Network/connectivity failures
+- `VSNAuthenticationError` - Authentication failures (401/403)
+- `VSNDetectionError` - Model detection failures
+- `VSNUnsupportedDeviceError` - Device doesn't support REST API (404)
 
-[TEST 1] Device Detection
---------------------------------------------------------------------------------
-✓ Device detected: VSN300
+## Output Files
 
-[TEST 2] /v1/status - System Information
---------------------------------------------------------------------------------
-✓ Status endpoint successful
+The script generates these JSON files in the current directory:
 
-  - logger.sn: 111033-3N16-1421
-  - device.invID: 077909-3G82-3112
-  - device.modelDesc: PVI-10.0-OUTD
-  - fw.release_number: 1.9.2
-  - Saved to: vsn300_status.json
+| File | Description |
+|------|-------------|
+| `{model}_discovery.json` | Device discovery results with all metadata |
+| `{model}_status.json` | Raw `/v1/status` response |
+| `{model}_livedata.json` | Raw `/v1/livedata` response |
+| `{model}_feeds.json` | Raw `/v1/feeds` response |
+| `{model}_normalized.json` | Normalized data with HA metadata |
 
-[TEST 3] /v1/livedata - Live Data
---------------------------------------------------------------------------------
-✓ Livedata endpoint successful
-
-  - Number of devices: 2
-  - Device IDs: ['077909-3G82-3112', 'a4:06:e9:7f:42:49']
-  - Saved to: vsn300_livedata.json
-
-[TEST 3b] Data Normalization
---------------------------------------------------------------------------------
-✓ Data normalized successfully
-
-  - Normalized points: 53
-  - Saved to: vsn300_normalized.json
-
-[TEST 4] /v1/feeds - Feed Metadata
---------------------------------------------------------------------------------
-✓ Feeds endpoint successful
-
-  - Number of feeds: 2
-  - Saved to: vsn300_feeds.json
-
-================================================================================
-TEST SUMMARY
-================================================================================
-✓ Device model: VSN300
-✓ All 3 endpoints tested successfully!
-✓ /v1/status: OK
-✓ /v1/livedata: OK (2 devices)
-✓ /v1/livedata normalized: OK (53 points)
-✓ /v1/feeds: OK
-
-Output files created:
-
-  - vsn300_status.json
-  - vsn300_livedata.json
-  - vsn300_normalized.json
-  - vsn300_feeds.json
-================================================================================
-```text
-
-## Data Normalization
-
-The script automatically normalizes raw VSN data to Home Assistant entity format using a mapping file from GitHub. This transformation:
-
-- Maps VSN-specific point names to standard SunSpec names
-- Adds metadata (units, labels, descriptions, device classes)
-- Creates properly structured HA entities
-- Handles differences between VSN300 and VSN700 naming
-
-**Requirements:**
-
-- Internet connection to download the mapping file from GitHub
-- If the mapping file is not yet available in the repository, normalization will be skipped with a warning
-
-**Example normalized output:**
-
-```json
-{
-  "devices": {
-    "077909-3G82-3112": {
-      "device_type": "inverter",
-      "points": {
-        "abb_m103_w": {
-          "value": 8524.0,
-          "units": "W",
-          "label": "Watts",
-          "description": "AC Power",
-          "device_class": "power",
-          "state_class": "measurement"
-        }
-      }
-    }
-  }
-}
-```text
-
-## Authentication
-
-The script defaults to username `guest` with an empty password, but credentials vary by device configuration.
-**Check your datalogger's web interface** for the correct username and password.
-
-Use `--username` and `--password` to specify your device's credentials:
-
-```bash
-python vsn_rest_client.py 192.168.1.100 --username admin --password mypassword
-```text
-
-### VSN300
-
-- Uses HTTP Digest authentication with custom X-Digest header
-- Challenge-response flow for each request
-
-### VSN700
-
-- Uses HTTP Basic authentication
-- Credentials sent with each request
+Where `{model}` is `vsn300` or `vsn700`.
 
 ## Troubleshooting
 
-### "ERROR: aiohttp is required"
+### Connection Refused
 
-Install aiohttp:
-
-```bash
-pip install aiohttp
-```text
-
-### Connection Timeout
-
-- Check network connectivity to the device
-- Verify the IP address or hostname is correct
-- Ensure device is powered on and accessible
+- Verify the datalogger is powered on and connected to the network
+- Check that port 80 is accessible
+- Try pinging the device first
+- The script performs a socket check before HTTP requests for fast failure
 
 ### Authentication Failed
 
-- Check your datalogger's web interface for configured credentials
-- Use `--username` and `--password` options to specify your credentials
-- Some devices may have authentication disabled
+- VSN300: Default credentials are usually `guest` / `""` (empty password)
+- VSN700: Check your admin credentials
+- The script auto-detects the authentication method
 
-### 401 Unauthorized
+### Timeout Errors
 
-- Device may require admin credentials
-- Check firewall settings
-- Verify device firmware version supports REST API
+- Increase timeout with `--timeout 30`
+- Check network connectivity
+- VSN300 devices can be slow to respond
 
-### Normalization Skipped
+### Unsupported Device (404)
 
-If you see "Normalization will be skipped":
+- The device doesn't have VSN REST API endpoints
+- This tool requires VSN300 or VSN700 dataloggers
 
-- Check internet connectivity
-- The mapping file may not be available yet in the GitHub repository
-- This doesn't affect the main tests - raw data is still saved
-- The normalized output is optional and mainly useful for integration development
+## Related
 
-## Sending to Users
-
-To share with users for testing:
-
-1. Send them the `vsn_rest_client.py` file
-2. Provide installation instructions (Python 3.9+ and aiohttp)
-3. Give them the command: `python vsn_rest_client.py <their_device_ip>`
-4. Ask them to send back the generated JSON files (3-4 files depending on internet availability)
-
-## Technical Details
-
-### Supported Models
-
-- **VSN300** - WiFi Logger Card (older model)
-- **VSN700** - VSN700 datalogger (newer model)
-
-### API Endpoints
-
-- `/v1/status` - Device and system status
-- `/v1/livedata` - Real-time measurements from inverters
-- `/v1/feeds` - Feed configuration and metadata
-
-### Protocol Differences
-
-| Feature | VSN300 | VSN700 |
-|---------|--------|--------|
-| Auth Method | Digest | Basic |
-| Header Name | Authorization | Authorization |
-| Auth Scheme | X-Digest | Basic |
-| Challenge | Yes (401) | No |
-| Endpoints | Same (/v1/*) | Same (/v1/*) |
-
-## License
-
-Part of the ha-abb-fimer-pvi-vsn-rest Home Assistant integration project.
-
-## Support
-
-For issues or questions, please open an issue on the GitHub repository.
+- Main integration: `custom_components/abb_fimer_pvi_vsn_rest/`
+- Integration test script: `scripts/test_vsn_client.py`
+- Test data: `docs/vsn-data/`
+- Client library: `custom_components/abb_fimer_pvi_vsn_rest/abb_fimer_vsn_rest_client/`

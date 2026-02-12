@@ -1,63 +1,417 @@
 #!/usr/bin/env python3
-"""Self-contained VSN REST client for testing VSN300/VSN700 devices.
+"""ABB/FIMER/Power-One VSN REST Client - Standalone Test Script.
 
-This script has no dependencies except Python standard library and aiohttp.
-It can be sent to users for testing their VSN devices without installing
-the full Home Assistant integration.
-
-Features:
-- Auto-detects VSN300 vs VSN700
-- Tests all 3 endpoints (/v1/status, /v1/livedata, /v1/feeds)
-- Normalizes data using online mapping (no local files needed)
-- Creates both raw and normalized JSON outputs
+Self-contained REST client for testing VSN300/VSN700 dataloggers.
+This script mirrors the integration's client library features but
+can be run independently of Home Assistant.
 
 Usage:
-    python vsn_rest_client.py <host> [--username USER] [--password PASS] [--timeout SEC]
+    python vsn_rest_client.py --host <IP> [--username guest] [--password ""]
 
-Example:
-    python vsn_rest_client.py 192.168.1.100
-    python vsn_rest_client.py 192.168.1.100 --username admin --password mypassword
-    python vsn_rest_client.py abb-vsn300.local -u guest -p "" -t 15
+Features:
+    - Automatic VSN300/VSN700 detection (auth header + status structure analysis)
+    - X-Digest authentication (VSN300) / Basic authentication (VSN700)
+    - Socket connectivity check (fast-fail when device is offline)
+    - Full device discovery (logger metadata, inverters, meters, batteries)
+    - Data normalization with SunSpec mapping (fetched from GitHub)
+    - All value transformations (uA->mA, A->mA, temp correction, Wh->kWh, bytes->MB)
+    - VSN300/VSN700 point name normalization (M101/M102->M103, TSoc->Soc)
+    - Aurora protocol state translation (human-readable status codes)
+    - Comprehensive sensor attributes in normalized output
+    - Pretty-printed JSON output with optional file save
 
 Requirements:
-    - Python 3.9+
-    - aiohttp (install with: pip install aiohttp)
+    - Python 3.11+
+    - aiohttp
 
+Author: Alex Del Prete
+License: Apache-2.0
 """
+
+from __future__ import annotations
 
 import argparse
 import asyncio
 import base64
+from dataclasses import dataclass, field
 import hashlib
 import json
 import logging
 import os
 from pathlib import Path
 import re
+import socket
 import sys
 import time
 from typing import Any
+from urllib.parse import urlparse
 
-try:
-    import aiohttp
-except ImportError:
-    print("ERROR: aiohttp is required. Install it with: pip install aiohttp")
-    sys.exit(1)
+import aiohttp
 
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 _LOGGER = logging.getLogger(__name__)
 
-# URL to the mapping JSON on GitHub (integration runtime location)
-MAPPING_URL = "https://raw.githubusercontent.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/master/custom_components/abb_fimer_pvi_vsn_rest/abb_fimer_vsn_rest_client/data/vsn-sunspec-point-mapping.json"
+
+# ── Exceptions ───────────────────────────────────────────────────────
 
 
-# ============================================================================
-# VSN Authentication Module
-# ============================================================================
+class VSNClientError(Exception):
+    """Base exception for VSN client."""
+
+
+class VSNConnectionError(VSNClientError):
+    """Connection error."""
+
+
+class VSNAuthenticationError(VSNClientError):
+    """Authentication error."""
+
+
+class VSNDetectionError(VSNClientError):
+    """VSN model detection error."""
+
+
+class VSNUnsupportedDeviceError(VSNDetectionError):
+    """Device doesn't support VSN REST API (404 response)."""
+
+
+# ── Constants ────────────────────────────────────────────────────────
+
+DEFAULT_USERNAME = "guest"
+DEFAULT_PASSWORD = ""
+DEFAULT_PORT = 80
+DEFAULT_TIMEOUT = 10
+
+ENDPOINT_STATUS = "/v1/status"
+ENDPOINT_LIVEDATA = "/v1/livedata"
+ENDPOINT_FEEDS = "/v1/feeds"
+
+MAPPING_URL = (
+    "https://raw.githubusercontent.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest"
+    "/master/docs/vsn-sunspec-point-mapping.json"
+)
+
+# Aurora protocol epoch offset (Jan 1, 2000 00:00:00 UTC)
+AURORA_EPOCH_OFFSET = 946684800
+
+# Aurora Protocol State Mappings
+# Reference: https://github.com/xreef/ABB_Aurora_Solar_Inverter_Library
+GLOBAL_STATE_MAP = {
+    0: "Sending Parameters",
+    1: "Wait Sun / Grid",
+    2: "Checking Grid",
+    3: "Measuring Riso",
+    4: "DcDc Start",
+    5: "Inverter Start",
+    6: "Run",
+    7: "Recovery",
+    8: "Pausev",
+    9: "Ground Fault",
+    10: "OTH Fault",
+    11: "Address Setting",
+    12: "Self Test",
+    13: "Self Test Fail",
+    14: "Sensor Test + Meas.Riso",
+    15: "Leak Fault",
+    16: "Waiting for manual reset",
+    17: "Internal Error E026",
+    18: "Internal Error E027",
+    19: "Internal Error E028",
+    20: "Internal Error E029",
+    21: "Internal Error E030",
+    22: "Sending Wind Table",
+    23: "Failed Sending table",
+    24: "UTH Fault",
+    25: "Remote OFF",
+    26: "Interlock Fail",
+    27: "Executing Autotest",
+    30: "Waiting Sun",
+    31: "Temperature Fault",
+    32: "Fan Staucked",
+    33: "Int.Com.Fault",
+    34: "Slave Insertion",
+    35: "DC Switch Open",
+    36: "TRAS Switch Open",
+    37: "MASTER Exclusion",
+    38: "Auto Exclusion",
+    98: "Erasing Internal EEprom",
+    99: "Erasing External EEprom",
+    100: "Counting EEprom",
+    101: "Freeze",
+}
+
+DCDC_STATE_MAP = {
+    0: "DcDc OFF",
+    1: "Ramp Start",
+    2: "MPPT",
+    3: "Not Used",
+    4: "Input OC",
+    5: "Input UV",
+    6: "Input OV",
+    7: "Input Low",
+    8: "No Parameters",
+    9: "Bulk OV",
+    10: "Communication Error",
+    11: "Ramp Fail",
+    12: "Internal Error",
+    13: "Input mode Error",
+    14: "Ground Fault",
+    15: "Inverter Fail",
+    16: "DcDc IGBT Sat",
+    17: "DcDc ILEAK Fail",
+    18: "DcDc Grid Fail",
+    19: "DcDc Comm. Error",
+}
+
+INVERTER_STATE_MAP = {
+    0: "Stand By",
+    1: "Checking Grid",
+    2: "Run",
+    3: "Bulk OV",
+    4: "Out OC",
+    5: "IGBT Sat",
+    6: "Bulk UV",
+    7: "Degauss Error",
+    8: "No Parameters",
+    9: "Bulk Low",
+    10: "Grid OV",
+    11: "Communication Error",
+    12: "Degaussing",
+    13: "Starting",
+    14: "Bulk Cap Fail",
+    15: "Leak Fail",
+    16: "DcDc Fail",
+    17: "Ileak Sensor Fail",
+    18: "SelfTest: relay inverter",
+    19: "SelfTest: wait for sensor test",
+    20: "SelfTest: test relay DcDc + sensor",
+    21: "SelfTest: relay inverter fail",
+    22: "SelfTest: timeout fail",
+    23: "SelfTest: relay DcDc fail",
+    24: "Self Test 1",
+    25: "Waiting self test start",
+    26: "Dc Injection",
+    27: "Self Test 2",
+    28: "Self Test 3",
+    29: "Self Test 4",
+    30: "Internal Error",
+    31: "Internal Error",
+    40: "Forbidden State",
+    41: "Input UC",
+    42: "Zero Power",
+    43: "Grid Not Present",
+    44: "Waiting Start",
+    45: "MPPT",
+    46: "Grid Fail",
+    47: "Input OC",
+}
+
+ALARM_STATE_MAP = {
+    0: "No Alarm",
+    1: "Sun Low",
+    2: "Input OC",
+    3: "Input UV",
+    4: "Input OV",
+    5: "Sun Low",
+    6: "No Parameters",
+    7: "Bulk OV",
+    8: "Comm.Error",
+    9: "Output OC",
+    10: "IGBT Sat",
+    11: "Bulk UV",
+    12: "Internal error",
+    13: "Grid Fail",
+    14: "Bulk Low",
+    15: "Ramp Fail",
+    16: "Dc/Dc Fail",
+    17: "Wrong Mode",
+    18: "Ground Fault",
+    19: "Over Temp.",
+    20: "Bulk Cap Fail",
+    21: "Inverter Fail",
+    22: "Start Timeout",
+    23: "Ground Fault",
+    24: "Degauss error",
+    25: "Ileak sens.fail",
+    26: "DcDc Fail",
+    27: "Self Test Error 1",
+    28: "Self Test Error 2",
+    29: "Self Test Error 3",
+    30: "Self Test Error 4",
+    31: "DC inj error",
+    32: "Grid OV",
+    33: "Grid UV",
+    34: "Grid OF",
+    35: "Grid UF",
+    36: "Z grid Hi",
+    37: "Internal error",
+    38: "Riso Low",
+    39: "Vref Error",
+    40: "Error Meas V",
+    41: "Error Meas F",
+    42: "Error Meas Z",
+    43: "Error Meas Ileak",
+    44: "Error Read V",
+    45: "Error Read I",
+    46: "Table fail",
+    47: "Fan Fail",
+    48: "UTH",
+    49: "Interlock fail",
+    50: "Remote Off",
+    51: "Vout Avg errror",
+    52: "Battery low",
+    53: "Clk fail",
+    54: "Input UC",
+    55: "Zero Power",
+    56: "Fan Stucked",
+    57: "DC Switch Open",
+    58: "Tras Switch Open",
+    59: "AC Switch Open",
+    60: "Bulk UV",
+    61: "Autoexclusion",
+    62: "Grid df / dt",
+    63: "Den switch Open",
+    64: "Jbox fail",
+}
+
+# State entity name -> state map
+STATE_ENTITY_MAPPINGS: dict[str, dict[int, str]] = {
+    "GlobState": GLOBAL_STATE_MAP,
+    "m64061_1_GlobState": GLOBAL_STATE_MAP,
+    "DC1State": DCDC_STATE_MAP,
+    "m64061_1_DC1State": DCDC_STATE_MAP,
+    "DC2State": DCDC_STATE_MAP,
+    "m64061_1_DC2State": DCDC_STATE_MAP,
+    "InvState": INVERTER_STATE_MAP,
+    "m64061_1_InvState": INVERTER_STATE_MAP,
+    "AlarmState": ALARM_STATE_MAP,
+    "AlarmSt": ALARM_STATE_MAP,
+    "m64061_1_AlarmState": ALARM_STATE_MAP,
+}
+
+# ── Normalization Registries ─────────────────────────────────────────
+
+# uA to mA conversion (divide by 1000)
+UA_TO_MA_POINTS = {
+    "m64061_1_ILeakDcAc",
+    "m64061_1_ILeakDcDc",
+    "Ileak 1",
+    "Ileak 2",
+}
+
+# A to mA conversion for VSN700 leakage current (multiply by 1000)
+A_TO_MA_POINTS = {"IleakInv", "IleakDC"}
+
+# Temperature scale factor correction (divide by 10 when > 70)
+TEMP_CORRECTION_POINTS = {"m103_1_TmpCab", "m101_1_TmpCab", "Temp1"}
+TEMP_THRESHOLD_CELSIUS = 70
+
+# String cleanup - strip leading/trailing dashes
+STRING_STRIP_POINTS = {"pn", "C_Md"}
+
+# Title case normalization
+TITLE_CASE_POINTS = {"type"}
+
+# Bytes to MB conversion (divide by 1048576)
+B_TO_MB_POINTS = {"flash_free", "free_ram", "store_size"}
+
+# VSN700 alternate name normalization
+VSN700_NAME_NORMALIZATION = {"TSoc": "Soc"}
+
+
+# ── Data Models ──────────────────────────────────────────────────────
+
+
+@dataclass
+class DiscoveredDevice:
+    """Represents a discovered device."""
+
+    device_id: str
+    raw_device_id: str
+    device_type: str
+    device_model: str | None = None
+    manufacturer: str | None = None
+    firmware_version: str | None = None
+    hardware_version: str | None = None
+    is_datalogger: bool = False
+
+
+@dataclass
+class DiscoveryResult:
+    """Complete discovery result from VSN device."""
+
+    vsn_model: str
+    requires_auth: bool
+    logger_sn: str
+    logger_model: str | None = None
+    firmware_version: str | None = None
+    hostname: str | None = None
+    devices: list[DiscoveredDevice] = field(default_factory=list)
+    status_data: dict[str, Any] = field(default_factory=dict)
+
+    def get_title(self) -> str:
+        """Generate a suitable title."""
+        return f"{self.vsn_model} ({self.logger_sn})"
+
+
+@dataclass
+class PointMapping:
+    """Mapping information for a single point."""
+
+    vsn700_name: str | None
+    vsn300_name: str | None
+    sunspec_name: str | None
+    ha_entity_name: str
+    in_livedata: bool
+    in_feeds: bool
+    label: str
+    description: str
+    ha_display_name: str
+    models: list[str]
+    category: str
+    units: str
+    state_class: str
+    device_class: str
+    entity_category: str | None
+    available_in_modbus: str
+    icon: str = ""
+    suggested_display_precision: int | None = None
+
+
+# ── Socket Check ─────────────────────────────────────────────────────
+
+
+def check_socket_connection(base_url: str, timeout: int = 5) -> None:
+    """Check TCP socket connection (fast-fail when device is offline).
+
+    Args:
+        base_url: Base URL of device (e.g., "http://192.168.1.100")
+        timeout: Socket connection timeout in seconds
+
+    Raises:
+        VSNConnectionError: If socket connection fails
+
+    """
+    parsed = urlparse(base_url)
+    hostname = parsed.hostname or parsed.netloc.split(":")[0]
+    port = parsed.port or (443 if parsed.scheme == "https" else 80)
+
+    _LOGGER.debug("Testing socket connection to %s:%d...", hostname, port)
+
+    try:
+        sock = socket.create_connection((hostname, port), timeout=timeout)
+        sock.close()
+        _LOGGER.debug("Socket connection to %s:%d successful", hostname, port)
+    except (TimeoutError, ConnectionRefusedError, OSError) as err:
+        msg = f"Cannot connect to {hostname}:{port}: {err}"
+        raise VSNConnectionError(msg) from err
+
+
+# ── Authentication ───────────────────────────────────────────────────
 
 
 def calculate_digest_response(
@@ -71,14 +425,12 @@ def calculate_digest_response(
     nc: str | None = None,
     cnonce: str | None = None,
 ) -> str:
-    """Calculate HTTP Digest authentication response."""
-    # Calculate HA1 = MD5(username:realm:password)
-    ha1 = hashlib.md5(f"{username}:{realm}:{password}".encode()).hexdigest()  # noqa: S324
-
-    # Calculate HA2 = MD5(method:uri)
+    """Calculate HTTP Digest authentication response (MD5)."""
+    ha1 = hashlib.md5(  # noqa: S324
+        f"{username}:{realm}:{password}".encode()
+    ).hexdigest()
     ha2 = hashlib.md5(f"{method}:{uri}".encode()).hexdigest()  # noqa: S324
 
-    # Calculate response
     if qop and nc and cnonce:
         response_str = f"{ha1}:{nonce}:{nc}:{cnonce}:{qop}:{ha2}"
     else:
@@ -90,13 +442,11 @@ def calculate_digest_response(
 def parse_digest_challenge(www_authenticate: str) -> dict[str, str]:
     """Parse WWW-Authenticate digest challenge header."""
     challenge = re.sub(r"^(Digest|X-Digest)\s+", "", www_authenticate, flags=re.IGNORECASE)
-
     params = {}
     for match in re.finditer(r'(\w+)=(?:"([^"]+)"|([^,\s]+))', challenge):
         key = match.group(1)
         value = match.group(2) or match.group(3)
         params[key] = value
-
     return params
 
 
@@ -115,14 +465,11 @@ def build_digest_header(
 
     if qop:
         nc = "00000001"
-        # Generate cnonce like stdlib: H(nonce:time:random)
         cnonce_input = f"{nonce}:{time.time()}:{os.urandom(8).hex()}"
         cnonce = hashlib.md5(cnonce_input.encode()).hexdigest()[:16]  # noqa: S324
         response = calculate_digest_response(
             username, password, realm, nonce, method, uri, qop, nc, cnonce
         )
-
-        # Match stdlib format: response before algorithm/qop/nc/cnonce, qop without quotes
         auth_parts = [
             f'username="{username}"',
             f'realm="{realm}"',
@@ -136,7 +483,6 @@ def build_digest_header(
         ]
     else:
         response = calculate_digest_response(username, password, realm, nonce, method, uri)
-
         auth_parts = [
             f'username="{username}"',
             f'realm="{realm}"',
@@ -156,113 +502,44 @@ async def get_vsn300_digest_header(
     base_url: str,
     username: str,
     password: str,
-    uri: str = "/v1/livedata",
+    uri: str = ENDPOINT_LIVEDATA,
     method: str = "GET",
-    timeout: int = 10,
+    timeout: int = DEFAULT_TIMEOUT,
 ) -> str:
-    """Get VSN300 X-Digest authentication header."""
+    """Get VSN300 X-Digest authentication header via challenge-response."""
     url = f"{base_url.rstrip('/')}{uri}"
+
+    _LOGGER.debug("Requesting digest challenge: %s %s", method, url)
 
     try:
         async with session.request(
-            method,
-            url,
-            timeout=aiohttp.ClientTimeout(total=timeout),
+            method, url, timeout=aiohttp.ClientTimeout(total=timeout)
         ) as response:
             if response.status == 401:
                 www_authenticate = response.headers.get("WWW-Authenticate", "")
 
                 if not www_authenticate or "digest" not in www_authenticate.lower():
-                    raise Exception("VSN300 challenge missing or not digest-based")
+                    raise VSNAuthenticationError("VSN300 challenge missing or not digest-based")
 
                 challenge_params = parse_digest_challenge(www_authenticate)
-                return build_digest_header(username, password, challenge_params, method, uri)
+                digest_value = build_digest_header(
+                    username, password, challenge_params, method, uri
+                )
+                _LOGGER.debug("Generated X-Digest header for %s", username)
+                return digest_value
 
-            raise Exception(f"Expected 401 challenge, got {response.status}")
+            raise VSNAuthenticationError(f"Expected 401 challenge, got {response.status}")
     except aiohttp.ClientError as err:
-        raise Exception(f"VSN300 challenge request failed: {err}") from err
+        raise VSNConnectionError(f"VSN300 challenge request failed: {err}") from err
 
 
 def get_vsn700_basic_auth(username: str, password: str) -> str:
-    """Get VSN700 HTTP Basic authentication header value."""
+    """Get VSN700 HTTP Basic authentication header value (base64)."""
     credentials = f"{username}:{password}"
     return base64.b64encode(credentials.encode("utf-8")).decode("utf-8")
 
 
-def _detect_model_from_status(status_data: dict) -> str:
-    """Detect VSN model from status data structure.
-
-    VSN300 status has:
-    - keys.logger.sn (serial number like "111033-3N16-1421")
-    - keys.logger.board_model = "WIFI LOGGER CARD"
-    - Many keys including device info, firmware, etc.
-
-    VSN700 status has:
-    - keys.logger.loggerId (MAC address like "ac:1f:0f:b0:50:b5")
-    - Minimal keys (usually just loggerId)
-
-    Args:
-        status_data: Parsed status JSON response
-
-    Returns:
-        "VSN300" or "VSN700"
-
-    Raises:
-        Exception: If model cannot be determined
-
-    """
-    keys = status_data.get("keys", {})
-
-    # Check for VSN300 indicators
-    logger_sn = keys.get("logger.sn", {}).get("value", "")
-    board_model = keys.get("logger.board_model", {}).get("value", "")
-
-    if board_model == "WIFI LOGGER CARD":
-        _LOGGER.info("[VSN Detection] Detected VSN300 (board_model='WIFI LOGGER CARD')")
-        return "VSN300"
-
-    # VSN300 serial number format: XXXXXX-XXXX-XXXX (digits and dashes)
-    if logger_sn and re.match(r"^\d{6}-\w{4}-\d{4}$", logger_sn):
-        _LOGGER.info(
-            "[VSN Detection] Detected VSN300 (serial number format: %s)",
-            logger_sn,
-        )
-        return "VSN300"
-
-    # Check for VSN700 indicators
-    logger_id = keys.get("logger.loggerId", {}).get("value", "")
-
-    # VSN700 loggerId is a MAC address format: xx:xx:xx:xx:xx:xx
-    if logger_id and re.match(r"^([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$", logger_id):
-        _LOGGER.info(
-            "[VSN Detection] Detected VSN700 (MAC address format: %s)",
-            logger_id,
-        )
-        return "VSN700"
-
-    # Fallback: VSN300 typically has many more keys than VSN700
-    if len(keys) > 10:
-        _LOGGER.info(
-            "[VSN Detection] Detected VSN300 (rich status data with %d keys)",
-            len(keys),
-        )
-        return "VSN300"
-
-    if len(keys) <= 3:
-        _LOGGER.info(
-            "[VSN Detection] Detected VSN700 (minimal status data with %d keys)",
-            len(keys),
-        )
-        return "VSN700"
-
-    # Cannot determine model
-    _LOGGER.error(
-        "[VSN Detection] Could not determine VSN model from status data. Keys found: %s",
-        list(keys.keys()),
-    )
-    raise Exception(
-        "Could not determine VSN model from status data. Enable debug logging for details."
-    )
+# ── Model Detection ──────────────────────────────────────────────────
 
 
 async def detect_vsn_model(
@@ -270,158 +547,106 @@ async def detect_vsn_model(
     base_url: str,
     username: str,
     password: str,
-    timeout: int = 10,
+    timeout: int = DEFAULT_TIMEOUT,
 ) -> tuple[str, bool]:
     """Detect VSN model by examining response and data structure.
 
-    Detection methods (in order of preference):
-    1. If 401: Examine WWW-Authenticate header (digest = VSN300, basic = VSN700)
-    2. If 200: Analyze status data structure to determine model (no auth required)
-
-    This approach supports:
-    - VSN300 (digest authentication with WWW-Authenticate header)
-    - VSN700 (preemptive Basic auth, may or may not send WWW-Authenticate header)
-    - Devices without authentication (HTTP 200 response)
-
-    Args:
-        session: aiohttp client session
-        base_url: Base URL of VSN device
-        username: Username for authentication
-        password: Password for authentication
-        timeout: Request timeout in seconds
-
     Returns:
-        Tuple of (vsn_model, requires_auth):
-        - vsn_model: "VSN300" or "VSN700"
-        - requires_auth: True if authentication is required, False if device is open
-
-    Raises:
-        Exception: If detection fails or device is not compatible
+        Tuple of (vsn_model, requires_auth)
 
     """
     base_url = base_url.rstrip("/")
-    detection_url = f"{base_url}/v1/status"
+    check_socket_connection(base_url, timeout=5)
 
-    _LOGGER.debug(
-        "[VSN Detection] Making unauthenticated request to %s (timeout=%ds)",
-        detection_url,
-        timeout,
-    )
+    detection_url = f"{base_url}{ENDPOINT_STATUS}"
+    _LOGGER.debug("Detecting VSN model at %s", detection_url)
 
     try:
-        # Make unauthenticated request to /v1/status to trigger 401
         async with session.get(
-            detection_url,
-            timeout=aiohttp.ClientTimeout(total=timeout),
+            detection_url, timeout=aiohttp.ClientTimeout(total=timeout)
         ) as response:
-            _LOGGER.debug(
-                "[VSN Detection] Response: status=%d, headers=%s",
-                response.status,
-                dict(response.headers),
-            )
+            _LOGGER.debug("Detection response: status=%d", response.status)
 
             if response.status == 401:
                 www_authenticate = response.headers.get("WWW-Authenticate", "").lower()
-                www_authenticate_raw = response.headers.get("WWW-Authenticate", "")
 
-                _LOGGER.debug(
-                    "[VSN Detection] WWW-Authenticate: %s",
-                    repr(www_authenticate_raw) if www_authenticate_raw else "NOT PRESENT",
-                )
-
-                # Check for digest authentication (VSN300) - unique identifier
+                # Digest auth = VSN300
                 if www_authenticate and (
                     "x-digest" in www_authenticate or "digest" in www_authenticate
                 ):
-                    _LOGGER.info(
-                        "Detected VSN300 (digest auth in WWW-Authenticate: %s)",
-                        www_authenticate_raw,
-                    )
-                    return ("VSN300", True)  # Auth required
+                    _LOGGER.info("Detected VSN300 (digest auth)")
+                    return ("VSN300", True)
 
-                # Not VSN300 - try preemptive Basic authentication
-                # VSN700 uses preemptive Basic auth (may or may not send WWW-Authenticate header)
-                _LOGGER.debug(
-                    "[VSN Detection] Not VSN300. Attempting preemptive Basic authentication for VSN700."
+                # Try preemptive Basic auth for VSN700
+                _LOGGER.debug("Trying preemptive Basic auth for VSN700")
+                basic_auth = get_vsn700_basic_auth(username, password)
+                auth_headers = {"Authorization": f"Basic {basic_auth}"}
+
+                async with session.get(
+                    detection_url,
+                    headers=auth_headers,
+                    timeout=aiohttp.ClientTimeout(total=timeout),
+                ) as auth_response:
+                    if auth_response.status in (200, 204):
+                        _LOGGER.info("Detected VSN700 (preemptive Basic auth)")
+                        return ("VSN700", True)
+
+                    raise VSNDetectionError(
+                        f"Authentication failed (status {auth_response.status}). "
+                        "Not VSN300/VSN700 compatible."
+                    )
+
+            if response.status == 200:
+                _LOGGER.info("No authentication required (HTTP 200)")
+                status_data = await response.json()
+                model = _detect_model_from_status(status_data)
+                return (model, False)
+
+            if response.status == 404:
+                raise VSNUnsupportedDeviceError(
+                    f"Device at {base_url} returned 404 - REST API not available"
                 )
 
-                try:
-                    basic_auth = get_vsn700_basic_auth(username, password)
-                    auth_headers = {"Authorization": f"Basic {basic_auth}"}
-
-                    _LOGGER.debug(
-                        "[VSN Detection] Sending preemptive Basic auth to %s",
-                        detection_url,
-                    )
-
-                    async with session.get(
-                        detection_url,
-                        headers=auth_headers,
-                        timeout=aiohttp.ClientTimeout(total=timeout),
-                    ) as auth_response:
-                        _LOGGER.debug(
-                            "[VSN Detection] Preemptive auth response: status=%d",
-                            auth_response.status,
-                        )
-
-                        # Check if preemptive Basic auth succeeded
-                        if auth_response.status in (200, 204):
-                            _LOGGER.info("Detected VSN700 (preemptive Basic authentication)")
-                            return ("VSN700", True)  # Auth required
-
-                        # Preemptive auth failed
-                        _LOGGER.error(
-                            "[VSN Detection] Preemptive Basic auth failed with status %d. "
-                            "Device is not compatible.",
-                            auth_response.status,
-                        )
-                        raise Exception(
-                            f"Device authentication failed. Not VSN300/VSN700 compatible. "
-                            f"Preemptive Basic auth returned {auth_response.status}."
-                        )
-
-                except aiohttp.ClientError as auth_err:
-                    _LOGGER.error(
-                        "[VSN Detection] Preemptive Basic auth connection error: %s",
-                        auth_err,
-                    )
-                    raise Exception(
-                        f"Device authentication connection failed: {auth_err}"
-                    ) from auth_err
-
-            elif response.status == 200:
-                # No authentication required - detect model from status data structure
-                _LOGGER.info(
-                    "[VSN Detection] No authentication required (HTTP 200). "
-                    "Detecting model from status data structure."
-                )
-
-                try:
-                    status_data = await response.json()
-                    model = _detect_model_from_status(status_data)
-                except Exception as parse_err:
-                    _LOGGER.error(
-                        "[VSN Detection] Failed to parse status response: %s",
-                        parse_err,
-                    )
-                    raise Exception(f"Failed to parse status response: {parse_err}") from parse_err
-                else:
-                    return (model, False)  # No auth required
-
-            # Got unexpected response status
-            _LOGGER.error(
-                "[VSN Detection] Unexpected response status %d. Headers: %s",
-                response.status,
-                dict(response.headers),
-            )
-            raise Exception(f"Unexpected response status {response.status} during detection")
+            raise VSNDetectionError(f"Unexpected response status {response.status}")
     except aiohttp.ClientError as err:
-        raise Exception(f"Device detection connection error: {err}") from err
+        raise VSNConnectionError(f"Device detection connection error: {err}") from err
 
 
-# ============================================================================
-# VSN REST Client
-# ============================================================================
+def _detect_model_from_status(status_data: dict) -> str:
+    """Detect VSN model from status data structure."""
+    keys = status_data.get("keys", {})
+
+    # VSN300: board_model = "WIFI LOGGER CARD"
+    board_model = keys.get("logger.board_model", {}).get("value", "")
+    if board_model == "WIFI LOGGER CARD":
+        _LOGGER.info("Detected VSN300 (board_model='WIFI LOGGER CARD')")
+        return "VSN300"
+
+    # VSN300: serial number format XXXXXX-XXXX-XXXX
+    logger_sn = keys.get("logger.sn", {}).get("value", "")
+    if logger_sn and re.match(r"^\d{6}-\w{4}-\d{4}$", logger_sn):
+        _LOGGER.info("Detected VSN300 (S/N format: %s)", logger_sn)
+        return "VSN300"
+
+    # VSN700: loggerId is MAC address xx:xx:xx:xx:xx:xx
+    logger_id = keys.get("logger.loggerId", {}).get("value", "")
+    if logger_id and re.match(r"^([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$", logger_id):
+        _LOGGER.info("Detected VSN700 (MAC: %s)", logger_id)
+        return "VSN700"
+
+    # Fallback: VSN300 has many more keys
+    if len(keys) > 10:
+        _LOGGER.info("Detected VSN300 (rich status: %d keys)", len(keys))
+        return "VSN300"
+
+    if len(keys) <= 3:
+        _LOGGER.info("Detected VSN700 (minimal status: %d keys)", len(keys))
+        return "VSN700"
+
+    raise VSNDetectionError(f"Could not determine VSN model. Status keys: {list(keys.keys())}")
+
+
+# ── Authenticated Fetch ──────────────────────────────────────────────
 
 
 async def fetch_endpoint(
@@ -429,424 +654,713 @@ async def fetch_endpoint(
     base_url: str,
     endpoint: str,
     vsn_model: str,
-    username: str = "guest",
-    password: str = "",
-    timeout: int = 10,
+    username: str,
+    password: str,
+    timeout: int,
     requires_auth: bool = True,
-) -> dict:
-    """Fetch data from a VSN endpoint.
+) -> dict[str, Any]:
+    """Fetch a VSN endpoint with proper authentication."""
+    check_socket_connection(base_url, timeout=5)
 
-    Args:
-        session: aiohttp client session
-        base_url: Base URL of VSN device
-        endpoint: API endpoint (e.g., /v1/status)
-        vsn_model: "VSN300" or "VSN700"
-        username: Authentication username
-        password: Authentication password
-        timeout: Request timeout in seconds
-        requires_auth: Whether authentication is required
+    url = f"{base_url}{endpoint}"
 
-    Returns:
-        JSON response data
-
-    """
-    url = f"{base_url.rstrip('/')}{endpoint}"
-
-    # Build auth header based on model (skip if no auth required)
     if not requires_auth:
-        _LOGGER.debug("[Fetch %s] No authentication required", endpoint)
-        headers = {}
+        headers: dict[str, str] = {}
     elif vsn_model == "VSN300":
         digest_value = await get_vsn300_digest_header(
             session, base_url, username, password, endpoint, "GET", timeout
         )
         headers = {"Authorization": f"X-Digest {digest_value}"}
-    else:  # VSN700
+    else:
         basic_auth = get_vsn700_basic_auth(username, password)
         headers = {"Authorization": f"Basic {basic_auth}"}
 
-    # Make authenticated request
-    async with session.get(
-        url,
-        headers=headers,
-        timeout=aiohttp.ClientTimeout(total=timeout),
-    ) as response:
-        if response.status == 200:
-            return await response.json()
-        raise Exception(f"Request failed: HTTP {response.status}")
-
-
-# ============================================================================
-# Mapping and Normalization Module
-# ============================================================================
-
-
-async def load_mapping_from_url(session: aiohttp.ClientSession) -> dict[str, Any]:
-    """Load VSN-SunSpec mapping from GitHub URL.
-
-    Returns:
-        Dictionary with vsn300_index, vsn700_index, and mappings
-
-    """
-    _LOGGER.info("Loading VSN-SunSpec mapping from GitHub...")
+    _LOGGER.debug("Fetching %s (auth=%s)", url, vsn_model if requires_auth else "None")
 
     try:
-        async with session.get(MAPPING_URL, timeout=aiohttp.ClientTimeout(total=30)) as response:
+        async with session.get(
+            url, headers=headers, timeout=aiohttp.ClientTimeout(total=timeout)
+        ) as response:
             if response.status == 200:
-                # GitHub serves raw files as text/plain, so we need to use content_type=None
-                # to allow aiohttp to parse JSON regardless of Content-Type header
-                mappings_data = await response.json(content_type=None)
+                return await response.json()
 
-                # Build indexes for fast lookup
-                vsn300_index = {}
-                vsn700_index = {}
+            if response.status == 401:
+                raise VSNAuthenticationError(f"Authentication failed for {endpoint}: HTTP 401")
 
-                for mapping in mappings_data:
-                    vsn300_name = mapping.get("REST Name (VSN300)")
-                    vsn700_name = mapping.get("REST Name (VSN700)")
+            raise VSNConnectionError(f"Request to {endpoint} failed: HTTP {response.status}")
+    except aiohttp.ClientError as err:
+        raise VSNConnectionError(f"Request to {endpoint} error: {err}") from err
 
-                    if vsn300_name and vsn300_name != "N/A":
-                        vsn300_index[vsn300_name] = mapping
-                    if vsn700_name and vsn700_name != "N/A":
-                        vsn700_index[vsn700_name] = mapping
 
-                _LOGGER.info(
-                    "✓ Loaded %d mappings (%d VSN300, %d VSN700)",
-                    len(mappings_data),
-                    len(vsn300_index),
-                    len(vsn700_index),
-                )
+# ── Discovery ────────────────────────────────────────────────────────
 
-                return {
-                    "vsn300_index": vsn300_index,
-                    "vsn700_index": vsn700_index,
-                    "mappings": mappings_data,
-                }
-            raise Exception(f"Failed to load mapping: HTTP {response.status}")
-    except Exception as err:
-        _LOGGER.warning("Could not load mapping from URL: %s", err)
-        _LOGGER.warning("Normalization will be skipped")
-        _LOGGER.info("  Note: Mapping file may not be available yet in the GitHub repository")
-        _LOGGER.info("  The normalization feature will be available once the file is committed")
-        return None
+
+async def discover_vsn_device(
+    session: aiohttp.ClientSession,
+    base_url: str,
+    username: str = DEFAULT_USERNAME,
+    password: str = DEFAULT_PASSWORD,
+    timeout: int = DEFAULT_TIMEOUT,
+) -> DiscoveryResult:
+    """Discover VSN device and all connected devices."""
+    _LOGGER.debug("Starting VSN device discovery at %s", base_url)
+
+    # Step 1: Detect model
+    vsn_model, requires_auth = await detect_vsn_model(
+        session, base_url, username, password, timeout
+    )
+    _LOGGER.info("Detected %s (requires_auth=%s)", vsn_model, requires_auth)
+
+    # Step 2: Fetch status
+    status_data = await fetch_endpoint(
+        session,
+        base_url,
+        ENDPOINT_STATUS,
+        vsn_model,
+        username,
+        password,
+        timeout,
+        requires_auth,
+    )
+
+    # Step 3: Fetch livedata
+    livedata = await fetch_endpoint(
+        session,
+        base_url,
+        ENDPOINT_LIVEDATA,
+        vsn_model,
+        username,
+        password,
+        timeout,
+        requires_auth,
+    )
+
+    # Step 4: Extract logger info
+    logger_info = _extract_logger_info(status_data, vsn_model)
+
+    # Step 5: Extract all devices
+    devices = _extract_devices(livedata, vsn_model, status_data)
+
+    _LOGGER.info("Discovery complete: %s with %d devices", vsn_model, len(devices))
+
+    return DiscoveryResult(
+        vsn_model=vsn_model,
+        requires_auth=requires_auth,
+        logger_sn=logger_info["logger_sn"],
+        logger_model=logger_info.get("logger_model"),
+        firmware_version=logger_info.get("firmware_version"),
+        hostname=logger_info.get("hostname"),
+        devices=devices,
+        status_data=status_data,
+    )
+
+
+def _extract_logger_info(status_data: dict[str, Any], vsn_model: str) -> dict[str, Any]:
+    """Extract logger information from status data."""
+    keys = status_data.get("keys", {})
+
+    logger_info = {
+        "logger_sn": keys.get("logger.sn", {}).get("value", "Unknown"),
+        "logger_model": keys.get("logger.board_model", {}).get("value"),
+        "firmware_version": keys.get("fw.release_number", {}).get("value"),
+        "hostname": keys.get("logger.hostname", {}).get("value"),
+    }
+
+    if logger_info["logger_sn"] == "Unknown" and vsn_model == "VSN700":
+        logger_info["logger_sn"] = keys.get("logger.loggerId", {}).get("value", "Unknown")
+
+    return logger_info
+
+
+def _extract_devices(
+    livedata: dict[str, Any], vsn_model: str, status_data: dict[str, Any]
+) -> list[DiscoveredDevice]:
+    """Extract all devices from livedata."""
+    devices = []
+    keys = status_data.get("keys", {})
+
+    # Create synthetic datalogger device
+    logger_sn = keys.get("logger.sn", {}).get("value", "Unknown")
+    if logger_sn == "Unknown" and vsn_model == "VSN700":
+        logger_sn = keys.get("logger.loggerId", {}).get("value", "Unknown")
+
+    logger_id = logger_sn.replace(":", "") if ":" in logger_sn else logger_sn
+
+    devices.append(
+        DiscoveredDevice(
+            device_id=logger_id,
+            raw_device_id=logger_sn,
+            device_type="datalogger",
+            device_model=vsn_model,
+            manufacturer="ABB" if vsn_model == "VSN300" else "FIMER",
+            firmware_version=keys.get("fw.release_number", {}).get("value"),
+            is_datalogger=True,
+        )
+    )
+
+    # Process livedata devices
+    for raw_device_id, device_data in livedata.items():
+        is_datalogger = ":" in raw_device_id
+        device_id = raw_device_id
+
+        if is_datalogger:
+            sn_found = False
+            for point in device_data.get("points", []):
+                if point.get("name") == "sn":
+                    device_id = point["value"]
+                    sn_found = True
+                    break
+            if not sn_found:
+                device_id = raw_device_id.replace(":", "")
+
+        device_type = device_data.get("device_type", "unknown")
+        device_model = None
+
+        if is_datalogger:
+            device_model = vsn_model
+            device_type = "datalogger"
+        elif vsn_model == "VSN700":
+            device_model = device_data.get("device_model")
+        elif vsn_model == "VSN300":
+            device_model = keys.get("device.modelDesc", {}).get("value")
+
+        manufacturer = None
+        firmware_version = None
+        hardware_version = None
+
+        for point in device_data.get("points", []):
+            point_name = point.get("name")
+            if point_name == "C_Mn":
+                manufacturer = point.get("value")
+            elif point_name in ("C_Vr", "fw_ver"):
+                firmware_version = point.get("value")
+
+        devices.append(
+            DiscoveredDevice(
+                device_id=device_id,
+                raw_device_id=raw_device_id,
+                device_type=device_type,
+                device_model=device_model,
+                manufacturer=manufacturer,
+                firmware_version=firmware_version,
+                hardware_version=hardware_version,
+                is_datalogger=is_datalogger,
+            )
+        )
+
+        _LOGGER.debug(
+            "Discovered: %s (%s) Model=%s Mfr=%s FW=%s",
+            device_id,
+            device_type,
+            device_model or "?",
+            manufacturer or "?",
+            firmware_version or "?",
+        )
+
+    return devices
+
+
+# ── Mapping Loader ───────────────────────────────────────────────────
+
+
+class MappingLoader:
+    """Load VSN-SunSpec point mappings from GitHub."""
+
+    def __init__(self) -> None:
+        """Initialize the mapping loader."""
+        self._mappings: dict[str, PointMapping] = {}
+        self._vsn300_index: dict[str, str] = {}
+        self._vsn700_index: dict[str, str] = {}
+        self._loaded = False
+
+    async def async_load(self, session: aiohttp.ClientSession) -> None:
+        """Load mappings from GitHub."""
+        if self._loaded:
+            return
+
+        _LOGGER.info("Downloading mapping file from GitHub...")
+
+        try:
+            async with session.get(
+                MAPPING_URL, timeout=aiohttp.ClientTimeout(total=30)
+            ) as response:
+                if response.status != 200:
+                    _LOGGER.warning("Failed to download mapping: HTTP %d", response.status)
+                    return
+                content = await response.text()
+                mappings_data = json.loads(content)
+        except (aiohttp.ClientError, json.JSONDecodeError) as err:
+            _LOGGER.warning("Failed to load mapping: %s", err)
+            return
+
+        for row in mappings_data:
+            vsn700 = row.get("REST Name (VSN700)")
+            vsn300 = row.get("REST Name (VSN300)")
+            ha_entity = row.get("HA Name")
+
+            if vsn700 == "N/A":
+                vsn700 = None
+            if vsn300 == "N/A":
+                vsn300 = None
+
+            sunspec = row.get("SunSpec Normalized Name")
+            if sunspec == "N/A":
+                sunspec = None
+
+            if not ha_entity:
+                continue
+
+            entity_category = row.get("Entity Category") or None
+            if entity_category == "":
+                entity_category = None
+
+            mapping = PointMapping(
+                vsn700_name=vsn700,
+                vsn300_name=vsn300,
+                sunspec_name=sunspec,
+                ha_entity_name=ha_entity,
+                in_livedata=row.get("In /livedata") == "\u2713",
+                in_feeds=row.get("In /feeds") == "\u2713",
+                label=row.get("Label") or "",
+                description=row.get("Description") or "",
+                ha_display_name=(
+                    row.get("HA Display Name") or row.get("Description") or row.get("Label") or ""
+                ),
+                models=row.get("models") or [],
+                category=row.get("Category") or "",
+                units=row.get("HA Unit of Measurement") or "",
+                state_class=row.get("HA State Class") or "",
+                device_class=row.get("HA Device Class") or "",
+                entity_category=entity_category,
+                available_in_modbus=row.get("Available in Modbus") or "",
+                icon=row.get("HA Icon") or "",
+                suggested_display_precision=row.get("Suggested Display Precision"),
+            )
+
+            self._mappings[ha_entity] = mapping
+
+            if vsn300:
+                self._vsn300_index[vsn300] = ha_entity
+            if vsn700:
+                self._vsn700_index[vsn700] = ha_entity
+
+        self._loaded = True
+        _LOGGER.info(
+            "Loaded %d mappings (%d VSN300, %d VSN700)",
+            len(self._mappings),
+            len(self._vsn300_index),
+            len(self._vsn700_index),
+        )
+
+    def get_by_vsn300(self, vsn300_name: str) -> PointMapping | None:
+        """Get mapping by VSN300 point name."""
+        key = self._vsn300_index.get(vsn300_name)
+        return self._mappings.get(key) if key else None
+
+    def get_by_vsn700(self, vsn700_name: str) -> PointMapping | None:
+        """Get mapping by VSN700 point name."""
+        key = self._vsn700_index.get(vsn700_name)
+        return self._mappings.get(key) if key else None
+
+
+# ── Normalizer ───────────────────────────────────────────────────────
+
+
+def normalize_vsn300_point_name(point_name: str) -> str:
+    """Normalize VSN300 point names (M101/M102 -> M103)."""
+    if point_name.startswith(("m101_", "m102_")):
+        return "m103_" + point_name[5:]
+    return point_name
+
+
+def normalize_vsn700_point_name(point_name: str) -> str:
+    """Normalize VSN700 alternate names (e.g., TSoc -> Soc)."""
+    return VSN700_NAME_NORMALIZATION.get(point_name, point_name)
+
+
+def apply_value_transformations(point_name: str, point_value: Any, vsn_model: str) -> Any:
+    """Apply all unit conversions and value transformations."""
+    if point_value is None:
+        return point_value
+
+    # uA to mA (divide by 1000)
+    if point_name in UA_TO_MA_POINTS and isinstance(point_value, (int, float)):
+        point_value = point_value / 1000
+
+    # A to mA for VSN700 leakage current (multiply by 1000)
+    if (
+        vsn_model == "VSN700"
+        and point_name in A_TO_MA_POINTS
+        and isinstance(point_value, (int, float))
+        and point_value != 0
+    ):
+        point_value = point_value * 1000
+
+    # Temperature scale factor correction
+    if (
+        point_name in TEMP_CORRECTION_POINTS
+        and isinstance(point_value, (int, float))
+        and point_value > TEMP_THRESHOLD_CELSIUS
+    ):
+        point_value = point_value / 10
+
+    # String cleanup - strip dashes
+    if point_name in STRING_STRIP_POINTS and isinstance(point_value, str):
+        point_value = point_value.strip("-")
+
+    # Title case normalization
+    if point_name in TITLE_CASE_POINTS and isinstance(point_value, str):
+        point_value = point_value.title()
+
+    # Bytes to MB
+    if point_name in B_TO_MB_POINTS and isinstance(point_value, (int, float)):
+        point_value = point_value / 1048576
+
+    return point_value
+
+
+def translate_state(point_name: str, value: Any) -> str | None:
+    """Translate Aurora state codes to human-readable text."""
+    state_map = STATE_ENTITY_MAPPINGS.get(point_name)
+    if state_map and isinstance(value, (int, float)):
+        int_value = int(value)
+        return state_map.get(int_value, f"Unknown ({int_value})")
+    return None
 
 
 def normalize_livedata(
-    raw_data: dict[str, Any], vsn_model: str, mapping_data: dict
+    livedata: dict[str, Any],
+    vsn_model: str,
+    mapping_loader: MappingLoader,
 ) -> dict[str, Any]:
-    """Normalize VSN livedata to Home Assistant format.
+    """Normalize VSN livedata to SunSpec schema with HA metadata."""
+    normalized: dict[str, Any] = {"devices": {}}
 
-    Args:
-        raw_data: Raw livedata from VSN
-        vsn_model: "VSN300" or "VSN700"
-        mapping_data: Mapping data with indexes
-
-    Returns:
-        Normalized data structure
-
-    """
-    if not mapping_data:
-        return None
-
-    index = mapping_data["vsn300_index"] if vsn_model == "VSN300" else mapping_data["vsn700_index"]
-
-    normalized = {"devices": {}}
-
-    for device_id, device_data in raw_data.items():
-        if not isinstance(device_data, dict):
+    for device_id, device_data in livedata.items():
+        if "points" not in device_data:
             continue
 
-        device_points = {}
-        points = device_data.get("points", [])
+        # Use logger S/N instead of MAC for datalogger
+        actual_device_id = device_id
+        if ":" in device_id:
+            for point in device_data["points"]:
+                if point.get("name") == "sn":
+                    actual_device_id = point.get("value", device_id)
+                    break
 
-        for point in points:
-            if not isinstance(point, dict):
-                continue
+        normalized_points = {}
+        unmapped_points = []
 
+        for point in device_data["points"]:
             point_name = point.get("name")
-            if not point_name or point_name not in index:
-                continue
-
-            mapping = index[point_name]
-            ha_entity = mapping.get("HA Name")
             point_value = point.get("value")
 
-            # Get metadata from mapping
-            device_class = mapping.get("HA Device Class", "")
-            unit = mapping.get("HA Unit of Measurement", "")
+            if not point_name:
+                continue
 
-            # Convert energy sensors from Wh to kWh (matching normalizer.py logic)
-            if device_class == "energy" and point_value is not None:
+            # Apply value transformations
+            point_value = apply_value_transformations(point_name, point_value, vsn_model)
+
+            # Translate state codes
+            state_text = translate_state(point_name, point_value)
+
+            # Normalize point name for mapping lookup
+            if vsn_model == "VSN300":
+                lookup_name = normalize_vsn300_point_name(point_name)
+                mapping = mapping_loader.get_by_vsn300(lookup_name)
+            else:
+                lookup_name = normalize_vsn700_point_name(point_name)
+                mapping = mapping_loader.get_by_vsn700(lookup_name)
+
+            if not mapping:
+                unmapped_points.append(point_name)
+                continue
+
+            # Energy conversion: Wh -> kWh (check device_class, not units)
+            unit_to_use = mapping.units
+            if mapping.device_class == "energy" and point_value is not None:
                 if isinstance(point_value, (int, float)) and point_value != 0:
-                    point_value = point_value / 1000  # Wh → kWh
-                    unit = "kWh"
+                    point_value = point_value / 1000
+                    unit_to_use = "kWh"
 
-            if ha_entity:
-                device_points[ha_entity] = {
-                    "value": point_value,
-                    "units": unit,
-                    "label": mapping.get("Label", ""),
-                    "description": mapping.get("Description", ""),
-                    "device_class": device_class,
-                    "state_class": mapping.get("HA State Class", ""),
-                }
+            # Build normalized point
+            models_str = ", ".join(mapping.models) if mapping.models else ""
+            vsn300_compatible = mapping.vsn300_name not in (None, "N/A", "")
+            vsn700_compatible = mapping.vsn700_name not in (None, "N/A", "")
 
-        if device_points:
-            normalized["devices"][device_id] = {
-                "device_type": device_data.get("device_type", "unknown"),
-                "timestamp": device_data.get("timestamp", ""),
-                "points": device_points,
+            normalized_point: dict[str, Any] = {
+                "value": point_value,
+                "label": mapping.label,
+                "description": mapping.description,
+                "ha_display_name": mapping.ha_display_name,
+                "units": unit_to_use,
+                "device_class": mapping.device_class,
+                "state_class": mapping.state_class,
+                "entity_category": mapping.entity_category,
+                "category": mapping.category,
+                "sunspec_model": models_str,
+                "sunspec_name": mapping.sunspec_name,
+                "vsn300_rest_name": mapping.vsn300_name,
+                "vsn700_rest_name": mapping.vsn700_name,
+                "vsn300_compatible": vsn300_compatible,
+                "vsn700_compatible": vsn700_compatible,
+                "icon": mapping.icon,
+                "suggested_display_precision": (mapping.suggested_display_precision),
             }
+
+            # Add state translation if applicable
+            if state_text is not None:
+                normalized_point["state_text"] = state_text
+
+            normalized_points[mapping.ha_entity_name] = normalized_point
+
+        if unmapped_points:
+            _LOGGER.debug(
+                "Device %s: %d unmapped points: %s",
+                actual_device_id,
+                len(unmapped_points),
+                ", ".join(unmapped_points[:10])
+                + (
+                    f" ... and {len(unmapped_points) - 10} more"
+                    if len(unmapped_points) > 10
+                    else ""
+                ),
+            )
+
+        if normalized_points:
+            normalized["devices"][actual_device_id] = {
+                "device_type": device_data.get("device_type", "unknown"),
+                "point_count": len(normalized_points),
+                "points": normalized_points,
+            }
+
+    total_points = sum(len(d["points"]) for d in normalized["devices"].values())
+    _LOGGER.info(
+        "Normalized %d devices with %d total points",
+        len(normalized["devices"]),
+        total_points,
+    )
 
     return normalized
 
 
-async def test_vsn_device(
-    host: str,
-    username: str = "guest",
-    password: str = "",
-    timeout: int = 10,
-) -> None:
-    """Test VSN device and display results.
+# ── Output Formatting ────────────────────────────────────────────────
 
-    Args:
-        host: Hostname or IP address of the VSN device
-        username: Authentication username
-        password: Authentication password
-        timeout: Request timeout in seconds
 
-    """
-    # Add http:// prefix if not present
-    if not host.startswith(("http://", "https://")):
-        base_url = f"http://{host}"
-    else:
-        base_url = host
+def format_discovery(discovery: DiscoveryResult) -> dict[str, Any]:
+    """Format discovery result for display."""
+    result: dict[str, Any] = {
+        "vsn_model": discovery.vsn_model,
+        "requires_auth": discovery.requires_auth,
+        "logger_sn": discovery.logger_sn,
+        "logger_model": discovery.logger_model,
+        "firmware_version": discovery.firmware_version,
+        "hostname": discovery.hostname,
+        "device_count": len(discovery.devices),
+        "devices": [],
+    }
 
-    _LOGGER.info("=" * 80)
-    _LOGGER.info("VSN REST Client - Device Test")
-    _LOGGER.info("Host: %s", host)
-    _LOGGER.info("Base URL: %s", base_url)
-    _LOGGER.info("Username: %s", username)
-    _LOGGER.info("Password: %s", "(set)" if password else "(empty)")
-    _LOGGER.info("Timeout: %d seconds", timeout)
-    _LOGGER.info("=" * 80)
+    for device in discovery.devices:
+        result["devices"].append(
+            {
+                "device_id": device.device_id,
+                "raw_device_id": device.raw_device_id,
+                "device_type": device.device_type,
+                "device_model": device.device_model,
+                "manufacturer": device.manufacturer,
+                "firmware_version": device.firmware_version,
+                "is_datalogger": device.is_datalogger,
+            }
+        )
+
+    return result
+
+
+def save_json(data: Any, filepath: str) -> None:
+    """Save data to JSON file."""
+    with Path(filepath).open("w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2, default=str, ensure_ascii=False)
+    _LOGGER.info("Saved: %s", filepath)
+
+
+# ── Main ─────────────────────────────────────────────────────────────
+
+
+async def main(args: argparse.Namespace) -> int:
+    """Run the VSN REST client."""
+    print("\n" + "=" * 60)
+    print(" ABB/FIMER VSN REST Client - Standalone Test Script")
+    print("=" * 60)
+
+    base_url = f"http://{args.host}"
+    _LOGGER.info("Host: %s", args.host)
+    _LOGGER.info("Username: %s", args.username)
+
+    # Step 1: Socket check
+    _LOGGER.info("Checking connectivity...")
+    try:
+        check_socket_connection(base_url, timeout=5)
+    except VSNConnectionError as err:
+        _LOGGER.error("Connectivity check failed: %s", err)
+        return 1
 
     async with aiohttp.ClientSession() as session:
+        # Step 2: Discovery (detect model + find all devices)
+        _LOGGER.info("Running device discovery...")
         try:
-            # Test 1: Device Detection
-            _LOGGER.info("\n[TEST 1] Device Detection")
-            _LOGGER.info("-" * 80)
-            model, requires_auth = await detect_vsn_model(
-                session, base_url, username, password, timeout
+            discovery = await discover_vsn_device(
+                session, base_url, args.username, args.password, args.timeout
             )
-            _LOGGER.info("✓ Device detected: %s", model)
-            _LOGGER.info("  - Requires authentication: %s", requires_auth)
+        except VSNClientError as err:
+            _LOGGER.error("Discovery failed: %s", err)
+            return 1
 
-            # Test 2: /v1/status
-            _LOGGER.info("\n[TEST 2] /v1/status - System Information")
-            _LOGGER.info("-" * 80)
-            status_data = await fetch_endpoint(
+        discovery_data = format_discovery(discovery)
+        print("\n" + json.dumps(discovery_data, indent=2, default=str))
+        save_json(
+            discovery_data,
+            f"{discovery.vsn_model.lower()}_discovery.json",
+        )
+
+        # Step 3: Fetch raw data
+        _LOGGER.info("Fetching status...")
+        status = await fetch_endpoint(
+            session,
+            base_url,
+            ENDPOINT_STATUS,
+            discovery.vsn_model,
+            args.username,
+            args.password,
+            args.timeout,
+            discovery.requires_auth,
+        )
+        save_json(status, f"{discovery.vsn_model.lower()}_status.json")
+
+        _LOGGER.info("Fetching livedata...")
+        livedata = await fetch_endpoint(
+            session,
+            base_url,
+            ENDPOINT_LIVEDATA,
+            discovery.vsn_model,
+            args.username,
+            args.password,
+            args.timeout,
+            discovery.requires_auth,
+        )
+        save_json(livedata, f"{discovery.vsn_model.lower()}_livedata.json")
+
+        _LOGGER.info("Fetching feeds...")
+        try:
+            feeds = await fetch_endpoint(
                 session,
                 base_url,
-                "/v1/status",
-                model,
-                username,
-                password,
-                timeout,
-                requires_auth=requires_auth,
+                ENDPOINT_FEEDS,
+                discovery.vsn_model,
+                args.username,
+                args.password,
+                args.timeout,
+                discovery.requires_auth,
             )
-            _LOGGER.info("✓ Status endpoint successful")
+            save_json(feeds, f"{discovery.vsn_model.lower()}_feeds.json")
+        except VSNClientError:
+            _LOGGER.warning("Feeds endpoint not available")
 
-            if isinstance(status_data, dict) and "keys" in status_data:
-                keys_data = status_data["keys"]
-                important_keys = [
-                    "logger.sn",
-                    "device.invID",
-                    "device.modelDesc",
-                    "fw.release_number",
-                ]
-                for key in important_keys:
-                    if key in keys_data:
-                        _LOGGER.info("  - %s: %s", key, keys_data[key].get("value", "N/A"))
+        # Step 4: Normalize data
+        _LOGGER.info("Loading mapping and normalizing data...")
+        mapping_loader = MappingLoader()
+        await mapping_loader.async_load(session)
 
-            # Save status to file
-            output_file = Path.cwd() / f"{model.lower()}_status.json"
-            with open(output_file, "w", encoding="utf-8") as f:
-                json.dump(status_data, f, indent=2)
-            _LOGGER.info("  - Saved to: %s", output_file)
-
-            # Test 3: /v1/livedata
-            _LOGGER.info("\n[TEST 3] /v1/livedata - Live Data")
-            _LOGGER.info("-" * 80)
-            livedata = await fetch_endpoint(
-                session,
-                base_url,
-                "/v1/livedata",
-                model,
-                username,
-                password,
-                timeout,
-                requires_auth=requires_auth,
+        if mapping_loader._loaded:  # noqa: SLF001
+            normalized = normalize_livedata(livedata, discovery.vsn_model, mapping_loader)
+            save_json(
+                normalized,
+                f"{discovery.vsn_model.lower()}_normalized.json",
             )
-            _LOGGER.info("✓ Livedata endpoint successful")
-            _LOGGER.info("  - Number of devices: %d", len(livedata))
-            _LOGGER.info("  - Device IDs: %s", list(livedata.keys()))
-
-            # Show sample data from first device
-            if livedata:
-                first_device_id = list(livedata.keys())[0]
-                first_device = livedata[first_device_id]
-                _LOGGER.info("\n  Sample data from device: %s", first_device_id)
-                if "points" in first_device:
-                    points = first_device["points"]
-                    _LOGGER.info("  - Total points: %d", len(points))
-                    # Show first 5 points
-                    for _i, point in enumerate(points[:5]):
-                        name = point.get("name", "N/A")
-                        value = point.get("value", "N/A")
-                        _LOGGER.info("    - %s: %s", name, value)
-                    if len(points) > 5:
-                        _LOGGER.info("    - ... (%d more points)", len(points) - 5)
-
-            # Save livedata to file
-            output_file = Path.cwd() / f"{model.lower()}_livedata.json"
-            with open(output_file, "w", encoding="utf-8") as f:
-                json.dump(livedata, f, indent=2)
-            _LOGGER.info("\n  - Saved to: %s", output_file)
-
-            # Load mapping and normalize data
-            _LOGGER.info("\n[TEST 3b] Data Normalization")
-            _LOGGER.info("-" * 80)
-            mapping_data = await load_mapping_from_url(session)
-
-            if mapping_data:
-                normalized = normalize_livedata(livedata, model, mapping_data)
-                if normalized:
-                    total_points = sum(
-                        len(d.get("points", {})) for d in normalized.get("devices", {}).values()
-                    )
-                    _LOGGER.info("✓ Data normalized successfully")
-                    _LOGGER.info("  - Normalized points: %d", total_points)
-
-                    # Show sample normalized data
-                    if normalized.get("devices"):
-                        first_device_id = list(normalized["devices"].keys())[0]
-                        first_device = normalized["devices"][first_device_id]
-                        _LOGGER.info("\n  Sample normalized data from: %s", first_device_id)
-                        points = first_device.get("points", {})
-                        for _i, (ha_entity, point_data) in enumerate(list(points.items())[:5]):
-                            value = point_data.get("value")
-                            units = point_data.get("units", "")
-                            label = point_data.get("label", "")
-                            _LOGGER.info("    - %s (%s): %s %s", ha_entity, label, value, units)
-                        if len(points) > 5:
-                            _LOGGER.info("    - ... (%d more points)", len(points) - 5)
-
-                    # Save normalized data
-                    output_file = Path.cwd() / f"{model.lower()}_normalized.json"
-                    with open(output_file, "w", encoding="utf-8") as f:
-                        json.dump(normalized, f, indent=2)
-                    _LOGGER.info("\n  - Saved to: %s", output_file)
-                else:
-                    _LOGGER.warning("✗ Normalization failed")
-            else:
-                _LOGGER.warning("✗ Mapping not available, skipping normalization")
-
-            # Test 4: /v1/feeds
-            _LOGGER.info("\n[TEST 4] /v1/feeds - Feed Metadata")
-            _LOGGER.info("-" * 80)
-            feeds_data = await fetch_endpoint(
-                session,
-                base_url,
-                "/v1/feeds",
-                model,
-                username,
-                password,
-                timeout,
-                requires_auth=requires_auth,
-            )
-            _LOGGER.info("✓ Feeds endpoint successful")
-
-            if isinstance(feeds_data, dict) and "feeds" in feeds_data:
-                _LOGGER.info("  - Number of feeds: %d", len(feeds_data["feeds"]))
-
-            # Save feeds to file
-            output_file = Path.cwd() / f"{model.lower()}_feeds.json"
-            with open(output_file, "w", encoding="utf-8") as f:
-                json.dump(feeds_data, f, indent=2)
-            _LOGGER.info("  - Saved to: %s", output_file)
 
             # Summary
-            _LOGGER.info("\n" + "=" * 80)
-            _LOGGER.info("TEST SUMMARY")
-            _LOGGER.info("=" * 80)
-            _LOGGER.info("✓ Device model: %s", model)
-            _LOGGER.info("✓ Requires authentication: %s", requires_auth)
-            _LOGGER.info("✓ All 3 endpoints tested successfully!")
-            _LOGGER.info("✓ /v1/status: OK")
-            _LOGGER.info("✓ /v1/livedata: OK (%d devices)", len(livedata))
-            if mapping_data and normalized:
-                total_points = sum(
-                    len(d.get("points", {})) for d in normalized.get("devices", {}).values()
+            print("\n" + "=" * 60)
+            print(" Normalization Summary")
+            print("=" * 60)
+            for dev_id, dev_data in normalized.get("devices", {}).items():
+                print(
+                    f"  Device {dev_id} ({dev_data.get('device_type', '?')}): "
+                    f"{dev_data.get('point_count', 0)} normalized points"
                 )
-                _LOGGER.info("✓ /v1/livedata normalized: OK (%d points)", total_points)
-            _LOGGER.info("✓ /v1/feeds: OK")
-            _LOGGER.info("\nOutput files created:")
-            _LOGGER.info("  - %s_status.json", model.lower())
-            _LOGGER.info("  - %s_livedata.json", model.lower())
-            if mapping_data and normalized:
-                _LOGGER.info("  - %s_normalized.json", model.lower())
-            _LOGGER.info("  - %s_feeds.json", model.lower())
-            _LOGGER.info("=" * 80)
 
-        except Exception as err:
-            _LOGGER.error("\n✗ Error: %s", err)
-            import traceback
+                # Show state translations
+                for _pt_name, pt_data in dev_data.get("points", {}).items():
+                    if "state_text" in pt_data:
+                        print(
+                            f"    {pt_data.get('ha_display_name', _pt_name)}: "
+                            f"{pt_data['value']} -> {pt_data['state_text']}"
+                        )
+        else:
+            _LOGGER.warning("Mapping not loaded - skipping normalization")
 
-            _LOGGER.debug(traceback.format_exc())
-            sys.exit(1)
+    if args.verbose:
+        print("\n" + "=" * 60)
+        print(" Raw Status Data")
+        print("=" * 60)
+        print(json.dumps(status, indent=2, default=str))
+
+    print("\n" + "=" * 60)
+    print(" Output Files")
+    print("=" * 60)
+    model = discovery.vsn_model.lower()
+    print(f"  {model}_discovery.json  - Device discovery results")
+    print(f"  {model}_status.json     - Raw status data")
+    print(f"  {model}_livedata.json   - Raw livedata")
+    print(f"  {model}_feeds.json      - Raw feeds data")
+    print(f"  {model}_normalized.json - Normalized data with HA metadata")
+    print()
+
+    return 0
 
 
-def main() -> None:
-    """Main entry point."""
+def parse_args() -> argparse.Namespace:
+    """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        description="VSN REST Client - Self-contained testing script for VSN300/VSN700 devices"
+        description=(
+            "ABB/FIMER VSN REST Client - Test connectivity, discovery, and data normalization"
+        ),
     )
     parser.add_argument(
-        "host",
-        help="Host or IP address of the VSN device (e.g., 192.168.1.100 or abb-vsn300.local)",
+        "--host",
+        required=True,
+        help="VSN datalogger IP address or hostname",
     )
     parser.add_argument(
         "--username",
-        "-u",
-        default="guest",
-        help="Authentication username (check your datalogger's web interface)",
+        default=DEFAULT_USERNAME,
+        help=f"Authentication username (default: {DEFAULT_USERNAME})",
     )
     parser.add_argument(
         "--password",
-        "-p",
-        default="",
-        help="Authentication password (check your datalogger's web interface)",
+        default=DEFAULT_PASSWORD,
+        help="Authentication password (default: empty)",
     )
     parser.add_argument(
         "--timeout",
-        "-t",
         type=int,
-        default=10,
-        help="Request timeout in seconds (default: 10)",
+        default=DEFAULT_TIMEOUT,
+        help=f"Request timeout in seconds (default: {DEFAULT_TIMEOUT})",
     )
-
-    args = parser.parse_args()
-
-    asyncio.run(
-        test_vsn_device(
-            host=args.host,
-            username=args.username,
-            password=args.password,
-            timeout=args.timeout,
-        )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="Show full raw API response data",
     )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Enable debug logging",
+    )
+    return parser.parse_args()
 
 
 if __name__ == "__main__":
-    main()
+    cli_args = parse_args()
+    if cli_args.debug:
+        logging.getLogger().setLevel(logging.DEBUG)
+    sys.exit(asyncio.run(main(cli_args)))

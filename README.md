@@ -515,7 +515,7 @@ If you're experiencing connection or authentication issues, you can use the stan
 
 #### Using the VSN Test Script
 
-The repository includes a standalone diagnostic script that can test your VSN device without installing the integration:
+The repository includes a standalone diagnostic script that mirrors the integration's client library. It can test your VSN device without installing the integration:
 
 1. **Download the script**:
 
@@ -532,24 +532,51 @@ The repository includes a standalone diagnostic script that can test your VSN de
 1. **Run the test**:
 
    ```bash
-   python vsn_rest_client.py 192.168.1.100
+   python vsn_rest_client.py --host 192.168.1.100
    ```
 
-   (Replace `192.168.1.100` with your datalogger's IP address)
+   Replace `192.168.1.100` with your datalogger's IP address. Additional options:
+
+   ```bash
+   # With credentials (if not using default guest access)
+   python vsn_rest_client.py --host 192.168.1.100 --username admin --password mypass
+
+   # With verbose output (includes raw status data)
+   python vsn_rest_client.py --host 192.168.1.100 -v
+
+   # With debug logging
+   python vsn_rest_client.py --host 192.168.1.100 --debug
+
+   # Custom timeout (default: 10s)
+   python vsn_rest_client.py --host 192.168.1.100 --timeout 30
+   ```
 
 1. **Review output**:
 
-   The script will:
+   The script performs a complete diagnostic sequence:
 
-   - Auto-detect VSN300 vs VSN700
-   - Test all REST API endpoints
-   - Create JSON output files with raw and normalized data
-   - Display comprehensive debug information
+   - **Socket check** - Verifies the device is reachable on port 80 (fast-fail)
+   - **Device discovery** - Detects VSN300/VSN700, finds all connected devices (inverters, meters, batteries)
+   - **Data fetching** - Retrieves status, livedata, and feeds from all REST API endpoints
+   - **Data normalization** - Maps raw VSN points to SunSpec-compatible names with Home Assistant metadata
+   - **State translation** - Translates Aurora protocol state codes to human-readable text
+
+   Output files are automatically saved in the current directory:
+
+   | File | Content |
+   |------|---------|
+   | `{model}_discovery.json` | Device discovery results (logger info, connected devices) |
+   | `{model}_status.json` | Raw status endpoint data |
+   | `{model}_livedata.json` | Raw livedata endpoint data |
+   | `{model}_feeds.json` | Raw feeds endpoint data |
+   | `{model}_normalized.json` | Normalized data with SunSpec names and HA metadata |
+
+   Where `{model}` is `vsn300` or `vsn700`.
 
 1. **When reporting issues**:
 
    - Include the console output showing device detection and any errors
-   - Attach the generated JSON files (especially `vsn300_status.json` or `vsn700_status.json`)
+   - Attach the generated JSON files (especially `_discovery.json` and `_status.json`)
    - Specify your inverter model and VSN datalogger model
 
 #### Common Test Results
@@ -557,23 +584,38 @@ The repository includes a standalone diagnostic script that can test your VSN de
 **Successful VSN300 detection**:
 
 ```text
-[VSN Detection] Detected VSN300 (digest auth in WWW-Authenticate: X-Digest realm="...")
-✓ Device detected: VSN300
+[INFO] Checking socket connectivity to 192.168.1.100:80...
+[INFO] Socket connection successful
+[INFO] Running device discovery...
+[INFO] Attempting /v1/status at http://192.168.1.100
+[INFO] Got 401 - checking WWW-Authenticate header for X-Digest
+[INFO] Detected VSN300 (X-Digest authentication required)
 ```
 
 **Successful VSN700 detection**:
 
 ```text
-[VSN Detection] Not VSN300. Attempting preemptive Basic authentication for VSN700.
-[VSN Detection] Detected VSN700 (preemptive Basic authentication)
-✓ Device detected: VSN700
+[INFO] Checking socket connectivity to 192.168.1.100:80...
+[INFO] Socket connection successful
+[INFO] Running device discovery...
+[INFO] Attempting /v1/status at http://192.168.1.100
+[INFO] No authentication required (HTTP 200)
+[INFO] Detected VSN700 from status structure
 ```
+
+**Device unreachable**:
+
+```text
+[INFO] Checking socket connectivity to 192.168.1.100:80...
+[ERROR] Socket connection failed: Connection timed out
+```
+
+If you see this, verify the device is powered on and the IP address is correct.
 
 **Authentication failure**:
 
 ```text
-[VSN Detection] Preemptive Basic auth failed with status 401.
-Device authentication failed. Not VSN300/VSN700 compatible.
+[ERROR] Authentication failed for VSN300: invalid credentials
 ```
 
 If you see this, verify your credentials and ensure the device is a VSN300/VSN700 datalogger.
