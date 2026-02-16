@@ -8,12 +8,14 @@ from unittest.mock import MagicMock, PropertyMock, patch
 import pytest
 
 from custom_components.abb_fimer_pvi_vsn_rest.const import DOMAIN, GLOBAL_STATE_MAP
+from custom_components.abb_fimer_pvi_vsn_rest.helpers import (
+    compact_serial_number,
+    format_device_name,
+)
 from custom_components.abb_fimer_pvi_vsn_rest.sensor import (
     DEVICE_CLASS_EXCEPTIONS,
     DEVICE_CLASS_VALID_UNITS,
     VSNSensor,
-    _compact_serial_number,
-    _format_device_name,
     _get_precision_from_units,
     _simplify_device_type,
     async_setup_entry,
@@ -32,31 +34,31 @@ SKIP_INTEGRATION_LOADING = (
 
 
 class TestCompactSerialNumber:
-    """Tests for _compact_serial_number function."""
+    """Tests for compact_serial_number function."""
 
     def test_compact_with_dashes(self) -> None:
         """Test compacting serial with dashes."""
-        result = _compact_serial_number("077909-3G82-3112")
+        result = compact_serial_number("077909-3G82-3112")
         assert result == "0779093g823112"
 
     def test_compact_with_colons(self) -> None:
         """Test compacting MAC address with colons."""
-        result = _compact_serial_number("ac:1f:0f:b0:50:b5")
+        result = compact_serial_number("ac:1f:0f:b0:50:b5")
         assert result == "ac1f0fb050b5"
 
     def test_compact_with_underscores(self) -> None:
         """Test compacting serial with underscores."""
-        result = _compact_serial_number("abc_123_def")
+        result = compact_serial_number("abc_123_def")
         assert result == "abc123def"
 
     def test_compact_mixed_separators(self) -> None:
         """Test compacting with mixed separators."""
-        result = _compact_serial_number("a-b:c_d")
+        result = compact_serial_number("a-b:c_d")
         assert result == "abcd"
 
     def test_compact_lowercase(self) -> None:
         """Test result is lowercase."""
-        result = _compact_serial_number("ABC-DEF")
+        result = compact_serial_number("ABC-DEF")
         assert result == "abcdef"
 
 
@@ -121,11 +123,11 @@ class TestGetPrecisionFromUnits:
 
 
 class TestFormatDeviceName:
-    """Tests for _format_device_name function."""
+    """Tests for format_device_name function."""
 
     def test_with_model(self) -> None:
         """Test formatting with model."""
-        result = _format_device_name(
+        result = format_device_name(
             manufacturer="Power-One",
             device_type_simple="inverter",
             device_model="PVI-10.0-OUTD",
@@ -135,7 +137,7 @@ class TestFormatDeviceName:
 
     def test_without_model(self) -> None:
         """Test formatting without model."""
-        result = _format_device_name(
+        result = format_device_name(
             manufacturer="ABB",
             device_type_simple="datalogger",
             device_model=None,
@@ -145,7 +147,7 @@ class TestFormatDeviceName:
 
     def test_with_custom_prefix(self) -> None:
         """Test custom prefix overrides default name."""
-        result = _format_device_name(
+        result = format_device_name(
             manufacturer="Power-One",
             device_type_simple="inverter",
             device_model="PVI-10.0-OUTD",
@@ -156,7 +158,7 @@ class TestFormatDeviceName:
 
     def test_device_type_title_case(self) -> None:
         """Test device type is title cased."""
-        result = _format_device_name(
+        result = format_device_name(
             manufacturer="ABB",
             device_type_simple="battery",
             device_model="REACT2",

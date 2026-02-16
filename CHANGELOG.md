@@ -5,7 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - v1.3.6
+## [1.3.6-beta.1] - 2026-02-17
+
+### New Features
+
+- **Per-Device Custom Name Prefixes** - Users with multiple devices of the same type (e.g., 2 batteries) can now set individual custom names for each device (Fixes #36)
+  - Single device per type: unchanged behavior (e.g., `prefix_battery`)
+  - Multiple devices per type: indexed fields (e.g., `prefix_battery_1`, `prefix_battery_2`)
+  - Devices sorted by device_id for stable, deterministic ordering
+- **`strings.json` as Canonical Source** - Added `strings.json` following HA convention; generator now syncs `strings.json` to `translations/en.json`
+
+### Translations
+
+- **Full Translation Coverage** - All indexed prefix strings fully translated in all 9 languages (de, es, et, fi, fr, it, nb, pt, sv)
+- **Translation Generator Updated** - Generator reads from `strings.json` (canonical) and syncs to `translations/en.json`
+
+### Refactoring
+
+- **Shared Constants** - Added `TYPE_TO_CONF_PREFIX` mapping in `const.py` for reuse across `sensor.py` and `config_flow.py`
+- **Alias Cleanup** - Removed backward-compatible `_compact_serial_number` / `_format_device_name` aliases from `sensor.py`; uses direct imports from `helpers.py`
+
+**See**: [v1.3.6-beta.1 Release Notes](docs/releases/v1.3.6-beta.1.md)
 
 ## [1.3.5] - 2026-02-16
 
