@@ -5,26 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - v1.3.5-beta.3
-
-## [1.3.5-beta.2] - 2026-02-16
-
-### Refactoring
-
-- **HA Translation API** - Replaced manual file I/O (`Path.read_text`) with HA's built-in `async_get_translations()` API for loading entity translations (fixes blocking call warning in event loop)
-- **Shared Helper** - Added `async_get_entity_translations()` in `helpers.py` for reuse across modules
-
-## [1.3.5-beta.1] - 2026-02-16
+## [1.3.5] - 2026-02-16
 
 ### Bug Fixes
 
 - **Entity ID Regeneration** - Fixed "Regenerate entity IDs" using raw point_names (`watts`) instead of translated names (`power_ac`) as suffixes
 - **No-Prefix Regeneration** - Fixed entity regeneration skipping entities when no custom prefix was set
 - **Domain Preservation** - Fixed entity regeneration hardcoding `sensor.` domain instead of preserving original domain
+- **Custom Entity Names** - "Regenerate entity IDs" now clears user-set custom entity names so HA uses translation-based defaults
 
 ### New Features
 
 - **Auto-Migration** - Automatic entity ID migration for users who previously used the buggy regeneration
+
+### Refactoring
+
+- **HA Translation API** - Replaced manual file I/O with HA's built-in `async_get_translations()` API for loading entity translations
+- **Shared Helper** - Added `async_get_entity_translations()` in `helpers.py` for reuse across modules
 
 **See**: [v1.3.5 Release Notes](docs/releases/v1.3.5.md)
 
