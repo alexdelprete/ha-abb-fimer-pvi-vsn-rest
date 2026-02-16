@@ -21,6 +21,7 @@ import copy
 import importlib
 import json
 from pathlib import Path
+import shutil
 import sys
 
 # Language configuration: code -> (name, dictionary module name)
@@ -96,9 +97,10 @@ def generate_translations(lang_code: str, lang_name: str) -> bool:
 
     Returns True on success, False on failure.
     """
-    # Paths
-    translations_dir = Path("custom_components/abb_fimer_pvi_vsn_rest/translations")
-    en_file = translations_dir / "en.json"
+    # Paths - strings.json is the canonical English source (HA convention)
+    integration_dir = Path("custom_components/abb_fimer_pvi_vsn_rest")
+    translations_dir = integration_dir / "translations"
+    en_file = integration_dir / "strings.json"
     lang_file = translations_dir / f"{lang_code}.json"
 
     # Validate paths
@@ -142,6 +144,25 @@ def generate_translations(lang_code: str, lang_name: str) -> bool:
     print(
         f"✓ {lang_name} ({lang_code}) - {sensor_count} sensors, {options_count} options translated"
     )
+    return True
+
+
+def sync_en_json() -> bool:
+    """Copy strings.json to translations/en.json (HA convention).
+
+    strings.json is the canonical English source. translations/en.json
+    is generated from it, matching the Home Assistant core workflow.
+    """
+    integration_dir = Path("custom_components/abb_fimer_pvi_vsn_rest")
+    strings_file = integration_dir / "strings.json"
+    en_file = integration_dir / "translations" / "en.json"
+
+    if not strings_file.exists():
+        print(f"✗ Cannot sync en.json: {strings_file} not found")
+        return False
+
+    shutil.copy2(strings_file, en_file)
+    print("✓ translations/en.json synced from strings.json")
     return True
 
 
@@ -195,6 +216,9 @@ def main():
         lang_name, _ = LANGUAGE_CONFIG[lang_code]
         if generate_translations(lang_code, lang_name):
             success_count += 1
+
+    # Sync translations/en.json from strings.json (canonical source)
+    sync_en_json()
 
     print(f"\nCompleted: {success_count}/{len(languages)} languages")
 

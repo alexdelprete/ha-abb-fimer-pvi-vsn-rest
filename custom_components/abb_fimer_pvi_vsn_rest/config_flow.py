@@ -41,10 +41,6 @@ from .const import (
     CONF_ENABLE_REPAIR_NOTIFICATION,
     CONF_ENABLE_STARTUP_NOTIFICATION,
     CONF_FAILURES_THRESHOLD,
-    CONF_PREFIX_BATTERY,
-    CONF_PREFIX_DATALOGGER,
-    CONF_PREFIX_INVERTER,
-    CONF_PREFIX_METER,
     CONF_RECOVERY_SCRIPT,
     CONF_REGENERATE_ENTITY_IDS,
     CONF_REQUIRES_AUTH,
@@ -61,8 +57,10 @@ from .const import (
     MAX_SCAN_INTERVAL,
     MIN_FAILURES_THRESHOLD,
     MIN_SCAN_INTERVAL,
+    TYPE_TO_CONF_PREFIX,
 )
 from .helpers import async_get_entity_translations, compact_serial_number, format_device_name
+from .sensor import _get_device_type_simple
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -379,30 +377,19 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
             )
             return self.async_create_entry(data=user_input)
 
-        # Determine which device types exist from discovered devices
-        has_inverters = False
-        has_datalogger = False
-        has_meters = False
-        has_batteries = False
-
         # Access discovered devices from coordinator (if available)
+        discovered_devices = []
         if hasattr(self.config_entry, "runtime_data") and self.config_entry.runtime_data:
             coordinator = self.config_entry.runtime_data.coordinator
             discovered_devices = getattr(coordinator, "discovered_devices", None) or []
 
-            for device in discovered_devices:
-                if device.is_datalogger:
-                    has_datalogger = True
-                elif device.device_type.startswith("inverter"):
-                    has_inverters = True
-                elif device.device_type == "meter":
-                    has_meters = True
-                elif device.device_type == "battery":
-                    has_batteries = True
-        else:
-            # Fallback: show all fields if no runtime data (shouldn't happen normally)
-            _LOGGER.debug("No runtime_data available, showing all prefix fields")
-            has_inverters = has_datalogger = has_meters = has_batteries = True
+        # Group discovered devices by simplified type, sorted for stable ordering
+        devices_by_type: dict[str, list] = {}
+        for device in discovered_devices:
+            dtype = _get_device_type_simple(device)
+            devices_by_type.setdefault(dtype, []).append(device)
+        for device_list in devices_by_type.values():
+            device_list.sort(key=lambda d: d.device_id)
 
         # Get current options with defaults
         current_options = self.config_entry.options
@@ -467,41 +454,27 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
             )
         )
 
-        # Only add prefix fields for device types that exist
-        if has_inverters:
-            schema_dict[
-                vol.Optional(
-                    CONF_PREFIX_INVERTER,
-                    default=current_options.get(CONF_PREFIX_INVERTER, ""),
-                )
-            ] = str
+        # Add per-device prefix fields
+        # Single device of a type → base key (e.g., "prefix_battery") for backward compat
+        # Multiple devices of same type → indexed keys (e.g., "prefix_battery_1", "prefix_battery_2")
+        has_any_device = False
+        for dtype, devices in devices_by_type.items():
+            base_key = TYPE_TO_CONF_PREFIX.get(dtype)
+            if not base_key:
+                continue
+            has_any_device = True
 
-        if has_datalogger:
-            schema_dict[
-                vol.Optional(
-                    CONF_PREFIX_DATALOGGER,
-                    default=current_options.get(CONF_PREFIX_DATALOGGER, ""),
-                )
-            ] = str
+            if len(devices) == 1:
+                # Single device: use base key (backward compatible)
+                schema_dict[vol.Optional(base_key, default=current_options.get(base_key, ""))] = str
+            else:
+                # Multiple devices: use indexed keys
+                for i, _device in enumerate(devices, start=1):
+                    key = f"{base_key}_{i}"
+                    schema_dict[vol.Optional(key, default=current_options.get(key, ""))] = str
 
-        if has_meters:
-            schema_dict[
-                vol.Optional(
-                    CONF_PREFIX_METER,
-                    default=current_options.get(CONF_PREFIX_METER, ""),
-                )
-            ] = str
-
-        if has_batteries:
-            schema_dict[
-                vol.Optional(
-                    CONF_PREFIX_BATTERY,
-                    default=current_options.get(CONF_PREFIX_BATTERY, ""),
-                )
-            ] = str
-
-        # Always show regenerate checkbox if any device type has prefix support
-        if has_inverters or has_datalogger or has_meters or has_batteries:
+        # Show regenerate checkbox if any devices exist
+        if has_any_device:
             schema_dict[
                 vol.Optional(
                     CONF_REGENERATE_ENTITY_IDS,
@@ -542,13 +515,30 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
 
         registry = er.async_get(self.hass)
 
-        # Map device types to their prefix options
-        prefix_map = {
-            "inverter": new_options.get(CONF_PREFIX_INVERTER, ""),
-            "datalogger": new_options.get(CONF_PREFIX_DATALOGGER, ""),
-            "meter": new_options.get(CONF_PREFIX_METER, ""),
-            "battery": new_options.get(CONF_PREFIX_BATTERY, ""),
-        }
+        # Build device_id_compact → custom_prefix mapping from discovered devices
+        # Group by type and sort for stable index assignment
+        devices_by_type: dict[str, list] = {}
+        for device in coordinator.discovered_devices:
+            dtype = _get_device_type_simple(device)
+            devices_by_type.setdefault(dtype, []).append(device)
+        for device_list in devices_by_type.values():
+            device_list.sort(key=lambda d: d.device_id)
+
+        # Map device_id_compact → custom prefix
+        prefix_by_device: dict[str, str] = {}
+        for dtype, devices in devices_by_type.items():
+            base_key = TYPE_TO_CONF_PREFIX.get(dtype, "")
+            if not base_key:
+                continue
+            if len(devices) == 1:
+                prefix = new_options.get(base_key, "").strip()
+                if prefix:
+                    prefix_by_device[compact_serial_number(devices[0].device_id)] = prefix
+            else:
+                for i, device in enumerate(devices, start=1):
+                    prefix = new_options.get(f"{base_key}_{i}", "").strip()
+                    if prefix:
+                        prefix_by_device[compact_serial_number(device.device_id)] = prefix
 
         # Get all entities for this config entry
         entities = er.async_entries_for_config_entry(registry, self.config_entry.entry_id)
@@ -556,8 +546,9 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
         regenerated_count = 0
         names_cleared = 0
         for entity_entry in entities:
-            # Extract device type from unique_id
-            # Format: abb_fimer_pvi_vsn_rest_{device_type}_{serial}_{point_name}
+            # Extract device_id_compact and point_name from unique_id
+            # Format: abb_fimer_pvi_vsn_rest_{device_type}_{serial_compact}_{point_name}
+            # Indices: 0   1     2   3    4    5             6                7+
             unique_id_parts = entity_entry.unique_id.split("_")
             if len(unique_id_parts) < 8:
                 continue
@@ -579,7 +570,7 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
                 continue
 
             # Compute device name (custom prefix or default friendly name)
-            custom_prefix = prefix_map.get(device_type, "").strip() or None
+            custom_prefix = prefix_by_device.get(device_sn_compact, "").strip() or None
             device_name = format_device_name(
                 manufacturer=discovered.manufacturer or "ABB/FIMER",
                 device_type_simple=device_type,

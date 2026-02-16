@@ -14,15 +14,7 @@ from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import (
-    AURORA_EPOCH_OFFSET,
-    CONF_PREFIX_BATTERY,
-    CONF_PREFIX_DATALOGGER,
-    CONF_PREFIX_INVERTER,
-    CONF_PREFIX_METER,
-    DOMAIN,
-    STATE_ENTITY_MAPPINGS,
-)
+from .const import AURORA_EPOCH_OFFSET, DOMAIN, STATE_ENTITY_MAPPINGS, TYPE_TO_CONF_PREFIX
 from .coordinator import ABBFimerPVIVSNRestCoordinator
 from .helpers import compact_serial_number, format_device_name
 
@@ -115,6 +107,63 @@ def _simplify_device_type(device_type: str) -> str:
         return "battery"
     # Datalogger types vary, but we'll handle this specially
     return device_type.lower()
+
+
+def _get_device_type_simple(device: object) -> str:
+    """Get simplified device type from a DiscoveredDevice.
+
+    Args:
+        device: DiscoveredDevice with is_datalogger and device_type attributes
+
+    Returns:
+        Simplified type (e.g., "inverter", "meter", "battery", "datalogger")
+
+    """
+    if device.is_datalogger:  # type: ignore[attr-defined]
+        return "datalogger"
+    return _simplify_device_type(device.device_type)  # type: ignore[attr-defined]
+
+
+def _get_prefix_key_for_device(
+    device_id: str,
+    device_type_simple: str,
+    discovered_devices: list,
+) -> str:
+    """Get the correct prefix options key for a device.
+
+    For single devices of a type, returns the base key (e.g., "prefix_battery").
+    For multiple devices of the same type, returns an indexed key (e.g., "prefix_battery_1").
+
+    Args:
+        device_id: The device's serial number / ID
+        device_type_simple: Simplified device type (e.g., "battery")
+        discovered_devices: All discovered devices from coordinator
+
+    Returns:
+        The config options key to look up the custom prefix
+
+    """
+    base_key = TYPE_TO_CONF_PREFIX.get(device_type_simple, "")
+    if not base_key:
+        return ""
+
+    # Find all devices of the same simplified type, sorted for stable ordering
+    same_type = sorted(
+        [d for d in discovered_devices if _get_device_type_simple(d) == device_type_simple],
+        key=lambda d: d.device_id,
+    )
+
+    if len(same_type) <= 1:
+        # Single device of this type: use base key (backward compatible)
+        return base_key
+
+    # Multiple devices: find this device's 1-based index
+    for i, d in enumerate(same_type, start=1):
+        if d.device_id == device_id:
+            return f"{base_key}_{i}"
+
+    # Fallback (shouldn't happen)
+    return base_key
 
 
 def _get_precision_from_units(units: str | None) -> int | None:
@@ -294,14 +343,14 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         else:
             device_type_simple = _simplify_device_type(device_type)
 
-        # Get custom prefix for this device type from options
-        prefix_map = {
-            "inverter": config_entry.options.get(CONF_PREFIX_INVERTER, ""),
-            "datalogger": config_entry.options.get(CONF_PREFIX_DATALOGGER, ""),
-            "meter": config_entry.options.get(CONF_PREFIX_METER, ""),
-            "battery": config_entry.options.get(CONF_PREFIX_BATTERY, ""),
-        }
-        self._custom_prefix = prefix_map.get(device_type_simple, "").strip() or None
+        # Get custom prefix for this specific device from options
+        # Supports indexed keys for multi-device setups (e.g., prefix_battery_1, prefix_battery_2)
+        prefix_key = _get_prefix_key_for_device(
+            device_id, device_type_simple, coordinator.discovered_devices
+        )
+        self._custom_prefix = (
+            config_entry.options.get(prefix_key, "").strip() or None if prefix_key else None
+        )
 
         # Compact device serial number (remove dashes/colons/underscores, lowercase)
         device_sn_compact = _compact_serial_number(device_id)

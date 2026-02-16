@@ -22,10 +22,20 @@ CONF_VSN_MODEL = "vsn_model"  # Cached detection result
 CONF_REQUIRES_AUTH = "requires_auth"  # Whether device requires authentication
 
 # Device name prefix options (empty = use default naming)
+# When a single device of a type exists, use the base key (e.g., "prefix_battery").
+# When multiple devices of the same type exist, use indexed keys (e.g., "prefix_battery_1").
 CONF_PREFIX_INVERTER = "prefix_inverter"
 CONF_PREFIX_DATALOGGER = "prefix_datalogger"
 CONF_PREFIX_METER = "prefix_meter"
 CONF_PREFIX_BATTERY = "prefix_battery"
+
+# Mapping from simplified device type to its config prefix key base
+TYPE_TO_CONF_PREFIX: dict[str, str] = {
+    "inverter": CONF_PREFIX_INVERTER,
+    "datalogger": CONF_PREFIX_DATALOGGER,
+    "meter": CONF_PREFIX_METER,
+    "battery": CONF_PREFIX_BATTERY,
+}
 
 # Entity ID regeneration option (one-time action, not persisted)
 CONF_REGENERATE_ENTITY_IDS = "regenerate_entity_ids"
