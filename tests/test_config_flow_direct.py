@@ -986,54 +986,60 @@ class TestOptionsFlow:
 class TestOptionsFlowRegenerateEntityIds:
     """Tests for _regenerate_entity_ids in options flow."""
 
-    @pytest.mark.asyncio
-    async def test_regenerate_entity_ids_no_prefix(self) -> None:
-        """Test regenerate entity IDs with no custom prefix does nothing."""
+    def _create_mock_device(
+        self,
+        device_id: str = "077909-3G82-3112",
+        device_type: str = "inverter_3phases",
+        manufacturer: str = "Power-One",
+        device_model: str = "PVI-10.0-OUTD",
+    ) -> MockDiscoveredDevice:
+        """Create a mock discovered device."""
+        return MockDiscoveredDevice(
+            device_id=device_id,
+            raw_device_id=device_id,
+            device_type=device_type,
+            device_model=device_model,
+            manufacturer=manufacturer,
+            firmware_version="C008",
+            hardware_version=None,
+            is_datalogger=False,
+        )
 
+    def _setup_flow_with_runtime_data(
+        self,
+        discovered_devices: list | None = None,
+    ) -> tuple:
+        """Set up flow with runtime_data and coordinator mock."""
         mock_entry = MagicMock()
         mock_entry.entry_id = "test_entry"
+
+        # Set up coordinator with discovered devices
+        mock_coordinator = MagicMock()
+        if discovered_devices is None:
+            discovered_devices = [self._create_mock_device()]
+        mock_coordinator.discovered_devices = discovered_devices
+
+        # Set up runtime_data
+        mock_runtime_data = MagicMock()
+        mock_runtime_data.coordinator = mock_coordinator
+        mock_entry.runtime_data = mock_runtime_data
 
         flow = ABBFimerPVIVSNRestOptionsFlow()
         flow.hass = MagicMock()
 
-        mock_registry = MagicMock()
-        mock_registry.async_get = MagicMock(return_value=None)
-
-        with (
-            patch.object(
-                ABBFimerPVIVSNRestOptionsFlow,
-                "config_entry",
-                new_callable=lambda: property(lambda self: mock_entry),
-            ),
-            patch(
-                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.er.async_get",
-                return_value=mock_registry,
-            ),
-            patch(
-                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.er.async_entries_for_config_entry",
-                return_value=[],
-            ),
-        ):
-            await flow._regenerate_entity_ids({})
-
-        # Should not fail even with no entities
+        return flow, mock_entry
 
     @pytest.mark.asyncio
-    async def test_regenerate_entity_ids_with_prefix(self) -> None:
-        """Test regenerate entity IDs with custom prefix."""
-
-        mock_entry = MagicMock()
-        mock_entry.entry_id = "test_entry"
-
-        flow = ABBFimerPVIVSNRestOptionsFlow()
-        flow.hass = MagicMock()
+    async def test_regenerate_entity_ids_no_prefix_uses_default_name(self) -> None:
+        """Test regenerate entity IDs with no prefix uses default device name."""
+        flow, mock_entry = self._setup_flow_with_runtime_data()
 
         mock_entity = MagicMock()
         mock_entity.unique_id = "abb_fimer_pvi_vsn_rest_inverter_0779093g823112_watts"
-        mock_entity.entity_id = "sensor.abb_fimer_pvi_vsn_rest_inverter_0779093g823112_watts"
+        mock_entity.entity_id = "sensor.old_prefix_watts"
 
         mock_registry = MagicMock()
-        mock_registry.async_get = MagicMock(return_value=None)  # Target doesn't exist
+        mock_registry.async_get = MagicMock(return_value=None)
         mock_registry.async_update_entity = MagicMock()
 
         with (
@@ -1050,20 +1056,110 @@ class TestOptionsFlowRegenerateEntityIds:
                 "custom_components.abb_fimer_pvi_vsn_rest.config_flow.er.async_entries_for_config_entry",
                 return_value=[mock_entity],
             ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.Path.read_text",
+                return_value='{"entity":{"sensor":{"watts":{"name":"Power AC"}}}}',
+            ),
         ):
-            await flow._regenerate_entity_ids({"prefix_inverter": "My Solar"})
+            # No prefix → should use default name: "Power-One Inverter PVI-10.0-OUTD (077909-3G82-3112)"
+            await flow._regenerate_entity_ids({})
 
         mock_registry.async_update_entity.assert_called_once()
+        call_args = mock_registry.async_update_entity.call_args
+        new_id = (
+            call_args[1]["new_entity_id"]
+            if "new_entity_id" in call_args[1]
+            else call_args[0][1]
+            if len(call_args[0]) > 1
+            else call_args[1].get("new_entity_id")
+        )
+        # Default name: "Power-One Inverter PVI-10.0-OUTD (077909-3G82-3112)" → slugified
+        assert new_id == "sensor.power_one_inverter_pvi_10_0_outd_077909_3g82_3112_power_ac"
+
+    @pytest.mark.asyncio
+    async def test_regenerate_entity_ids_with_prefix(self) -> None:
+        """Test regenerate entity IDs uses translated name suffix with custom prefix."""
+        flow, mock_entry = self._setup_flow_with_runtime_data()
+
+        mock_entity = MagicMock()
+        mock_entity.unique_id = "abb_fimer_pvi_vsn_rest_inverter_0779093g823112_watts"
+        mock_entity.entity_id = "sensor.abb_fimer_pvi_vsn_rest_inverter_0779093g823112_watts"
+
+        mock_registry = MagicMock()
+        mock_registry.async_get = MagicMock(return_value=None)
+        mock_registry.async_update_entity = MagicMock()
+
+        with (
+            patch.object(
+                ABBFimerPVIVSNRestOptionsFlow,
+                "config_entry",
+                new_callable=lambda: property(lambda self: mock_entry),
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.er.async_get",
+                return_value=mock_registry,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.er.async_entries_for_config_entry",
+                return_value=[mock_entity],
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.Path.read_text",
+                return_value='{"entity":{"sensor":{"watts":{"name":"Power AC"}}}}',
+            ),
+        ):
+            await flow._regenerate_entity_ids({"prefix_inverter": "ABB FIMER Inverter"})
+
+        mock_registry.async_update_entity.assert_called_once()
+        call_args = mock_registry.async_update_entity.call_args
+        # First positional arg is old entity_id
+        assert call_args[0][0] == "sensor.abb_fimer_pvi_vsn_rest_inverter_0779093g823112_watts"
+        # new_entity_id uses custom prefix + translated name
+        assert call_args[1]["new_entity_id"] == "sensor.abb_fimer_inverter_power_ac"
+
+    @pytest.mark.asyncio
+    async def test_regenerate_entity_ids_preserves_domain(self) -> None:
+        """Test regenerate entity IDs preserves entity domain (not hardcoded sensor)."""
+        flow, mock_entry = self._setup_flow_with_runtime_data()
+
+        mock_entity = MagicMock()
+        mock_entity.unique_id = "abb_fimer_pvi_vsn_rest_inverter_0779093g823112_alarm_st"
+        mock_entity.entity_id = "binary_sensor.old_alarm_st"
+
+        mock_registry = MagicMock()
+        mock_registry.async_get = MagicMock(return_value=None)
+        mock_registry.async_update_entity = MagicMock()
+
+        with (
+            patch.object(
+                ABBFimerPVIVSNRestOptionsFlow,
+                "config_entry",
+                new_callable=lambda: property(lambda self: mock_entry),
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.er.async_get",
+                return_value=mock_registry,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.er.async_entries_for_config_entry",
+                return_value=[mock_entity],
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.Path.read_text",
+                return_value='{"entity":{"sensor":{"alarm_st":{"name":"Alarm Status"}}}}',
+            ),
+        ):
+            await flow._regenerate_entity_ids({"prefix_inverter": "My Inverter"})
+
+        mock_registry.async_update_entity.assert_called_once()
+        call_args = mock_registry.async_update_entity.call_args
+        # Domain should be binary_sensor, not hardcoded sensor
+        assert call_args[1]["new_entity_id"].startswith("binary_sensor.")
 
     @pytest.mark.asyncio
     async def test_regenerate_entity_ids_target_exists(self) -> None:
         """Test regenerate entity IDs when target already exists."""
-
-        mock_entry = MagicMock()
-        mock_entry.entry_id = "test_entry"
-
-        flow = ABBFimerPVIVSNRestOptionsFlow()
-        flow.hass = MagicMock()
+        flow, mock_entry = self._setup_flow_with_runtime_data()
 
         mock_entity = MagicMock()
         mock_entity.unique_id = "abb_fimer_pvi_vsn_rest_inverter_0779093g823112_watts"
@@ -1088,6 +1184,10 @@ class TestOptionsFlowRegenerateEntityIds:
                 "custom_components.abb_fimer_pvi_vsn_rest.config_flow.er.async_entries_for_config_entry",
                 return_value=[mock_entity],
             ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.Path.read_text",
+                return_value='{"entity":{"sensor":{"watts":{"name":"Power AC"}}}}',
+            ),
         ):
             await flow._regenerate_entity_ids({"prefix_inverter": "My Solar"})
 
@@ -1097,12 +1197,7 @@ class TestOptionsFlowRegenerateEntityIds:
     @pytest.mark.asyncio
     async def test_regenerate_entity_ids_short_unique_id(self) -> None:
         """Test regenerate entity IDs skips entities with short unique_id."""
-
-        mock_entry = MagicMock()
-        mock_entry.entry_id = "test_entry"
-
-        flow = ABBFimerPVIVSNRestOptionsFlow()
-        flow.hass = MagicMock()
+        flow, mock_entry = self._setup_flow_with_runtime_data()
 
         mock_entity = MagicMock()
         mock_entity.unique_id = "short_id"  # Too short, only 2 parts
@@ -1125,8 +1220,81 @@ class TestOptionsFlowRegenerateEntityIds:
                 "custom_components.abb_fimer_pvi_vsn_rest.config_flow.er.async_entries_for_config_entry",
                 return_value=[mock_entity],
             ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.Path.read_text",
+                return_value='{"entity":{"sensor":{}}}',
+            ),
         ):
             await flow._regenerate_entity_ids({"prefix_inverter": "My Solar"})
 
         # Should not update because unique_id doesn't have enough parts
         mock_registry.async_update_entity.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_regenerate_entity_ids_no_runtime_data(self) -> None:
+        """Test regenerate entity IDs returns early when runtime_data not available."""
+        mock_entry = MagicMock()
+        mock_entry.entry_id = "test_entry"
+        # Simulate no runtime_data
+        del mock_entry.runtime_data
+
+        flow = ABBFimerPVIVSNRestOptionsFlow()
+        flow.hass = MagicMock()
+
+        mock_registry = MagicMock()
+        mock_registry.async_update_entity = MagicMock()
+
+        with (
+            patch.object(
+                ABBFimerPVIVSNRestOptionsFlow,
+                "config_entry",
+                new_callable=lambda: property(lambda self: mock_entry),
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.er.async_get",
+                return_value=mock_registry,
+            ),
+        ):
+            await flow._regenerate_entity_ids({"prefix_inverter": "My Solar"})
+
+        # Should not update because runtime_data is not available
+        mock_registry.async_update_entity.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_regenerate_entity_ids_falls_back_to_point_name(self) -> None:
+        """Test regenerate uses point_name as suffix when no translation exists."""
+        flow, mock_entry = self._setup_flow_with_runtime_data()
+
+        mock_entity = MagicMock()
+        mock_entity.unique_id = "abb_fimer_pvi_vsn_rest_inverter_0779093g823112_unknown_point"
+        mock_entity.entity_id = "sensor.old_unknown_point"
+
+        mock_registry = MagicMock()
+        mock_registry.async_get = MagicMock(return_value=None)
+        mock_registry.async_update_entity = MagicMock()
+
+        with (
+            patch.object(
+                ABBFimerPVIVSNRestOptionsFlow,
+                "config_entry",
+                new_callable=lambda: property(lambda self: mock_entry),
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.er.async_get",
+                return_value=mock_registry,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.er.async_entries_for_config_entry",
+                return_value=[mock_entity],
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.Path.read_text",
+                return_value='{"entity":{"sensor":{}}}',
+            ),
+        ):
+            await flow._regenerate_entity_ids({"prefix_inverter": "My Inverter"})
+
+        mock_registry.async_update_entity.assert_called_once()
+        call_args = mock_registry.async_update_entity.call_args
+        # Falls back to point_name when no translation
+        assert call_args[1]["new_entity_id"] == "sensor.my_inverter_unknown_point"

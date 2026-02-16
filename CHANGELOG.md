@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - v1.3.5
 
+### Bug Fixes
+
+- **Entity ID Regeneration** - Fixed "Regenerate entity IDs" using raw point_names (`watts`) instead of translated names (`power_ac`) as suffixes
+- **No-Prefix Regeneration** - Fixed entity regeneration skipping entities when no custom prefix was set
+- **Domain Preservation** - Fixed entity regeneration hardcoding `sensor.` domain instead of preserving original domain
+
+### New Features
+
+- **Auto-Migration** - Automatic entity ID migration for users who previously used the buggy regeneration
+
+**See**: [v1.3.5 Release Notes](docs/releases/v1.3.5.md)
+
 ## [1.3.4] - 2026-02-16
 
 ### Bug Fixes

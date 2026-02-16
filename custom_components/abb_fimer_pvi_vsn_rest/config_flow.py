@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import json
 import logging
+from pathlib import Path
 from typing import Any
 
 import voluptuous as vol
@@ -62,6 +64,7 @@ from .const import (
     MIN_FAILURES_THRESHOLD,
     MIN_SCAN_INTERVAL,
 )
+from .helpers import compact_serial_number, format_device_name
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -516,9 +519,28 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
     async def _regenerate_entity_ids(self, new_options: dict[str, Any]) -> None:
         """Regenerate entity IDs based on new prefix settings.
 
-        This updates entity_id in the entity registry to match the new device names.
+        Uses translated entity names (from en.json) as suffixes to match HA's native
+        entity_id generation convention: {domain}.{slugify(device_name)}_{slugify(translated_name)}.
         Warning: This breaks existing automations and dashboards!
         """
+        # Need runtime_data with coordinator for device discovery info
+        if not hasattr(self.config_entry, "runtime_data") or not self.config_entry.runtime_data:
+            _LOGGER.warning("Cannot regenerate entity IDs: runtime_data not available")
+            return
+
+        coordinator = self.config_entry.runtime_data.coordinator
+
+        # Load English translations (HA always uses English for entity_ids)
+        translations_path = Path(__file__).parent / "translations" / "en.json"
+        translations_data = json.loads(translations_path.read_text(encoding="utf-8"))
+        sensor_translations = translations_data.get("entity", {}).get("sensor", {})
+
+        # Build device lookup by compact serial
+        device_lookup: dict[str, Any] = {}
+        for device in coordinator.discovered_devices:
+            key = compact_serial_number(device.device_id)
+            device_lookup[key] = device
+
         registry = er.async_get(self.hass)
 
         # Map device types to their prefix options
@@ -537,39 +559,61 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
             # Extract device type from unique_id
             # Format: abb_fimer_pvi_vsn_rest_{device_type}_{serial}_{point_name}
             unique_id_parts = entity_entry.unique_id.split("_")
-            if len(unique_id_parts) >= 8:
-                # Find device type (after domain prefix: abb_fimer_pvi_vsn_rest)
-                device_type = unique_id_parts[5]  # inverter, datalogger, meter, battery
-                # Point name is everything after the serial (index 6 is serial)
-                point_name = "_".join(unique_id_parts[7:])
+            if len(unique_id_parts) < 8:
+                continue
 
-                custom_prefix = prefix_map.get(device_type, "").strip()
+            # Find device type (after domain prefix: abb_fimer_pvi_vsn_rest)
+            device_type = unique_id_parts[5]  # inverter, datalogger, meter, battery
+            device_sn_compact = unique_id_parts[6]
+            # Point name is everything after the serial (index 6 is serial)
+            point_name = "_".join(unique_id_parts[7:])
 
-                if not custom_prefix:
-                    # Keep current entity_id if no prefix set
-                    continue
+            # Find matching discovered device for device name computation
+            discovered = device_lookup.get(device_sn_compact)
+            if not discovered:
+                _LOGGER.debug(
+                    "Skipping entity %s: no discovered device for serial %s",
+                    entity_entry.entity_id,
+                    device_sn_compact,
+                )
+                continue
 
-                # Generate new entity_id from custom prefix
-                new_entity_id = f"sensor.{slugify(custom_prefix)}_{point_name}"
+            # Compute device name (custom prefix or default friendly name)
+            custom_prefix = prefix_map.get(device_type, "").strip() or None
+            device_name = format_device_name(
+                manufacturer=discovered.manufacturer or "ABB/FIMER",
+                device_type_simple=device_type,
+                device_model=discovered.device_model,
+                device_sn_original=discovered.device_id,
+                custom_prefix=custom_prefix,
+            )
 
-                # Update if different and new ID doesn't exist
-                if entity_entry.entity_id != new_entity_id:
-                    if not registry.async_get(new_entity_id):
-                        registry.async_update_entity(
-                            entity_entry.entity_id, new_entity_id=new_entity_id
-                        )
-                        regenerated_count += 1
-                        _LOGGER.info(
-                            "Regenerated entity ID: %s → %s",
-                            entity_entry.entity_id,
-                            new_entity_id,
-                        )
-                    else:
-                        _LOGGER.warning(
-                            "Cannot regenerate %s → %s: target already exists",
-                            entity_entry.entity_id,
-                            new_entity_id,
-                        )
+            # Get translated entity name (matches HA's entity_id generation)
+            translation = sensor_translations.get(point_name, {})
+            entity_name = translation.get("name", point_name)
+
+            # Generate entity_id matching HA's convention
+            domain = entity_entry.entity_id.split(".")[0]  # sensor, binary_sensor, etc.
+            new_entity_id = f"{domain}.{slugify(device_name)}_{slugify(entity_name)}"
+
+            # Update if different and new ID doesn't exist
+            if entity_entry.entity_id != new_entity_id:
+                if not registry.async_get(new_entity_id):
+                    registry.async_update_entity(
+                        entity_entry.entity_id, new_entity_id=new_entity_id
+                    )
+                    regenerated_count += 1
+                    _LOGGER.info(
+                        "Regenerated entity ID: %s → %s",
+                        entity_entry.entity_id,
+                        new_entity_id,
+                    )
+                else:
+                    _LOGGER.warning(
+                        "Cannot regenerate %s → %s: target already exists",
+                        entity_entry.entity_id,
+                        new_entity_id,
+                    )
 
         if regenerated_count > 0:
             _LOGGER.info("Regenerated %d entity IDs", regenerated_count)

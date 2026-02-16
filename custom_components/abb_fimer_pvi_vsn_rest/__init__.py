@@ -7,14 +7,17 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import timedelta
+import json
 import logging
+from pathlib import Path
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME, Platform
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryNotReady
-from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.util import slugify
 
 from .abb_fimer_vsn_rest_client.client import ABBFimerVSNRestClient
 from .abb_fimer_vsn_rest_client.discovery import discover_vsn_device
@@ -22,7 +25,10 @@ from .const import (
     CONF_ENABLE_REPAIR_NOTIFICATION,
     CONF_ENABLE_STARTUP_NOTIFICATION,
     CONF_FAILURES_THRESHOLD,
+    CONF_PREFIX_BATTERY,
     CONF_PREFIX_DATALOGGER,
+    CONF_PREFIX_INVERTER,
+    CONF_PREFIX_METER,
     CONF_RECOVERY_SCRIPT,
     CONF_SCAN_INTERVAL,
     CONF_VSN_MODEL,
@@ -36,7 +42,7 @@ from .const import (
     STARTUP_MESSAGE,
 )
 from .coordinator import ABBFimerPVIVSNRestCoordinator
-from .helpers import format_device_name
+from .helpers import compact_serial_number, format_device_name
 from .repairs import create_connection_issue, delete_connection_issue
 
 _LOGGER = logging.getLogger(__name__)
@@ -175,6 +181,9 @@ async def async_setup_entry(
 
     # Store runtime data
     config_entry.runtime_data = RuntimeData(coordinator=coordinator)
+
+    # Auto-migrate entity IDs affected by buggy regeneration (v1.3.4)
+    _async_migrate_entity_ids(hass, config_entry)
 
     # Note: No manual update listener needed - OptionsFlowWithReload handles reload automatically
 
@@ -322,6 +331,92 @@ async def _async_migrate_options(
     if updated:
         hass.config_entries.async_update_entry(config_entry, options=options)
         _LOGGER.debug("Migrated options with new repair notification defaults")
+
+
+@callback
+def _async_migrate_entity_ids(
+    hass: HomeAssistant,
+    config_entry: ABBFimerPVIVSNRestConfigEntry,
+) -> None:
+    """Auto-migrate entity IDs from point_name suffixes to translated name suffixes.
+
+    Fixes entities affected by the buggy _regenerate_entity_ids() (pre-v1.3.5) that used
+    raw point_names (e.g., 'watts') instead of translated names ('power_ac').
+
+    This function is idempotent: after the first successful migration, no entities match
+    the buggy pattern criteria, so subsequent loads do a fast no-op loop.
+    """
+    coordinator = config_entry.runtime_data.coordinator
+    registry = er.async_get(hass)
+
+    # Load English translations (HA always uses English for entity_ids)
+    translations_path = Path(__file__).parent / "translations" / "en.json"
+    translations_data = json.loads(translations_path.read_text(encoding="utf-8"))
+    sensor_translations = translations_data.get("entity", {}).get("sensor", {})
+
+    # Build device lookup by compact serial
+    device_lookup: dict[str, object] = {}
+    for device in coordinator.discovered_devices:
+        device_lookup[compact_serial_number(device.device_id)] = device
+
+    # Prefix map from options
+    prefix_map = {
+        "inverter": config_entry.options.get(CONF_PREFIX_INVERTER, ""),
+        "datalogger": config_entry.options.get(CONF_PREFIX_DATALOGGER, ""),
+        "meter": config_entry.options.get(CONF_PREFIX_METER, ""),
+        "battery": config_entry.options.get(CONF_PREFIX_BATTERY, ""),
+    }
+
+    entities = er.async_entries_for_config_entry(registry, config_entry.entry_id)
+    migrated = 0
+
+    for entity_entry in entities:
+        unique_id_parts = entity_entry.unique_id.split("_")
+        if len(unique_id_parts) < 8:
+            continue
+
+        device_type = unique_id_parts[5]
+        device_sn_compact = unique_id_parts[6]
+        point_name = "_".join(unique_id_parts[7:])
+
+        # Get translated name
+        translation = sensor_translations.get(point_name, {})
+        translated_name = translation.get("name", "")
+        if not translated_name:
+            continue  # No translation → can't determine if migration needed
+
+        slugified_translation = slugify(translated_name)
+        if slugified_translation == point_name:
+            continue  # Translation matches point_name → no migration needed
+
+        # Check if entity_id uses point_name suffix (buggy pattern)
+        if not entity_entry.entity_id.endswith(f"_{point_name}"):
+            continue  # Already uses translated name or was manually customized
+
+        # Compute correct entity_id
+        discovered = device_lookup.get(device_sn_compact)
+        if not discovered:
+            continue
+
+        custom_prefix = prefix_map.get(device_type, "").strip() or None
+        device_name = format_device_name(
+            manufacturer=discovered.manufacturer or "ABB/FIMER",
+            device_type_simple=device_type,
+            device_model=discovered.device_model,
+            device_sn_original=discovered.device_id,
+            custom_prefix=custom_prefix,
+        )
+
+        domain = entity_entry.entity_id.split(".")[0]
+        new_entity_id = f"{domain}.{slugify(device_name)}_{slugified_translation}"
+
+        if entity_entry.entity_id != new_entity_id and not registry.async_get(new_entity_id):
+            registry.async_update_entity(entity_entry.entity_id, new_entity_id=new_entity_id)
+            migrated += 1
+            _LOGGER.info("Migrated entity ID: %s → %s", entity_entry.entity_id, new_entity_id)
+
+    if migrated > 0:
+        _LOGGER.info("Migrated %d entity IDs from point_name to translated name format", migrated)
 
 
 def _handle_startup_failure(
