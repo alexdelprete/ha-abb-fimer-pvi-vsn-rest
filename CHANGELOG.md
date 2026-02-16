@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.4] - 2026-02-16
+
+### Bug Fixes
+
+- **Datalogger Device Name** - Fixed datalogger device name not updating when custom name set via options flow
+- **Wrong Manufacturer** - Fixed Device Info showing "WIFI LOGGER CARD" as manufacturer instead of "ABB"/"FIMER"
+- **Default Device Name** - Fixed datalogger using ugly technical name instead of friendly format (e.g., "ABB Datalogger VSN300 (111033-3N16-1421)")
+
+### Refactoring
+
+- **Shared Helpers** - Moved `format_device_name` and `compact_serial_number` to `helpers.py` for reuse across modules
+
+**See**: [v1.3.4 Release Notes](docs/releases/v1.3.4.md)
+
 ## [1.3.3] - 2026-01-13
 
 ### Bug Fixes

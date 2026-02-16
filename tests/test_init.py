@@ -16,7 +16,11 @@ from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discover
     DiscoveredDevice,
     DiscoveryResult,
 )
-from custom_components.abb_fimer_pvi_vsn_rest.const import CONF_SCAN_INTERVAL, DOMAIN
+from custom_components.abb_fimer_pvi_vsn_rest.const import (
+    CONF_PREFIX_DATALOGGER,
+    CONF_SCAN_INTERVAL,
+    DOMAIN,
+)
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
@@ -330,6 +334,7 @@ class TestAsyncUpdateDeviceRegistry:
         entry = MagicMock(spec=ConfigEntry)
         entry.entry_id = "test_entry_id"
         entry.data = {"host": "192.168.1.100"}
+        entry.options = {}
 
         # Create mock discovery result
         mock_discovery = MagicMock()
@@ -337,11 +342,24 @@ class TestAsyncUpdateDeviceRegistry:
         mock_discovery.logger_model = "WIFI LOGGER CARD"
         mock_discovery.firmware_version = "1.9.2"
 
+        # Create mock datalogger DiscoveredDevice
+        datalogger_device = DiscoveredDevice(
+            device_id="111033-3N16-1421",
+            raw_device_id="111033-3N16-1421",
+            device_type="datalogger",
+            device_model="VSN300",
+            manufacturer="ABB",
+            firmware_version="1.9.2",
+            hardware_version=None,
+            is_datalogger=True,
+        )
+
         # Create mock coordinator
         mock_coordinator = MagicMock()
         mock_coordinator.discovery_result = mock_discovery
         mock_coordinator.vsn_model = "VSN300"
         mock_coordinator.device_id = None
+        mock_coordinator.discovered_devices = [datalogger_device]
 
         # Create runtime data
         runtime_data = MagicMock()
@@ -355,7 +373,7 @@ class TestAsyncUpdateDeviceRegistry:
         mock_hass: MagicMock,
         mock_config_entry: MagicMock,
     ) -> None:
-        """Test successful device registry update."""
+        """Test successful device registry update with correct metadata."""
         mock_device_registry = MagicMock()
         mock_device = MagicMock()
         mock_device.id = "device_123"
@@ -369,6 +387,35 @@ class TestAsyncUpdateDeviceRegistry:
 
         mock_device_registry.async_get_or_create.assert_called_once()
         assert mock_config_entry.runtime_data.coordinator.device_id == "device_123"
+
+        # Verify correct manufacturer and device name
+        call_kwargs = mock_device_registry.async_get_or_create.call_args
+        assert call_kwargs.kwargs["manufacturer"] == "ABB"
+        assert call_kwargs.kwargs["model"] == "VSN300"
+        assert call_kwargs.kwargs["name"] == "ABB Datalogger VSN300 (111033-3N16-1421)"
+
+    def test_update_device_registry_with_custom_prefix(
+        self,
+        mock_hass: MagicMock,
+        mock_config_entry: MagicMock,
+    ) -> None:
+        """Test device registry uses custom prefix when configured."""
+        mock_config_entry.options = {CONF_PREFIX_DATALOGGER: "ABB FIMER Datalogger"}
+
+        mock_device_registry = MagicMock()
+        mock_device = MagicMock()
+        mock_device.id = "device_456"
+        mock_device_registry.async_get_device.return_value = mock_device
+
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.dr.async_get",
+            return_value=mock_device_registry,
+        ):
+            async_update_device_registry(mock_hass, mock_config_entry)
+
+        call_kwargs = mock_device_registry.async_get_or_create.call_args
+        assert call_kwargs.kwargs["name"] == "ABB FIMER Datalogger"
+        assert call_kwargs.kwargs["manufacturer"] == "ABB"
 
     def test_update_device_registry_no_logger_sn(
         self,

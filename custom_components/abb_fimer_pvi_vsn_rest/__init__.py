@@ -22,6 +22,7 @@ from .const import (
     CONF_ENABLE_REPAIR_NOTIFICATION,
     CONF_ENABLE_STARTUP_NOTIFICATION,
     CONF_FAILURES_THRESHOLD,
+    CONF_PREFIX_DATALOGGER,
     CONF_RECOVERY_SCRIPT,
     CONF_SCAN_INTERVAL,
     CONF_VSN_MODEL,
@@ -35,6 +36,7 @@ from .const import (
     STARTUP_MESSAGE,
 )
 from .coordinator import ABBFimerPVIVSNRestCoordinator
+from .helpers import format_device_name
 from .repairs import create_connection_issue, delete_connection_issue
 
 _LOGGER = logging.getLogger(__name__)
@@ -206,13 +208,44 @@ def async_update_device_registry(
         _LOGGER.warning("No logger serial number found, skipping device registration")
         return
 
+    # Find the datalogger DiscoveredDevice for correct manufacturer and model
+    datalogger_device = None
+    for device in coordinator.discovered_devices:
+        if device.is_datalogger:
+            datalogger_device = device
+            break
+
+    # Extract metadata from discovered device (with fallbacks)
+    manufacturer = (
+        datalogger_device.manufacturer
+        if datalogger_device and datalogger_device.manufacturer
+        else "ABB/FIMER"
+    )
+    device_model = (
+        datalogger_device.device_model
+        if datalogger_device and datalogger_device.device_model
+        else coordinator.vsn_model or "VSN Datalogger"
+    )
+
+    # Get custom prefix from options (same logic as sensor.py)
+    custom_prefix = config_entry.options.get(CONF_PREFIX_DATALOGGER, "").strip() or None
+
+    # Build friendly device name using shared helper
+    device_name = format_device_name(
+        manufacturer=manufacturer,
+        device_type_simple="datalogger",
+        device_model=device_model,
+        device_sn_original=logger_sn,
+        custom_prefix=custom_prefix,
+    )
+
     # Register the main device (datalogger)
     device_registry.async_get_or_create(
         config_entry_id=config_entry.entry_id,
         identifiers={(DOMAIN, logger_sn)},
-        manufacturer=coordinator.discovery_result.logger_model or "ABB/FIMER",
-        model=coordinator.vsn_model or "VSN Datalogger",
-        name=f"{DOMAIN}_datalogger_{logger_sn.lower().replace('-', '').replace(':', '')}",
+        manufacturer=manufacturer,
+        model=device_model,
+        name=device_name,
         serial_number=logger_sn,
         sw_version=coordinator.discovery_result.firmware_version,
         configuration_url=f"http://{config_entry.data.get(CONF_HOST)}",
