@@ -519,6 +519,8 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
 
         Uses translated entity names (from en.json) as suffixes to match HA's native
         entity_id generation convention: {domain}.{slugify(device_name)}_{slugify(translated_name)}.
+        Also clears any user-set custom entity names so that HA uses the translation-based
+        names, ensuring consistency between entity_id and friendly_name.
         Warning: This breaks existing automations and dashboards!
         """
         # Need runtime_data with coordinator for device discovery info
@@ -552,6 +554,7 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
         entities = er.async_entries_for_config_entry(registry, self.config_entry.entry_id)
 
         regenerated_count = 0
+        names_cleared = 0
         for entity_entry in entities:
             # Extract device type from unique_id
             # Format: abb_fimer_pvi_vsn_rest_{device_type}_{serial}_{point_name}
@@ -592,24 +595,57 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
             domain = entity_entry.entity_id.split(".")[0]  # sensor, binary_sensor, etc.
             new_entity_id = f"{domain}.{slugify(device_name)}_{slugify(entity_name)}"
 
-            # Update if different and new ID doesn't exist
-            if entity_entry.entity_id != new_entity_id:
-                if not registry.async_get(new_entity_id):
-                    registry.async_update_entity(
-                        entity_entry.entity_id, new_entity_id=new_entity_id
-                    )
-                    regenerated_count += 1
-                    _LOGGER.info(
-                        "Regenerated entity ID: %s → %s",
-                        entity_entry.entity_id,
-                        new_entity_id,
-                    )
-                else:
+            # Determine what needs updating
+            needs_id_update = entity_entry.entity_id != new_entity_id
+            needs_name_clear = entity_entry.name is not None
+
+            if not needs_id_update and not needs_name_clear:
+                continue
+
+            # Build update kwargs for a single registry call
+            update_kwargs: dict[str, Any] = {}
+
+            if needs_id_update:
+                if registry.async_get(new_entity_id):
                     _LOGGER.warning(
                         "Cannot regenerate %s → %s: target already exists",
                         entity_entry.entity_id,
                         new_entity_id,
                     )
+                    # Still clear custom name even if ID can't be updated
+                    if needs_name_clear:
+                        registry.async_update_entity(entity_entry.entity_id, name=None)
+                        names_cleared += 1
+                        _LOGGER.info(
+                            "Cleared custom name '%s' for %s",
+                            entity_entry.name,
+                            entity_entry.entity_id,
+                        )
+                    continue
+                update_kwargs["new_entity_id"] = new_entity_id
+
+            if needs_name_clear:
+                update_kwargs["name"] = None
+
+            # Apply all updates in a single call
+            registry.async_update_entity(entity_entry.entity_id, **update_kwargs)
+
+            if needs_id_update:
+                regenerated_count += 1
+                _LOGGER.info(
+                    "Regenerated entity ID: %s → %s",
+                    entity_entry.entity_id,
+                    new_entity_id,
+                )
+            if needs_name_clear:
+                names_cleared += 1
+                _LOGGER.info(
+                    "Cleared custom name '%s' for %s",
+                    entity_entry.name,
+                    new_entity_id if needs_id_update else entity_entry.entity_id,
+                )
 
         if regenerated_count > 0:
             _LOGGER.info("Regenerated %d entity IDs", regenerated_count)
+        if names_cleared > 0:
+            _LOGGER.info("Cleared %d custom entity names", names_cleared)

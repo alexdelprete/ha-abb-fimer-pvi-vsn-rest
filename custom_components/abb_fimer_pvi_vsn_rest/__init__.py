@@ -413,6 +413,8 @@ async def _async_migrate_entity_ids(
 
     if migrated > 0:
         _LOGGER.info("Migrated %d entity IDs from point_name to translated name format", migrated)
+    else:
+        _LOGGER.info("Entity ID migration: all entity IDs are up to date, no migration needed")
 
 
 def _handle_startup_failure(

@@ -1037,6 +1037,7 @@ class TestOptionsFlowRegenerateEntityIds:
         mock_entity = MagicMock()
         mock_entity.unique_id = "abb_fimer_pvi_vsn_rest_inverter_0779093g823112_watts"
         mock_entity.entity_id = "sensor.old_prefix_watts"
+        mock_entity.name = None  # No custom name
 
         mock_registry = MagicMock()
         mock_registry.async_get = MagicMock(return_value=None)
@@ -1067,15 +1068,11 @@ class TestOptionsFlowRegenerateEntityIds:
 
         mock_registry.async_update_entity.assert_called_once()
         call_args = mock_registry.async_update_entity.call_args
-        new_id = (
-            call_args[1]["new_entity_id"]
-            if "new_entity_id" in call_args[1]
-            else call_args[0][1]
-            if len(call_args[0]) > 1
-            else call_args[1].get("new_entity_id")
-        )
+        new_id = call_args[1]["new_entity_id"]
         # Default name: "Power-One Inverter PVI-10.0-OUTD (077909-3G82-3112)" → slugified
         assert new_id == "sensor.power_one_inverter_pvi_10_0_outd_077909_3g82_3112_power_ac"
+        # No custom name → name kwarg should not be passed
+        assert "name" not in call_args[1]
 
     @pytest.mark.asyncio
     async def test_regenerate_entity_ids_with_prefix(self) -> None:
@@ -1085,6 +1082,7 @@ class TestOptionsFlowRegenerateEntityIds:
         mock_entity = MagicMock()
         mock_entity.unique_id = "abb_fimer_pvi_vsn_rest_inverter_0779093g823112_watts"
         mock_entity.entity_id = "sensor.abb_fimer_pvi_vsn_rest_inverter_0779093g823112_watts"
+        mock_entity.name = None  # No custom name
 
         mock_registry = MagicMock()
         mock_registry.async_get = MagicMock(return_value=None)
@@ -1127,6 +1125,7 @@ class TestOptionsFlowRegenerateEntityIds:
         mock_entity = MagicMock()
         mock_entity.unique_id = "abb_fimer_pvi_vsn_rest_inverter_0779093g823112_alarm_st"
         mock_entity.entity_id = "binary_sensor.old_alarm_st"
+        mock_entity.name = None  # No custom name
 
         mock_registry = MagicMock()
         mock_registry.async_get = MagicMock(return_value=None)
@@ -1160,13 +1159,14 @@ class TestOptionsFlowRegenerateEntityIds:
         assert call_args[1]["new_entity_id"].startswith("binary_sensor.")
 
     @pytest.mark.asyncio
-    async def test_regenerate_entity_ids_target_exists(self) -> None:
-        """Test regenerate entity IDs when target already exists."""
+    async def test_regenerate_entity_ids_target_exists_no_custom_name(self) -> None:
+        """Test regenerate entity IDs when target already exists and no custom name."""
         flow, mock_entry = self._setup_flow_with_runtime_data()
 
         mock_entity = MagicMock()
         mock_entity.unique_id = "abb_fimer_pvi_vsn_rest_inverter_0779093g823112_watts"
         mock_entity.entity_id = "sensor.abb_fimer_pvi_vsn_rest_inverter_0779093g823112_watts"
+        mock_entity.name = None  # No custom name
 
         mock_registry = MagicMock()
         # Target already exists
@@ -1195,8 +1195,51 @@ class TestOptionsFlowRegenerateEntityIds:
         ):
             await flow._regenerate_entity_ids({"prefix_inverter": "My Solar"})
 
-        # Should not update because target exists
+        # Should not update because target exists and no custom name to clear
         mock_registry.async_update_entity.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_regenerate_entity_ids_target_exists_clears_custom_name(self) -> None:
+        """Test regenerate clears custom name even when target entity_id already exists."""
+        flow, mock_entry = self._setup_flow_with_runtime_data()
+
+        mock_entity = MagicMock()
+        mock_entity.unique_id = "abb_fimer_pvi_vsn_rest_inverter_0779093g823112_watts"
+        mock_entity.entity_id = "sensor.abb_fimer_pvi_vsn_rest_inverter_0779093g823112_watts"
+        mock_entity.name = "Inverter Power AC"  # Custom name set
+
+        mock_registry = MagicMock()
+        # Target already exists
+        mock_registry.async_get = MagicMock(return_value=MagicMock())
+        mock_registry.async_update_entity = MagicMock()
+
+        with (
+            patch.object(
+                ABBFimerPVIVSNRestOptionsFlow,
+                "config_entry",
+                new_callable=lambda: property(lambda self: mock_entry),
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.er.async_get",
+                return_value=mock_registry,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.er.async_entries_for_config_entry",
+                return_value=[mock_entity],
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.async_get_entity_translations",
+                new_callable=AsyncMock,
+                return_value={"watts": "Power AC"},
+            ),
+        ):
+            await flow._regenerate_entity_ids({"prefix_inverter": "My Solar"})
+
+        # Should still clear custom name even though entity_id can't be updated
+        mock_registry.async_update_entity.assert_called_once()
+        call_args = mock_registry.async_update_entity.call_args
+        assert call_args[1]["name"] is None
+        assert "new_entity_id" not in call_args[1]
 
     @pytest.mark.asyncio
     async def test_regenerate_entity_ids_short_unique_id(self) -> None:
@@ -1273,6 +1316,7 @@ class TestOptionsFlowRegenerateEntityIds:
         mock_entity = MagicMock()
         mock_entity.unique_id = "abb_fimer_pvi_vsn_rest_inverter_0779093g823112_unknown_point"
         mock_entity.entity_id = "sensor.old_unknown_point"
+        mock_entity.name = None  # No custom name
 
         mock_registry = MagicMock()
         mock_registry.async_get = MagicMock(return_value=None)
@@ -1304,3 +1348,128 @@ class TestOptionsFlowRegenerateEntityIds:
         call_args = mock_registry.async_update_entity.call_args
         # Falls back to point_name when no translation
         assert call_args[1]["new_entity_id"] == "sensor.my_inverter_unknown_point"
+
+    @pytest.mark.asyncio
+    async def test_regenerate_clears_custom_name(self) -> None:
+        """Test regenerate clears user-set custom entity name."""
+        flow, mock_entry = self._setup_flow_with_runtime_data()
+
+        mock_entity = MagicMock()
+        mock_entity.unique_id = "abb_fimer_pvi_vsn_rest_inverter_0779093g823112_watts"
+        mock_entity.entity_id = "sensor.abb_fimer_inverter_power_ac"
+        mock_entity.name = "Inverter Power AC"  # Custom name set by user
+
+        mock_registry = MagicMock()
+        mock_registry.async_get = MagicMock(return_value=None)
+        mock_registry.async_update_entity = MagicMock()
+
+        with (
+            patch.object(
+                ABBFimerPVIVSNRestOptionsFlow,
+                "config_entry",
+                new_callable=lambda: property(lambda self: mock_entry),
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.er.async_get",
+                return_value=mock_registry,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.er.async_entries_for_config_entry",
+                return_value=[mock_entity],
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.async_get_entity_translations",
+                new_callable=AsyncMock,
+                return_value={"watts": "Power AC"},
+            ),
+        ):
+            # entity_id already matches, only custom name needs clearing
+            await flow._regenerate_entity_ids({"prefix_inverter": "ABB FIMER Inverter"})
+
+        mock_registry.async_update_entity.assert_called_once()
+        call_args = mock_registry.async_update_entity.call_args
+        # entity_id matches → no new_entity_id kwarg
+        assert "new_entity_id" not in call_args[1]
+        # Custom name cleared
+        assert call_args[1]["name"] is None
+
+    @pytest.mark.asyncio
+    async def test_regenerate_clears_custom_name_and_updates_id(self) -> None:
+        """Test regenerate updates entity_id AND clears custom name in one call."""
+        flow, mock_entry = self._setup_flow_with_runtime_data()
+
+        mock_entity = MagicMock()
+        mock_entity.unique_id = "abb_fimer_pvi_vsn_rest_inverter_0779093g823112_watts"
+        mock_entity.entity_id = "sensor.old_prefix_watts"
+        mock_entity.name = "Inverter Power AC"  # Custom name set by user
+
+        mock_registry = MagicMock()
+        mock_registry.async_get = MagicMock(return_value=None)
+        mock_registry.async_update_entity = MagicMock()
+
+        with (
+            patch.object(
+                ABBFimerPVIVSNRestOptionsFlow,
+                "config_entry",
+                new_callable=lambda: property(lambda self: mock_entry),
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.er.async_get",
+                return_value=mock_registry,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.er.async_entries_for_config_entry",
+                return_value=[mock_entity],
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.async_get_entity_translations",
+                new_callable=AsyncMock,
+                return_value={"watts": "Power AC"},
+            ),
+        ):
+            await flow._regenerate_entity_ids({"prefix_inverter": "ABB FIMER Inverter"})
+
+        # Single call updates both entity_id and name
+        mock_registry.async_update_entity.assert_called_once()
+        call_args = mock_registry.async_update_entity.call_args
+        assert call_args[1]["new_entity_id"] == "sensor.abb_fimer_inverter_power_ac"
+        assert call_args[1]["name"] is None
+
+    @pytest.mark.asyncio
+    async def test_regenerate_skips_entity_with_no_changes(self) -> None:
+        """Test regenerate skips entity when entity_id matches and no custom name."""
+        flow, mock_entry = self._setup_flow_with_runtime_data()
+
+        mock_entity = MagicMock()
+        mock_entity.unique_id = "abb_fimer_pvi_vsn_rest_inverter_0779093g823112_watts"
+        mock_entity.entity_id = "sensor.abb_fimer_inverter_power_ac"  # Already correct
+        mock_entity.name = None  # No custom name
+
+        mock_registry = MagicMock()
+        mock_registry.async_get = MagicMock(return_value=None)
+        mock_registry.async_update_entity = MagicMock()
+
+        with (
+            patch.object(
+                ABBFimerPVIVSNRestOptionsFlow,
+                "config_entry",
+                new_callable=lambda: property(lambda self: mock_entry),
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.er.async_get",
+                return_value=mock_registry,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.er.async_entries_for_config_entry",
+                return_value=[mock_entity],
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.async_get_entity_translations",
+                new_callable=AsyncMock,
+                return_value={"watts": "Power AC"},
+            ),
+        ):
+            await flow._regenerate_entity_ids({"prefix_inverter": "ABB FIMER Inverter"})
+
+        # Nothing to update
+        mock_registry.async_update_entity.assert_not_called()
