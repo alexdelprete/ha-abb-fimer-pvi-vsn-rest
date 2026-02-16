@@ -1026,8 +1026,6 @@ class TestOptionsFlowRegenerateEntityIds:
 
         flow = ABBFimerPVIVSNRestOptionsFlow()
         flow.hass = MagicMock()
-        # async_add_executor_job delegates to the callable (which will be mocked)
-        flow.hass.async_add_executor_job = AsyncMock(side_effect=lambda fn, *args: fn(*args))
 
         return flow, mock_entry
 
@@ -1059,8 +1057,9 @@ class TestOptionsFlowRegenerateEntityIds:
                 return_value=[mock_entity],
             ),
             patch(
-                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.Path.read_text",
-                return_value='{"entity":{"sensor":{"watts":{"name":"Power AC"}}}}',
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.async_get_entity_translations",
+                new_callable=AsyncMock,
+                return_value={"watts": "Power AC"},
             ),
         ):
             # No prefix → should use default name: "Power-One Inverter PVI-10.0-OUTD (077909-3G82-3112)"
@@ -1106,8 +1105,9 @@ class TestOptionsFlowRegenerateEntityIds:
                 return_value=[mock_entity],
             ),
             patch(
-                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.Path.read_text",
-                return_value='{"entity":{"sensor":{"watts":{"name":"Power AC"}}}}',
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.async_get_entity_translations",
+                new_callable=AsyncMock,
+                return_value={"watts": "Power AC"},
             ),
         ):
             await flow._regenerate_entity_ids({"prefix_inverter": "ABB FIMER Inverter"})
@@ -1147,8 +1147,9 @@ class TestOptionsFlowRegenerateEntityIds:
                 return_value=[mock_entity],
             ),
             patch(
-                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.Path.read_text",
-                return_value='{"entity":{"sensor":{"alarm_st":{"name":"Alarm Status"}}}}',
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.async_get_entity_translations",
+                new_callable=AsyncMock,
+                return_value={"alarm_st": "Alarm Status"},
             ),
         ):
             await flow._regenerate_entity_ids({"prefix_inverter": "My Inverter"})
@@ -1187,8 +1188,9 @@ class TestOptionsFlowRegenerateEntityIds:
                 return_value=[mock_entity],
             ),
             patch(
-                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.Path.read_text",
-                return_value='{"entity":{"sensor":{"watts":{"name":"Power AC"}}}}',
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.async_get_entity_translations",
+                new_callable=AsyncMock,
+                return_value={"watts": "Power AC"},
             ),
         ):
             await flow._regenerate_entity_ids({"prefix_inverter": "My Solar"})
@@ -1223,8 +1225,9 @@ class TestOptionsFlowRegenerateEntityIds:
                 return_value=[mock_entity],
             ),
             patch(
-                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.Path.read_text",
-                return_value='{"entity":{"sensor":{}}}',
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.async_get_entity_translations",
+                new_callable=AsyncMock,
+                return_value={},
             ),
         ):
             await flow._regenerate_entity_ids({"prefix_inverter": "My Solar"})
@@ -1290,8 +1293,9 @@ class TestOptionsFlowRegenerateEntityIds:
                 return_value=[mock_entity],
             ),
             patch(
-                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.Path.read_text",
-                return_value='{"entity":{"sensor":{}}}',
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.async_get_entity_translations",
+                new_callable=AsyncMock,
+                return_value={},
             ),
         ):
             await flow._regenerate_entity_ids({"prefix_inverter": "My Inverter"})

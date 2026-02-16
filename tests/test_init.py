@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from typing import ClassVar
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -520,21 +521,16 @@ class TestAsyncRemoveConfigEntryDevice:
 class TestAsyncMigrateEntityIds:
     """Tests for _async_migrate_entity_ids function."""
 
-    MOCK_TRANSLATIONS_JSON = (
-        '{"entity":{"sensor":{'
-        '"watts":{"name":"Power AC"},'
-        '"alarm_st":{"name":"Alarm Status"},'
-        '"serial_number":{"name":"Serial number"}'
-        "}}}"
-    )
+    MOCK_TRANSLATIONS: ClassVar[dict[str, str]] = {
+        "watts": "Power AC",
+        "alarm_st": "Alarm Status",
+        "serial_number": "Serial number",
+    }
 
     @pytest.fixture
     def mock_hass(self) -> MagicMock:
         """Create mock Home Assistant instance."""
-        hass = MagicMock(spec=HomeAssistant)
-        # async_add_executor_job delegates to the callable (which will be mocked)
-        hass.async_add_executor_job = AsyncMock(side_effect=lambda fn, *args: fn(*args))
-        return hass
+        return MagicMock(spec=HomeAssistant)
 
     @pytest.fixture
     def mock_config_entry(self) -> MagicMock:
@@ -590,8 +586,9 @@ class TestAsyncMigrateEntityIds:
                 return_value=[mock_entity],
             ),
             patch(
-                "custom_components.abb_fimer_pvi_vsn_rest.Path.read_text",
-                return_value=self.MOCK_TRANSLATIONS_JSON,
+                "custom_components.abb_fimer_pvi_vsn_rest.async_get_entity_translations",
+                new_callable=AsyncMock,
+                return_value=self.MOCK_TRANSLATIONS,
             ),
         ):
             await _async_migrate_entity_ids(mock_hass, mock_config_entry)
@@ -625,8 +622,9 @@ class TestAsyncMigrateEntityIds:
                 return_value=[mock_entity],
             ),
             patch(
-                "custom_components.abb_fimer_pvi_vsn_rest.Path.read_text",
-                return_value=self.MOCK_TRANSLATIONS_JSON,
+                "custom_components.abb_fimer_pvi_vsn_rest.async_get_entity_translations",
+                new_callable=AsyncMock,
+                return_value=self.MOCK_TRANSLATIONS,
             ),
         ):
             await _async_migrate_entity_ids(mock_hass, mock_config_entry)
@@ -658,8 +656,9 @@ class TestAsyncMigrateEntityIds:
                 return_value=[mock_entity],
             ),
             patch(
-                "custom_components.abb_fimer_pvi_vsn_rest.Path.read_text",
-                return_value=self.MOCK_TRANSLATIONS_JSON,
+                "custom_components.abb_fimer_pvi_vsn_rest.async_get_entity_translations",
+                new_callable=AsyncMock,
+                return_value=self.MOCK_TRANSLATIONS,
             ),
         ):
             await _async_migrate_entity_ids(mock_hass, mock_config_entry)
@@ -692,8 +691,9 @@ class TestAsyncMigrateEntityIds:
                 return_value=[mock_entity],
             ),
             patch(
-                "custom_components.abb_fimer_pvi_vsn_rest.Path.read_text",
-                return_value=self.MOCK_TRANSLATIONS_JSON,
+                "custom_components.abb_fimer_pvi_vsn_rest.async_get_entity_translations",
+                new_callable=AsyncMock,
+                return_value=self.MOCK_TRANSLATIONS,
             ),
         ):
             await _async_migrate_entity_ids(mock_hass, mock_config_entry)

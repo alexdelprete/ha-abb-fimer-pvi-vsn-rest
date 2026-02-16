@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-import json
 import logging
-from pathlib import Path
 from typing import Any
 
 import voluptuous as vol
@@ -64,7 +62,7 @@ from .const import (
     MIN_FAILURES_THRESHOLD,
     MIN_SCAN_INTERVAL,
 )
-from .helpers import compact_serial_number, format_device_name
+from .helpers import async_get_entity_translations, compact_serial_number, format_device_name
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -530,14 +528,9 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
 
         coordinator = self.config_entry.runtime_data.coordinator
 
-        # Load English translations (HA always uses English for entity_ids)
-        # Use executor to avoid blocking I/O in the event loop
-        translations_path = Path(__file__).parent / "translations" / "en.json"
-        translations_text = await self.hass.async_add_executor_job(
-            translations_path.read_text, "utf-8"
-        )
-        translations_data = json.loads(translations_text)
-        sensor_translations = translations_data.get("entity", {}).get("sensor", {})
+        # Load English entity translations via HA's built-in translation API
+        # Returns {point_name: translated_name}, e.g. {"watts": "Power AC"}
+        sensor_translations = await async_get_entity_translations(self.hass, DOMAIN)
 
         # Build device lookup by compact serial
         device_lookup: dict[str, Any] = {}
@@ -593,8 +586,7 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
             )
 
             # Get translated entity name (matches HA's entity_id generation)
-            translation = sensor_translations.get(point_name, {})
-            entity_name = translation.get("name", point_name)
+            entity_name = sensor_translations.get(point_name, point_name)
 
             # Generate entity_id matching HA's convention
             domain = entity_entry.entity_id.split(".")[0]  # sensor, binary_sensor, etc.

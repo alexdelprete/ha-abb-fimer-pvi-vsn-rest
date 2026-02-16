@@ -7,9 +7,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import timedelta
-import json
 import logging
-from pathlib import Path
 from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
@@ -43,7 +41,7 @@ from .const import (
     STARTUP_MESSAGE,
 )
 from .coordinator import ABBFimerPVIVSNRestCoordinator
-from .helpers import compact_serial_number, format_device_name
+from .helpers import async_get_entity_translations, compact_serial_number, format_device_name
 from .repairs import create_connection_issue, delete_connection_issue
 
 _LOGGER = logging.getLogger(__name__)
@@ -349,12 +347,9 @@ async def _async_migrate_entity_ids(
     coordinator = config_entry.runtime_data.coordinator
     registry = er.async_get(hass)
 
-    # Load English translations (HA always uses English for entity_ids)
-    # Use executor to avoid blocking I/O in the event loop
-    translations_path = Path(__file__).parent / "translations" / "en.json"
-    translations_text = await hass.async_add_executor_job(translations_path.read_text, "utf-8")
-    translations_data = json.loads(translations_text)
-    sensor_translations = translations_data.get("entity", {}).get("sensor", {})
+    # Load English entity translations via HA's built-in translation API
+    # Returns {point_name: translated_name}, e.g. {"watts": "Power AC"}
+    sensor_translations = await async_get_entity_translations(hass, DOMAIN)
 
     # Build device lookup by compact serial
     device_lookup: dict[str, Any] = {}
@@ -382,8 +377,7 @@ async def _async_migrate_entity_ids(
         point_name = "_".join(unique_id_parts[7:])
 
         # Get translated name
-        translation = sensor_translations.get(point_name, {})
-        translated_name = translation.get("name", "")
+        translated_name = sensor_translations.get(point_name, "")
         if not translated_name:
             continue  # No translation → can't determine if migration needed
 

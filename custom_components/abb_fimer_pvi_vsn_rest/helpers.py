@@ -4,6 +4,9 @@ from __future__ import annotations
 
 import logging
 
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.translation import async_get_translations
+
 
 def compact_serial_number(serial: str) -> str:
     """Compact serial number by removing separators and converting to lowercase.
@@ -65,6 +68,36 @@ def format_device_name(
 
     # Fallback without model: "Manufacturer Type Serial"
     return f"{manufacturer} {device_type_display} {sn_display}"
+
+
+async def async_get_entity_translations(
+    hass: HomeAssistant,
+    domain: str,
+) -> dict[str, str]:
+    """Load entity name translations using HA's built-in translation API.
+
+    Returns a dict mapping translation_key → translated name.
+    Example: {"watts": "Power AC", "alarm_st": "Alarm Status"}
+
+    Args:
+        hass: Home Assistant instance
+        domain: Integration domain (e.g., "abb_fimer_pvi_vsn_rest")
+
+    """
+    translations = await async_get_translations(hass, "en", "entity", integrations=[domain])
+
+    # HA returns flat keys like:
+    # "component.abb_fimer_pvi_vsn_rest.entity.sensor.watts.name" → "Power AC"
+    # Extract into {point_name: translated_name} lookup
+    prefix = f"component.{domain}.entity.sensor."
+    suffix = ".name"
+    result: dict[str, str] = {}
+    for key, value in translations.items():
+        if key.startswith(prefix) and key.endswith(suffix):
+            translation_key = key[len(prefix) : -len(suffix)]
+            result[translation_key] = value
+
+    return result
 
 
 def log_debug(logger: logging.Logger, context: str, message: str, **kwargs):
