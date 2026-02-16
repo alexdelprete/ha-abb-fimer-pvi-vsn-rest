@@ -204,7 +204,7 @@ async def validate_connection(
         raise VSNClientError(f"Unexpected error: {err}") from err
 
 
-class ABBFimerPVIVSNRestConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg]
+class ABBFimerPVIVSNRestConfigFlow(ConfigFlow, domain=DOMAIN):
     """Handle a config flow for ABB FIMER PVI VSN REST."""
 
     VERSION = 1

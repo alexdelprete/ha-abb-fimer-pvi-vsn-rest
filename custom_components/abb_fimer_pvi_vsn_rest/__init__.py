@@ -247,7 +247,9 @@ def async_update_device_registry(
         model=device_model,
         name=device_name,
         serial_number=logger_sn,
-        sw_version=coordinator.discovery_result.firmware_version,
+        sw_version=coordinator.discovery_result.firmware_version
+        if coordinator.discovery_result
+        else None,
         configuration_url=f"http://{config_entry.data.get(CONF_HOST)}",
     )
 
