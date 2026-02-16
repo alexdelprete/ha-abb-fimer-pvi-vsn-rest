@@ -84,11 +84,6 @@ DEVICE_CLASS_EXCEPTIONS = {
 }
 
 
-# Backward-compatible aliases for functions moved to helpers.py
-_compact_serial_number = compact_serial_number
-_format_device_name = format_device_name
-
-
 def _simplify_device_type(device_type: str) -> str:
     """Simplify device type to basic category.
 
@@ -353,7 +348,7 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         )
 
         # Compact device serial number (remove dashes/colons/underscores, lowercase)
-        device_sn_compact = _compact_serial_number(device_id)
+        device_sn_compact = compact_serial_number(device_id)
 
         # Build device identifier using domain from manifest.json
         # This ensures namespace isolation and prevents conflicts with other integrations
@@ -791,7 +786,7 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         # Format: "Manufacturer Type Model (Serial)" OR custom prefix if configured
         # Example: "ABB Datalogger VSN300 (111033-3N16-1421)" or "My ABB Inverter"
         # With has_entity_name=True, this is slugified and becomes the entity_id prefix
-        device_name = _format_device_name(
+        device_name = format_device_name(
             manufacturer=manufacturer,
             device_type_simple=self._device_type_simple,
             device_model=device_model,
