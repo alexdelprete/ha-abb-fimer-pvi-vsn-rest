@@ -531,7 +531,10 @@ class TestAsyncMigrateEntityIds:
     @pytest.fixture
     def mock_hass(self) -> MagicMock:
         """Create mock Home Assistant instance."""
-        return MagicMock(spec=HomeAssistant)
+        hass = MagicMock(spec=HomeAssistant)
+        # async_add_executor_job delegates to the callable (which will be mocked)
+        hass.async_add_executor_job = AsyncMock(side_effect=lambda fn, *args: fn(*args))
+        return hass
 
     @pytest.fixture
     def mock_config_entry(self) -> MagicMock:
@@ -563,7 +566,7 @@ class TestAsyncMigrateEntityIds:
 
         return entry
 
-    def test_migrate_buggy_point_name_suffix(
+    async def test_migrate_buggy_point_name_suffix(
         self,
         mock_hass: MagicMock,
         mock_config_entry: MagicMock,
@@ -591,14 +594,14 @@ class TestAsyncMigrateEntityIds:
                 return_value=self.MOCK_TRANSLATIONS_JSON,
             ),
         ):
-            _async_migrate_entity_ids(mock_hass, mock_config_entry)
+            await _async_migrate_entity_ids(mock_hass, mock_config_entry)
 
         mock_registry.async_update_entity.assert_called_once()
         call_args = mock_registry.async_update_entity.call_args
         assert call_args[0][0] == "sensor.abb_fimer_inverter_watts"
         assert call_args[1]["new_entity_id"] == "sensor.abb_fimer_inverter_power_ac"
 
-    def test_migrate_skips_already_translated_suffix(
+    async def test_migrate_skips_already_translated_suffix(
         self,
         mock_hass: MagicMock,
         mock_config_entry: MagicMock,
@@ -626,12 +629,12 @@ class TestAsyncMigrateEntityIds:
                 return_value=self.MOCK_TRANSLATIONS_JSON,
             ),
         ):
-            _async_migrate_entity_ids(mock_hass, mock_config_entry)
+            await _async_migrate_entity_ids(mock_hass, mock_config_entry)
 
         # Should not update because entity_id doesn't end with _watts (point_name)
         mock_registry.async_update_entity.assert_not_called()
 
-    def test_migrate_skips_when_translation_matches_point_name(
+    async def test_migrate_skips_when_translation_matches_point_name(
         self,
         mock_hass: MagicMock,
         mock_config_entry: MagicMock,
@@ -659,12 +662,12 @@ class TestAsyncMigrateEntityIds:
                 return_value=self.MOCK_TRANSLATIONS_JSON,
             ),
         ):
-            _async_migrate_entity_ids(mock_hass, mock_config_entry)
+            await _async_migrate_entity_ids(mock_hass, mock_config_entry)
 
         # Translation "Serial number" → "serial_number" == point_name → no migration
         mock_registry.async_update_entity.assert_not_called()
 
-    def test_migrate_skips_when_target_exists(
+    async def test_migrate_skips_when_target_exists(
         self,
         mock_hass: MagicMock,
         mock_config_entry: MagicMock,
@@ -693,6 +696,6 @@ class TestAsyncMigrateEntityIds:
                 return_value=self.MOCK_TRANSLATIONS_JSON,
             ),
         ):
-            _async_migrate_entity_ids(mock_hass, mock_config_entry)
+            await _async_migrate_entity_ids(mock_hass, mock_config_entry)
 
         mock_registry.async_update_entity.assert_not_called()

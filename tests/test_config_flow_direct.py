@@ -1026,6 +1026,8 @@ class TestOptionsFlowRegenerateEntityIds:
 
         flow = ABBFimerPVIVSNRestOptionsFlow()
         flow.hass = MagicMock()
+        # async_add_executor_job delegates to the callable (which will be mocked)
+        flow.hass.async_add_executor_job = AsyncMock(side_effect=lambda fn, *args: fn(*args))
 
         return flow, mock_entry
 

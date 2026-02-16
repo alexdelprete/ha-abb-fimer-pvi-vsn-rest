@@ -531,8 +531,12 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
         coordinator = self.config_entry.runtime_data.coordinator
 
         # Load English translations (HA always uses English for entity_ids)
+        # Use executor to avoid blocking I/O in the event loop
         translations_path = Path(__file__).parent / "translations" / "en.json"
-        translations_data = json.loads(translations_path.read_text(encoding="utf-8"))
+        translations_text = await self.hass.async_add_executor_job(
+            translations_path.read_text, "utf-8"
+        )
+        translations_data = json.loads(translations_text)
         sensor_translations = translations_data.get("entity", {}).get("sensor", {})
 
         # Build device lookup by compact serial

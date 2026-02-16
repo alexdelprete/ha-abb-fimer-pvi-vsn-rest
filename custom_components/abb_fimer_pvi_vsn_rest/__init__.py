@@ -184,7 +184,7 @@ async def async_setup_entry(
     config_entry.runtime_data = RuntimeData(coordinator=coordinator)
 
     # Auto-migrate entity IDs affected by buggy regeneration (v1.3.4)
-    _async_migrate_entity_ids(hass, config_entry)
+    await _async_migrate_entity_ids(hass, config_entry)
 
     # Note: No manual update listener needed - OptionsFlowWithReload handles reload automatically
 
@@ -334,8 +334,7 @@ async def _async_migrate_options(
         _LOGGER.debug("Migrated options with new repair notification defaults")
 
 
-@callback
-def _async_migrate_entity_ids(
+async def _async_migrate_entity_ids(
     hass: HomeAssistant,
     config_entry: ABBFimerPVIVSNRestConfigEntry,
 ) -> None:
@@ -351,8 +350,10 @@ def _async_migrate_entity_ids(
     registry = er.async_get(hass)
 
     # Load English translations (HA always uses English for entity_ids)
+    # Use executor to avoid blocking I/O in the event loop
     translations_path = Path(__file__).parent / "translations" / "en.json"
-    translations_data = json.loads(translations_path.read_text(encoding="utf-8"))
+    translations_text = await hass.async_add_executor_job(translations_path.read_text, "utf-8")
+    translations_data = json.loads(translations_text)
     sensor_translations = translations_data.get("entity", {}).get("sensor", {})
 
     # Build device lookup by compact serial
