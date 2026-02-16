@@ -10,6 +10,7 @@ from datetime import timedelta
 import json
 import logging
 from pathlib import Path
+from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME, Platform
@@ -355,7 +356,7 @@ def _async_migrate_entity_ids(
     sensor_translations = translations_data.get("entity", {}).get("sensor", {})
 
     # Build device lookup by compact serial
-    device_lookup: dict[str, object] = {}
+    device_lookup: dict[str, Any] = {}
     for device in coordinator.discovered_devices:
         device_lookup[compact_serial_number(device.device_id)] = device
 
