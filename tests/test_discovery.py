@@ -282,7 +282,7 @@ class TestExtractDevices:
         assert inverter.manufacturer == "FIMER"
 
     def test_extract_datalogger_with_sn_point(self) -> None:
-        """Test extracting datalogger with S/N point in livedata."""
+        """Test that datalogger MAC in livedata is skipped (synthetic from status used)."""
         livedata: dict[str, Any] = {
             "a4:06:e9:7f:42:49": {
                 "device_type": "unknown",
@@ -295,15 +295,18 @@ class TestExtractDevices:
         status_data = {
             "keys": {
                 "logger.sn": {"value": "111033-3N16-1421"},
+                "fw.release_number": {"value": "1.9.2"},
             }
         }
         devices = _extract_devices(livedata, "VSN300", status_data)
 
-        # Find the device from livedata (not the synthetic one)
-        livedata_device = next(d for d in devices if d.raw_device_id == "a4:06:e9:7f:42:49")
-        assert livedata_device.device_id == "111033-3N16-1421"
-        assert livedata_device.firmware_version == "1.9.2"
-        assert livedata_device.is_datalogger is True
+        # Only the synthetic datalogger should exist (livedata MAC entry is skipped)
+        assert len(devices) == 1
+        datalogger = devices[0]
+        assert datalogger.device_id == "111033-3N16-1421"
+        assert datalogger.firmware_version == "1.9.2"
+        assert datalogger.is_datalogger is True
+        assert datalogger.device_model == "VSN300"
 
 
 class TestFetchStatus:

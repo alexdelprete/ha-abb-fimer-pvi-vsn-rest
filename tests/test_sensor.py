@@ -1277,10 +1277,7 @@ class TestVSNSensorCustomPrefix:
         mock_coordinator: MagicMock,
         mock_sensor_config_entry: MagicMock,
     ) -> None:
-        """Test sensor with custom prefix option."""
-        # Set custom prefix in options
-        mock_sensor_config_entry.options = {"prefix_inverter": "My Solar Inverter"}
-
+        """Test sensor with custom prefix passed explicitly."""
         point_data = {
             "value": 5000,
             "ha_display_name": "Power AC",
@@ -1296,6 +1293,7 @@ class TestVSNSensorCustomPrefix:
             device_type="inverter_3phases",
             point_name="watts",
             point_data=point_data,
+            custom_prefix="My Solar Inverter",
         )
 
         device_info = sensor.device_info
