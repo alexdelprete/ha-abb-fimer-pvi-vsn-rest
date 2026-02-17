@@ -1,0 +1,65 @@
+{
+  "vsn_model": "VSN700",
+  "requires_auth": true,
+  "logger_sn": "0c:1c:57:fd:c6:2c",
+  "logger_model": null,
+  "firmware_version": null,
+  "hostname": null,
+  "device_count": 6,
+  "devices": [
+    {
+      "device_id": "0c1c57fdc62c",
+      "raw_device_id": "0c:1c:57:fd:c6:2c",
+      "device_type": "datalogger",
+      "device_model": "VSN700",
+      "manufacturer": "FIMER",
+      "firmware_version": null,
+      "is_datalogger": true
+    },
+    {
+      "device_id": "113049-3P72-0221",
+      "raw_device_id": "113049-3P72-0221",
+      "device_type": "battery",
+      "device_model": null,
+      "manufacturer": null,
+      "firmware_version": null,
+      "is_datalogger": false
+    },
+    {
+      "device_id": "120730-3N52-3019",
+      "raw_device_id": "120730-3N52-3019",
+      "device_type": "meter",
+      "device_model": null,
+      "manufacturer": null,
+      "firmware_version": null,
+      "is_datalogger": false
+    },
+    {
+      "device_id": "140821-3P72-1319",
+      "raw_device_id": "140821-3P72-1319",
+      "device_type": "battery",
+      "device_model": null,
+      "manufacturer": null,
+      "firmware_version": null,
+      "is_datalogger": false
+    },
+    {
+      "device_id": "140842-3P81-2619",
+      "raw_device_id": "140842-3P81-2619",
+      "device_type": "inverter_1phase",
+      "device_model": "REACT2-5.0-TL",
+      "manufacturer": null,
+      "firmware_version": null,
+      "is_datalogger": false
+    },
+    {
+      "device_id": "0c1c57fdc62c",
+      "raw_device_id": "0c:1c:57:fd:c6:2c",
+      "device_type": "datalogger",
+      "device_model": "VSN700",
+      "manufacturer": null,
+      "firmware_version": null,
+      "is_datalogger": true
+    }
+  ]
+}
