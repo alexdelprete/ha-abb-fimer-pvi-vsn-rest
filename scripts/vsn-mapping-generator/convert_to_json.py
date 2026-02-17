@@ -10,6 +10,38 @@ from pathlib import Path
 import openpyxl
 
 
+def update_strings_json(mapping_rows: list[dict], strings_path: Path) -> None:
+    """Update sensor entries in strings.json from mapping data.
+
+    Preserves the config/options sections and only replaces entity.sensor entries
+    with display names from the mapping JSON (HA Display Name field).
+    """
+    if not strings_path.exists():
+        print(f"✗ strings.json not found: {strings_path}")
+        return
+
+    with open(strings_path, encoding="utf-8") as f:
+        strings_data = json.load(f)
+
+    # Build sensor entries from mapping: {ha_name: {"name": display_name}}
+    sensor_entries = {}
+    for row in mapping_rows:
+        ha_name = row.get("HA Name", "")
+        display_name = row.get("HA Display Name", "")
+        if ha_name and display_name:
+            sensor_entries[ha_name] = {"name": display_name}
+
+    # Replace only the entity.sensor section
+    if "entity" not in strings_data:
+        strings_data["entity"] = {}
+    strings_data["entity"]["sensor"] = sensor_entries
+
+    with open(strings_path, "w", encoding="utf-8") as f:
+        json.dump(strings_data, f, indent=2, ensure_ascii=False)
+
+    print(f"✓ strings.json updated: {len(sensor_entries)} sensor entries")
+
+
 def convert_excel_to_json():
     """Convert Excel mapping file (with model flags) to JSON format."""
     script_dir = Path(__file__).parent
@@ -107,6 +139,10 @@ def convert_excel_to_json():
         json.dump(rows, f, indent=2, ensure_ascii=False)
 
     print(f"✓ Integration data file updated: {data_path}")
+
+    # Update strings.json sensor entries from mapping
+    strings_path = repo_root / "custom_components" / "abb_fimer_pvi_vsn_rest" / "strings.json"
+    update_strings_json(rows, strings_path)
 
     # Print statistics
     print("\nModel Statistics:")

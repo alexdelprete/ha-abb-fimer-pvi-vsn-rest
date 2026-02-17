@@ -399,41 +399,25 @@ def _extract_devices(
         # Determine if this is a datalogger (MAC address pattern with colons)
         is_datalogger = ":" in raw_device_id
 
+        # Skip datalogger entries from livedata — already added from status_data above.
+        # VSN700 includes the datalogger MAC in livedata with an empty points array,
+        # which would create a duplicate device with less metadata.
+        if is_datalogger:
+            _LOGGER.debug(
+                "Skipping datalogger entry '%s' from livedata (already created from status)",
+                raw_device_id,
+            )
+            continue
+
         # Get clean device ID
         device_id = raw_device_id
-        if is_datalogger:
-            # Check for "sn" point (VSN300 datalogger has this)
-            sn_found = False
-            for point in device_data.get("points", []):
-                if point.get("name") == "sn":
-                    device_id = point["value"]
-                    sn_found = True
-                    _LOGGER.debug(
-                        "Using logger S/N '%s' instead of MAC '%s'",
-                        device_id,
-                        raw_device_id,
-                    )
-                    break
-
-            if not sn_found:
-                # VSN700: Strip colons from MAC (no underscores!)
-                device_id = raw_device_id.replace(":", "")
-                _LOGGER.debug(
-                    "Using clean MAC '%s' instead of '%s'",
-                    device_id,
-                    raw_device_id,
-                )
 
         # Get device type
         device_type = device_data.get("device_type", "unknown")
 
         # Get device model
         device_model = None
-        if is_datalogger:
-            # Datalogger: Use VSN model as device model
-            device_model = vsn_model  # "VSN300" or "VSN700"
-            device_type = "datalogger"  # Override "unknown" from livedata
-        elif vsn_model == "VSN700":
+        if vsn_model == "VSN700":
             # VSN700: Model in livedata at device level
             device_model = device_data.get("device_model")
         elif vsn_model == "VSN300":
@@ -465,7 +449,7 @@ def _extract_devices(
                 manufacturer=manufacturer,
                 firmware_version=firmware_version,
                 hardware_version=hardware_version,
-                is_datalogger=is_datalogger,
+                is_datalogger=False,
             )
         )
 

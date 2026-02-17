@@ -640,7 +640,7 @@
         "name": "Teho - Akku Yhteensä"
       },
       "pba_t": {
-        "name": "Teho - Akku Yhteensä"
+        "name": "Teho - Akku Aggregate"
       },
       "pf": {
         "name": "Tehokerroin"
@@ -766,10 +766,10 @@
         "name": "Firmware versio"
       },
       "vgrid_l1_n": {
-        "name": "Jännite AC - Vaihe A-N"
+        "name": "Jännite AC - Verkko L1-N"
       },
       "vgrid_l2_n": {
-        "name": "Jännite AC - Vaihe B-N"
+        "name": "Jännite AC - Verkko L2-N"
       },
       "vin1": {
         "name": "Jännite DC - Tulo 1"

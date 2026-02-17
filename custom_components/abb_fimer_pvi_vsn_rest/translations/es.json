@@ -640,7 +640,7 @@
         "name": "Potencia - Total Batería"
       },
       "pba_t": {
-        "name": "Potencia - Total Batería"
+        "name": "Potencia - Batería Aggregate"
       },
       "pf": {
         "name": "Factor de Potencia"
@@ -766,10 +766,10 @@
         "name": "Versión firmware"
       },
       "vgrid_l1_n": {
-        "name": "Tensión AC - Fase A-N"
+        "name": "Tensión AC - Red L1-N"
       },
       "vgrid_l2_n": {
-        "name": "Tensión AC - Fase B-N"
+        "name": "Tensión AC - Red L2-N"
       },
       "vin1": {
         "name": "Tensión DC - Entrada 1"

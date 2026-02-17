@@ -640,7 +640,7 @@
         "name": "Effekt - Batteri Total"
       },
       "pba_t": {
-        "name": "Effekt - Batteri Total"
+        "name": "Effekt - Batteri Aggregate"
       },
       "pf": {
         "name": "Effektfaktor"
@@ -766,10 +766,10 @@
         "name": "Firmware versjon"
       },
       "vgrid_l1_n": {
-        "name": "Spenning AC - Fase A-N"
+        "name": "Spenning AC - Nett L1-N"
       },
       "vgrid_l2_n": {
-        "name": "Spenning AC - Fase B-N"
+        "name": "Spenning AC - Nett L2-N"
       },
       "vin1": {
         "name": "Spenning DC - Inngang 1"

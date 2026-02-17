@@ -640,7 +640,7 @@
         "name": "Leistung - Batterie Gesamt"
       },
       "pba_t": {
-        "name": "Leistung - Batterie Gesamt"
+        "name": "Leistung - Batterie Aggregate"
       },
       "pf": {
         "name": "Leistungsfaktor"
@@ -766,10 +766,10 @@
         "name": "Firmware Version"
       },
       "vgrid_l1_n": {
-        "name": "Spannung AC - Phase A-N"
+        "name": "Spannung AC - Netz L1-N"
       },
       "vgrid_l2_n": {
-        "name": "Spannung AC - Phase B-N"
+        "name": "Spannung AC - Netz L2-N"
       },
       "vin1": {
         "name": "Spannung DC - Eingang 1"

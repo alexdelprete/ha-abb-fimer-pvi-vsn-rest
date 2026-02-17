@@ -3,9 +3,91 @@
 from __future__ import annotations
 
 import logging
+from typing import Any
 
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.translation import async_get_translations
+
+from .const import TYPE_TO_CONF_PREFIX
+
+
+def simplify_device_type(device_type: str) -> str:
+    """Simplify device type to basic category.
+
+    Args:
+        device_type: Device type from API (e.g., "inverter_3phases", "meter")
+
+    Returns:
+        Simplified type (e.g., "inverter", "meter", "battery", "datalogger")
+
+    """
+    if device_type.startswith("inverter"):
+        return "inverter"
+    if device_type == "meter":
+        return "meter"
+    if device_type == "battery":
+        return "battery"
+    # Datalogger types vary, but we'll handle this specially
+    return device_type.lower()
+
+
+def get_device_type_simple(device: object) -> str:
+    """Get simplified device type from a DiscoveredDevice.
+
+    Args:
+        device: DiscoveredDevice with is_datalogger and device_type attributes
+
+    Returns:
+        Simplified type (e.g., "inverter", "meter", "battery", "datalogger")
+
+    """
+    if device.is_datalogger:  # type: ignore[attr-defined]
+        return "datalogger"
+    return simplify_device_type(device.device_type)  # type: ignore[attr-defined]
+
+
+def build_prefix_by_device(
+    discovered_devices: list,
+    options: dict[str, Any],
+) -> dict[str, str]:
+    """Build mapping of compact_serial → custom_prefix from options.
+
+    Handles both single-device (base key like "prefix_battery") and multi-device
+    (indexed keys like "prefix_battery_1", "prefix_battery_2") scenarios.
+
+    Args:
+        discovered_devices: List of DiscoveredDevice objects from coordinator
+        options: Config entry options dict
+
+    Returns:
+        Dict mapping compact serial number to custom prefix string.
+        Only includes entries with non-empty prefixes.
+
+    """
+    # Group devices by simplified type, sorted by device_id for stable ordering
+    devices_by_type: dict[str, list] = {}
+    for device in discovered_devices:
+        dtype = get_device_type_simple(device)
+        devices_by_type.setdefault(dtype, []).append(device)
+    for device_list in devices_by_type.values():
+        device_list.sort(key=lambda d: d.device_id)
+
+    prefix_by_device: dict[str, str] = {}
+    for dtype, devices in devices_by_type.items():
+        base_key = TYPE_TO_CONF_PREFIX.get(dtype, "")
+        if not base_key:
+            continue
+        if len(devices) == 1:
+            prefix = options.get(base_key, "").strip()
+            if prefix:
+                prefix_by_device[compact_serial_number(devices[0].device_id)] = prefix
+        else:
+            for i, device in enumerate(devices, start=1):
+                prefix = options.get(f"{base_key}_{i}", "").strip()
+                if prefix:
+                    prefix_by_device[compact_serial_number(device.device_id)] = prefix
+
+    return prefix_by_device
 
 
 def compact_serial_number(serial: str) -> str:

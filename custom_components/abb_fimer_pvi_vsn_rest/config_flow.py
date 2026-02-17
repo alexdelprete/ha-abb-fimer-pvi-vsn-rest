@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections import defaultdict
 import logging
 from typing import Any
 
@@ -59,8 +60,13 @@ from .const import (
     MIN_SCAN_INTERVAL,
     TYPE_TO_CONF_PREFIX,
 )
-from .helpers import async_get_entity_translations, compact_serial_number, format_device_name
-from .sensor import _get_device_type_simple
+from .helpers import (
+    async_get_entity_translations,
+    build_prefix_by_device,
+    compact_serial_number,
+    format_device_name,
+    get_device_type_simple,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -386,7 +392,7 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
         # Group discovered devices by simplified type, sorted for stable ordering
         devices_by_type: dict[str, list] = {}
         for device in discovered_devices:
-            dtype = _get_device_type_simple(device)
+            dtype = get_device_type_simple(device)
             devices_by_type.setdefault(dtype, []).append(device)
         for device_list in devices_by_type.values():
             device_list.sort(key=lambda d: d.device_id)
@@ -515,36 +521,16 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
 
         registry = er.async_get(self.hass)
 
-        # Build device_id_compact → custom_prefix mapping from discovered devices
-        # Group by type and sort for stable index assignment
-        devices_by_type: dict[str, list] = {}
-        for device in coordinator.discovered_devices:
-            dtype = _get_device_type_simple(device)
-            devices_by_type.setdefault(dtype, []).append(device)
-        for device_list in devices_by_type.values():
-            device_list.sort(key=lambda d: d.device_id)
-
-        # Map device_id_compact → custom prefix
-        prefix_by_device: dict[str, str] = {}
-        for dtype, devices in devices_by_type.items():
-            base_key = TYPE_TO_CONF_PREFIX.get(dtype, "")
-            if not base_key:
-                continue
-            if len(devices) == 1:
-                prefix = new_options.get(base_key, "").strip()
-                if prefix:
-                    prefix_by_device[compact_serial_number(devices[0].device_id)] = prefix
-            else:
-                for i, device in enumerate(devices, start=1):
-                    prefix = new_options.get(f"{base_key}_{i}", "").strip()
-                    if prefix:
-                        prefix_by_device[compact_serial_number(device.device_id)] = prefix
+        # Build device_id_compact → custom_prefix mapping using shared helper
+        prefix_by_device = build_prefix_by_device(coordinator.discovered_devices, new_options)
 
         # Get all entities for this config entry
         entities = er.async_entries_for_config_entry(registry, self.config_entry.entry_id)
 
-        regenerated_count = 0
-        names_cleared = 0
+        # Phase 1: Build complete rename plan
+        rename_plan: list[tuple[er.RegistryEntry, str, bool]] = []
+        target_sources: dict[str, list[str]] = defaultdict(list)
+
         for entity_entry in entities:
             # Extract device_id_compact and point_name from unique_id
             # Format: abb_fimer_pvi_vsn_rest_{device_type}_{serial_compact}_{point_name}
@@ -593,6 +579,46 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
             if not needs_id_update and not needs_name_clear:
                 continue
 
+            rename_plan.append((entity_entry, new_entity_id, needs_name_clear))
+
+            # Track targets for collision detection (only actual renames)
+            if needs_id_update:
+                target_sources[new_entity_id].append(entity_entry.entity_id)
+
+        # Phase 1b: Detect collisions (multiple entities targeting same entity_id)
+        collision_targets: set[str] = set()
+        for target, sources in target_sources.items():
+            if len(sources) > 1:
+                collision_targets.add(target)
+                _LOGGER.warning(
+                    "Collision detected: %d entities target '%s': %s (keeping first, skipping rest)",
+                    len(sources),
+                    target,
+                    sorted(sources),
+                )
+
+        # Phase 2: Execute renames
+        regenerated_count = 0
+        names_cleared = 0
+
+        for entity_entry, new_entity_id, needs_name_clear in rename_plan:
+            needs_id_update = entity_entry.entity_id != new_entity_id
+
+            # Skip collision losers (keep first entity alphabetically)
+            if needs_id_update and new_entity_id in collision_targets:
+                winner = sorted(target_sources[new_entity_id])[0]
+                if entity_entry.entity_id != winner:
+                    _LOGGER.info(
+                        "Skipping collision loser: %s → %s (winner: %s)",
+                        entity_entry.entity_id,
+                        new_entity_id,
+                        winner,
+                    )
+                    if needs_name_clear:
+                        registry.async_update_entity(entity_entry.entity_id, name=None)
+                        names_cleared += 1
+                    continue
+
             # Build update kwargs for a single registry call
             update_kwargs: dict[str, Any] = {}
 
@@ -603,15 +629,9 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
                         entity_entry.entity_id,
                         new_entity_id,
                     )
-                    # Still clear custom name even if ID can't be updated
                     if needs_name_clear:
                         registry.async_update_entity(entity_entry.entity_id, name=None)
                         names_cleared += 1
-                        _LOGGER.info(
-                            "Cleared custom name '%s' for %s",
-                            entity_entry.name,
-                            entity_entry.entity_id,
-                        )
                     continue
                 update_kwargs["new_entity_id"] = new_entity_id
 

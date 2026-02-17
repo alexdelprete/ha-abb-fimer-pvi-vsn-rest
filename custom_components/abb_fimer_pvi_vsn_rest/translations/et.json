@@ -640,7 +640,7 @@
         "name": "Võimsus - Aku Kokku"
       },
       "pba_t": {
-        "name": "Võimsus - Aku Kokku"
+        "name": "Võimsus - Aku Aggregate"
       },
       "pf": {
         "name": "Võimsustegur"
@@ -766,10 +766,10 @@
         "name": "Firmware versioon"
       },
       "vgrid_l1_n": {
-        "name": "Pinge AC - Faas A-N"
+        "name": "Pinge AC - Võrk L1-N"
       },
       "vgrid_l2_n": {
-        "name": "Pinge AC - Faas B-N"
+        "name": "Pinge AC - Võrk L2-N"
       },
       "vin1": {
         "name": "Pinge DC - Sisend 1"

@@ -5,6 +5,7 @@ https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest
 
 from __future__ import annotations
 
+from collections import defaultdict
 from dataclasses import dataclass
 from datetime import timedelta
 import logging
@@ -24,10 +25,7 @@ from .const import (
     CONF_ENABLE_REPAIR_NOTIFICATION,
     CONF_ENABLE_STARTUP_NOTIFICATION,
     CONF_FAILURES_THRESHOLD,
-    CONF_PREFIX_BATTERY,
     CONF_PREFIX_DATALOGGER,
-    CONF_PREFIX_INVERTER,
-    CONF_PREFIX_METER,
     CONF_RECOVERY_SCRIPT,
     CONF_SCAN_INTERVAL,
     CONF_VSN_MODEL,
@@ -41,7 +39,12 @@ from .const import (
     STARTUP_MESSAGE,
 )
 from .coordinator import ABBFimerPVIVSNRestCoordinator
-from .helpers import async_get_entity_translations, compact_serial_number, format_device_name
+from .helpers import (
+    async_get_entity_translations,
+    build_prefix_by_device,
+    compact_serial_number,
+    format_device_name,
+)
 from .repairs import create_connection_issue, delete_connection_issue
 
 _LOGGER = logging.getLogger(__name__)
@@ -186,11 +189,11 @@ async def async_setup_entry(
 
     # Note: No manual update listener needed - OptionsFlowWithReload handles reload automatically
 
-    # Forward setup to platforms
-    await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
-
-    # Register device and store device_id in coordinator for device triggers
+    # Register datalogger device FIRST so child devices can reference it via via_device
     async_update_device_registry(hass, config_entry)
+
+    # Forward setup to platforms (datalogger device already exists for via_device references)
+    await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
 
     _LOGGER.info(
         "Successfully set up %s integration for %s",
@@ -356,16 +359,16 @@ async def _async_migrate_entity_ids(
     for device in coordinator.discovered_devices:
         device_lookup[compact_serial_number(device.device_id)] = device
 
-    # Prefix map from options
-    prefix_map = {
-        "inverter": config_entry.options.get(CONF_PREFIX_INVERTER, ""),
-        "datalogger": config_entry.options.get(CONF_PREFIX_DATALOGGER, ""),
-        "meter": config_entry.options.get(CONF_PREFIX_METER, ""),
-        "battery": config_entry.options.get(CONF_PREFIX_BATTERY, ""),
-    }
+    # Build prefix mapping using shared helper (handles indexed keys for multi-device setups)
+    prefix_by_device = build_prefix_by_device(
+        coordinator.discovered_devices, dict(config_entry.options)
+    )
 
     entities = er.async_entries_for_config_entry(registry, config_entry.entry_id)
-    migrated = 0
+
+    # Phase 1: Build complete rename plan
+    rename_plan: list[tuple[er.RegistryEntry, str]] = []
+    target_sources: dict[str, list[str]] = defaultdict(list)
 
     for entity_entry in entities:
         unique_id_parts = entity_entry.unique_id.split("_")
@@ -394,7 +397,7 @@ async def _async_migrate_entity_ids(
         if not discovered:
             continue
 
-        custom_prefix = prefix_map.get(device_type, "").strip() or None
+        custom_prefix = prefix_by_device.get(device_sn_compact) or None
         device_name = format_device_name(
             manufacturer=discovered.manufacturer or "ABB/FIMER",
             device_type_simple=device_type,
@@ -406,7 +409,39 @@ async def _async_migrate_entity_ids(
         domain = entity_entry.entity_id.split(".")[0]
         new_entity_id = f"{domain}.{slugify(device_name)}_{slugified_translation}"
 
-        if entity_entry.entity_id != new_entity_id and not registry.async_get(new_entity_id):
+        if entity_entry.entity_id != new_entity_id:
+            rename_plan.append((entity_entry, new_entity_id))
+            target_sources[new_entity_id].append(entity_entry.entity_id)
+
+    # Phase 1b: Detect collisions (multiple entities targeting same entity_id)
+    collision_targets: set[str] = set()
+    for target, sources in target_sources.items():
+        if len(sources) > 1:
+            collision_targets.add(target)
+            _LOGGER.warning(
+                "Migration collision: %d entities target '%s': %s (keeping first, skipping rest)",
+                len(sources),
+                target,
+                sorted(sources),
+            )
+
+    # Phase 2: Execute renames
+    migrated = 0
+
+    for entity_entry, new_entity_id in rename_plan:
+        # Skip collision losers (keep first entity alphabetically)
+        if new_entity_id in collision_targets:
+            winner = sorted(target_sources[new_entity_id])[0]
+            if entity_entry.entity_id != winner:
+                _LOGGER.info(
+                    "Skipping migration collision loser: %s → %s (winner: %s)",
+                    entity_entry.entity_id,
+                    new_entity_id,
+                    winner,
+                )
+                continue
+
+        if not registry.async_get(new_entity_id):
             registry.async_update_entity(entity_entry.entity_id, new_entity_id=new_entity_id)
             migrated += 1
             _LOGGER.info("Migrated entity ID: %s → %s", entity_entry.entity_id, new_entity_id)

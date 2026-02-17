@@ -5,7 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - v1.3.6-beta.2
+## [1.3.6-beta.2] - 2026-02-17
+
+### Bug Fixes
+
+- **Inverted Device Prefixes** - Fixed custom name prefixes being assigned to wrong
+  devices in multi-device setups (e.g., battery 1 prefix applied to battery 2)
+- **`via_device` Deprecation Warnings** - Fixed HA deprecation warnings by registering
+  datalogger device before forwarding sensor platform setup
+- **Entity ID Collisions** - Fixed 3 mapping collision groups where different measurements
+  produced identical display names (e.g., `VgridL1_N` and `PhVphA` both → "Voltage AC - Phase A-N")
+- **Duplicate Datalogger in Discovery** - Fixed VSN700 datalogger appearing twice in
+  discovery, which caused incorrect device counting for prefix key resolution
+
+### Improvements
+
+- **Collision Safety Net** - Entity ID regeneration and migration now use two-phase approach: pre-compute all renames, detect collisions before executing, skip losers with clear warning
+- **Automated `strings.json` Sync** - `convert_to_json.py` now auto-updates sensor entries in `strings.json` from mapping data, closing the pipeline automation gap
+- **Updated Regeneration Pipeline Docs** - CLAUDE.md now documents the full 3-step pipeline (generate_mapping → convert_to_json → generate_translations)
+
+### Mapping Changes
+
+- `VgridL1_N`: "Voltage AC - Phase A-N" → "Voltage AC - Grid L1-N" (distinct from `PhVphA`)
+- `VgridL2_N`: "Voltage AC - Phase B-N" → "Voltage AC - Grid L2-N" (distinct from `PhVphB`)
+- `PbaT`: "Power - Battery Total" → "Power - Battery Aggregate" (distinct from `Pba`)
+
+**See**: [v1.3.6-beta.2 Release Notes](docs/releases/v1.3.6-beta.2.md)
 
 ## [1.3.6-beta.1] - 2026-02-17
 

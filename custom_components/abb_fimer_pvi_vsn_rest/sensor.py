@@ -14,9 +14,15 @@ from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import AURORA_EPOCH_OFFSET, DOMAIN, STATE_ENTITY_MAPPINGS, TYPE_TO_CONF_PREFIX
+from .const import AURORA_EPOCH_OFFSET, DOMAIN, STATE_ENTITY_MAPPINGS
 from .coordinator import ABBFimerPVIVSNRestCoordinator
-from .helpers import compact_serial_number, format_device_name
+from .helpers import (
+    build_prefix_by_device,
+    compact_serial_number,
+    format_device_name,
+    get_device_type_simple,
+    simplify_device_type,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -87,78 +93,19 @@ DEVICE_CLASS_EXCEPTIONS = {
 def _simplify_device_type(device_type: str) -> str:
     """Simplify device type to basic category.
 
-    Args:
-        device_type: Device type from API (e.g., "inverter_3phases", "meter")
-
-    Returns:
-        Simplified type (e.g., "inverter", "meter", "battery", "datalogger")
-
+    Delegates to helpers.simplify_device_type().
+    Kept for backward compatibility with any external callers.
     """
-    if device_type.startswith("inverter"):
-        return "inverter"
-    if device_type == "meter":
-        return "meter"
-    if device_type == "battery":
-        return "battery"
-    # Datalogger types vary, but we'll handle this specially
-    return device_type.lower()
+    return simplify_device_type(device_type)
 
 
 def _get_device_type_simple(device: object) -> str:
     """Get simplified device type from a DiscoveredDevice.
 
-    Args:
-        device: DiscoveredDevice with is_datalogger and device_type attributes
-
-    Returns:
-        Simplified type (e.g., "inverter", "meter", "battery", "datalogger")
-
+    Delegates to helpers.get_device_type_simple().
+    Kept for backward compatibility with any external callers.
     """
-    if device.is_datalogger:  # type: ignore[attr-defined]
-        return "datalogger"
-    return _simplify_device_type(device.device_type)  # type: ignore[attr-defined]
-
-
-def _get_prefix_key_for_device(
-    device_id: str,
-    device_type_simple: str,
-    discovered_devices: list,
-) -> str:
-    """Get the correct prefix options key for a device.
-
-    For single devices of a type, returns the base key (e.g., "prefix_battery").
-    For multiple devices of the same type, returns an indexed key (e.g., "prefix_battery_1").
-
-    Args:
-        device_id: The device's serial number / ID
-        device_type_simple: Simplified device type (e.g., "battery")
-        discovered_devices: All discovered devices from coordinator
-
-    Returns:
-        The config options key to look up the custom prefix
-
-    """
-    base_key = TYPE_TO_CONF_PREFIX.get(device_type_simple, "")
-    if not base_key:
-        return ""
-
-    # Find all devices of the same simplified type, sorted for stable ordering
-    same_type = sorted(
-        [d for d in discovered_devices if _get_device_type_simple(d) == device_type_simple],
-        key=lambda d: d.device_id,
-    )
-
-    if len(same_type) <= 1:
-        # Single device of this type: use base key (backward compatible)
-        return base_key
-
-    # Multiple devices: find this device's 1-based index
-    for i, d in enumerate(same_type, start=1):
-        if d.device_id == device_id:
-            return f"{base_key}_{i}"
-
-    # Fallback (shouldn't happen)
-    return base_key
+    return get_device_type_simple(device)
 
 
 def _get_precision_from_units(units: str | None) -> int | None:
@@ -239,6 +186,11 @@ async def async_setup_entry(
             datalogger_device_id = discovered_device.device_id
             break
 
+    # Pre-compute prefix mapping once for all sensors
+    prefix_by_device = build_prefix_by_device(
+        coordinator.discovered_devices, dict(config_entry.options)
+    )
+
     # Second pass: create sensors, separating datalogger from others
     for device_id, device_data in devices.items():
         device_type = device_data.get("device_type", "unknown")
@@ -253,6 +205,10 @@ async def async_setup_entry(
 
         is_datalogger = device_id == datalogger_device_id
 
+        # Look up pre-computed custom prefix for this device
+        device_sn_compact = compact_serial_number(device_id)
+        custom_prefix = prefix_by_device.get(device_sn_compact) or None
+
         for point_name, point_data in points.items():
             sensor = VSNSensor(
                 coordinator=coordinator,
@@ -261,6 +217,7 @@ async def async_setup_entry(
                 device_type=device_type,
                 point_name=point_name,
                 point_data=point_data,
+                custom_prefix=custom_prefix,
             )
 
             # Log individual entity creation in debug mode
@@ -299,6 +256,7 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         device_type: str,
         point_name: str,
         point_data: dict[str, Any],
+        custom_prefix: str | None = None,
     ) -> None:
         """Initialize the sensor.
 
@@ -309,6 +267,7 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
             device_type: Device type (e.g., "inverter_3phases")
             point_name: HA entity name (e.g., "abb_m103_w")
             point_data: Point metadata and initial value
+            custom_prefix: Pre-computed custom device name prefix (or None for default)
 
         """
         super().__init__(coordinator)
@@ -336,16 +295,10 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         if is_datalogger:
             device_type_simple = "datalogger"
         else:
-            device_type_simple = _simplify_device_type(device_type)
+            device_type_simple = simplify_device_type(device_type)
 
-        # Get custom prefix for this specific device from options
-        # Supports indexed keys for multi-device setups (e.g., prefix_battery_1, prefix_battery_2)
-        prefix_key = _get_prefix_key_for_device(
-            device_id, device_type_simple, coordinator.discovered_devices
-        )
-        self._custom_prefix = (
-            config_entry.options.get(prefix_key, "").strip() or None if prefix_key else None
-        )
+        # Use pre-computed custom prefix from async_setup_entry
+        self._custom_prefix = custom_prefix
 
         # Compact device serial number (remove dashes/colons/underscores, lowercase)
         device_sn_compact = compact_serial_number(device_id)
