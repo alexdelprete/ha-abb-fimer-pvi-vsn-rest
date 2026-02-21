@@ -1,7 +1,7 @@
 # ABB/FIMER PVI VSN REST Integration
 
 <!-- BEGIN SHARED:repo-sync:badges -->
-<!-- Synced by repo-sync on 2026-02-11 -->
+<!-- Synced by repo-sync on 2026-02-20 -->
 
 [![GitHub Release](https://img.shields.io/github/v/release/alexdelprete/ha-abb-fimer-pvi-vsn-rest?style=for-the-badge)](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/releases)
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-donate-yellow?style=for-the-badge&logo=buy-me-a-coffee)](https://www.buymeacoffee.com/alexdelprete)
@@ -48,7 +48,7 @@ SunSpec-compatible format for consistent Home Assistant entity creation.
 - Battery storage systems
 
 <!-- BEGIN SHARED:repo-sync:installation -->
-<!-- Synced by repo-sync on 2026-02-11 -->
+<!-- Synced by repo-sync on 2026-02-20 -->
 
 ## Installation
 
@@ -742,7 +742,7 @@ custom_components/abb_fimer_pvi_vsn_rest/
 - **Discussions**: [GitHub Discussions](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/discussions)
 
 <!-- BEGIN SHARED:repo-sync:license -->
-<!-- Synced by repo-sync on 2026-02-11 -->
+<!-- Synced by repo-sync on 2026-02-20 -->
 
 ## License
 
@@ -757,7 +757,7 @@ Developed by [Alessandro Del Prete](https://github.com/alexdelprete)
 SunSpec model definitions from [SunSpec Models Repository](https://github.com/sunspec/models) (Apache-2.0 license)
 
 <!-- BEGIN SHARED:repo-sync:contributing -->
-<!-- Synced by repo-sync on 2026-02-11 -->
+<!-- Synced by repo-sync on 2026-02-20 -->
 
 ## Contributing
 

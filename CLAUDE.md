@@ -1391,7 +1391,7 @@ The project includes `.markdownlint.json` configuration:
 Run linting: `npx markdownlint-cli2 *.md docs/*.md`
 
 <!-- BEGIN SHARED:repo-sync -->
-<!-- Synced by repo-sync on 2026-02-11 -->
+<!-- Synced by repo-sync on 2026-02-20 -->
 
 ## Context7 for Documentation
 
