@@ -423,13 +423,14 @@ class TestAsyncUpdateDeviceRegistry:
         assert call_kwargs.kwargs["name"] == "ABB FIMER Datalogger"
         assert call_kwargs.kwargs["manufacturer"] == "ABB"
 
-    def test_update_device_registry_no_logger_sn(
+    def test_update_device_registry_no_datalogger_device(
         self,
         mock_hass: MagicMock,
         mock_config_entry: MagicMock,
     ) -> None:
-        """Test device registry update with no logger serial number."""
-        mock_config_entry.runtime_data.coordinator.discovery_result.logger_sn = None
+        """Test device registry update with no datalogger in discovered devices."""
+        # Remove all devices so no datalogger is found
+        mock_config_entry.runtime_data.coordinator.discovered_devices = []
 
         mock_device_registry = MagicMock()
 
@@ -439,7 +440,7 @@ class TestAsyncUpdateDeviceRegistry:
         ):
             async_update_device_registry(mock_hass, mock_config_entry)
 
-        # Should not create device if no logger_sn
+        # Should not create device if no datalogger found
         mock_device_registry.async_get_or_create.assert_not_called()
 
     def test_update_device_registry_no_discovery_result(
@@ -447,10 +448,13 @@ class TestAsyncUpdateDeviceRegistry:
         mock_hass: MagicMock,
         mock_config_entry: MagicMock,
     ) -> None:
-        """Test device registry update with no discovery result."""
+        """Test device registry still works when discovery_result is None."""
         mock_config_entry.runtime_data.coordinator.discovery_result = None
 
         mock_device_registry = MagicMock()
+        mock_device = MagicMock()
+        mock_device.id = "device_789"
+        mock_device_registry.async_get_device.return_value = mock_device
 
         with patch(
             "custom_components.abb_fimer_pvi_vsn_rest.dr.async_get",
@@ -458,8 +462,11 @@ class TestAsyncUpdateDeviceRegistry:
         ):
             async_update_device_registry(mock_hass, mock_config_entry)
 
-        # Should not create device if no discovery_result
-        mock_device_registry.async_get_or_create.assert_not_called()
+        # Should still create device from discovered_devices (datalogger exists)
+        mock_device_registry.async_get_or_create.assert_called_once()
+        call_kwargs = mock_device_registry.async_get_or_create.call_args
+        # sw_version should be None when discovery_result is None
+        assert call_kwargs.kwargs["sw_version"] is None
 
 
 class TestAsyncRemoveConfigEntryDevice:
