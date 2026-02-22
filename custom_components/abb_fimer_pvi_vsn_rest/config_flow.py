@@ -463,7 +463,9 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
         # Add per-device prefix fields
         # Single device of a type → base key (e.g., "prefix_battery") for backward compat
         # Multiple devices of same type → indexed keys (e.g., "prefix_battery_1", "prefix_battery_2")
+        # Build description_placeholders to show serial numbers in field descriptions
         has_any_device = False
+        description_placeholders: dict[str, str] = {}
         for dtype, devices in devices_by_type.items():
             base_key = TYPE_TO_CONF_PREFIX.get(dtype)
             if not base_key:
@@ -474,10 +476,14 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
                 # Single device: use base key (backward compatible)
                 schema_dict[vol.Optional(base_key, default=current_options.get(base_key, ""))] = str
             else:
-                # Multiple devices: use indexed keys
-                for i, _device in enumerate(devices, start=1):
+                # Multiple devices: use indexed keys with serial numbers in descriptions
+                for i, device in enumerate(devices, start=1):
                     key = f"{base_key}_{i}"
                     schema_dict[vol.Optional(key, default=current_options.get(key, ""))] = str
+                    # Add serial number placeholder for this field's description
+                    # e.g., "battery_1_sn" → "113049-3P72-0221"
+                    placeholder_key = f"{dtype}_{i}_sn"
+                    description_placeholders[placeholder_key] = device.device_id
 
         # Show regenerate checkbox if any devices exist
         if has_any_device:
@@ -491,6 +497,7 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
         return self.async_show_form(
             step_id="init",
             data_schema=vol.Schema(schema_dict),
+            description_placeholders=description_placeholders if description_placeholders else None,
         )
 
     async def _regenerate_entity_ids(self, new_options: dict[str, Any]) -> None:

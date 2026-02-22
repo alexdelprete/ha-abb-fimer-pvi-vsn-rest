@@ -212,31 +212,28 @@ def async_update_device_registry(
     coordinator = config_entry.runtime_data.coordinator
     device_registry = dr.async_get(hass)
 
-    # The logger (datalogger) is the main device
-    logger_sn = coordinator.discovery_result.logger_sn if coordinator.discovery_result else None
-
-    if not logger_sn:
-        _LOGGER.warning("No logger serial number found, skipping device registration")
-        return
-
-    # Find the datalogger DiscoveredDevice for correct manufacturer and model
+    # Find the datalogger DiscoveredDevice for correct identifiers and metadata
     datalogger_device = None
     for device in coordinator.discovered_devices:
         if device.is_datalogger:
             datalogger_device = device
             break
 
+    if not datalogger_device:
+        _LOGGER.warning("No datalogger device found, skipping device registration")
+        return
+
+    # Use the cleaned device_id from discovery as the device identifier.
+    # This MUST match what sensor.py uses for via_device references.
+    # For VSN300: serial number (e.g., "111033-3N16-1421") — no change needed.
+    # For VSN700: MAC without colons (e.g., "0c1c57fdc62c") — colons stripped in discovery.
+    # Previously used discovery_result.logger_sn which kept colons for VSN700 MACs,
+    # causing a mismatch with sensor.py's via_device reference.
+    device_identifier = datalogger_device.device_id
+
     # Extract metadata from discovered device (with fallbacks)
-    manufacturer = (
-        datalogger_device.manufacturer
-        if datalogger_device and datalogger_device.manufacturer
-        else "ABB/FIMER"
-    )
-    device_model = (
-        datalogger_device.device_model
-        if datalogger_device and datalogger_device.device_model
-        else coordinator.vsn_model or "VSN Datalogger"
-    )
+    manufacturer = datalogger_device.manufacturer or "ABB/FIMER"
+    device_model = datalogger_device.device_model or coordinator.vsn_model or "VSN Datalogger"
 
     # Get custom prefix from options (same logic as sensor.py)
     custom_prefix = config_entry.options.get(CONF_PREFIX_DATALOGGER, "").strip() or None
@@ -246,18 +243,19 @@ def async_update_device_registry(
         manufacturer=manufacturer,
         device_type_simple="datalogger",
         device_model=device_model,
-        device_sn_original=logger_sn,
+        device_sn_original=datalogger_device.raw_device_id,
         custom_prefix=custom_prefix,
     )
 
     # Register the main device (datalogger)
+    # Use cleaned device_id as identifier for consistency with sensor.py via_device
     device_registry.async_get_or_create(
         config_entry_id=config_entry.entry_id,
-        identifiers={(DOMAIN, logger_sn)},
+        identifiers={(DOMAIN, device_identifier)},
         manufacturer=manufacturer,
         model=device_model,
         name=device_name,
-        serial_number=logger_sn,
+        serial_number=datalogger_device.raw_device_id,
         sw_version=coordinator.discovery_result.firmware_version
         if coordinator.discovery_result
         else None,
@@ -265,7 +263,7 @@ def async_update_device_registry(
     )
 
     # Store device_id in coordinator for device triggers
-    device = device_registry.async_get_device(identifiers={(DOMAIN, logger_sn)})
+    device = device_registry.async_get_device(identifiers={(DOMAIN, device_identifier)})
     if device:
         coordinator.device_id = device.id
         _LOGGER.debug("Device ID stored in coordinator: %s", device.id)
