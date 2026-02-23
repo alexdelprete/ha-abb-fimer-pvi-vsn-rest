@@ -42,7 +42,7 @@
     "step": {
       "init": {
         "title": "Opzioni ABB/FIMER PVI VSN REST",
-        "description": "",
+        "description": "For devices with multiple units, check the S/N under each field to match it to the correct physical device.",
         "data": {
           "scan_interval": "Intervallo di scansione (secondi)",
           "enable_repair_notification": "Enable runtime failure notifications",
@@ -74,21 +74,21 @@
           "failures_threshold": "Consecutive failures before notification. Range: 1-10. Default: 3.",
           "recovery_script": "Script to run on failure (e.g., 'script.restart_router'). Leave empty for none.",
           "prefix_inverter": "Custom inverter name. Lascia vuoto per il valore predefinito.",
-          "prefix_inverter_1": "S/N: {inverter_1_sn}. Lascia vuoto per il valore predefinito.",
-          "prefix_inverter_2": "S/N: {inverter_2_sn}. Lascia vuoto per il valore predefinito.",
-          "prefix_inverter_3": "S/N: {inverter_3_sn}. Lascia vuoto per il valore predefinito.",
-          "prefix_inverter_4": "S/N: {inverter_4_sn}. Lascia vuoto per il valore predefinito.",
+          "prefix_inverter_1": "Sets name for device with S/N: {inverter_1_sn}. Lascia vuoto per il valore predefinito.",
+          "prefix_inverter_2": "Sets name for device with S/N: {inverter_2_sn}. Lascia vuoto per il valore predefinito.",
+          "prefix_inverter_3": "Sets name for device with S/N: {inverter_3_sn}. Lascia vuoto per il valore predefinito.",
+          "prefix_inverter_4": "Sets name for device with S/N: {inverter_4_sn}. Lascia vuoto per il valore predefinito.",
           "prefix_datalogger": "Custom datalogger name. Lascia vuoto per il valore predefinito.",
           "prefix_meter": "Custom meter name. Lascia vuoto per il valore predefinito.",
-          "prefix_meter_1": "S/N: {meter_1_sn}. Lascia vuoto per il valore predefinito.",
-          "prefix_meter_2": "S/N: {meter_2_sn}. Lascia vuoto per il valore predefinito.",
-          "prefix_meter_3": "S/N: {meter_3_sn}. Lascia vuoto per il valore predefinito.",
-          "prefix_meter_4": "S/N: {meter_4_sn}. Lascia vuoto per il valore predefinito.",
+          "prefix_meter_1": "Sets name for device with S/N: {meter_1_sn}. Lascia vuoto per il valore predefinito.",
+          "prefix_meter_2": "Sets name for device with S/N: {meter_2_sn}. Lascia vuoto per il valore predefinito.",
+          "prefix_meter_3": "Sets name for device with S/N: {meter_3_sn}. Lascia vuoto per il valore predefinito.",
+          "prefix_meter_4": "Sets name for device with S/N: {meter_4_sn}. Lascia vuoto per il valore predefinito.",
           "prefix_battery": "Custom battery name. Lascia vuoto per il valore predefinito.",
-          "prefix_battery_1": "S/N: {battery_1_sn}. Lascia vuoto per il valore predefinito.",
-          "prefix_battery_2": "S/N: {battery_2_sn}. Lascia vuoto per il valore predefinito.",
-          "prefix_battery_3": "S/N: {battery_3_sn}. Lascia vuoto per il valore predefinito.",
-          "prefix_battery_4": "S/N: {battery_4_sn}. Lascia vuoto per il valore predefinito.",
+          "prefix_battery_1": "Sets name for device with S/N: {battery_1_sn}. Lascia vuoto per il valore predefinito.",
+          "prefix_battery_2": "Sets name for device with S/N: {battery_2_sn}. Lascia vuoto per il valore predefinito.",
+          "prefix_battery_3": "Sets name for device with S/N: {battery_3_sn}. Lascia vuoto per il valore predefinito.",
+          "prefix_battery_4": "Sets name for device with S/N: {battery_4_sn}. Lascia vuoto per il valore predefinito.",
           "regenerate_entity_ids": ""
         }
       }

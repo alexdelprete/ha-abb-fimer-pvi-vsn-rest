@@ -485,6 +485,9 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
                     placeholder_key = f"{dtype}_{i}_sn"
                     description_placeholders[placeholder_key] = device.device_id
 
+        if description_placeholders:
+            _LOGGER.debug("[Options Flow] Device S/N placeholders: %s", description_placeholders)
+
         # Show regenerate checkbox if any devices exist
         if has_any_device:
             schema_dict[
@@ -530,6 +533,7 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
 
         # Build device_id_compact → custom_prefix mapping using shared helper
         prefix_by_device = build_prefix_by_device(coordinator.discovered_devices, new_options)
+        _LOGGER.debug("[Regeneration] Prefix mapping: %s", prefix_by_device)
 
         # Get all entities for this config entry
         entities = er.async_entries_for_config_entry(registry, self.config_entry.entry_id)

@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.6-beta.4] - 2026-02-23
+
+### UX Improvements
+
+- **Options Flow Step Description** - Added instructional text at top of options form
+  guiding users to check S/N under each field for multi-device setups
+- **Clearer Indexed Field Descriptions** - Changed from `S/N: {serial}` to
+  `Sets name for device with S/N: {serial}` for all indexed prefix fields
+
+### Debug Logging
+
+- **Prefix Mapping Trace** - Debug logging in `build_prefix_by_device()`,
+  `_regenerate_entity_ids()`, and options flow for prefix mapping traceability
+
+### Translations
+
+- Updated all 10 language files with improved descriptions
+
+**See**: [v1.3.6-beta.4 Release Notes](docs/releases/v1.3.6-beta.4.md)
+
 ## [1.3.6-beta.3] - 2026-02-22
 
 ### Bug Fixes

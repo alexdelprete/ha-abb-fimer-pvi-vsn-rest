@@ -10,6 +10,8 @@ from homeassistant.helpers.translation import async_get_translations
 
 from .const import TYPE_TO_CONF_PREFIX
 
+_LOGGER = logging.getLogger(__name__)
+
 
 def simplify_device_type(device_type: str) -> str:
     """Simplify device type to basic category.
@@ -86,6 +88,10 @@ def build_prefix_by_device(
                 prefix = options.get(f"{base_key}_{i}", "").strip()
                 if prefix:
                     prefix_by_device[compact_serial_number(device.device_id)] = prefix
+
+    if prefix_by_device:
+        for compact_sn, prefix in prefix_by_device.items():
+            _LOGGER.debug("[Prefix Mapping] %s → '%s'", compact_sn, prefix)
 
     return prefix_by_device
 
