@@ -234,6 +234,40 @@ class TestVSNMappingLoaderAsyncLoad:
         assert firmware_mapping.sunspec_name is None
 
     @pytest.mark.asyncio
+    async def test_async_load_normalizes_vsn300_na(self, tmp_path: Path) -> None:
+        """Test VSN300 N/A value is normalized to None."""
+        data = [
+            {
+                "REST Name (VSN700)": "SomePoint",
+                "REST Name (VSN300)": "N/A",
+                "SunSpec Normalized Name": "SomePoint",
+                "HA Name": "some_point",
+                "In /livedata": "✓",
+                "In /feeds": "",
+                "Label": "Some Point",
+                "Description": "Some test point",
+                "HA Display Name": "Some Point",
+                "models": ["M103"],
+                "Category": "Inverter",
+                "HA Unit of Measurement": "W",
+                "HA State Class": "measurement",
+                "HA Device Class": "power",
+                "Entity Category": "",
+                "Available in Modbus": "No",
+                "HA Icon": "",
+                "Suggested Display Precision": None,
+            }
+        ]
+        mapping_file = tmp_path / "mapping.json"
+        mapping_file.write_text(json.dumps(data))
+
+        loader = VSNMappingLoader(mapping_file)
+        await loader.async_load()
+
+        mapping = loader._mappings["some_point"]
+        assert mapping.vsn300_name is None
+
+    @pytest.mark.asyncio
     async def test_async_load_handles_empty_entity_category(
         self, sample_mapping_data: list[dict[str, Any]], tmp_path: Path
     ) -> None:

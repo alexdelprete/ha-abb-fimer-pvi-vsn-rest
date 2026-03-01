@@ -2255,11 +2255,16 @@ class TestDeviceInfoHardwareVersion:
             "device_model": "PVI-10.0",
             "manufacturer": "ABB",
             "firmware_version": "C008",
-            "hardware_version": "HW-Rev2",
         }
         mock_coordinator.data = {
             "devices": {TEST_INVERTER_SN: {"points": {"test": {"value": 100}}}}
         }
+
+        # Set hardware_version on the discovered device (where device_info reads it)
+        for dev in mock_coordinator.discovered_devices:
+            if dev.device_id == TEST_INVERTER_SN:
+                dev.hardware_version = "HW-Rev2"
+                break
 
         sensor = VSNSensor(
             coordinator=mock_coordinator,

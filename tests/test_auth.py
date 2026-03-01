@@ -21,6 +21,7 @@ from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.exceptio
     VSNAuthenticationError,
     VSNConnectionError,
     VSNDetectionError,
+    VSNUnsupportedDeviceError,
 )
 
 
@@ -460,6 +461,32 @@ class TestDetectVSNModel:
 
         assert model == "VSN300"
         assert requires_auth is False
+
+    @pytest.mark.asyncio
+    async def test_detect_404_unsupported_device(self) -> None:
+        """Test 404 response raises VSNUnsupportedDeviceError."""
+        mock_response = MagicMock()
+        mock_response.status = 404
+        mock_response.headers = {}
+        mock_response.__aenter__ = AsyncMock(return_value=mock_response)
+        mock_response.__aexit__ = AsyncMock(return_value=None)
+
+        mock_session = MagicMock()
+        mock_session.get = MagicMock(return_value=mock_response)
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.auth.check_socket_connection",
+                new_callable=AsyncMock,
+            ),
+            pytest.raises(VSNUnsupportedDeviceError, match="404"),
+        ):
+            await detect_vsn_model(
+                session=mock_session,
+                base_url="http://192.168.1.100",
+                username="guest",
+                password="password",  # noqa: S106
+            )
 
     @pytest.mark.asyncio
     async def test_detect_unexpected_status_raises_error(self) -> None:

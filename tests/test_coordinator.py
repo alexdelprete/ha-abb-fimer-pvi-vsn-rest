@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import timedelta
+import time
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -22,6 +23,7 @@ from custom_components.abb_fimer_pvi_vsn_rest.const import (
     DOMAIN,
 )
 from custom_components.abb_fimer_pvi_vsn_rest.coordinator import ABBFimerPVIVSNRestCoordinator
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.update_coordinator import UpdateFailed
 
 from .conftest import (
@@ -778,3 +780,85 @@ class TestRecoveryScript:
 
         mock_hass.services.async_call.assert_not_called()
         assert coordinator._recovery_script_executed is False
+
+    @pytest.mark.asyncio
+    async def test_execute_recovery_script_failure(
+        self,
+        mock_hass: MagicMock,
+        mock_vsn_client: MagicMock,
+        mock_discovery_result: MockDiscoveryResult,
+    ) -> None:
+        """Test _execute_recovery_script handles HomeAssistantError gracefully."""
+        config_entry = MagicMock()
+        config_entry.options = {
+            CONF_ENABLE_REPAIR_NOTIFICATION: True,
+            CONF_FAILURES_THRESHOLD: 3,
+            CONF_RECOVERY_SCRIPT: "script.my_script",
+        }
+
+        coordinator = ABBFimerPVIVSNRestCoordinator(
+            hass=mock_hass,
+            client=mock_vsn_client,
+            update_interval=timedelta(seconds=60),
+            discovery_result=mock_discovery_result,
+            entry_id="test_entry",
+            host=TEST_HOST,
+            config_entry=config_entry,
+        )
+
+        mock_hass.services.async_call = AsyncMock(
+            side_effect=HomeAssistantError("Script not found")
+        )
+
+        await coordinator._execute_recovery_script()
+
+        mock_hass.services.async_call.assert_called_once()
+        # Script should NOT be marked as executed on failure
+        assert coordinator._recovery_script_executed is False
+
+    @pytest.mark.asyncio
+    async def test_handle_recovery_with_script_executed(
+        self,
+        mock_hass: MagicMock,
+        mock_vsn_client: MagicMock,
+        mock_discovery_result: MockDiscoveryResult,
+    ) -> None:
+        """Test _handle_recovery formats script_executed_at when script was run."""
+        config_entry = MagicMock()
+        config_entry.options = {
+            CONF_ENABLE_REPAIR_NOTIFICATION: True,
+            CONF_FAILURES_THRESHOLD: 3,
+            CONF_RECOVERY_SCRIPT: "script.my_script",
+        }
+
+        coordinator = ABBFimerPVIVSNRestCoordinator(
+            hass=mock_hass,
+            client=mock_vsn_client,
+            update_interval=timedelta(seconds=60),
+            discovery_result=mock_discovery_result,
+            entry_id="test_entry",
+            host=TEST_HOST,
+            config_entry=config_entry,
+        )
+
+        # Simulate script was executed during failure
+        coordinator._recovery_script_executed = True
+        coordinator._script_executed_time = time.time()
+        coordinator._failure_start_time = time.time() - 120
+        coordinator._repair_issue_created = True
+        coordinator._consecutive_failures = 3
+
+        with (
+            patch("custom_components.abb_fimer_pvi_vsn_rest.coordinator.delete_connection_issue"),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.coordinator.create_recovery_notification"
+            ) as mock_notify,
+        ):
+            await coordinator._handle_recovery()
+
+        mock_notify.assert_called_once()
+        call_kwargs = mock_notify.call_args[1]
+        # script_name should be set when script was executed
+        assert call_kwargs["script_name"] == "script.my_script"
+        # script_executed_at should be a formatted time string
+        assert call_kwargs["script_executed_at"] is not None
