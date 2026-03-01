@@ -5,90 +5,53 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.3.6-beta.4] - 2026-02-23
-
-### UX Improvements
-
-- **Options Flow Step Description** - Added instructional text at top of options form
-  guiding users to check S/N under each field for multi-device setups
-- **Clearer Indexed Field Descriptions** - Changed from `S/N: {serial}` to
-  `Sets name for device with S/N: {serial}` for all indexed prefix fields
-
-### Debug Logging
-
-- **Prefix Mapping Trace** - Debug logging in `build_prefix_by_device()`,
-  `_regenerate_entity_ids()`, and options flow for prefix mapping traceability
-
-### Translations
-
-- Updated all 10 language files with improved descriptions
-
-**See**: [v1.3.6-beta.4 Release Notes](docs/releases/v1.3.6-beta.4.md)
-
-## [1.3.6-beta.3] - 2026-02-22
-
-### Bug Fixes
-
-- **`via_device` Identifier Mismatch** - Fixed datalogger device registration using raw
-  `logger_sn` (with colons for VSN700 MACs) while `sensor.py` used cleaned `device_id`
-  (without colons) for `via_device`, causing HA deprecation warnings
-- **Device S/N in Options Flow** - Options flow now shows serial numbers in field
-  descriptions so users can identify which device maps to which field
-
-### Translations
-
-- Updated all 10 language files with S/N placeholder support in indexed prefix descriptions
-
-**See**: [v1.3.6-beta.3 Release Notes](docs/releases/v1.3.6-beta.3.md)
-
-## [1.3.6-beta.2] - 2026-02-17
-
-### Bug Fixes
-
-- **Inverted Device Prefixes** - Fixed custom name prefixes being assigned to wrong
-  devices in multi-device setups (e.g., battery 1 prefix applied to battery 2)
-- **`via_device` Deprecation Warnings** - Fixed HA deprecation warnings by registering
-  datalogger device before forwarding sensor platform setup
-- **Entity ID Collisions** - Fixed 3 mapping collision groups where different measurements
-  produced identical display names (e.g., `VgridL1_N` and `PhVphA` both → "Voltage AC - Phase A-N")
-- **Duplicate Datalogger in Discovery** - Fixed VSN700 datalogger appearing twice in
-  discovery, which caused incorrect device counting for prefix key resolution
-
-### Improvements
-
-- **Collision Safety Net** - Entity ID regeneration and migration now use two-phase approach: pre-compute all renames, detect collisions before executing, skip losers with clear warning
-- **Automated `strings.json` Sync** - `convert_to_json.py` now auto-updates sensor entries in `strings.json` from mapping data, closing the pipeline automation gap
-- **Updated Regeneration Pipeline Docs** - CLAUDE.md now documents the full 3-step pipeline (generate_mapping → convert_to_json → generate_translations)
-
-### Mapping Changes
-
-- `VgridL1_N`: "Voltage AC - Phase A-N" → "Voltage AC - Grid L1-N" (distinct from `PhVphA`)
-- `VgridL2_N`: "Voltage AC - Phase B-N" → "Voltage AC - Grid L2-N" (distinct from `PhVphB`)
-- `PbaT`: "Power - Battery Total" → "Power - Battery Aggregate" (distinct from `Pba`)
-
-**See**: [v1.3.6-beta.2 Release Notes](docs/releases/v1.3.6-beta.2.md)
-
-## [1.3.6-beta.1] - 2026-02-17
+## [1.3.6] - 2026-03-01
 
 ### New Features
 
-- **Per-Device Custom Name Prefixes** - Users with multiple devices of the same type (e.g., 2 batteries) can now set individual custom names for each device (Fixes #36)
-  - Single device per type: unchanged behavior (e.g., `prefix_battery`)
-  - Multiple devices per type: indexed fields (e.g., `prefix_battery_1`, `prefix_battery_2`)
-  - Devices sorted by device_id for stable, deterministic ordering
-- **`strings.json` as Canonical Source** - Added `strings.json` following HA convention; generator now syncs `strings.json` to `translations/en.json`
+- **Per-Device Custom Name Prefixes** - Users with multiple devices of the same type
+  (e.g., 2 batteries) can now set individual custom names for each device (Fixes #36)
+  - Single device per type: unchanged behavior (backward compatible)
+  - Multiple devices per type: indexed fields (`prefix_battery_1`, `prefix_battery_2`)
+  - Devices sorted by `device_id` for stable, deterministic ordering
+- **`strings.json` as Canonical Source** - Following HA convention; generator syncs to
+  `translations/en.json`
+- **Collision Safety Net** - Entity ID regeneration/migration uses two-phase approach:
+  pre-compute all renames, detect collisions before executing
+- **Automated `strings.json` Sync** - `convert_to_json.py` auto-updates sensor entries
+  from mapping data
+
+### Bug Fixes
+
+- **Inverted Device Prefixes** - Fixed custom name prefixes assigned to wrong devices
+  in multi-device setups. Created shared `build_prefix_by_device()` helper.
+- **`via_device` Deprecation Warnings** - Fixed two issues: sensor creation before
+  datalogger device registration, and raw `logger_sn` vs cleaned `device_id` mismatch
+- **Entity ID Collisions** - Fixed 3 mapping collision groups with distinct display names
+- **Duplicate Datalogger in Discovery** - Fixed VSN700 datalogger appearing twice
+
+### UX Improvements
+
+- **Options Flow** - Step description guiding users to check S/N for multi-device setups;
+  clearer indexed field descriptions showing device S/N
+
+### Mapping Changes
+
+- `VgridL1_N`: "Voltage AC - Phase A-N" → "Voltage AC - Grid L1-N"
+- `VgridL2_N`: "Voltage AC - Phase B-N" → "Voltage AC - Grid L2-N"
+- `PbaT`: "Power - Battery Total" → "Power - Battery Aggregate"
 
 ### Translations
 
-- **Full Translation Coverage** - All indexed prefix strings fully translated in all 9 languages (de, es, et, fi, fr, it, nb, pt, sv)
-- **Translation Generator Updated** - Generator reads from `strings.json` (canonical) and syncs to `translations/en.json`
+- Full translation coverage for all 10 languages with per-device indexed prefix strings
 
 ### Refactoring
 
-- **Shared Constants** - Added `TYPE_TO_CONF_PREFIX` mapping in `const.py` for reuse across `sensor.py` and `config_flow.py`
-- **Alias Cleanup** - Removed backward-compatible `_compact_serial_number` / `_format_device_name` aliases from `sensor.py`; uses direct imports from `helpers.py`
+- Shared `TYPE_TO_CONF_PREFIX` mapping and `build_prefix_by_device()` helper
+- Removed backward-compatible aliases from `sensor.py`
+- Debug logging for prefix mapping traceability
 
-**See**: [v1.3.6-beta.1 Release Notes](docs/releases/v1.3.6-beta.1.md)
+**See**: [v1.3.6 Release Notes](docs/releases/v1.3.6.md)
 
 ## [1.3.5] - 2026-02-16
 
