@@ -2047,10 +2047,11 @@ class TestVSNSensorNativeValueEdgeCases:
         mock_sensor_config_entry: MagicMock,
     ) -> None:
         """Test sys_time conversion handles exceptions gracefully."""
-        # Use a positive value (required for sys_time handling) but invalid timezone
-        point_data = {"value": 1000000, "ha_display_name": "System Time"}
+        # Use a huge value that causes datetime.fromtimestamp to raise ValueError/OSError
+        huge_value = 10**15
+        point_data = {"value": huge_value, "ha_display_name": "System Time"}
         mock_coordinator.data = {
-            "devices": {TEST_INVERTER_SN: {"points": {"sys_time": {"value": 1000000}}}}
+            "devices": {TEST_INVERTER_SN: {"points": {"sys_time": {"value": huge_value}}}}
         }
 
         sensor = VSNSensor(
@@ -2062,14 +2063,9 @@ class TestVSNSensorNativeValueEdgeCases:
             point_data=point_data,
         )
 
-        # Mock hass with invalid timezone to trigger KeyError in ZoneInfo
-        mock_hass = MagicMock()
-        mock_hass.config.time_zone = "Invalid/Timezone"
-
-        with patch.object(type(sensor), "hass", new_callable=PropertyMock, return_value=mock_hass):
-            # Should return None due to invalid timezone (KeyError from ZoneInfo)
-            result = sensor.native_value
-            assert result is None
+        # Should return None due to timestamp overflow (ValueError/OSError)
+        result = sensor.native_value
+        assert result is None
 
     def test_native_value_system_load_rounding(
         self,

@@ -8,7 +8,11 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 from custom_components.abb_fimer_pvi_vsn_rest import (
+    STARTUP_FAILURES_KEY,
     _async_migrate_entity_ids,
+    _cleanup_orphaned_devices,
+    _clear_startup_failure,
+    _handle_startup_failure,
     async_remove_config_entry_device,
     async_setup_entry,
     async_unload_entry,
@@ -125,6 +129,7 @@ class TestAsyncSetupEntry:
             ),
             patch("custom_components.abb_fimer_pvi_vsn_rest._async_migrate_entity_ids"),
             patch("custom_components.abb_fimer_pvi_vsn_rest.async_update_device_registry"),
+            patch("custom_components.abb_fimer_pvi_vsn_rest._cleanup_orphaned_devices"),
         ):
             result = await async_setup_entry(mock_hass, mock_config_entry)
 
@@ -223,6 +228,7 @@ class TestAsyncSetupEntry:
             ),
             patch("custom_components.abb_fimer_pvi_vsn_rest._async_migrate_entity_ids"),
             patch("custom_components.abb_fimer_pvi_vsn_rest.async_update_device_registry"),
+            patch("custom_components.abb_fimer_pvi_vsn_rest._cleanup_orphaned_devices"),
         ):
             result = await async_setup_entry(mock_hass, mock_config_entry)
 
@@ -261,6 +267,7 @@ class TestAsyncSetupEntry:
             ),
             patch("custom_components.abb_fimer_pvi_vsn_rest._async_migrate_entity_ids"),
             patch("custom_components.abb_fimer_pvi_vsn_rest.async_update_device_registry"),
+            patch("custom_components.abb_fimer_pvi_vsn_rest._cleanup_orphaned_devices"),
         ):
             # First call - startup message should be logged
             await async_setup_entry(mock_hass, mock_config_entry)
@@ -479,22 +486,45 @@ class TestAsyncRemoveConfigEntryDevice:
 
     @pytest.fixture
     def mock_config_entry(self) -> MagicMock:
-        """Create mock config entry."""
-        return MagicMock(spec=ConfigEntry)
+        """Create mock config entry with discovered devices."""
+        entry = MagicMock(spec=ConfigEntry)
+        # Mock discovered devices for the smart deletion logic
+        mock_coordinator = MagicMock()
+        mock_coordinator.discovered_devices = [
+            MagicMock(device_id="111033-3N16-1421"),
+            MagicMock(device_id="077909-3G82-3112"),
+        ]
+        entry.runtime_data = MagicMock()
+        entry.runtime_data.coordinator = mock_coordinator
+        return entry
 
     @pytest.mark.asyncio
-    async def test_remove_device_blocked_for_domain(
+    async def test_remove_device_blocked_for_discovered(
         self,
         mock_hass: MagicMock,
         mock_config_entry: MagicMock,
     ) -> None:
-        """Test device removal is blocked for domain devices."""
+        """Test device removal is blocked for devices still in discovery."""
         mock_device = MagicMock()
         mock_device.identifiers = {(DOMAIN, "111033-3N16-1421")}
 
         result = await async_remove_config_entry_device(mock_hass, mock_config_entry, mock_device)
 
         assert result is False
+
+    @pytest.mark.asyncio
+    async def test_remove_device_allowed_for_orphaned(
+        self,
+        mock_hass: MagicMock,
+        mock_config_entry: MagicMock,
+    ) -> None:
+        """Test device removal is allowed for orphaned devices not in discovery."""
+        mock_device = MagicMock()
+        mock_device.identifiers = {(DOMAIN, "orphaned-device-id")}
+
+        result = await async_remove_config_entry_device(mock_hass, mock_config_entry, mock_device)
+
+        assert result is True
 
     @pytest.mark.asyncio
     async def test_remove_device_allowed_for_other_domain(
@@ -706,3 +736,229 @@ class TestAsyncMigrateEntityIds:
             await _async_migrate_entity_ids(mock_hass, mock_config_entry)
 
         mock_registry.async_update_entity.assert_not_called()
+
+
+class TestCleanupOrphanedDevices:
+    """Tests for _cleanup_orphaned_devices function."""
+
+    @pytest.fixture
+    def mock_hass(self) -> MagicMock:
+        """Create mock Home Assistant instance."""
+        return MagicMock(spec=HomeAssistant)
+
+    @pytest.fixture
+    def mock_config_entry(self) -> MagicMock:
+        """Create mock config entry with discovered devices."""
+        entry = MagicMock(spec=ConfigEntry)
+        entry.entry_id = "test_entry_id"
+        mock_coordinator = MagicMock()
+        mock_coordinator.discovered_devices = [
+            MagicMock(device_id="111033-3N16-1421"),
+            MagicMock(device_id="077909-3G82-3112"),
+        ]
+        entry.runtime_data = MagicMock()
+        entry.runtime_data.coordinator = mock_coordinator
+        return entry
+
+    def test_removes_orphaned_device(
+        self,
+        mock_hass: MagicMock,
+        mock_config_entry: MagicMock,
+    ) -> None:
+        """Test orphaned devices are removed from registry."""
+        orphan_device = MagicMock()
+        orphan_device.identifiers = {(DOMAIN, "orphan-device-id")}
+        orphan_device.name = "Orphan Device"
+        orphan_device.id = "orphan_entry_id"
+
+        mock_device_registry = MagicMock()
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.dr.async_get",
+                return_value=mock_device_registry,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.dr.async_entries_for_config_entry",
+                return_value=[orphan_device],
+            ),
+        ):
+            _cleanup_orphaned_devices(mock_hass, mock_config_entry)
+
+        mock_device_registry.async_remove_device.assert_called_once_with("orphan_entry_id")
+
+    def test_keeps_discovered_device(
+        self,
+        mock_hass: MagicMock,
+        mock_config_entry: MagicMock,
+    ) -> None:
+        """Test discovered devices are NOT removed from registry."""
+        active_device = MagicMock()
+        active_device.identifiers = {(DOMAIN, "111033-3N16-1421")}
+        active_device.name = "Active Device"
+
+        mock_device_registry = MagicMock()
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.dr.async_get",
+                return_value=mock_device_registry,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.dr.async_entries_for_config_entry",
+                return_value=[active_device],
+            ),
+        ):
+            _cleanup_orphaned_devices(mock_hass, mock_config_entry)
+
+        mock_device_registry.async_remove_device.assert_not_called()
+
+    def test_no_devices_in_registry(
+        self,
+        mock_hass: MagicMock,
+        mock_config_entry: MagicMock,
+    ) -> None:
+        """Test no-op when registry has no devices."""
+        mock_device_registry = MagicMock()
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.dr.async_get",
+                return_value=mock_device_registry,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.dr.async_entries_for_config_entry",
+                return_value=[],
+            ),
+        ):
+            _cleanup_orphaned_devices(mock_hass, mock_config_entry)
+
+        mock_device_registry.async_remove_device.assert_not_called()
+
+
+class TestHandleStartupFailure:
+    """Tests for _handle_startup_failure function."""
+
+    @pytest.fixture
+    def mock_hass(self) -> MagicMock:
+        """Create mock Home Assistant instance."""
+        hass = MagicMock(spec=HomeAssistant)
+        hass.data = {STARTUP_FAILURES_KEY: {}}
+        return hass
+
+    @pytest.fixture
+    def mock_config_entry(self) -> MagicMock:
+        """Create mock config entry."""
+        entry = MagicMock(spec=ConfigEntry)
+        entry.entry_id = "test_entry_id"
+        entry.title = "Test VSN Device"
+        return entry
+
+    def test_first_failure_increments_count(
+        self,
+        mock_hass: MagicMock,
+        mock_config_entry: MagicMock,
+    ) -> None:
+        """Test first failure initializes and increments counter."""
+        _handle_startup_failure(
+            mock_hass, mock_config_entry, "192.168.1.100", 3, True, Exception("test")
+        )
+
+        failures = mock_hass.data[STARTUP_FAILURES_KEY]["test_entry_id"]
+        assert failures["count"] == 1
+        assert failures["notification_created"] is False
+
+    def test_notification_created_at_threshold(
+        self,
+        mock_hass: MagicMock,
+        mock_config_entry: MagicMock,
+    ) -> None:
+        """Test notification is created when failure threshold is reached."""
+        mock_hass.data[STARTUP_FAILURES_KEY]["test_entry_id"] = {
+            "count": 2,
+            "notification_created": False,
+        }
+
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.create_connection_issue"
+        ) as mock_create:
+            _handle_startup_failure(
+                mock_hass, mock_config_entry, "192.168.1.100", 3, True, Exception("test")
+            )
+
+        mock_create.assert_called_once()
+        failures = mock_hass.data[STARTUP_FAILURES_KEY]["test_entry_id"]
+        assert failures["notification_created"] is True
+
+    def test_notification_not_created_when_disabled(
+        self,
+        mock_hass: MagicMock,
+        mock_config_entry: MagicMock,
+    ) -> None:
+        """Test notification is NOT created when notifications are disabled."""
+        mock_hass.data[STARTUP_FAILURES_KEY]["test_entry_id"] = {
+            "count": 2,
+            "notification_created": False,
+        }
+
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.create_connection_issue"
+        ) as mock_create:
+            _handle_startup_failure(
+                mock_hass,
+                mock_config_entry,
+                "192.168.1.100",
+                3,
+                False,
+                Exception("test"),
+            )
+
+        mock_create.assert_not_called()
+
+
+class TestClearStartupFailure:
+    """Tests for _clear_startup_failure function."""
+
+    def test_clear_with_notification(self) -> None:
+        """Test clearing failure when notification was created."""
+        hass = MagicMock(spec=HomeAssistant)
+        hass.data = {
+            STARTUP_FAILURES_KEY: {"test_entry": {"count": 5, "notification_created": True}}
+        }
+
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.delete_connection_issue"
+        ) as mock_delete:
+            _clear_startup_failure(hass, "test_entry")
+
+        mock_delete.assert_called_once_with(hass, "test_entry")
+        assert "test_entry" not in hass.data[STARTUP_FAILURES_KEY]
+
+    def test_clear_without_notification(self) -> None:
+        """Test clearing failure when no notification was created."""
+        hass = MagicMock(spec=HomeAssistant)
+        hass.data = {
+            STARTUP_FAILURES_KEY: {"test_entry": {"count": 1, "notification_created": False}}
+        }
+
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.delete_connection_issue"
+        ) as mock_delete:
+            _clear_startup_failure(hass, "test_entry")
+
+        mock_delete.assert_not_called()
+        assert "test_entry" not in hass.data[STARTUP_FAILURES_KEY]
+
+    def test_clear_nonexistent_entry(self) -> None:
+        """Test clearing failure for entry that doesn't exist."""
+        hass = MagicMock(spec=HomeAssistant)
+        hass.data = {STARTUP_FAILURES_KEY: {}}
+
+        _clear_startup_failure(hass, "nonexistent_entry")
+
+    def test_clear_missing_failures_key(self) -> None:
+        """Test clearing when STARTUP_FAILURES_KEY not in hass.data."""
+        hass = MagicMock(spec=HomeAssistant)
+        hass.data = {}
+
+        _clear_startup_failure(hass, "test_entry")
