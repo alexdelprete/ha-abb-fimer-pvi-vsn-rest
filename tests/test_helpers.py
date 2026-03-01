@@ -8,8 +8,8 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 from custom_components.abb_fimer_pvi_vsn_rest.helpers import (
+    async_get_entity_translations,
     build_prefix_by_device,
-    load_entity_name_translations,
     log_debug,
     log_error,
     log_info,
@@ -193,7 +193,7 @@ class TestBuildPrefixByDevice:
 
 
 class TestLoadEntityNameTranslations:
-    """Tests for load_entity_name_translations function."""
+    """Tests for async_get_entity_translations function."""
 
     @pytest.mark.asyncio
     async def test_loads_and_parses_translations(self) -> None:
@@ -211,7 +211,7 @@ class TestLoadEntityNameTranslations:
             new_callable=AsyncMock,
             return_value=mock_translations,
         ):
-            result = await load_entity_name_translations(mock_hass, "abb_fimer_pvi_vsn_rest")
+            result = await async_get_entity_translations(mock_hass, "abb_fimer_pvi_vsn_rest")
 
         assert result == {
             "watts": "Power AC",
@@ -229,6 +229,6 @@ class TestLoadEntityNameTranslations:
             new_callable=AsyncMock,
             return_value={},
         ):
-            result = await load_entity_name_translations(mock_hass, "abb_fimer_pvi_vsn_rest")
+            result = await async_get_entity_translations(mock_hass, "abb_fimer_pvi_vsn_rest")
 
         assert result == {}
