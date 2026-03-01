@@ -16,6 +16,7 @@ from custom_components.abb_fimer_pvi_vsn_rest.sensor import (
     DEVICE_CLASS_EXCEPTIONS,
     DEVICE_CLASS_VALID_UNITS,
     VSNSensor,
+    _get_device_type_simple,
     _get_precision_from_units,
     _simplify_device_type,
     async_setup_entry,
@@ -2164,3 +2165,111 @@ class TestVSNSensorAvailableEdgeCases:
         )
 
         assert sensor.available is False
+
+
+class TestGetDeviceTypeSimple:
+    """Tests for _get_device_type_simple wrapper function."""
+
+    def test_inverter_device(self) -> None:
+        """Test inverter device returns 'inverter'."""
+        device = MagicMock()
+        device.is_datalogger = False
+        device.device_type = "inverter_3phases"
+        assert _get_device_type_simple(device) == "inverter"
+
+    def test_datalogger_device(self) -> None:
+        """Test datalogger device returns 'datalogger'."""
+        device = MagicMock()
+        device.is_datalogger = True
+        device.device_type = "vsn300"
+        assert _get_device_type_simple(device) == "datalogger"
+
+
+class TestUptimeFormattingWithMonths:
+    """Tests for _format_uptime_seconds with large values."""
+
+    def test_uptime_with_months(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test uptime formatting with months included."""
+        # 45 days = 1 month + 15 days
+        seconds = 45 * 24 * 3600 + 3 * 3600 + 30 * 60
+        point_data = {"value": seconds, "ha_display_name": "Uptime"}
+        mock_coordinator.data = {
+            "devices": {TEST_INVERTER_SN: {"points": {"uptime": {"value": seconds}}}}
+        }
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="uptime",
+            point_data=point_data,
+        )
+
+        result = sensor._format_uptime_seconds(seconds)
+        assert "month" in result
+        assert "day" in result
+        assert "hour" in result
+
+    def test_uptime_with_single_month(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test uptime formatting with exactly 1 month (singular)."""
+        seconds = 30 * 24 * 3600  # Exactly 1 month
+        point_data = {"value": seconds, "ha_display_name": "Uptime"}
+        mock_coordinator.data = {
+            "devices": {TEST_INVERTER_SN: {"points": {"uptime": {"value": seconds}}}}
+        }
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="uptime",
+            point_data=point_data,
+        )
+
+        result = sensor._format_uptime_seconds(seconds)
+        assert "1 month" in result
+
+
+class TestDeviceInfoHardwareVersion:
+    """Tests for device_info with hardware_version populated."""
+
+    def test_device_info_with_hw_version(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test device_info includes hw_version when available."""
+        point_data = {
+            "value": 100,
+            "ha_display_name": "Test",
+            "device_model": "PVI-10.0",
+            "manufacturer": "ABB",
+            "firmware_version": "C008",
+            "hardware_version": "HW-Rev2",
+        }
+        mock_coordinator.data = {
+            "devices": {TEST_INVERTER_SN: {"points": {"test": {"value": 100}}}}
+        }
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name="test",
+            point_data=point_data,
+        )
+
+        device_info = sensor.device_info
+        assert device_info is not None
+        assert device_info.get("hw_version") == "HW-Rev2"
