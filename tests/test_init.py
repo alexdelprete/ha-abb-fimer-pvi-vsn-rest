@@ -10,6 +10,7 @@ import pytest
 from custom_components.abb_fimer_pvi_vsn_rest import (
     STARTUP_FAILURES_KEY,
     _async_migrate_entity_ids,
+    _async_migrate_options,
     _cleanup_orphaned_devices,
     _clear_startup_failure,
     _handle_startup_failure,
@@ -23,8 +24,12 @@ from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discover
     DiscoveryResult,
 )
 from custom_components.abb_fimer_pvi_vsn_rest.const import (
+    CONF_ENABLE_REPAIR_NOTIFICATION,
+    CONF_ENABLE_STARTUP_NOTIFICATION,
+    CONF_FAILURES_THRESHOLD,
     CONF_PREFIX_DATALOGGER,
     CONF_PREFIX_INVERTER,
+    CONF_RECOVERY_SCRIPT,
     CONF_SCAN_INTERVAL,
     DOMAIN,
 )
@@ -962,3 +967,231 @@ class TestClearStartupFailure:
         hass.data = {}
 
         _clear_startup_failure(hass, "test_entry")
+
+
+class TestAsyncMigrateOptions:
+    """Tests for _async_migrate_options function."""
+
+    @pytest.fixture
+    def mock_hass(self) -> MagicMock:
+        """Create mock Home Assistant instance."""
+        hass = MagicMock(spec=HomeAssistant)
+        hass.config_entries = MagicMock()
+        return hass
+
+    @pytest.mark.asyncio
+    async def test_migrate_adds_all_missing_options(
+        self,
+        mock_hass: MagicMock,
+    ) -> None:
+        """Test all new options are added when missing."""
+        entry = MagicMock(spec=ConfigEntry)
+        entry.options = {CONF_SCAN_INTERVAL: 60}
+
+        await _async_migrate_options(mock_hass, entry)
+
+        mock_hass.config_entries.async_update_entry.assert_called_once()
+        call_kwargs = mock_hass.config_entries.async_update_entry.call_args
+        updated_options = call_kwargs[1]["options"]
+        assert CONF_ENABLE_REPAIR_NOTIFICATION in updated_options
+        assert CONF_ENABLE_STARTUP_NOTIFICATION in updated_options
+        assert CONF_FAILURES_THRESHOLD in updated_options
+        assert CONF_RECOVERY_SCRIPT in updated_options
+
+    @pytest.mark.asyncio
+    async def test_migrate_skips_when_all_present(
+        self,
+        mock_hass: MagicMock,
+    ) -> None:
+        """Test no update when all options already present."""
+        entry = MagicMock(spec=ConfigEntry)
+        entry.options = {
+            CONF_SCAN_INTERVAL: 60,
+            CONF_ENABLE_REPAIR_NOTIFICATION: True,
+            CONF_ENABLE_STARTUP_NOTIFICATION: True,
+            CONF_FAILURES_THRESHOLD: 3,
+            CONF_RECOVERY_SCRIPT: "",
+        }
+
+        await _async_migrate_options(mock_hass, entry)
+
+        mock_hass.config_entries.async_update_entry.assert_not_called()
+
+
+class TestAsyncMigrateEntityIdsCollision:
+    """Tests for entity ID migration collision handling."""
+
+    MOCK_TRANSLATIONS: ClassVar[dict[str, str]] = {
+        "watts": "Power AC",
+        "pgrid": "Power AC",  # Same translation as watts → collision!
+    }
+
+    @pytest.fixture
+    def mock_hass(self) -> MagicMock:
+        """Create mock Home Assistant instance."""
+        return MagicMock(spec=HomeAssistant)
+
+    @pytest.fixture
+    def mock_config_entry(self) -> MagicMock:
+        """Create mock config entry with runtime data."""
+        entry = MagicMock(spec=ConfigEntry)
+        entry.entry_id = "test_entry_id"
+        entry.options = {CONF_PREFIX_INVERTER: "ABB FIMER Inverter"}
+
+        inverter_device = DiscoveredDevice(
+            device_id="077909-3G82-3112",
+            raw_device_id="077909-3G82-3112",
+            device_type="inverter_3phases",
+            device_model="PVI-10.0-OUTD",
+            manufacturer="Power-One",
+            firmware_version="C008",
+            hardware_version=None,
+            is_datalogger=False,
+        )
+
+        mock_coordinator = MagicMock()
+        mock_coordinator.discovered_devices = [inverter_device]
+        runtime_data = MagicMock()
+        runtime_data.coordinator = mock_coordinator
+        entry.runtime_data = runtime_data
+        return entry
+
+    @pytest.mark.asyncio
+    async def test_collision_skips_loser(
+        self,
+        mock_hass: MagicMock,
+        mock_config_entry: MagicMock,
+    ) -> None:
+        """Test collision: two entities target same ID, loser is skipped."""
+        # Two entities with different point_names but same translation
+        entity_a = MagicMock()
+        entity_a.unique_id = "abb_fimer_pvi_vsn_rest_inverter_0779093g823112_pgrid"
+        entity_a.entity_id = "sensor.abb_fimer_inverter_pgrid"
+
+        entity_b = MagicMock()
+        entity_b.unique_id = "abb_fimer_pvi_vsn_rest_inverter_0779093g823112_watts"
+        entity_b.entity_id = "sensor.abb_fimer_inverter_watts"
+
+        mock_registry = MagicMock()
+        mock_registry.async_get = MagicMock(return_value=None)
+        mock_registry.async_update_entity = MagicMock()
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.er.async_get",
+                return_value=mock_registry,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.er.async_entries_for_config_entry",
+                return_value=[entity_a, entity_b],
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.async_get_entity_translations",
+                new_callable=AsyncMock,
+                return_value=self.MOCK_TRANSLATIONS,
+            ),
+        ):
+            await _async_migrate_entity_ids(mock_hass, mock_config_entry)
+
+        # Only the winner (alphabetically first entity_id) should be migrated
+        assert mock_registry.async_update_entity.call_count <= 1
+
+    @pytest.mark.asyncio
+    async def test_short_unique_id_skipped(
+        self,
+        mock_hass: MagicMock,
+        mock_config_entry: MagicMock,
+    ) -> None:
+        """Test entity with short unique_id (< 8 parts) is skipped."""
+        entity = MagicMock()
+        entity.unique_id = "short_id"
+        entity.entity_id = "sensor.short_id"
+
+        mock_registry = MagicMock()
+        mock_registry.async_update_entity = MagicMock()
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.er.async_get",
+                return_value=mock_registry,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.er.async_entries_for_config_entry",
+                return_value=[entity],
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.async_get_entity_translations",
+                new_callable=AsyncMock,
+                return_value=self.MOCK_TRANSLATIONS,
+            ),
+        ):
+            await _async_migrate_entity_ids(mock_hass, mock_config_entry)
+
+        mock_registry.async_update_entity.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_untranslated_point_name_skipped(
+        self,
+        mock_hass: MagicMock,
+        mock_config_entry: MagicMock,
+    ) -> None:
+        """Test entity with untranslated point_name is skipped."""
+        entity = MagicMock()
+        entity.unique_id = "abb_fimer_pvi_vsn_rest_inverter_0779093g823112_unknown_point"
+        entity.entity_id = "sensor.abb_fimer_inverter_unknown_point"
+
+        mock_registry = MagicMock()
+        mock_registry.async_update_entity = MagicMock()
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.er.async_get",
+                return_value=mock_registry,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.er.async_entries_for_config_entry",
+                return_value=[entity],
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.async_get_entity_translations",
+                new_callable=AsyncMock,
+                return_value=self.MOCK_TRANSLATIONS,
+            ),
+        ):
+            await _async_migrate_entity_ids(mock_hass, mock_config_entry)
+
+        mock_registry.async_update_entity.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_unknown_device_skipped(
+        self,
+        mock_hass: MagicMock,
+        mock_config_entry: MagicMock,
+    ) -> None:
+        """Test entity for unknown device (not in discovery) is skipped."""
+        entity = MagicMock()
+        # Device serial 'unknownsn123456' is not in discovered devices
+        entity.unique_id = "abb_fimer_pvi_vsn_rest_inverter_unknownsn123456_watts"
+        entity.entity_id = "sensor.abb_fimer_inverter_watts"
+
+        mock_registry = MagicMock()
+        mock_registry.async_update_entity = MagicMock()
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.er.async_get",
+                return_value=mock_registry,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.er.async_entries_for_config_entry",
+                return_value=[entity],
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.async_get_entity_translations",
+                new_callable=AsyncMock,
+                return_value=self.MOCK_TRANSLATIONS,
+            ),
+        ):
+            await _async_migrate_entity_ids(mock_hass, mock_config_entry)
+
+        mock_registry.async_update_entity.assert_not_called()
