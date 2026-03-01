@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import UTC, datetime
 import logging
 from typing import Any
-from zoneinfo import ZoneInfo
 
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity, SensorStateClass
 from homeassistant.config_entries import ConfigEntry
@@ -581,13 +580,14 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
 
         # Convert Aurora timestamps for sys_time sensor
         # Aurora protocol uses Jan 1, 2000 epoch instead of Unix epoch (Jan 1, 1970)
+        # The inverter returns sys_time as LOCAL time seconds since Aurora epoch,
+        # so we must NOT apply a timezone conversion (would cause double-offset).
         # Return formatted string to show actual date/time instead of relative time ("X ago")
         if self._point_name == "sys_time" and isinstance(value, (int, float)) and value > 0:
             try:
-                # Get HA's configured timezone
-                tz = ZoneInfo(self.hass.config.time_zone)
-                # Add Aurora epoch offset to convert to Unix timestamp, then to datetime
-                dt = datetime.fromtimestamp(value + AURORA_EPOCH_OFFSET, tz=tz)
+                # The inverter returns local time as Aurora epoch seconds.
+                # Interpret as UTC to get correct wall-clock values (no tz conversion).
+                dt = datetime.fromtimestamp(value + AURORA_EPOCH_OFFSET, tz=UTC)
                 # Return as formatted string (not datetime object) to avoid relative time display
                 return dt.strftime("%Y-%m-%d %H:%M:%S")
             except (ValueError, OSError, KeyError) as err:

@@ -192,6 +192,9 @@ async def async_setup_entry(
     # Register datalogger device FIRST so child devices can reference it via via_device
     async_update_device_registry(hass, config_entry)
 
+    # Remove orphaned devices no longer in discovery (e.g., beta.1 duplicate datalogger)
+    _cleanup_orphaned_devices(hass, config_entry)
+
     # Forward setup to platforms (datalogger device already exists for via_device references)
     await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
 
@@ -269,6 +272,33 @@ def async_update_device_registry(
         _LOGGER.debug("Device ID stored in coordinator: %s", device.id)
 
 
+@callback
+def _cleanup_orphaned_devices(
+    hass: HomeAssistant, config_entry: ABBFimerPVIVSNRestConfigEntry
+) -> None:
+    """Remove devices from registry that are no longer in discovery.
+
+    Handles stale devices left behind by earlier bugs (e.g., beta.1 duplicate datalogger).
+    Runs during setup after device registration and before platform setup.
+    """
+    coordinator = config_entry.runtime_data.coordinator
+    device_registry = dr.async_get(hass)
+    discovered_ids = {d.device_id for d in coordinator.discovered_devices}
+
+    for device_entry in dr.async_entries_for_config_entry(device_registry, config_entry.entry_id):
+        device_id = next(
+            (ident[1] for ident in device_entry.identifiers if ident[0] == DOMAIN),
+            None,
+        )
+        if device_id and device_id not in discovered_ids:
+            _LOGGER.info(
+                "Removing orphaned device '%s' (%s) — no longer discovered",
+                device_entry.name,
+                device_id,
+            )
+            device_registry.async_remove_device(device_entry.id)
+
+
 async def async_unload_entry(
     hass: HomeAssistant, config_entry: ABBFimerPVIVSNRestConfigEntry
 ) -> bool:
@@ -291,14 +321,19 @@ async def async_unload_entry(
 async def async_remove_config_entry_device(
     hass: HomeAssistant, config_entry: ConfigEntry, device_entry: dr.DeviceEntry
 ) -> bool:
-    """Prevent deletion of device via device registry.
+    """Allow deletion of orphaned devices not in current discovery.
 
-    Users must remove the integration instead.
+    Devices still present in discovery are protected from manual deletion.
+    Orphaned devices (no longer discovered) can be removed via the UI.
     """
-    if any(identifier[0] == DOMAIN for identifier in device_entry.identifiers):
-        _LOGGER.error("Cannot delete device using device delete. Remove the integration instead.")
-        return False
-    return True
+    coordinator = config_entry.runtime_data.coordinator
+    discovered_ids = {d.device_id for d in coordinator.discovered_devices}
+
+    for identifier in device_entry.identifiers:
+        if identifier[0] == DOMAIN and identifier[1] in discovered_ids:
+            return False  # Still discovered — block deletion
+
+    return True  # Not discovered (orphaned) — allow deletion
 
 
 async def _async_migrate_options(

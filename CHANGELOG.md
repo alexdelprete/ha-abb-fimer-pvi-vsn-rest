@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.7] - TBD
+
+### Bug Fixes
+
+- **SysTime Timezone Double-Offset** - Fixed `sys_time` sensor showing wrong time due to
+  double timezone offset. Inverter returns local time, not UTC.
+- **Ghost Datalogger Device** - Auto-cleanup orphaned devices from device registry during
+  setup (e.g., beta.1 duplicate datalogger leftover)
+- **Smart Device Deletion** - `async_remove_config_entry_device()` now allows deletion of
+  orphaned devices while protecting actively discovered devices
+
+**See**: [v1.3.7 Release Notes](docs/releases/v1.3.7.md)
+
 ## [1.3.6] - 2026-03-01
 
 ### New Features
