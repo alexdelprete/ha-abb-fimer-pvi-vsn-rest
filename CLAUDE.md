@@ -896,7 +896,7 @@ scripts/vsn-mapping-generator/generate_mapping.py
    # Step 1: Generate Excel from source data
    python scripts/vsn-mapping-generator/generate_mapping.py
 
-   # Step 2: Convert Excel to JSON + update strings.json sensor entries
+   # Step 2: Convert Excel to JSON + update translations/en.json sensor entries
    python scripts/vsn-mapping-generator/convert_to_json.py
 
    # Step 3: Regenerate all translation files (en.json + 9 languages)
@@ -916,7 +916,7 @@ scripts/vsn-mapping-generator/generate_mapping.py
    git add scripts/vsn-mapping-generator/generate_mapping.py
    git add scripts/vsn-mapping-generator/output/
    git add custom_components/.../data/vsn-sunspec-point-mapping.json
-   git add custom_components/.../strings.json
+   git add custom_components/.../translations/en.json
    git add custom_components/.../translations/
    git commit -m "feat: add/update sensor X with attributes Y"
    ```
@@ -1005,7 +1005,7 @@ If you need to add raw data sources:
 The mapping/translation pipeline has **3 mandatory steps** that must always run together. Never run just one step — the outputs are chained.
 
 ```text
-generate_mapping.py → Excel → convert_to_json.py → JSON + strings.json → generate_translations.py → en.json + 9 languages
+generate_mapping.py → Excel → convert_to_json.py → JSON + translations/en.json → generate_translations.py → 9 languages
 ```
 
 Step 1 — Generate Excel from generator script (source of truth):
@@ -1017,7 +1017,7 @@ python scripts/vsn-mapping-generator/generate_mapping.py
 - Reads VSN data sources + `SUNSPEC_TO_HA_METADATA`, `DESCRIPTION_IMPROVEMENTS`, `DISPLAY_NAME_STANDARDIZATION` dicts
 - Outputs: `scripts/vsn-mapping-generator/output/vsn-sunspec-point-mapping.xlsx`
 
-Step 2 — Convert Excel to JSON + sync strings.json:
+Step 2 — Convert Excel to JSON + sync translations/en.json:
 
 ```bash
 python scripts/vsn-mapping-generator/convert_to_json.py
@@ -1026,8 +1026,8 @@ python scripts/vsn-mapping-generator/convert_to_json.py
 - Reads Excel, outputs JSON mapping to 2 locations:
   - `scripts/vsn-mapping-generator/output/vsn-sunspec-point-mapping.json`
   - `custom_components/.../data/vsn-sunspec-point-mapping.json` (runtime copy)
-- Auto-updates `custom_components/.../strings.json` sensor entries from `HA Display Name` field
-- Preserves `config`/`options` sections in `strings.json` (only replaces `entity.sensor`)
+- Auto-updates `custom_components/.../translations/en.json` sensor entries from `HA Display Name` field
+- Preserves `config`/`options` sections in `translations/en.json` (only replaces `entity.sensor`)
 
 Step 3 — Regenerate all translations:
 
@@ -1035,9 +1035,8 @@ Step 3 — Regenerate all translations:
 python scripts/generate-translations/generate_translations.py --all
 ```
 
-- Reads `strings.json` (canonical English source)
-- Copies to `translations/en.json`
-- Translates sensor names + options for 9 languages using `translation_dictionaries/*.py`
+- Reads `translations/en.json` (canonical English source)
+- - Translates sensor names + options for 9 languages using `translation_dictionaries/*.py`
 
 Generated files (commit all together):
 
@@ -1046,7 +1045,7 @@ Generated files (commit all together):
 | `scripts/.../output/*.xlsx`                                   | Step 1       |
 | `scripts/.../output/*.json`                                   | Step 2       |
 | `custom_components/.../data/vsn-sunspec-point-mapping.json`   | Step 2       |
-| `custom_components/.../strings.json` (sensor entries)         | Step 2       |
+| `custom_components/.../translations/en.json` (sensor entries) | Step 2       |
 | `custom_components/.../translations/en.json`                  | Step 3       |
 | `custom_components/.../translations/{de,es,...,sv}.json`      | Step 3       |
 
@@ -1391,7 +1390,7 @@ The project includes `.markdownlint.json` configuration:
 Run linting: `npx markdownlint-cli2 *.md docs/*.md`
 
 <!-- BEGIN SHARED:repo-sync -->
-<!-- Synced by repo-sync on 2026-02-22 -->
+<!-- Synced by repo-sync on 2026-03-18 -->
 
 ## Context7 for Documentation
 
@@ -1464,6 +1463,14 @@ entry.runtime_data = MyData(device_name=name)
 ```
 
 **DO NOT use `hass.data[DOMAIN]`** (deprecated pattern)
+
+### Translations (Custom Integrations)
+
+Per [HA developer docs](https://developers.home-assistant.io/docs/internationalization/custom_integration/):
+
+- **DO use `translations/en.json`** as the source of truth for English strings
+- **DO NOT create `strings.json`** — it is a Core-only build-time feature and is ignored by custom integrations
+- All translation files go in `translations/<lang>.json` (e.g., `en.json`, `de.json`, `it.json`)
 
 ### Logging
 

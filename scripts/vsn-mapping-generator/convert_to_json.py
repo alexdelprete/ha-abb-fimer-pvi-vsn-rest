@@ -10,18 +10,18 @@ from pathlib import Path
 import openpyxl
 
 
-def update_strings_json(mapping_rows: list[dict], strings_path: Path) -> None:
-    """Update sensor entries in strings.json from mapping data.
+def update_en_json(mapping_rows: list[dict], en_path: Path) -> None:
+    """Update sensor entries in translations/en.json from mapping data.
 
     Preserves the config/options sections and only replaces entity.sensor entries
     with display names from the mapping JSON (HA Display Name field).
     """
-    if not strings_path.exists():
-        print(f"✗ strings.json not found: {strings_path}")
+    if not en_path.exists():
+        print(f"✗ translations/en.json not found: {en_path}")
         return
 
-    with open(strings_path, encoding="utf-8") as f:
-        strings_data = json.load(f)
+    with open(en_path, encoding="utf-8") as f:
+        en_data = json.load(f)
 
     # Build sensor entries from mapping: {ha_name: {"name": display_name}}
     sensor_entries = {}
@@ -32,14 +32,14 @@ def update_strings_json(mapping_rows: list[dict], strings_path: Path) -> None:
             sensor_entries[ha_name] = {"name": display_name}
 
     # Replace only the entity.sensor section
-    if "entity" not in strings_data:
-        strings_data["entity"] = {}
-    strings_data["entity"]["sensor"] = sensor_entries
+    if "entity" not in en_data:
+        en_data["entity"] = {}
+    en_data["entity"]["sensor"] = sensor_entries
 
-    with open(strings_path, "w", encoding="utf-8") as f:
-        json.dump(strings_data, f, indent=2, ensure_ascii=False)
+    with open(en_path, "w", encoding="utf-8") as f:
+        json.dump(en_data, f, indent=2, ensure_ascii=False)
 
-    print(f"✓ strings.json updated: {len(sensor_entries)} sensor entries")
+    print(f"✓ translations/en.json updated: {len(sensor_entries)} sensor entries")
 
 
 def convert_excel_to_json():
@@ -140,9 +140,9 @@ def convert_excel_to_json():
 
     print(f"✓ Integration data file updated: {data_path}")
 
-    # Update strings.json sensor entries from mapping
-    strings_path = repo_root / "custom_components" / "abb_fimer_pvi_vsn_rest" / "strings.json"
-    update_strings_json(rows, strings_path)
+    # Update translations/en.json sensor entries from mapping
+    en_path = repo_root / "custom_components" / "abb_fimer_pvi_vsn_rest" / "translations" / "en.json"
+    update_en_json(rows, en_path)
 
     # Print statistics
     print("\nModel Statistics:")
