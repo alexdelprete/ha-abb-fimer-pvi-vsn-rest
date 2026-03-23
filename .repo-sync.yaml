@@ -24,7 +24,6 @@ vars:
 
   # -- Workflow tuning --
   jsonlint_flags: ""
-  pymarkdown_config: ""
   version_grep_pattern: 'VERSION = '
 
   # -- Dependabot --
@@ -53,8 +52,6 @@ vars:
       - "PT028"
       - "PERF401"
   ruff_tests_extra_ignores: ["INP001"]
-  pymarkdown_line_length: 180
-  pymarkdown_strict_md013: true
 
   # -- Extras --
   requirements_extra_deps: ["aiohttp>=3.13.3", "urllib3>=2.6.3"]
@@ -64,6 +61,7 @@ vars:
 
 copy_files:
   - .gitattributes
+  - .pymarkdownlint.json
   - .github/workflows/dbautomerge.yml
   - .github/FUNDING.yml
   - LICENSE
