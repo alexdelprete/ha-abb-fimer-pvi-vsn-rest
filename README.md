@@ -15,7 +15,8 @@ Home Assistant custom integration for ABB/FIMER/Power-One PVI inverters via **VS
 
 ## Overview
 
-This integration connects to VSN300 or VSN700 dataloggers to monitor ABB/FIMER/Power-One PV inverters. It communicates via the datalogger's REST API and normalizes data to
+This integration connects to VSN300 or VSN700 dataloggers to monitor ABB/FIMER/Power-One PV inverters. It communicates
+via the datalogger's REST API and normalizes data to
 SunSpec-compatible format for consistent Home Assistant entity creation.
 
 ### Features
@@ -98,7 +99,8 @@ The integration will:
 
 ### Configuration Options
 
-After setup, click **"Configure"** on the integration card to access the options dialog. All configuration options are described below:
+After setup, click **"Configure"** on the integration card to access the options dialog. All configuration options are
+described below:
 
 #### Polling Settings
 
@@ -234,7 +236,8 @@ The integration uses Home Assistant's modern entity naming pattern (`has_entity_
 
 ### Custom Device Names
 
-You can customize device names for each device type through the integration options. This is useful if you want shorter, friendlier names for your devices.
+You can customize device names for each device type through the integration options. This is useful if you want shorter,
+friendlier names for your devices.
 
 **To configure custom names**:
 
@@ -251,7 +254,8 @@ You can customize device names for each device type through the integration opti
 | **No prefix (default)** | `Power-One Inverter PVI-10.0-OUTD (077909-3G82-3112)` | `sensor.power_one_inverter_pvi_...` |
 | **Custom: "Solar Inverter"** | `Solar Inverter` | `sensor.solar_inverter_power_ac` |
 
-**Dynamic Options Form**: The configuration only shows prefix fields for device types that were actually discovered. For example, if you only have an inverter and datalogger, you
+**Dynamic Options Form**: The configuration only shows prefix fields for device types that were actually discovered. For
+example, if you only have an inverter and datalogger, you
 won't see fields for meter or battery.
 
 **Entity ID Behavior**:
@@ -261,7 +265,8 @@ won't see fields for meter or battery.
 | Change device name only | **Preserved** | Keep working ✅ |
 | Change name + check "Regenerate entity IDs" | **Updated** | **Will break** ⚠️ |
 
-**⚠️ Warning**: The "Regenerate entity IDs" checkbox will update all entity IDs to match new device names. This **will break** existing automations, scripts, and dashboards that
+**⚠️ Warning**: The "Regenerate entity IDs" checkbox will update all entity IDs to match new device names. This **will
+break** existing automations, scripts, and dashboards that
 reference these entities. Only use this option if you understand the implications and are prepared to update your automations.
 
 ### Supported Languages
@@ -281,7 +286,8 @@ The integration includes native translations for entity names in 10 European lan
 | Finnish | `fi` | ✅ Complete (258 sensors) |
 | Estonian | `et` | ✅ Complete (258 sensors) |
 
-**Automatic Language Selection**: Home Assistant automatically selects the appropriate language based on your system settings. No configuration needed!
+**Automatic Language Selection**: Home Assistant automatically selects the appropriate language based on your system
+settings. No configuration needed!
 
 **Examples**:
 
@@ -410,8 +416,10 @@ The integration automatically detects which VSN model you have and uses the appr
 
 Some VSN devices may have authentication disabled. The integration fully supports this:
 
-- When the device returns HTTP 200 (no authentication required), the integration analyzes the status data structure to determine the model
-- **VSN300 indicators**: `logger.board_model = "WIFI LOGGER CARD"`, serial format `XXXXXX-XXXX-XXXX`, or many status keys (>10)
+- When the device returns HTTP 200 (no authentication required), the integration analyzes the status data structure to
+  determine the model
+- **VSN300 indicators**: `logger.board_model = "WIFI LOGGER CARD"`, serial format `XXXXXX-XXXX-XXXX`, or many status
+  keys (>10)
 - **VSN700 indicators**: `logger.loggerId` in MAC address format, or minimal status keys (≤3)
 - All subsequent requests are made without authentication headers
 
@@ -507,15 +515,18 @@ When opening a GitHub issue, please include:
 5. **Inverter model** (e.g., PVI-10.0-OUTD, REACT2-3.6-TL)
 6. **Steps to reproduce** the issue
 
-**Privacy Note**: Debug logs may contain your device's IP address and serial numbers. Review the log before sharing and redact sensitive information if needed.
+**Privacy Note**: Debug logs may contain your device's IP address and serial numbers. Review the log before sharing and
+redact sensitive information if needed.
 
 ### Testing and Reporting Issues
 
-If you're experiencing connection or authentication issues, you can use the standalone test script to diagnose the problem and provide detailed logs when reporting issues.
+If you're experiencing connection or authentication issues, you can use the standalone test script to diagnose the
+problem and provide detailed logs when reporting issues.
 
 #### Using the VSN Test Script
 
-The repository includes a standalone diagnostic script that mirrors the integration's client library. It can test your VSN device without installing the integration:
+The repository includes a standalone diagnostic script that mirrors the integration's client library. It can test your
+VSN device without installing the integration:
 
 1. **Download the script**:
 
@@ -649,7 +660,8 @@ The integration includes complete translations for entity names in **10 European
 - 🇫🇮 **Finnish** (`fi.json`) - 258 sensors
 - 🇪🇪 **Estonian** (`et.json`) - 258 sensors
 
-The integration automatically uses the language configured in your Home Assistant instance. All UI strings, error messages, configuration flows, and **entity names** are fully
+The integration automatically uses the language configured in your Home Assistant instance. All UI strings, error
+messages, configuration flows, and **entity names** are fully
 translated.
 
 ### Contributing Translations
@@ -662,7 +674,8 @@ Want to add a new language or improve existing translations? Here's how:
 
 1. Copy `translations/en.json` to `translations/[language_code].json`
 
-   - Use [ISO 639-1 language codes](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) (e.g., `nl` for Dutch, `da` for Danish)
+   - Use [ISO 639-1 language codes](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) (e.g., `nl` for Dutch, `da`
+     for Danish)
 
 1. Translate the `entity.sensor` section:
 
@@ -689,7 +702,8 @@ Want to add a new language or improve existing translations? Here's how:
 - Preserve measurement context (e.g., distinguish "Voltage DC - String 1" from "Voltage AC")
 - Review existing languages for consistency
 
-**Questions?** Open a [GitHub Discussion](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/discussions) - the community is happy to help!
+**Questions?** Open a [GitHub Discussion](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/discussions) - the
+community is happy to help!
 
 See [translations/](custom_components/abb_fimer_pvi_vsn_rest/translations/) for existing translations.
 
@@ -734,7 +748,8 @@ custom_components/abb_fimer_pvi_vsn_rest/
 
 ## Related Projects
 
-- **[ha-abb-powerone-pvi-sunspec](https://github.com/alexdelprete/ha-abb-powerone-pvi-sunspec)** Legacy v4.x integration (Modbus only)
+- **[ha-abb-powerone-pvi-sunspec](https://github.com/alexdelprete/ha-abb-powerone-pvi-sunspec)** Legacy v4.x integration
+  (Modbus only)
 
 ## Support
 

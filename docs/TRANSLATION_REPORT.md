@@ -152,12 +152,14 @@ Each translation file contains:
 - **Phase**: IT=Fase, FR=Phase, ES=Fase, PT=Fase, DE=Phase, SV=Fas, NB=Fase, FI=Vaihe, ET=Faas
 - **String**: IT=Stringa, FR=Chaîne, ES=Cadena, PT=String, DE=String, SV=Sträng, NB=Streng, FI=Ketju, ET=Ahel
 - **Grid**: IT=Rete, FR=Réseau, ES=Red, PT=Rede, DE=Netz, SV=Nät, NB=Nett, FI=Verkko, ET=Võrk
-- **Temperature**: IT=Temperatura, FR=Température, ES=Temperatura, PT=Temperatura, DE=Temperatur, SV/NB=Temperatur, FI=Lämpötila, ET=Temperatuur
+- **Temperature**: IT=Temperatura, FR=Température, ES=Temperatura, PT=Temperatura, DE=Temperatur, SV/NB=Temperatur,
+  FI=Lämpötila, ET=Temperatuur
 
 #### Location Terms
 
 - **Cabinet**: IT=Armadio, FR=Armoire, ES=Gabinete, PT=Gabinete, DE=Schrank, SV=Skåp, NB=Skap, FI=Kaappi, ET=Kapp
-- **Heatsink**: IT=Dissipatore, FR=Dissipateur, ES=Disipador, PT=Dissipador, DE=Kühlkörper, SV=Kylflänsar, NB=Kjøleribbe, FI=Jäähdytyslevy, ET=Jahutusriba
+- **Heatsink**: IT=Dissipatore, FR=Dissipateur, ES=Disipador, PT=Dissipador, DE=Kühlkörper, SV=Kylflänsar,
+  NB=Kjøleribbe, FI=Jäähdytyslevy, ET=Jahutusriba
 
 ---
 

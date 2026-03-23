@@ -21,7 +21,6 @@ import copy
 import importlib
 import json
 from pathlib import Path
-
 import sys
 
 # Language configuration: code -> (name, dictionary module name)
@@ -145,7 +144,6 @@ def generate_translations(lang_code: str, lang_name: str) -> bool:
         f"✓ {lang_name} ({lang_code}) - {sensor_count} sensors, {options_count} options translated"
     )
     return True
-
 
 
 def main():

@@ -25,7 +25,8 @@ The GitHub MCP `get_job_logs` tool is currently broken. To get workflow run logs
 
 ## Project Overview
 
-This is the **ha-abb-fimer-pvi-vsn-rest** integration for Home Assistant. It provides monitoring of ABB/FIMER/Power-One PVI inverters through VSN300 or VSN700 dataloggers via their
+This is the **ha-abb-fimer-pvi-vsn-rest** integration for Home Assistant. It provides monitoring of ABB/FIMER/Power-One
+PVI inverters through VSN300 or VSN700 dataloggers via their
 REST API.
 
 **Current Status**: v1.1.7 - Active development
@@ -1104,7 +1105,8 @@ The project follows industry best practices for release documentation:
   - `gh release create` commands
   - Any automation that creates tags/releases
 
-**Exception:** You may prepare all release materials (bump versions, update CHANGELOG, create release notes), commit changes, and push commits - but STOP before creating tags or
+**Exception:** You may prepare all release materials (bump versions, update CHANGELOG, create release notes), commit
+changes, and push commits - but STOP before creating tags or
 releases unless explicitly instructed.
 
 **After Publishing a Release:**

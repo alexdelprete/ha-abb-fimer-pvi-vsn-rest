@@ -141,7 +141,9 @@ def convert_excel_to_json():
     print(f"✓ Integration data file updated: {data_path}")
 
     # Update translations/en.json sensor entries from mapping
-    en_path = repo_root / "custom_components" / "abb_fimer_pvi_vsn_rest" / "translations" / "en.json"
+    en_path = (
+        repo_root / "custom_components" / "abb_fimer_pvi_vsn_rest" / "translations" / "en.json"
+    )
     update_en_json(rows, en_path)
 
     # Print statistics

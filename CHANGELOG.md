@@ -74,10 +74,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
-- **Entity ID Regeneration** - Fixed "Regenerate entity IDs" using raw point_names (`watts`) instead of translated names (`power_ac`) as suffixes
+- **Entity ID Regeneration** - Fixed "Regenerate entity IDs" using raw point_names (`watts`) instead of translated names
+  (`power_ac`) as suffixes
 - **No-Prefix Regeneration** - Fixed entity regeneration skipping entities when no custom prefix was set
 - **Domain Preservation** - Fixed entity regeneration hardcoding `sensor.` domain instead of preserving original domain
-- **Custom Entity Names** - "Regenerate entity IDs" now clears user-set custom entity names so HA uses translation-based defaults
+- **Custom Entity Names** - "Regenerate entity IDs" now clears user-set custom entity names so HA uses translation-based
+  defaults
 
 ### New Features
 
@@ -85,7 +87,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Refactoring
 
-- **HA Translation API** - Replaced manual file I/O with HA's built-in `async_get_translations()` API for loading entity translations
+- **HA Translation API** - Replaced manual file I/O with HA's built-in `async_get_translations()` API for loading entity
+  translations
 - **Shared Helper** - Added `async_get_entity_translations()` in `helpers.py` for reuse across modules
 
 **See**: [v1.3.5 Release Notes](docs/releases/v1.3.5.md)
@@ -96,7 +99,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Datalogger Device Name** - Fixed datalogger device name not updating when custom name set via options flow
 - **Wrong Manufacturer** - Fixed Device Info showing "WIFI LOGGER CARD" as manufacturer instead of "ABB"/"FIMER"
-- **Default Device Name** - Fixed datalogger using ugly technical name instead of friendly format (e.g., "ABB Datalogger VSN300 (111033-3N16-1421)")
+- **Default Device Name** - Fixed datalogger using ugly technical name instead of friendly format (e.g., "ABB Datalogger
+  VSN300 (111033-3N16-1421)")
 
 ### Refactoring
 
@@ -358,7 +362,8 @@ When a device returns HTTP 200 (no authentication required), detection failed.
 
 ### BREAKING CHANGE: Fix Incorrect Entity IDs for "Since Restart" Energy Sensors
 
-**This release fixes 15 energy sensors that were incorrectly named with `_lifetime` suffix when they actually track "since restart" values.**
+**This release fixes 15 energy sensors that were incorrectly named with `_lifetime` suffix when they actually track
+"since restart" values.**
 
 **Breaking Change - 15 Entity IDs Renamed**:
 
@@ -383,7 +388,8 @@ When a device returns HTTP 200 (no authentication required), detection failed.
 **Root Cause**: The VSN700 REST API uses `_runtime` suffix (e.g., `E0_runtime`) for "since restart" data, not lifetime.
 The generator script incorrectly mapped `runtime` → `Lifetime` instead of `runtime` → `Since Restart`.
 
-**Evidence**: `E0_runtime` value (32,821 Wh) is ~400x smaller than `ETotal` (13,341,652 Wh), confirming it resets on device restart.
+**Evidence**: `E0_runtime` value (32,821 Wh) is ~400x smaller than `ETotal` (13,341,652 Wh), confirming it resets on
+device restart.
 
 **Additional Display Name Fixes**:
 
@@ -494,7 +500,8 @@ and providing test data from their PVI-4.2-OUTD single-phase inverter.
 
 ### 🐛 Bug Fixes: Duplicate Sensor Resolution
 
-**This release resolves duplicate sensor entries by implementing VSN name normalization that prioritizes VSN300 (SunSpec-based) names as canonical.**
+**This release resolves duplicate sensor entries by implementing VSN name normalization that prioritizes VSN300
+(SunSpec-based) names as canonical.**
 
 **Bug #1: Duplicate Sensor Entries with Inconsistent Metadata (Fixed)**:
 
@@ -538,7 +545,8 @@ and providing test data from their PVI-4.2-OUTD single-phase inverter.
 
 ### 🔍 Features: Attribute Validation + 🐛 Bug Fixes
 
-**This release adds comprehensive attribute validation to catch mapping file bugs at runtime, and fixes bugs in the standalone test script.**
+**This release adds comprehensive attribute validation to catch mapping file bugs at runtime, and fixes bugs in the
+standalone test script.**
 
 **Feature #1: Attribute Validation in sensor.py**:
 
@@ -578,7 +586,8 @@ and providing test data from their PVI-4.2-OUTD single-phase inverter.
 - `scripts/vsn_client.py` (mapping URL + energy conversion)
 - Version bump to v1.1.11
 
-**Impact**: Better error detection for mapping file bugs, insulation resistance icon displays correctly, test script works properly.
+**Impact**: Better error detection for mapping file bugs, insulation resistance icon displays correctly, test script
+works properly.
 
 **Upgrade Priority**: 🔧 **RECOMMENDED** - Upgrade when convenient for improved validation and bug fixes.
 
@@ -634,7 +643,8 @@ and providing test data from their PVI-4.2-OUTD single-phase inverter.
 **Bug #2: SysTime Sensor Precision Error (Critical)**:
 
 - Fixed SysTime sensor unavailable with ValueError about numeric vs string value
-- Error: "has suggested precision '0' thus indicating it has a numeric value; however, it has the non-numeric value: '2025-11-17 14:30:13'"
+- Error: "has suggested precision '0' thus indicating it has a numeric value; however, it has the non-numeric value:
+  '2025-11-17 14:30:13'"
 - Root cause: v1.1.8 removed `device_class="timestamp"` but forgot to remove `precision=0`
 - Same issue as state sensors - precision makes HA expect numeric value but sensor returns formatted string
 - Generator fix #1: Added TIMESTAMP_SENSORS check in `_get_suggested_precision()` (lines 3061-3067)
@@ -684,7 +694,8 @@ and providing test data from their PVI-4.2-OUTD single-phase inverter.
 - Examples from user report:
   - Some sensors: `7.240 Wh` (should be `7.240 kWh`)
   - Some sensors: `108.892.416 kWh` (should be `108.892 kWh` - WRONG by 1000x!)
-- Root cause: normalizer.py checked `if mapping.units == "Wh"` to convert, but v1.1.7 set some sensors to `unit="kWh"` in mapping, so they skipped conversion
+- Root cause: normalizer.py checked `if mapping.units == "Wh"` to convert, but v1.1.7 set some sensors to `unit="kWh"`
+  in mapping, so they skipped conversion
 - VSN API always returns Wh values → sensors with `mapping.units="kWh"` displayed Wh as kWh = 1000x error
 - normalizer.py fix: Changed from unit-based to device_class-based conversion
   - Old (BROKEN): `if mapping.units == "Wh"`
@@ -698,7 +709,8 @@ and providing test data from their PVI-4.2-OUTD single-phase inverter.
 - Regenerated all mapping files (Excel + 3 JSON copies)
 - Version bump to v1.1.8
 
-**Impact**: v1.1.7 users experienced 6 unavailable sensors, 1 timestamp display issue, and 70+ energy sensors with wrong values (critical data error).
+**Impact**: v1.1.7 users experienced 6 unavailable sensors, 1 timestamp display issue, and 70+ energy sensors with wrong
+values (critical data error).
 
 **Upgrade Priority**: 🚨 **CRITICAL** - All v1.1.7 users should upgrade immediately.
 
@@ -996,7 +1008,8 @@ This is a known limitation already documented in sensor.py for system_load.
 
 **Full release notes**: [v1.1.0](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/releases/tag/v1.1.0)
 
-**Note**: v1.1.0 was released with incorrect version strings in manifest.json and const.py (still showing "1.0.0"). This has been corrected in v1.1.1.
+**Note**: v1.1.0 was released with incorrect version strings in manifest.json and const.py (still showing "1.0.0"). This
+has been corrected in v1.1.1.
 
 ---
 
@@ -1170,7 +1183,8 @@ Thank you to all beta testers who helped make this release possible! 🙏
 ### Fixed
 
 - **system_uptime Sensor ValueError**: Fixed sensor failing to load due to value type mismatch
-  - Root cause: Sensor was configured with `device_class: duration`, `state_class: total_increasing`, and `unit: s` (numeric sensor)
+  - Root cause: Sensor was configured with `device_class: duration`, `state_class: total_increasing`, and `unit: s`
+    (numeric sensor)
   - But code was returning formatted string "10 hours 9 minutes" instead of numeric seconds
   - Home Assistant rejected the sensor: "ValueError: sensor has numeric indicators but non-numeric value"
   - **Solution**: Return raw numeric value (seconds) as `native_value`, add `formatted` attribute for beautiful display
@@ -1204,7 +1218,8 @@ Thank you to all beta testers who helped make this release possible! 🙏
 
 2. **Device names and friendly names now beautiful** in UI
 
-3. **Migration**: Remove integration via UI (auto-deletes entities) → Use "Recreate Entity IDs" feature on device page OR reinstall
+3. **Migration**: Remove integration via UI (auto-deletes entities) → Use "Recreate Entity IDs" feature on device page
+   OR reinstall
 
 4. Update all dashboards and automations with new entity IDs
 
@@ -1212,7 +1227,8 @@ Thank you to all beta testers who helped make this release possible! 🙏
 The new entity IDs are still technical (contain manufacturer, model, serial) but slightly friendlier format.
 The beautiful device names make the integration much more pleasant to use.
 
-**This is the FINAL entity ID format.** We're now following HA best practices with `has_entity_name=True` + friendly device names.
+**This is the FINAL entity ID format.** We're now following HA best practices with `has_entity_name=True` + friendly
+device names.
 
 **Full release notes**: [v1.0.0-beta.26](docs/releases/v1.0.0-beta.26.md)
 
@@ -1220,7 +1236,8 @@ The beautiful device names make the integration much more pleasant to use.
 
 ### Fixed
 
-- **Entity ID Generation - THE REAL FIX**: Properly fixed entity ID generation by using `has_entity_name=True` with technical device names
+- **Entity ID Generation - THE REAL FIX**: Properly fixed entity ID generation by using `has_entity_name=True` with
+  technical device names
   - Beta.24's fix was incorrect: `suggested_object_id` is ONLY used when `has_entity_name=True`
   - When `has_entity_name=False`, Home Assistant completely ignores `suggested_object_id`
   - Implemented correct approach: `has_entity_name=True` + technical device names + simplified `suggested_object_id`
@@ -1270,7 +1287,8 @@ The beautiful device names make the integration much more pleasant to use.
 3. **Manual cleanup required**: Delete integration → Clean `.storage/core.entity_registry` → Re-add integration
 4. Update all dashboards and automations with new entity IDs
 
-**Apology**: We apologize for this back-and-forth with entity ID changes. The bug was introduced in beta.13 and this fix restores correct behavior from beta.12.
+**Apology**: We apologize for this back-and-forth with entity ID changes. The bug was introduced in beta.13 and this fix
+restores correct behavior from beta.12.
 
 **Full release notes**: [v1.0.0-beta.24](docs/releases/v1.0.0-beta.24.md)
 
@@ -1318,7 +1336,8 @@ The beautiful device names make the integration much more pleasant to use.
   - Changed from `abb_vsn_rest_{device_type}_{serial}_{point}` to `abb_fimer_pvi_vsn_rest_{device_type}_{serial}_{point}`
   - Ensures consistency between unique_id and entity_id formats
 
-- **Display Name Standardization**: Standardized 187 entity display names to TYPE-first pattern `[Type] [AC/DC] - [Details] - [Time Period]`
+- **Display Name Standardization**: Standardized 187 entity display names to TYPE-first pattern `[Type] [AC/DC] -
+  [Details] - [Time Period]`
   - Energy entities (75): "Inverter AC energy produced - Lifetime" → "Energy AC - Produced Lifetime"
   - Power entities (24): "AC Power" → "Power AC", "House Power A" → "Power AC - House Phase A"
   - Voltage entities (27): "AC Voltage A-N" → "Voltage AC - Phase A-N"
@@ -1389,7 +1408,8 @@ The beautiful device names make the integration much more pleasant to use.
 
 ### Fixed
 
-- **Device Name Serial Number**: Fixed device names to show full serial number (e.g., `111033-3N16-1421`) instead of truncated 8-character version (e.g., `111033-3N`)
+- **Device Name Serial Number**: Fixed device names to show full serial number (e.g., `111033-3N16-1421`) instead of
+  truncated 8-character version (e.g., `111033-3N`)
   - Updated `_format_device_name()` to use full original serial number with dashes preserved
   - Affects both hub device name and all device names in Home Assistant UI
   - Better device identification and consistency
@@ -1454,7 +1474,9 @@ The beautiful device names make the integration much more pleasant to use.
 
 **Full Release Notes**: [v1.0.0-beta.19](docs/releases/v1.0.0-beta.19.md)
 
-**Credits**: Special thanks to [xreef/ABB_Aurora_Solar_Inverter_Library](https://github.com/xreef/ABB_Aurora_Solar_Inverter_Library) for Aurora protocol documentation.
+**Credits**: Special thanks to
+[xreef/ABB_Aurora_Solar_Inverter_Library](https://github.com/xreef/ABB_Aurora_Solar_Inverter_Library) for Aurora
+protocol documentation.
 
 ## [1.0.0-beta.15] - 2025-11-03
 
@@ -1514,7 +1536,8 @@ The beautiful device names make the integration much more pleasant to use.
   - InverterSt: Properly capitalized "Inverter Status"
   - free_ram/flash_free: Improved descriptions
 
-**Summary**: 180+ point descriptions improved (70% of all 258 points), focusing on consistency, conciseness, and professional naming conventions.
+**Summary**: 180+ point descriptions improved (70% of all 258 points), focusing on consistency, conciseness, and
+professional naming conventions.
 
 [Full release notes](docs/releases/v1.0.0-beta.15.md)
 

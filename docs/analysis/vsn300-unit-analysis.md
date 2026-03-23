@@ -6,7 +6,8 @@
 
 ## Executive Summary
 
-This analysis compares measurement units across three authoritative sources to determine the correct unit specifications for the VSN REST integration:
+This analysis compares measurement units across three authoritative sources to determine the correct unit specifications
+for the VSN REST integration:
 
 1. **SunSpec/ABB Modbus Specifications** (official standards)
 2. **Livedata Endpoint** (raw inverter data via `/v1/livedata`)
@@ -24,7 +25,8 @@ This analysis compares measurement units across three authoritative sources to d
 
 ## Problem Statement
 
-During analysis of VSN300 data sources, we discovered that **11 power and energy points** have **different unit scales** between the `/livedata` and `/feeds` endpoints:
+During analysis of VSN300 data sources, we discovered that **11 power and energy points** have **different unit scales**
+between the `/livedata` and `/feeds` endpoints:
 
 - Power measurements: livedata uses **W**, feeds uses **kW** (1000x difference)
 - Energy measurements: livedata uses **Wh**, feeds uses **kWh** (1000x difference)
