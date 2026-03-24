@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.3.8] - TBD
 
+### New Features
+
+- **Sensor Scope Field** - New "Sensor Scope" metadata field (lifetime/runtime/periodic)
+  classifies all 40 `total_increasing` sensors by their reset behavior
+- **Stale-Value Guard** - Lifetime sensors reject values lower than current HA state,
+  preventing dashboard spikes from stale datalogger startup data (PR #42 by @bryanyork)
+
+### Bug Fixes
+
+- **Display Name Consistency** - Removed parentheses from "Lifetime" suffix across 7 sensors,
+  standardized ECt/EDt display names to follow "Energy - ..." pattern
+
 **See**: [v1.3.8 Release Notes](docs/releases/v1.3.8.md)
 
 ## [1.3.7] - 2026-03-01
