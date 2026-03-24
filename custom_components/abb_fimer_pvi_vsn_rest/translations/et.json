@@ -331,7 +331,7 @@
         "name": "Energia - Aku Laadimine (Alates Taaskäivitusest)"
       },
       "e_ct": {
-        "name": "Koguenergia voolumuundurist (CT)"
+        "name": "Energia - Vool Transformer (CT) Kokku"
       },
       "e_discharge": {
         "name": "Energia - Aku Tühjendamine Kokku"
@@ -346,7 +346,7 @@
         "name": "Energia - Aku Tühjendamine (Alates Taaskäivitusest)"
       },
       "e_dt": {
-        "name": "Koguenergia otseandurist (DT)"
+        "name": "Energia - Direct Transducer (DT) Kokku"
       },
       "e_grid_export": {
         "name": "Energia AC - Võrk Eksport Kokku"
@@ -385,16 +385,16 @@
         "name": "Energia AC - Neeldunud Kokku"
       },
       "e_total_apparent": {
-        "name": "Energia AC - Näiv (Kokku)"
+        "name": "Energia AC - Näiv Kokku"
       },
       "ein": {
         "name": "Energia DC - PV Kokku"
       },
       "ein1": {
-        "name": "Energia DC - Ahel 1 (Kokku)"
+        "name": "Energia DC - Ahel 1 Kokku"
       },
       "ein2": {
-        "name": "Energia DC - Ahel 2 (Kokku)"
+        "name": "Energia DC - Ahel 2 Kokku"
       },
       "ein_last_month": {
         "name": "Energia DC - PV (Vool Month)"
@@ -676,7 +676,7 @@
         "name": "Tootenumber"
       },
       "power_peak_abs": {
-        "name": "Võimsus - Tipp (Kokku)"
+        "name": "Võimsus - Tipp Kokku"
       },
       "power_peak_today": {
         "name": "Võimsus - Tipp (Täna)"
@@ -784,7 +784,7 @@
         "name": "Hoiatuslipud"
       },
       "watthours": {
-        "name": "Energia AC - Toodetud (Kokku)"
+        "name": "Energia AC - Toodetud Kokku"
       },
       "watts": {
         "name": "Võimsus AC"

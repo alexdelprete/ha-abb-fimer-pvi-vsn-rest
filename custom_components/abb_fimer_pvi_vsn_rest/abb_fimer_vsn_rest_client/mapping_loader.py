@@ -42,6 +42,7 @@ class PointMapping:
     available_in_modbus: str
     icon: str = ""  # MDI icon for entity (e.g., "mdi:information-box-outline")
     suggested_display_precision: int | None = None  # Suggested decimal precision for display
+    sensor_scope: str = ""  # Scope: "lifetime", "runtime", "periodic", or "" (not applicable)
 
 
 class VSNMappingLoader:
@@ -186,6 +187,7 @@ class VSNMappingLoader:
             available_in_modbus = row.get("Available in Modbus") or ""
             icon = row.get("HA Icon") or ""
             suggested_display_precision = row.get("Suggested Display Precision")
+            sensor_scope = row.get("Sensor Scope") or ""
 
             # Get HA Display Name (fallback to description if not present for backward compat)
             ha_display_name = row.get("HA Display Name") or description or label
@@ -225,6 +227,7 @@ class VSNMappingLoader:
                 available_in_modbus=available_in_modbus,
                 icon=icon,
                 suggested_display_precision=suggested_display_precision,
+                sensor_scope=sensor_scope,
             )
 
             # Use HA entity name as primary key

@@ -2278,3 +2278,152 @@ class TestDeviceInfoHardwareVersion:
         device_info = sensor.device_info
         assert device_info is not None
         assert device_info.get("hw_version") == "HW-Rev2"
+
+
+class TestLifetimeSensorGuard:
+    """Tests for stale-value guard on lifetime sensors."""
+
+    def _make_lifetime_sensor(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+        point_name: str = "etotal",
+        value: float = 500000.0,
+        sensor_scope: str = "lifetime",
+    ) -> VSNSensor:
+        """Create a sensor with given sensor_scope."""
+        point_data = {
+            "value": value,
+            "ha_display_name": "Energy AC - Produced Lifetime",
+            "device_class": "energy",
+            "state_class": "total_increasing",
+            "units": "kWh",
+            "sensor_scope": sensor_scope,
+        }
+        mock_coordinator.data = {
+            "devices": {
+                TEST_INVERTER_SN: {
+                    "points": {point_name: {"value": value}},
+                }
+            }
+        }
+        return VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name=point_name,
+            point_data=point_data,
+        )
+
+    def test_lifetime_sensor_discards_lower_value(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test lifetime sensor returns None when new value < current state."""
+        sensor = self._make_lifetime_sensor(mock_coordinator, mock_sensor_config_entry, value=0.0)
+        # Mock current HA state showing a high value
+        mock_state = MagicMock()
+        mock_state.state = "500000.0"
+        mock_coordinator.hass.states.get.return_value = mock_state
+
+        assert sensor.native_value is None
+
+    def test_lifetime_sensor_allows_equal_value(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test lifetime sensor returns value when new value == current state."""
+        sensor = self._make_lifetime_sensor(
+            mock_coordinator, mock_sensor_config_entry, value=500000.0
+        )
+        mock_state = MagicMock()
+        mock_state.state = "500000.0"
+        mock_coordinator.hass.states.get.return_value = mock_state
+
+        assert sensor.native_value == 500000.0
+
+    def test_lifetime_sensor_allows_higher_value(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test lifetime sensor returns value when new value > current state."""
+        sensor = self._make_lifetime_sensor(
+            mock_coordinator, mock_sensor_config_entry, value=500001.0
+        )
+        mock_state = MagicMock()
+        mock_state.state = "500000.0"
+        mock_coordinator.hass.states.get.return_value = mock_state
+
+        assert sensor.native_value == 500001.0
+
+    def test_lifetime_sensor_allows_first_reading(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test lifetime sensor returns value when no prior state exists."""
+        sensor = self._make_lifetime_sensor(
+            mock_coordinator, mock_sensor_config_entry, value=500000.0
+        )
+        # No prior state (entity not yet registered)
+        mock_coordinator.hass.states.get.return_value = None
+
+        assert sensor.native_value == 500000.0
+
+    def test_lifetime_sensor_allows_unknown_state(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test lifetime sensor returns value when current state is unknown."""
+        sensor = self._make_lifetime_sensor(
+            mock_coordinator, mock_sensor_config_entry, value=500000.0
+        )
+        mock_state = MagicMock()
+        mock_state.state = "unknown"
+        mock_coordinator.hass.states.get.return_value = mock_state
+
+        assert sensor.native_value == 500000.0
+
+    def test_runtime_sensor_not_guarded(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test runtime sensor allows lower values (legitimate reboot reset)."""
+        sensor = self._make_lifetime_sensor(
+            mock_coordinator,
+            mock_sensor_config_entry,
+            point_name="e0_runtime",
+            value=0.0,
+            sensor_scope="runtime",
+        )
+        mock_state = MagicMock()
+        mock_state.state = "5000.0"
+        mock_coordinator.hass.states.get.return_value = mock_state
+
+        # Runtime sensor should NOT be guarded — value 0 is returned
+        assert sensor.native_value == 0.0
+
+    def test_no_scope_sensor_not_guarded(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test sensor without sensor_scope is not guarded."""
+        sensor = self._make_lifetime_sensor(
+            mock_coordinator,
+            mock_sensor_config_entry,
+            point_name="watts",
+            value=0.0,
+            sensor_scope="",
+        )
+        mock_state = MagicMock()
+        mock_state.state = "5000.0"
+        mock_coordinator.hass.states.get.return_value = mock_state
+
+        assert sensor.native_value == 0.0

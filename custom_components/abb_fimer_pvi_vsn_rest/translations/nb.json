@@ -331,7 +331,7 @@
         "name": "Energi - Batterilading (Siden Omstart)"
       },
       "e_ct": {
-        "name": "Total energi fra strømtransformator (CT)"
+        "name": "Energi - Strøm Transformer (CT) Total"
       },
       "e_discharge": {
         "name": "Energi - Batteriutlading Total"
@@ -346,7 +346,7 @@
         "name": "Energi - Batteriutlading (Siden Omstart)"
       },
       "e_dt": {
-        "name": "Total energi fra direkte giver (DT)"
+        "name": "Energi - Direct Transducer (DT) Total"
       },
       "e_grid_export": {
         "name": "Energi AC - Nett Eksport Total"
@@ -385,16 +385,16 @@
         "name": "Energi AC - Absorbert Total"
       },
       "e_total_apparent": {
-        "name": "Energi AC - Tilsynelatende (Total)"
+        "name": "Energi AC - Tilsynelatende Total"
       },
       "ein": {
         "name": "Energi DC - PV Total"
       },
       "ein1": {
-        "name": "Energi DC - Streng 1 (Total)"
+        "name": "Energi DC - Streng 1 Total"
       },
       "ein2": {
-        "name": "Energi DC - Streng 2 (Total)"
+        "name": "Energi DC - Streng 2 Total"
       },
       "ein_last_month": {
         "name": "Energi DC - PV (Strøm Month)"
@@ -676,7 +676,7 @@
         "name": "Produktnummer"
       },
       "power_peak_abs": {
-        "name": "Effekt - Topp (Total)"
+        "name": "Effekt - Topp Total"
       },
       "power_peak_today": {
         "name": "Effekt - Topp (I dag)"
@@ -784,7 +784,7 @@
         "name": "Advarselsflagg"
       },
       "watthours": {
-        "name": "Energi AC - Produsert (Total)"
+        "name": "Energi AC - Produsert Total"
       },
       "watts": {
         "name": "Effekt AC"

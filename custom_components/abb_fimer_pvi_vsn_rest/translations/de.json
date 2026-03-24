@@ -331,7 +331,7 @@
         "name": "Energie - Batterieladung (Seit Neustart)"
       },
       "e_ct": {
-        "name": "Gesamtenergie vom Stromwandler (CT)"
+        "name": "Energie - Strom Transformer (CT) Gesamt"
       },
       "e_discharge": {
         "name": "Energie - Batterieentladung Gesamt"
@@ -346,7 +346,7 @@
         "name": "Energie - Batterieentladung (Seit Neustart)"
       },
       "e_dt": {
-        "name": "Gesamtenergie vom Direktwandler (DT)"
+        "name": "Energie - Direct Transducer (DT) Gesamt"
       },
       "e_grid_export": {
         "name": "Energie AC - Netz Export Gesamt"
@@ -385,16 +385,16 @@
         "name": "Energie AC - Aufgenommen Gesamt"
       },
       "e_total_apparent": {
-        "name": "Energie AC - Scheinleistung (Gesamt)"
+        "name": "Energie AC - Scheinleistung Gesamt"
       },
       "ein": {
         "name": "Energie DC - PV Gesamt"
       },
       "ein1": {
-        "name": "Energie DC - String 1 (Gesamt)"
+        "name": "Energie DC - String 1 Gesamt"
       },
       "ein2": {
-        "name": "Energie DC - String 2 (Gesamt)"
+        "name": "Energie DC - String 2 Gesamt"
       },
       "ein_last_month": {
         "name": "Energie DC - PV (Strom Month)"
@@ -676,7 +676,7 @@
         "name": "Produktnummer"
       },
       "power_peak_abs": {
-        "name": "Leistung - Spitze (Gesamt)"
+        "name": "Leistung - Spitze Gesamt"
       },
       "power_peak_today": {
         "name": "Leistung - Spitze (Heute)"
@@ -784,7 +784,7 @@
         "name": "Warnungs Flags"
       },
       "watthours": {
-        "name": "Energie AC - Erzeugt (Gesamt)"
+        "name": "Energie AC - Erzeugt Gesamt"
       },
       "watts": {
         "name": "Leistung AC"

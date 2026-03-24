@@ -383,6 +383,7 @@ class VSNDataNormalizer:
                     "vsn700_name": mapping.vsn700_name,
                     "icon": mapping.icon,
                     "suggested_display_precision": mapping.suggested_display_precision,
+                    "sensor_scope": mapping.sensor_scope,
                 }
 
                 # Use HA entity name as the key for normalized data

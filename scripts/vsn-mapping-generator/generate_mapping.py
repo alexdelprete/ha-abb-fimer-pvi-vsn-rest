@@ -47,7 +47,7 @@ MODEL_FLAGS = [
     "ABB_Proprietary",
 ]
 
-# Full Excel headers (28 columns total - added "Suggested Display Precision" in v1.1.7+)
+# Full Excel headers (29 columns total - added "Sensor Scope" in v1.3.8)
 EXCEL_HEADERS = [
     *MODEL_FLAGS,
     "REST Name (VSN700)",
@@ -66,6 +66,7 @@ EXCEL_HEADERS = [
     "HA Icon",
     "Entity Category",
     "Suggested Display Precision",
+    "Sensor Scope",
     "Available in Modbus",
     "Data Source",
     "Model_Notes",
@@ -769,7 +770,7 @@ DISPLAY_NAME_STANDARDIZATION = {
     "Meter reactive power - Total": "Reactive Power AC - Meter Total",
     # ========== ENERGY ENTITIES (75 changes) ==========
     # Base energy entities
-    "AC Energy": "Energy AC - Produced (Lifetime)",
+    "AC Energy": "Energy AC - Produced Lifetime",
     "Energy - Today": "Energy AC - Produced (Today)",
     "Energy - Year": "Energy AC - Produced (Current Year)",
     "Energy - Week": "Energy AC - Produced (Current Week)",
@@ -781,7 +782,7 @@ DISPLAY_NAME_STANDARDIZATION = {
     "String 1 Energy": "Energy DC - String 1 Lifetime",
     "String 2 Energy": "Energy DC - String 2 Lifetime",
     "Total Energy Absorbed": "Energy AC - Absorbed Lifetime",
-    "Total Apparent Energy": "Energy AC Apparent - Lifetime",
+    "Total Apparent Energy": "Energy AC - Apparent Lifetime",
     "Energy imported from grid - Lifetime": "Energy AC - Grid Import Lifetime",
     "Energy exported to grid - Lifetime": "Energy AC - Grid Export Lifetime",
     "Inverter backup output energy - Lifetime": "Energy AC - Backup Output Lifetime",
@@ -799,7 +800,7 @@ DISPLAY_NAME_STANDARDIZATION = {
     "Inverter apparent AC energy - Since Restart": "Energy AC - Apparent (Since Restart)",
     "Inverter apparent AC energy - Last 7 Days": "Energy AC - Apparent (Current Week)",
     "Inverter apparent AC energy - Last 30 Days": "Energy AC - Apparent (Current Month)",
-    "Inverter apparent AC energy - Lifetime": "Energy AC - Apparent (Lifetime)",
+    "Inverter apparent AC energy - Lifetime": "Energy AC - Apparent Lifetime",
     # E3 series (Energy exported to grid)
     "Energy exported to grid - Since Restart": "Energy AC - Grid Export (Since Restart)",
     "Energy exported to grid - Last 7 Days": "Energy AC - Grid Export (Current Week)",
@@ -868,10 +869,10 @@ DISPLAY_NAME_STANDARDIZATION = {
     "Fan 1 Speed": "Speed - Fan 1",
     "Fan 2 Speed": "Speed - Fan 2",
     "Peak Output Power - Today": "Power - Peak (Today)",
-    "Peak Output Power - Lifetime": "Power - Peak (Lifetime)",
+    "Peak Output Power - Lifetime": "Power - Peak Lifetime",
     # DC String energy lifetime
-    "DC energy (String 1) - Lifetime": "Energy DC - String 1 (Lifetime)",
-    "DC energy (String 2) - Lifetime": "Energy DC - String 2 (Lifetime)",
+    "DC energy (String 1) - Lifetime": "Energy DC - String 1 Lifetime",
+    "DC energy (String 2) - Lifetime": "Energy DC - String 2 Lifetime",
     "Nominal Power": "Power - Nominal Rating",
     "Nominal Apparent Power": "Power - Nominal Apparent Rating",
 }
@@ -957,58 +958,78 @@ TEMPERATURE_UNIT_FIX = {
 # ==============================================================================
 
 SUNSPEC_TO_HA_METADATA = {
-    # Energy measurements (kWh, total_increasing)
-    "WH": {"device_class": "energy", "state_class": "total_increasing", "unit": "kWh"},
+    # Energy measurements (kWh, total_increasing, lifetime)
+    "WH": {
+        "device_class": "energy",
+        "state_class": "total_increasing",
+        "unit": "kWh",
+        "sensor_scope": "lifetime",
+    },
     "TotWhExp": {
         "device_class": "energy",
         "state_class": "total_increasing",
         "unit": "kWh",
+        "sensor_scope": "lifetime",
     },
     "TotWhImp": {
         "device_class": "energy",
         "state_class": "total_increasing",
         "unit": "kWh",
+        "sensor_scope": "lifetime",
     },
     "ETotal": {
         "device_class": "energy",
         "state_class": "total_increasing",
         "unit": "kWh",
+        "sensor_scope": "lifetime",
     },
-    "Ein": {"device_class": "energy", "state_class": "total_increasing", "unit": "kWh"},
+    "Ein": {
+        "device_class": "energy",
+        "state_class": "total_increasing",
+        "unit": "kWh",
+        "sensor_scope": "lifetime",
+    },
     "ECharge": {
         "device_class": "energy",
         "state_class": "total_increasing",
         "unit": "kWh",
+        "sensor_scope": "lifetime",
     },
     "EDischarge": {
         "device_class": "energy",
         "state_class": "total_increasing",
         "unit": "kWh",
+        "sensor_scope": "lifetime",
     },
     "ETotCharge": {
         "device_class": "energy",
         "state_class": "total_increasing",
         "unit": "kWh",
+        "sensor_scope": "lifetime",
     },
     "ETotDischarge": {
         "device_class": "energy",
         "state_class": "total_increasing",
         "unit": "kWh",
+        "sensor_scope": "lifetime",
     },
     "EGridImport": {
         "device_class": "energy",
         "state_class": "total_increasing",
         "unit": "kWh",
+        "sensor_scope": "lifetime",
     },
     "EGridExport": {
         "device_class": "energy",
         "state_class": "total_increasing",
         "unit": "kWh",
+        "sensor_scope": "lifetime",
     },
     "ETotalAbsorbed": {
         "device_class": "energy",
         "state_class": "total_increasing",
         "unit": "kWh",
+        "sensor_scope": "lifetime",
     },
     "ETotalApparent": {
         "device_class": "energy",
@@ -1026,6 +1047,7 @@ SUNSPEC_TO_HA_METADATA = {
         "device_class": "energy",
         "state_class": "total_increasing",
         "unit": "Wh",
+        "sensor_scope": "runtime",
     },
     "E0_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
     "E0_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
@@ -1034,6 +1056,7 @@ SUNSPEC_TO_HA_METADATA = {
         "device_class": "energy",
         "state_class": "total_increasing",
         "unit": "Wh",
+        "sensor_scope": "runtime",
     },
     "E1_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
     "E1_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
@@ -1041,6 +1064,7 @@ SUNSPEC_TO_HA_METADATA = {
         "device_class": "energy",
         "state_class": "total_increasing",
         "unit": "Wh",
+        "sensor_scope": "runtime",
     },
     "E3_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
     "E3_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
@@ -1048,6 +1072,7 @@ SUNSPEC_TO_HA_METADATA = {
         "device_class": "energy",
         "state_class": "total_increasing",
         "unit": "Wh",
+        "sensor_scope": "runtime",
     },
     "E6_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
     "E6_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
@@ -1055,11 +1080,13 @@ SUNSPEC_TO_HA_METADATA = {
         "device_class": "energy",
         "state_class": "total_increasing",
         "unit": "Wh",
+        "sensor_scope": "lifetime",
     },
     "E7_runtime": {
         "device_class": "energy",
         "state_class": "total_increasing",
         "unit": "Wh",
+        "sensor_scope": "runtime",
     },
     "E7_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
     "E7_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
@@ -1067,11 +1094,13 @@ SUNSPEC_TO_HA_METADATA = {
         "device_class": "energy",
         "state_class": "total_increasing",
         "unit": "Wh",
+        "sensor_scope": "lifetime",
     },
     "E8_runtime": {
         "device_class": "energy",
         "state_class": "total_increasing",
         "unit": "Wh",
+        "sensor_scope": "runtime",
     },
     "E8_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
     "E8_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
@@ -1079,6 +1108,7 @@ SUNSPEC_TO_HA_METADATA = {
         "device_class": "energy",
         "state_class": "total_increasing",
         "unit": "Wh",
+        "sensor_scope": "runtime",
     },
     "E15_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
     "E15_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
@@ -1086,6 +1116,7 @@ SUNSPEC_TO_HA_METADATA = {
         "device_class": "energy",
         "state_class": "total_increasing",
         "unit": "Wh",
+        "sensor_scope": "runtime",
     },
     "Ein_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
     "Ein_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
@@ -1093,6 +1124,7 @@ SUNSPEC_TO_HA_METADATA = {
         "device_class": "energy",
         "state_class": "total_increasing",
         "unit": "Wh",
+        "sensor_scope": "runtime",
     },
     "ECharge_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
     "ECharge_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
@@ -1100,6 +1132,7 @@ SUNSPEC_TO_HA_METADATA = {
         "device_class": "energy",
         "state_class": "total_increasing",
         "unit": "Wh",
+        "sensor_scope": "runtime",
     },
     "EDischarge_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
     "EDischarge_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
@@ -1107,6 +1140,7 @@ SUNSPEC_TO_HA_METADATA = {
         "device_class": "energy",
         "state_class": "total_increasing",
         "unit": "Wh",
+        "sensor_scope": "runtime",
     },
     "ETotCharge_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
     "ETotCharge_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
@@ -1114,6 +1148,7 @@ SUNSPEC_TO_HA_METADATA = {
         "device_class": "energy",
         "state_class": "total_increasing",
         "unit": "Wh",
+        "sensor_scope": "runtime",
     },
     "ETotDischarge_7D": {
         "device_class": "energy",
@@ -1442,6 +1477,7 @@ SUNSPEC_TO_HA_METADATA = {
         "device_class": "duration",
         "state_class": "total_increasing",
         "unit": "s",
+        "sensor_scope": "runtime",
     },
     # Apparent Energy (VAh) - no standard HA device_class, use energy icon
     "E2_runtime": {
@@ -1449,6 +1485,7 @@ SUNSPEC_TO_HA_METADATA = {
         "state_class": "total_increasing",
         "unit": "VAh",
         "icon": "mdi:lightning-bolt",
+        "sensor_scope": "runtime",
     },
     "E2_7D": {
         "device_class": None,
@@ -1484,18 +1521,21 @@ SUNSPEC_TO_HA_METADATA = {
         "state_class": "total_increasing",
         "unit": "",
         "precision": 0,
+        "sensor_scope": "lifetime",
     },
     "Dhc": {
         "device_class": None,
         "state_class": "total_increasing",
         "unit": "",
         "precision": 0,
+        "sensor_scope": "lifetime",
     },
     "CycleNum": {
         "device_class": None,
         "state_class": "total_increasing",
         "unit": "",
         "precision": 0,
+        "sensor_scope": "lifetime",
     },
     # ===========================================================================
     # STATE SENSORS (v1.1.6+) - Diagnostic, no unit, NO precision (display text, not numbers)
@@ -1736,66 +1776,77 @@ SUNSPEC_TO_HA_METADATA = {
         "unit": "Wh",
         "state_class": "total_increasing",
         "precision": 2,
+        "sensor_scope": "lifetime",
     },
     "EDt": {
         "device_class": "energy",
         "unit": "Wh",
         "state_class": "total_increasing",
         "precision": 2,
+        "sensor_scope": "lifetime",
     },
     "E4_runtime": {
         "device_class": "energy",
         "unit": "Wh",
         "state_class": "total_increasing",
         "precision": 2,
+        "sensor_scope": "runtime",
     },
     "E4_7D": {
         "device_class": "energy",
         "unit": "Wh",
         "state_class": "total_increasing",
         "precision": 2,
+        "sensor_scope": "periodic",
     },
     "E4_30D": {
         "device_class": "energy",
         "unit": "Wh",
         "state_class": "total_increasing",
         "precision": 2,
+        "sensor_scope": "periodic",
     },
     "E5_runtime": {
         "device_class": "energy",
         "unit": "Wh",
         "state_class": "total_increasing",
         "precision": 2,
+        "sensor_scope": "runtime",
     },
     "E5_7D": {
         "device_class": "energy",
         "unit": "Wh",
         "state_class": "total_increasing",
         "precision": 2,
+        "sensor_scope": "periodic",
     },
     "E5_30D": {
         "device_class": "energy",
         "unit": "Wh",
         "state_class": "total_increasing",
         "precision": 2,
+        "sensor_scope": "periodic",
     },
     "Ein1": {
         "device_class": "energy",
         "unit": "Wh",
         "state_class": "total_increasing",
         "precision": 2,
+        "sensor_scope": "lifetime",
     },
     "Ein2": {
         "device_class": "energy",
         "unit": "Wh",
         "state_class": "total_increasing",
         "precision": 2,
+        "sensor_scope": "lifetime",
     },
     "EBackup": {
         "device_class": "energy",
         "unit": "Wh",
         "state_class": "total_increasing",
         "precision": 2,
+        "sensor_scope": "lifetime",
     },
     # ===========================================================================
     # FREQUENCY SENSORS (v1.1.3+) - Precision=2 for Hz measurements
@@ -2154,8 +2205,8 @@ DESCRIPTION_IMPROVEMENTS = {
     "VBulk": "DC Voltage (Bulk Capacitor)",
     "sys_load": "System load average",
     "store_size": "Flash storage used",
-    "ECt": "Total energy from current transformer (CT)",
-    "EDt": "Total energy from direct transducer (DT)",
+    "ECt": "Energy - Current Transformer (CT) Lifetime",
+    "EDt": "Energy - Direct Transducer (DT) Lifetime",
     "FRT_state": "Fault Ride Through (FRT) status",
 }
 
@@ -3188,6 +3239,7 @@ def create_row_with_model_flags(
         "data_source": data_source,
         "model_notes": model_notes,
         "icon": "",
+        "sensor_scope": "",
     }
 
     # Apply corrections
@@ -3237,6 +3289,9 @@ def create_row_with_model_flags(
         # Apply entity_category if specified in metadata
         if not row["entity_category"] and metadata.get("entity_category"):
             row["entity_category"] = metadata.get("entity_category")
+        # Apply sensor_scope if specified in metadata (lifetime, runtime, periodic)
+        if metadata.get("sensor_scope"):
+            row["sensor_scope"] = metadata.get("sensor_scope")
 
     # Update category if needed
     if row["category"] in ["Unknown", "", None]:
@@ -3874,6 +3929,8 @@ def _get_cell_value_for_header(header, row_data):
         return row_data.get("entity_category", "")
     if header == "Suggested Display Precision":
         return row_data.get("precision", "")
+    if header == "Sensor Scope":
+        return row_data.get("sensor_scope", "")
     if header == "Available in Modbus":
         return row_data.get("available_in_modbus", "")
     if header == "Data Source":

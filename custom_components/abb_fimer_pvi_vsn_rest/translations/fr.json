@@ -331,7 +331,7 @@
         "name": "Énergie - Charge Batterie (Depuis Redémarrage)"
       },
       "e_ct": {
-        "name": "Énergie totale du transformateur de courant (CT)"
+        "name": "Énergie - Courant Transformer (CT) Total"
       },
       "e_discharge": {
         "name": "Énergie - Décharge Batterie Total"
@@ -346,7 +346,7 @@
         "name": "Énergie - Décharge Batterie (Depuis Redémarrage)"
       },
       "e_dt": {
-        "name": "Énergie totale du transducteur direct (DT)"
+        "name": "Énergie - Direct Transducer (DT) Total"
       },
       "e_grid_export": {
         "name": "Énergie AC - Réseau Exportation Total"
@@ -385,16 +385,16 @@
         "name": "Énergie AC - Absorbée Total"
       },
       "e_total_apparent": {
-        "name": "Énergie AC - Apparente (Total)"
+        "name": "Énergie AC - Apparente Total"
       },
       "ein": {
         "name": "Énergie DC - PV Total"
       },
       "ein1": {
-        "name": "Énergie DC - Chaîne 1 (Total)"
+        "name": "Énergie DC - Chaîne 1 Total"
       },
       "ein2": {
-        "name": "Énergie DC - Chaîne 2 (Total)"
+        "name": "Énergie DC - Chaîne 2 Total"
       },
       "ein_last_month": {
         "name": "Énergie DC - PV (Courant Month)"
@@ -676,7 +676,7 @@
         "name": "Numéro produit"
       },
       "power_peak_abs": {
-        "name": "Puissance - Crête (Total)"
+        "name": "Puissance - Crête Total"
       },
       "power_peak_today": {
         "name": "Puissance - Crête (Aujourd'hui)"
@@ -784,7 +784,7 @@
         "name": "Flags Avertissement"
       },
       "watthours": {
-        "name": "Énergie AC - Produite (Total)"
+        "name": "Énergie AC - Produite Total"
       },
       "watts": {
         "name": "Puissance AC"

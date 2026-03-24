@@ -343,6 +343,9 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         initial_value = point_data.get("value")
         is_numeric = isinstance(initial_value, (int, float))
 
+        # Default: not a lifetime sensor (overridden by _configure_numeric_sensor if applicable)
+        self._is_lifetime_sensor = False
+
         if is_numeric:
             self._configure_numeric_sensor(point_data, point_name, device_id)
         else:
@@ -436,6 +439,9 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
 
         # Apply precision from mapping, unit-based defaults, or entity overrides
         self._apply_display_precision(point_data, point_name, device_id, units)
+
+        # Flag for stale-value guard (lifetime sensors should never decrease)
+        self._is_lifetime_sensor = point_data.get("sensor_scope") == "lifetime"
 
     def _validate_and_apply_units(
         self,
@@ -634,6 +640,32 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
             "clock_state",
         ) and isinstance(value, (int, float)):
             return int(value)
+
+        # Guard lifetime sensors against stale/lower values from datalogger startup.
+        # Per HA docs, the integration must ensure total_increasing values don't erroneously
+        # decrease. During startup the datalogger may return 0 or stale values before full
+        # inverter communication is established. HA interprets drops as meter resets → spikes.
+        # Return None so HA skips this reading without triggering a reset.
+        if self._is_lifetime_sensor and isinstance(value, (int, float)):
+            current_state = self.hass.states.get(self.entity_id)
+            if current_state is not None and current_state.state not in (
+                "unknown",
+                "unavailable",
+                None,
+            ):
+                try:
+                    current_value = float(current_state.state)
+                    if value < current_value:
+                        _LOGGER.debug(
+                            "Discarding stale value %s for %s (current: %s) — "
+                            "lifetime sensor cannot decrease",
+                            value,
+                            self._point_name,
+                            current_value,
+                        )
+                        return None
+                except (ValueError, TypeError):
+                    pass  # Current state not numeric, allow through
 
         # Return raw numeric value (native_value must be numeric for sensors with state_class)
         # For system_uptime, the formatted version is available as an attribute
