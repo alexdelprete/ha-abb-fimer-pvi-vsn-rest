@@ -343,6 +343,14 @@ class VSNDataNormalizer:
                     )
                     continue
 
+                # Prevent datalogger startup 0 values from resetting lifetime energy sensors
+                if mapping.state_class == "total_increasing" and point_value == 0:
+                    _LOGGER.debug(
+                        "Discarding 0 value for total_increasing point %s to prevent HA dashboard spikes",
+                        point_name,
+                    )
+                    continue
+
                 # Convert ALL energy sensors from Wh to kWh
                 # The VSN API always returns energy values in Wh, but we display them in kWh for readability
                 # Check device_class instead of units to ensure ALL energy sensors are converted,
