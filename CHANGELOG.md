@@ -5,7 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.4.2] - Unreleased
+## [1.4.2] - 2026-03-25
+
+### Bug Fixes
+
+- **Entity ID Migration Fix** - Fixed buggy `endswith` shortcut in entity ID migration
+  that could skip entities needing rename
+- **Stale Entity Names** - Fixed stale `original_name` in entity registry after category
+  prefix removal. HA's "rename device entity IDs" feature was proposing wrong IDs based
+  on old cached names (e.g., "Device - Product Number" instead of "Product Number").
+  New v4 config entry migration fixes this automatically on startup.
+- **Test Fix** - Fixed pre-existing test failure in `test_migrate_skips_already_translated_suffix`
+  (missing `dr.async_get` mock)
+
+### Documentation
+
+- Fixed sensor count in README (246 translated sensors, 253 mapped points)
+- Updated README and CLAUDE.md for v1.4.1 entity naming changes
 
 ## [1.4.1] - 2026-03-25
 
