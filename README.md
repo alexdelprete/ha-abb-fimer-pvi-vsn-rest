@@ -276,16 +276,16 @@ The integration includes native translations for entity names in 10 European lan
 
 | Language | Code | Status |
 |----------|------|--------|
-| English | `en` | ✅ Complete (253 sensors) |
-| Italian | `it` | ✅ Complete (253 sensors) |
-| French | `fr` | ✅ Complete (253 sensors) |
-| Spanish | `es` | ✅ Complete (253 sensors) |
-| Portuguese | `pt` | ✅ Complete (253 sensors) |
-| German | `de` | ✅ Complete (253 sensors) |
-| Swedish | `sv` | ✅ Complete (253 sensors) |
-| Norwegian Bokmål | `nb` | ✅ Complete (253 sensors) |
-| Finnish | `fi` | ✅ Complete (253 sensors) |
-| Estonian | `et` | ✅ Complete (253 sensors) |
+| English | `en` | ✅ Complete (246 sensors) |
+| Italian | `it` | ✅ Complete (246 sensors) |
+| French | `fr` | ✅ Complete (246 sensors) |
+| Spanish | `es` | ✅ Complete (246 sensors) |
+| Portuguese | `pt` | ✅ Complete (246 sensors) |
+| German | `de` | ✅ Complete (246 sensors) |
+| Swedish | `sv` | ✅ Complete (246 sensors) |
+| Norwegian Bokmål | `nb` | ✅ Complete (246 sensors) |
+| Finnish | `fi` | ✅ Complete (246 sensors) |
+| Estonian | `et` | ✅ Complete (246 sensors) |
 
 **Automatic Language Selection**: Home Assistant automatically selects the appropriate language based on your system
 settings. No configuration needed!
@@ -650,16 +650,16 @@ For details, see [MAPPING_NOTES.md](docs/MAPPING_NOTES.md).
 
 The integration includes complete translations for entity names in **10 European languages**:
 
-- 🇬🇧 **English** (`en.json`) - 253 sensors
-- 🇮🇹 **Italian** (`it.json`) - 253 sensors
-- 🇫🇷 **French** (`fr.json`) - 253 sensors
-- 🇪🇸 **Spanish** (`es.json`) - 253 sensors
-- 🇵🇹 **Portuguese** (`pt.json`) - 253 sensors
-- 🇩🇪 **German** (`de.json`) - 253 sensors
-- 🇸🇪 **Swedish** (`sv.json`) - 253 sensors
-- 🇳🇴 **Norwegian** (`nb.json`) - 253 sensors
-- 🇫🇮 **Finnish** (`fi.json`) - 253 sensors
-- 🇪🇪 **Estonian** (`et.json`) - 253 sensors
+- 🇬🇧 **English** (`en.json`) - 246 sensors
+- 🇮🇹 **Italian** (`it.json`) - 246 sensors
+- 🇫🇷 **French** (`fr.json`) - 246 sensors
+- 🇪🇸 **Spanish** (`es.json`) - 246 sensors
+- 🇵🇹 **Portuguese** (`pt.json`) - 246 sensors
+- 🇩🇪 **German** (`de.json`) - 246 sensors
+- 🇸🇪 **Swedish** (`sv.json`) - 246 sensors
+- 🇳🇴 **Norwegian** (`nb.json`) - 246 sensors
+- 🇫🇮 **Finnish** (`fi.json`) - 246 sensors
+- 🇪🇪 **Estonian** (`et.json`) - 246 sensors
 
 The integration automatically uses the language configured in your Home Assistant instance. All UI strings, error
 messages, configuration flows, and **entity names** are fully
@@ -669,7 +669,7 @@ translated.
 
 Want to add a new language or improve existing translations? Here's how:
 
-**For Entity Names** (253 sensors in `entity.sensor` section):
+**For Entity Names** (246 sensors in `entity.sensor` section):
 
 1. Fork the repository
 
