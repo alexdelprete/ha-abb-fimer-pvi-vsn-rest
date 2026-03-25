@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from .abb_fimer_vsn_rest_client.discovery import DiscoveredDevice
 
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.translation import async_get_translations
@@ -33,7 +36,7 @@ def simplify_device_type(device_type: str) -> str:
     return device_type.lower()
 
 
-def get_device_type_simple(device: object) -> str:
+def get_device_type_simple(device: DiscoveredDevice) -> str:
     """Get simplified device type from a DiscoveredDevice.
 
     Args:
@@ -43,9 +46,9 @@ def get_device_type_simple(device: object) -> str:
         Simplified type (e.g., "inverter", "meter", "battery", "datalogger")
 
     """
-    if device.is_datalogger:  # type: ignore[attr-defined]
+    if device.is_datalogger:
         return "datalogger"
-    return simplify_device_type(device.device_type)  # type: ignore[attr-defined]
+    return simplify_device_type(device.device_type)
 
 
 def build_prefix_by_device(

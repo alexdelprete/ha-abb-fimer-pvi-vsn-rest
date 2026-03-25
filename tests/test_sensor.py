@@ -2307,7 +2307,7 @@ class TestLifetimeSensorGuard:
                 }
             }
         }
-        return VSNSensor(
+        sensor = VSNSensor(
             coordinator=mock_coordinator,
             config_entry=mock_sensor_config_entry,
             device_id=TEST_INVERTER_SN,
@@ -2315,6 +2315,9 @@ class TestLifetimeSensorGuard:
             point_name=point_name,
             point_data=point_data,
         )
+        # Set hass manually (normally done by async_added_to_hass)
+        sensor.hass = mock_coordinator.hass
+        return sensor
 
     def test_lifetime_sensor_discards_lower_value(
         self,
