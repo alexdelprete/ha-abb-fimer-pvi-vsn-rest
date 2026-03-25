@@ -1216,8 +1216,8 @@ class TestAsyncMigrateEntry:
         return hass
 
     @pytest.mark.asyncio
-    async def test_migrate_version_1_to_2(self, mock_hass: MagicMock) -> None:
-        """Test config entry migration from version 1 to 2."""
+    async def test_migrate_version_1_to_3(self, mock_hass: MagicMock) -> None:
+        """Test config entry migration from version 1 to 3."""
         entry = MagicMock(spec=ConfigEntry)
         entry.version = 1
         entry.entry_id = "test_entry_id"
@@ -1230,13 +1230,30 @@ class TestAsyncMigrateEntry:
 
         assert result is True
         mock_migrate.assert_called_once_with(mock_hass, entry)
-        mock_hass.config_entries.async_update_entry.assert_called_once_with(entry, version=2)
+        mock_hass.config_entries.async_update_entry.assert_called_once_with(entry, version=3)
 
     @pytest.mark.asyncio
-    async def test_migrate_version_2_noop(self, mock_hass: MagicMock) -> None:
-        """Test no migration needed when already at version 2."""
+    async def test_migrate_version_2_to_3(self, mock_hass: MagicMock) -> None:
+        """Test config entry migration from version 2 to 3 (re-run for endswith bug fix)."""
         entry = MagicMock(spec=ConfigEntry)
         entry.version = 2
+        entry.entry_id = "test_entry_id"
+
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest._async_migrate_entity_ids_v2",
+            new_callable=AsyncMock,
+        ) as mock_migrate:
+            result = await async_migrate_entry(mock_hass, entry)
+
+        assert result is True
+        mock_migrate.assert_called_once_with(mock_hass, entry)
+        mock_hass.config_entries.async_update_entry.assert_called_once_with(entry, version=3)
+
+    @pytest.mark.asyncio
+    async def test_migrate_version_3_noop(self, mock_hass: MagicMock) -> None:
+        """Test no migration needed when already at version 3."""
+        entry = MagicMock(spec=ConfigEntry)
+        entry.version = 3
 
         result = await async_migrate_entry(mock_hass, entry)
 
@@ -1247,7 +1264,7 @@ class TestAsyncMigrateEntry:
     async def test_migrate_future_version_fails(self, mock_hass: MagicMock) -> None:
         """Test downgrade from future version fails."""
         entry = MagicMock(spec=ConfigEntry)
-        entry.version = 3
+        entry.version = 4
 
         result = await async_migrate_entry(mock_hass, entry)
 

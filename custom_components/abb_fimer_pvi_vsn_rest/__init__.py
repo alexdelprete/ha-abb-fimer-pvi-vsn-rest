@@ -365,21 +365,23 @@ async def async_migrate_entry(
     """Migrate config entry to a new version.
 
     Version 1 → 2: Migrate entity IDs to remove category prefixes from display names.
-    Display names like "Inverter - Type" were cleaned to "Type", which changes the
-    entity IDs that HA derives from translated names.
+    Version 2 → 3: Re-run migration to fix entities missed by buggy endswith check.
     """
-    if config_entry.version > 2:
+    if config_entry.version > 3:
         _LOGGER.error(
-            "Cannot downgrade config entry from version %s to 2",
+            "Cannot downgrade config entry from version %s to 3",
             config_entry.version,
         )
         return False
 
-    if config_entry.version == 1:
-        _LOGGER.info("Migrating config entry from version 1 to 2")
+    if config_entry.version < 3:
+        _LOGGER.info(
+            "Migrating config entry from version %s to 3",
+            config_entry.version,
+        )
         await _async_migrate_entity_ids_v2(hass, config_entry)
-        hass.config_entries.async_update_entry(config_entry, version=2)
-        _LOGGER.info("Config entry migration to version 2 complete")
+        hass.config_entries.async_update_entry(config_entry, version=3)
+        _LOGGER.info("Config entry migration to version 3 complete")
 
     return True
 
@@ -421,13 +423,6 @@ async def _async_migrate_entity_ids_v2(
 
         new_suffix = slugify(translated_name)
 
-        # Check if entity_id already ends with the new suffix
-        if entity_entry.entity_id.endswith(f"_{new_suffix}"):
-            continue  # Already up to date
-
-        # Compute new entity_id by replacing the suffix
-        # Entity ID format: sensor.{device_name_slug}_{old_suffix}
-        # We need to find where the device_name ends and the old suffix begins.
         # Build new entity_id from device name + new translated suffix
         domain = entity_entry.entity_id.split(".")[0]
         device_entry = (
