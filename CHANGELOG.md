@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.4.1] - Unreleased
 
+### Breaking Changes
+
+- **Sensor Names Cleaned** - Removed category prefixes ("Inverter - ", "Device - ", "System - ",
+  "Battery - ", "Grid - ") from 57 sensor display names. The device already provides that context.
+  Examples: "Inverter - Configuration Options" → "Configuration Options",
+  "Device - Manufacturer" → "Manufacturer", "System - Uptime" → "Uptime"
+- **Entity IDs Changed** - Entity IDs derived from display names are updated accordingly.
+  Automatic one-time migration renames existing entity IDs on first startup after update.
+
+### Bug Fixes
+
+- **Redundant Entity ID Prefixes** - Fixed entity IDs containing redundant category prefixes
+  when users set custom device names (e.g., `sensor.abb_fimer_inverter_inverter_configuration_options`
+  → `sensor.abb_fimer_inverter_configuration_options`)
+- **Wrong Category in Entity IDs** - Fixed datalogger entities incorrectly containing "inverter"
+  prefix (e.g., `sensor.abb_fimer_datalogger_inverter_type` → `sensor.abb_fimer_datalogger_type`)
+
+### Infrastructure
+
+- **One-Time Entity ID Migration** - Config entry version bump (1→2) triggers automatic entity ID
+  migration on first startup. Preserves dashboards, automations, and history.
+- **Removed Dead Code** - Removed non-functional `_attr_suggested_object_id` assignment in sensor.py
+  (`suggested_object_id` is not a settable attribute in HA core)
+- **Removed Old Migration** - Replaced per-startup `_async_migrate_entity_ids` with one-time
+  version-gated migration that won't overwrite user customizations
+
+**See**: [v1.4.1 Release Notes](docs/releases/v1.4.1.md)
+
 ## [1.4.0] - 2026-03-25
 
 ### New Features

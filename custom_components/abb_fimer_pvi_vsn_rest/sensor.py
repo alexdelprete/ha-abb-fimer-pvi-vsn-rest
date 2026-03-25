@@ -314,18 +314,12 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
         unique_id = f"{device_identifier}_{point_name}"
         self._attr_unique_id = unique_id
 
-        # Set suggested_object_id for entity_id generation
-        # With has_entity_name=True, HA combines device_name + suggested_object_id
-        # Device name will be technical format: {domain}_{device_type}_{serial_compact}
-        # Result: sensor.abb_fimer_pvi_vsn_rest_inverter_0779093g823112_wlan0_essid
-        self._attr_suggested_object_id = point_name
-
-        # Use translation system for entity names
+        # Use translation system for entity names and entity ID generation
         # With has_entity_name=True, HA looks up entity.sensor.{translation_key}.name
-        # The point_name is used as the translation key (e.g., "watts", "dc_voltage_1")
-        # HA automatically picks correct language from translations/{language}.json
-        # Full friendly_name will be: "{device_name} {translated_name}"
-        # Example: "Power-One Inverter PVI-10.0-OUTD (077909-3G82-3112) Power AC"
+        # in translations/{language}.json for display names.
+        # HA also derives entity IDs from the English translated name (slugified).
+        # Note: _attr_suggested_object_id does NOT exist in HA core — the
+        # suggested_object_id property is computed from the entity name.
         self._attr_translation_key = self._point_name
 
         # Store device identifier and components for device_info

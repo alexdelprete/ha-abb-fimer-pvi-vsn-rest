@@ -115,13 +115,13 @@
         "name": "Vool AC - Faas C"
       },
       "batt_ext_ctrl_ena": {
-        "name": "Aku - Control Lubatud"
+        "name": "Control Lubatud"
       },
       "batt_ext_ctrl_state": {
-        "name": "Aku - Control Seisund"
+        "name": "Control Seisund"
       },
       "batt_num": {
-        "name": "Aku - Module Arv"
+        "name": "Module Arv"
       },
       "battery_mode": {
         "name": "Aku Režiim"
@@ -133,25 +133,25 @@
         "name": "Temperatuur - Kapp"
       },
       "chc": {
-        "name": "Aku - Charge Cycles"
+        "name": "Charge Cycles"
       },
       "clock_state": {
         "name": "Olek - Clock"
       },
       "commissioning_freeze": {
-        "name": "Inverter - Kasutuselevõtu Külmutamine"
+        "name": "Kasutuselevõtu Külmutamine"
       },
       "communication_protocol": {
-        "name": "Device - Kommunikatsiooniprotokoll"
+        "name": "Kommunikatsiooniprotokoll"
       },
       "cos_phi": {
         "name": "Võimsustegur"
       },
       "country_std": {
-        "name": "Inverter - Arvry Standard"
+        "name": "Arvry Standard"
       },
       "cycle_num": {
-        "name": "Aku - Cycles"
+        "name": "Cycles"
       },
       "d_c1_state": {
         "name": "Olek - DC Sisend 1"
@@ -190,19 +190,19 @@
         "name": "Võimsus DC"
       },
       "detected_battery_number": {
-        "name": "Aku - Detected Number"
+        "name": "Detected Number"
       },
       "device_address": {
-        "name": "Device - Modbus Address"
+        "name": "Modbus Address"
       },
       "device_name": {
-        "name": "Device - Name 2"
+        "name": "Name 2"
       },
       "device_type": {
-        "name": "Device - Tüüp 2"
+        "name": "Tüüp 2"
       },
       "dhc": {
-        "name": "Aku - Discharge Cycles"
+        "name": "Discharge Cycles"
       },
       "di0_mode": {
         "name": "Digital Input - Režiim 0"
@@ -214,7 +214,7 @@
         "name": "Olek - Digital Input"
       },
       "dynamic_feed_in_ctrl": {
-        "name": "Inverter - Dynamic Feed-In Control"
+        "name": "Dynamic Feed-In Control"
       },
       "e0_1_year": {
         "name": "Energia AC - Toodetud (Vool Year)"
@@ -406,7 +406,7 @@
         "name": "Energia DC - PV (Alates Taaskäivitusest)"
       },
       "energy_policy": {
-        "name": "Inverter - Energiapoliitika"
+        "name": "Energiapoliitika"
       },
       "fan1rpm": {
         "name": "Kiirus - Ventilaator 1"
@@ -418,31 +418,31 @@
         "name": "Sagedus - Central Controller"
       },
       "firmware_version": {
-        "name": "Firmware - Version"
+        "name": "Firmware Versioon"
       },
       "flash_memory_free": {
-        "name": "System - Available Flash"
+        "name": "Available Flash"
       },
       "free_ram": {
-        "name": "System - Saadaval RAM"
+        "name": "Saadaval RAM"
       },
       "frt_state": {
         "name": "Olek - Fault Ride Through (FRT)"
       },
       "fw_build_date": {
-        "name": "Firmware - Build Date"
+        "name": "Firmware Build Kuupäev"
       },
       "fw_build_number": {
-        "name": "Firmware - Build Hash"
+        "name": "Firmware Build Hash"
       },
       "fw_release_number": {
-        "name": "Firmware - Version"
+        "name": "Firmware Versioon"
       },
       "fw_revision": {
-        "name": "Firmware - Revision"
+        "name": "Firmware Revisioon"
       },
       "fw_version": {
-        "name": "Firmware - Version"
+        "name": "Firmware Versioon"
       },
       "glob_state": {
         "name": "Olek - Global"
@@ -451,7 +451,7 @@
         "name": "Olek - Global"
       },
       "grid_ext_ctrl_ena": {
-        "name": "Võrk - External Control Lubatud"
+        "name": "External Control Lubatud"
       },
       "grid_ext_ctrl_state": {
         "name": "Olek - Võrk External Control"
@@ -508,7 +508,7 @@
         "name": "Vool DC - Ahel 2"
       },
       "input_mode": {
-        "name": "Inverter - Sisendi Režiim"
+        "name": "Sisendi Režiim"
       },
       "inv_state": {
         "name": "Olek - Inverter"
@@ -526,25 +526,25 @@
         "name": "Takistus - Isolatsioon"
       },
       "logger_board_model": {
-        "name": "Datalogger - Board Režiiml"
+        "name": "Logger Kaardi Mudel"
       },
       "logger_hostname": {
-        "name": "Datalogger - Hostname"
+        "name": "Hostname"
       },
       "logger_logger_id": {
-        "name": "Datalogger - ID"
+        "name": "Logger ID"
       },
       "logger_sn": {
-        "name": "Datalogger - Seerianumber"
+        "name": "Logger Seerianumber"
       },
       "m126_mod_ena": {
-        "name": "Inverter - Mudel 126 Lubatud"
+        "name": "Mudel 126 Lubatud"
       },
       "m132_mod_ena": {
-        "name": "Inverter - Mudel 132 Lubatud"
+        "name": "Mudel 132 Lubatud"
       },
       "manufacturer": {
-        "name": "Device - Manufacturer"
+        "name": "Manufacturer"
       },
       "meter_fgrid": {
         "name": "Sagedus AC - Arvesti"
@@ -592,31 +592,31 @@
         "name": "Pinge AC - Arvesti Faas C"
       },
       "mfg_part_number": {
-        "name": "Device - Osa Number"
+        "name": "Osa Number"
       },
       "mfg_serial_number": {
-        "name": "Device - Seerianumber"
+        "name": "Seerianumber"
       },
       "mfg_week_year": {
-        "name": "Device - Tootmisnädal/Aasta"
+        "name": "Tootmisnädal/Aasta"
       },
       "model": {
-        "name": "Device - Režiiml Identifier"
+        "name": "Režiiml Identifier"
       },
       "model_description": {
-        "name": "Device - Mudeli Kirjeldus"
+        "name": "Mudeli Kirjeldus"
       },
       "model_type": {
-        "name": "Device - Mudeli Tüüp"
+        "name": "Mudeli Tüüp"
       },
       "month_wh": {
         "name": "Energia AC - Toodetud (Vool Month)"
       },
       "num_of_mppt": {
-        "name": "Inverter - MPPT Channel Arv"
+        "name": "MPPT Channel Arv"
       },
       "options": {
-        "name": "Inverter - Configuration Options"
+        "name": "Configuration Options"
       },
       "other_temperature": {
         "name": "Temperatuur - Muu"
@@ -673,7 +673,7 @@
         "name": "Võimsus DC - Ahel 2"
       },
       "pn": {
-        "name": "Device - Product Number"
+        "name": "Product Number"
       },
       "power_peak_abs": {
         "name": "Võimsus - Tipp Kokku"
@@ -691,34 +691,34 @@
         "name": "Võimsus AC - Näiv Derating Lipud"
       },
       "serial_number": {
-        "name": "Device - Seerianumber"
+        "name": "Seerianumber"
       },
       "sh_u": {
         "name": "Pinge - Shunt"
       },
       "sn": {
-        "name": "Device - Seerianumber"
+        "name": "Seerianumber"
       },
       "split_phase": {
-        "name": "Inverter - Split Phase"
+        "name": "Split Phase"
       },
       "state_of_charge": {
-        "name": "Aku - Laadimisseisund"
+        "name": "Laadimisseisund"
       },
       "state_of_health": {
-        "name": "Aku - Terviseseisund"
+        "name": "Terviseseisund"
       },
       "storage_size": {
-        "name": "System - Flash Used"
+        "name": "Flash Used"
       },
       "sys_time": {
         "name": "Süsteemi Aeg"
       },
       "system_load": {
-        "name": "System - Koormus Average"
+        "name": "Koormus Average"
       },
       "system_uptime": {
-        "name": "System - Uptime"
+        "name": "Uptime"
       },
       "tba": {
         "name": "Temperatuur - Aku"
@@ -739,7 +739,7 @@
         "name": "Temperatuur - Inverter"
       },
       "type": {
-        "name": "Inverter - Tüüp"
+        "name": "Tüüp"
       },
       "v_bulk": {
         "name": "Pinge DC - Bulk Kondensaator"
@@ -763,7 +763,7 @@
         "name": "Pinge - Aku Element Min"
       },
       "version": {
-        "name": "Firmware - Version"
+        "name": "Firmware Versioon"
       },
       "vgrid_l1_n": {
         "name": "Pinge AC - Võrk L1-N"

@@ -115,13 +115,13 @@
         "name": "Ström AC - Fas C"
       },
       "batt_ext_ctrl_ena": {
-        "name": "Batteri - Control Aktiverad"
+        "name": "Control Aktiverad"
       },
       "batt_ext_ctrl_state": {
-        "name": "Batteri - Control Tillstånd"
+        "name": "Control Tillstånd"
       },
       "batt_num": {
-        "name": "Batteri - Module Antal"
+        "name": "Module Antal"
       },
       "battery_mode": {
         "name": "Batteriläge"
@@ -133,25 +133,25 @@
         "name": "Temperatur - Skåp"
       },
       "chc": {
-        "name": "Batteri - Charge Cycles"
+        "name": "Charge Cycles"
       },
       "clock_state": {
         "name": "Status - Clock"
       },
       "commissioning_freeze": {
-        "name": "Växelriktare - Driftsättning Frys"
+        "name": "Driftsättning Frys"
       },
       "communication_protocol": {
-        "name": "Device - Kommunikationsprotokoll"
+        "name": "Kommunikationsprotokoll"
       },
       "cos_phi": {
         "name": "Effektfaktor"
       },
       "country_std": {
-        "name": "Växelriktare - Antalry Standard"
+        "name": "Antalry Standard"
       },
       "cycle_num": {
-        "name": "Batteri - Cycles"
+        "name": "Cycles"
       },
       "d_c1_state": {
         "name": "Status - DC Ingång 1"
@@ -190,19 +190,19 @@
         "name": "Effekt DC"
       },
       "detected_battery_number": {
-        "name": "Batteri - Detected Number"
+        "name": "Detected Number"
       },
       "device_address": {
-        "name": "Device - Modbus Address"
+        "name": "Modbus Address"
       },
       "device_name": {
-        "name": "Device - Name 2"
+        "name": "Name 2"
       },
       "device_type": {
-        "name": "Device - Typ 2"
+        "name": "Typ 2"
       },
       "dhc": {
-        "name": "Batteri - Discharge Cycles"
+        "name": "Discharge Cycles"
       },
       "di0_mode": {
         "name": "Digital Input - Läge 0"
@@ -214,7 +214,7 @@
         "name": "Status - Digital Input"
       },
       "dynamic_feed_in_ctrl": {
-        "name": "Växelriktare - Dynamic Feed-In Control"
+        "name": "Dynamic Feed-In Control"
       },
       "e0_1_year": {
         "name": "Energi AC - Producerad (Ström Year)"
@@ -406,7 +406,7 @@
         "name": "Energi DC - PV (Sedan Omstart)"
       },
       "energy_policy": {
-        "name": "Växelriktare - Energipolicy"
+        "name": "Energipolicy"
       },
       "fan1rpm": {
         "name": "Hastighet - Fläkt 1"
@@ -418,31 +418,31 @@
         "name": "Frekvens - Central Controller"
       },
       "firmware_version": {
-        "name": "Firmware - Version"
+        "name": "Firmware Version"
       },
       "flash_memory_free": {
-        "name": "System - Available Flash"
+        "name": "Available Flash"
       },
       "free_ram": {
-        "name": "System - Tillgängligt RAM"
+        "name": "Tillgängligt RAM"
       },
       "frt_state": {
         "name": "Status - Fault Ride Through (FRT)"
       },
       "fw_build_date": {
-        "name": "Firmware - Build Date"
+        "name": "Firmware Build Datum"
       },
       "fw_build_number": {
-        "name": "Firmware - Build Hash"
+        "name": "Firmware Build Hash"
       },
       "fw_release_number": {
-        "name": "Firmware - Version"
+        "name": "Firmware Version"
       },
       "fw_revision": {
-        "name": "Firmware - Revision"
+        "name": "Firmware Revision"
       },
       "fw_version": {
-        "name": "Firmware - Version"
+        "name": "Firmware Version"
       },
       "glob_state": {
         "name": "Status - Global"
@@ -451,7 +451,7 @@
         "name": "Status - Global"
       },
       "grid_ext_ctrl_ena": {
-        "name": "Nät - External Control Aktiverad"
+        "name": "External Control Aktiverad"
       },
       "grid_ext_ctrl_state": {
         "name": "Status - Nät External Control"
@@ -508,7 +508,7 @@
         "name": "Ström DC - Sträng 2"
       },
       "input_mode": {
-        "name": "Växelriktare - Ingångsläge"
+        "name": "Ingångsläge"
       },
       "inv_state": {
         "name": "Status - Växelriktare"
@@ -526,25 +526,25 @@
         "name": "Motstånd - Isolering"
       },
       "logger_board_model": {
-        "name": "Datalogger - Board Lägel"
+        "name": "Logger Kort Lägell"
       },
       "logger_hostname": {
-        "name": "Datalogger - Hostname"
+        "name": "Hostname"
       },
       "logger_logger_id": {
-        "name": "Datalogger - ID"
+        "name": "Logger ID"
       },
       "logger_sn": {
-        "name": "Datalogger - Serienummer"
+        "name": "Logger Serienummer"
       },
       "m126_mod_ena": {
-        "name": "Växelriktare - Lägell 126 Aktiverad"
+        "name": "Lägell 126 Aktiverad"
       },
       "m132_mod_ena": {
-        "name": "Växelriktare - Lägell 132 Aktiverad"
+        "name": "Lägell 132 Aktiverad"
       },
       "manufacturer": {
-        "name": "Device - Manufacturer"
+        "name": "Manufacturer"
       },
       "meter_fgrid": {
         "name": "Frekvens AC - Mätare"
@@ -592,31 +592,31 @@
         "name": "Spänning AC - Mätare Fas C"
       },
       "mfg_part_number": {
-        "name": "Device - Delnummer"
+        "name": "Delnummer"
       },
       "mfg_serial_number": {
-        "name": "Device - Serienummer"
+        "name": "Serienummer"
       },
       "mfg_week_year": {
-        "name": "Device - Tillverkningsvecka/År"
+        "name": "Tillverkningsvecka/År"
       },
       "model": {
-        "name": "Device - Lägel Identifier"
+        "name": "Lägel Identifier"
       },
       "model_description": {
-        "name": "Device - Lägellbeskrivning"
+        "name": "Lägellbeskrivning"
       },
       "model_type": {
-        "name": "Device - Lägelltyp"
+        "name": "Lägelltyp"
       },
       "month_wh": {
         "name": "Energi AC - Producerad (Ström Month)"
       },
       "num_of_mppt": {
-        "name": "Växelriktare - MPPT Channel Antal"
+        "name": "MPPT Channel Antal"
       },
       "options": {
-        "name": "Växelriktare - Configuration Options"
+        "name": "Configuration Options"
       },
       "other_temperature": {
         "name": "Temperatur - Annan"
@@ -673,7 +673,7 @@
         "name": "Effekt DC - Sträng 2"
       },
       "pn": {
-        "name": "Device - Product Number"
+        "name": "Product Number"
       },
       "power_peak_abs": {
         "name": "Effekt - Topp Total"
@@ -691,34 +691,34 @@
         "name": "Effekt AC - Skenbar Derating Flaggor"
       },
       "serial_number": {
-        "name": "Device - Serienummer"
+        "name": "Serienummer"
       },
       "sh_u": {
         "name": "Spänning - Shunt"
       },
       "sn": {
-        "name": "Device - Serienummer"
+        "name": "Serienummer"
       },
       "split_phase": {
-        "name": "Växelriktare - Split Phase"
+        "name": "Split Phase"
       },
       "state_of_charge": {
-        "name": "Batteri - Laddningstillstånd"
+        "name": "Laddningstillstånd"
       },
       "state_of_health": {
-        "name": "Batteri - Hälsotillstånd"
+        "name": "Hälsotillstånd"
       },
       "storage_size": {
-        "name": "System - Flash Used"
+        "name": "Flash Used"
       },
       "sys_time": {
         "name": "Systemtid"
       },
       "system_load": {
-        "name": "System - Last Average"
+        "name": "Last Average"
       },
       "system_uptime": {
-        "name": "System - Uptime"
+        "name": "Uptime"
       },
       "tba": {
         "name": "Temperatur - Batteri"
@@ -739,7 +739,7 @@
         "name": "Temperatur - Växelriktare"
       },
       "type": {
-        "name": "Växelriktare - Typ"
+        "name": "Typ"
       },
       "v_bulk": {
         "name": "Spänning DC - Bulk Kondensator"
@@ -763,7 +763,7 @@
         "name": "Spänning - Battericell Min"
       },
       "version": {
-        "name": "Firmware - Version"
+        "name": "Firmware Version"
       },
       "vgrid_l1_n": {
         "name": "Spänning AC - Nät L1-N"

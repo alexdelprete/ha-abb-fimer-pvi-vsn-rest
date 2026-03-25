@@ -115,13 +115,13 @@
         "name": "Virta AC - Vaihe C"
       },
       "batt_ext_ctrl_ena": {
-        "name": "Akku - Control Käytössä"
+        "name": "Control Käytössä"
       },
       "batt_ext_ctrl_state": {
-        "name": "Akku - Control Tila"
+        "name": "Control Tila"
       },
       "batt_num": {
-        "name": "Akku - Module Lukumäärä"
+        "name": "Module Lukumäärä"
       },
       "battery_mode": {
         "name": "Akkutila"
@@ -133,25 +133,25 @@
         "name": "Lämpötila - Kaappi"
       },
       "chc": {
-        "name": "Akku - Charge Cycles"
+        "name": "Charge Cycles"
       },
       "clock_state": {
         "name": "Tila - Clock"
       },
       "commissioning_freeze": {
-        "name": "Invertteri - Käyttöönoton Jäädytys"
+        "name": "Käyttöönoton Jäädytys"
       },
       "communication_protocol": {
-        "name": "Device - Viestintäprotokolla"
+        "name": "Viestintäprotokolla"
       },
       "cos_phi": {
         "name": "Tehokerroin"
       },
       "country_std": {
-        "name": "Invertteri - Lukumääräry Standard"
+        "name": "Lukumääräry Standard"
       },
       "cycle_num": {
-        "name": "Akku - Cycles"
+        "name": "Cycles"
       },
       "d_c1_state": {
         "name": "Tila - DC Tulo 1"
@@ -190,19 +190,19 @@
         "name": "Teho DC"
       },
       "detected_battery_number": {
-        "name": "Akku - Detected Number"
+        "name": "Detected Number"
       },
       "device_address": {
-        "name": "Device - Modbus Address"
+        "name": "Modbus Address"
       },
       "device_name": {
-        "name": "Device - Name 2"
+        "name": "Name 2"
       },
       "device_type": {
-        "name": "Device - Tyyppi 2"
+        "name": "Tyyppi 2"
       },
       "dhc": {
-        "name": "Akku - Discharge Cycles"
+        "name": "Discharge Cycles"
       },
       "di0_mode": {
         "name": "Digital Input - Tila 0"
@@ -214,7 +214,7 @@
         "name": "Tila - Digital Input"
       },
       "dynamic_feed_in_ctrl": {
-        "name": "Invertteri - Dynamic Feed-In Control"
+        "name": "Dynamic Feed-In Control"
       },
       "e0_1_year": {
         "name": "Energia AC - Tuotettu (Virta Year)"
@@ -406,7 +406,7 @@
         "name": "Energia DC - PV (Uudelleenkäynnistyksestä)"
       },
       "energy_policy": {
-        "name": "Invertteri - Energiapolitiikka"
+        "name": "Energiapolitiikka"
       },
       "fan1rpm": {
         "name": "Nopeus - Tuuletin 1"
@@ -418,31 +418,31 @@
         "name": "Taajuus - Central Controller"
       },
       "firmware_version": {
-        "name": "Firmware - Version"
+        "name": "Firmware Versio"
       },
       "flash_memory_free": {
-        "name": "System - Available Flash"
+        "name": "Available Flash"
       },
       "free_ram": {
-        "name": "System - Käytettävissä oleva RAM"
+        "name": "Käytettävissä oleva RAM"
       },
       "frt_state": {
         "name": "Tila - Fault Ride Through (FRT)"
       },
       "fw_build_date": {
-        "name": "Firmware - Build Date"
+        "name": "Firmware Build Päivämäärä"
       },
       "fw_build_number": {
-        "name": "Firmware - Build Hash"
+        "name": "Firmware Build Hash"
       },
       "fw_release_number": {
-        "name": "Firmware - Version"
+        "name": "Firmware Versio"
       },
       "fw_revision": {
-        "name": "Firmware - Revision"
+        "name": "Firmware Revisio"
       },
       "fw_version": {
-        "name": "Firmware - Version"
+        "name": "Firmware Versio"
       },
       "glob_state": {
         "name": "Tila - Global"
@@ -451,7 +451,7 @@
         "name": "Tila - Global"
       },
       "grid_ext_ctrl_ena": {
-        "name": "Verkko - External Control Käytössä"
+        "name": "External Control Käytössä"
       },
       "grid_ext_ctrl_state": {
         "name": "Tila - Verkko External Control"
@@ -508,7 +508,7 @@
         "name": "Virta DC - Ketju 2"
       },
       "input_mode": {
-        "name": "Invertteri - Tulotila"
+        "name": "Tulotila"
       },
       "inv_state": {
         "name": "Tila - Invertteri"
@@ -526,25 +526,25 @@
         "name": "Vastus - Eristys"
       },
       "logger_board_model": {
-        "name": "Datalogger - Board Tilal"
+        "name": "Logger Kortin Malli"
       },
       "logger_hostname": {
-        "name": "Datalogger - Hostname"
+        "name": "Hostname"
       },
       "logger_logger_id": {
-        "name": "Datalogger - ID"
+        "name": "Logger ID"
       },
       "logger_sn": {
-        "name": "Datalogger - Sarjanumero"
+        "name": "Logger Sarjanumero"
       },
       "m126_mod_ena": {
-        "name": "Invertteri - Malli 126 Käytössä"
+        "name": "Malli 126 Käytössä"
       },
       "m132_mod_ena": {
-        "name": "Invertteri - Malli 132 Käytössä"
+        "name": "Malli 132 Käytössä"
       },
       "manufacturer": {
-        "name": "Device - Manufacturer"
+        "name": "Manufacturer"
       },
       "meter_fgrid": {
         "name": "Taajuus AC - Mittari"
@@ -592,31 +592,31 @@
         "name": "Jännite AC - Mittari Vaihe C"
       },
       "mfg_part_number": {
-        "name": "Device - Osanumero"
+        "name": "Osanumero"
       },
       "mfg_serial_number": {
-        "name": "Device - Sarjanumero"
+        "name": "Sarjanumero"
       },
       "mfg_week_year": {
-        "name": "Device - Valmistusviikko/Vuosi"
+        "name": "Valmistusviikko/Vuosi"
       },
       "model": {
-        "name": "Device - Tilal Identifier"
+        "name": "Tilal Identifier"
       },
       "model_description": {
-        "name": "Device - Mallin Kuvaus"
+        "name": "Mallin Kuvaus"
       },
       "model_type": {
-        "name": "Device - Mallityyppi"
+        "name": "Mallityyppi"
       },
       "month_wh": {
         "name": "Energia AC - Tuotettu (Virta Month)"
       },
       "num_of_mppt": {
-        "name": "Invertteri - MPPT Channel Lukumäärä"
+        "name": "MPPT Channel Lukumäärä"
       },
       "options": {
-        "name": "Invertteri - Configuration Options"
+        "name": "Configuration Options"
       },
       "other_temperature": {
         "name": "Lämpötila - Muu"
@@ -673,7 +673,7 @@
         "name": "Teho DC - Ketju 2"
       },
       "pn": {
-        "name": "Device - Product Number"
+        "name": "Product Number"
       },
       "power_peak_abs": {
         "name": "Teho - Huippu Yhteensä"
@@ -691,34 +691,34 @@
         "name": "Teho AC - Näennäinen Derating Liput"
       },
       "serial_number": {
-        "name": "Device - Sarjanumero"
+        "name": "Sarjanumero"
       },
       "sh_u": {
         "name": "Jännite - Shunt"
       },
       "sn": {
-        "name": "Device - Sarjanumero"
+        "name": "Sarjanumero"
       },
       "split_phase": {
-        "name": "Invertteri - Split Phase"
+        "name": "Split Phase"
       },
       "state_of_charge": {
-        "name": "Akku - Lataustila"
+        "name": "Lataustila"
       },
       "state_of_health": {
-        "name": "Akku - Terveystila"
+        "name": "Terveystila"
       },
       "storage_size": {
-        "name": "System - Flash Used"
+        "name": "Flash Used"
       },
       "sys_time": {
         "name": "Järjestelmäaika"
       },
       "system_load": {
-        "name": "System - Kuorma Average"
+        "name": "Kuorma Average"
       },
       "system_uptime": {
-        "name": "System - Uptime"
+        "name": "Uptime"
       },
       "tba": {
         "name": "Lämpötila - Akku"
@@ -739,7 +739,7 @@
         "name": "Lämpötila - Invertteri"
       },
       "type": {
-        "name": "Invertteri - Tyyppi"
+        "name": "Tyyppi"
       },
       "v_bulk": {
         "name": "Jännite DC - Bulk Kondensaattori"
@@ -763,7 +763,7 @@
         "name": "Jännite - Akkukenno Min"
       },
       "version": {
-        "name": "Firmware - Version"
+        "name": "Firmware Versio"
       },
       "vgrid_l1_n": {
         "name": "Jännite AC - Verkko L1-N"

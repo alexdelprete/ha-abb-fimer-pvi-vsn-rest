@@ -5,11 +5,9 @@ https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest
 
 from __future__ import annotations
 
-from collections import defaultdict
 from dataclasses import dataclass
 from datetime import timedelta
 import logging
-from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME, Platform
@@ -39,12 +37,7 @@ from .const import (
     STARTUP_MESSAGE,
 )
 from .coordinator import ABBFimerPVIVSNRestCoordinator
-from .helpers import (
-    async_get_entity_translations,
-    build_prefix_by_device,
-    compact_serial_number,
-    format_device_name,
-)
+from .helpers import async_get_entity_translations, format_device_name
 from .repairs import create_connection_issue, delete_connection_issue
 
 _LOGGER = logging.getLogger(__name__)
@@ -183,9 +176,6 @@ async def async_setup_entry(
 
     # Store runtime data
     config_entry.runtime_data = RuntimeData(coordinator=coordinator)
-
-    # Auto-migrate entity IDs affected by buggy regeneration (v1.3.4)
-    await _async_migrate_entity_ids(hass, config_entry)
 
     # Note: No manual update listener needed - OptionsFlowWithReload handles reload automatically
 
@@ -368,121 +358,116 @@ async def _async_migrate_options(
         _LOGGER.debug("Migrated options with new repair notification defaults")
 
 
-async def _async_migrate_entity_ids(
+async def async_migrate_entry(
     hass: HomeAssistant,
-    config_entry: ABBFimerPVIVSNRestConfigEntry,
-) -> None:
-    """Auto-migrate entity IDs from point_name suffixes to translated name suffixes.
+    config_entry: ConfigEntry,
+) -> bool:
+    """Migrate config entry to a new version.
 
-    Fixes entities affected by the buggy _regenerate_entity_ids() (pre-v1.3.5) that used
-    raw point_names (e.g., 'watts') instead of translated names ('power_ac').
-
-    This function is idempotent: after the first successful migration, no entities match
-    the buggy pattern criteria, so subsequent loads do a fast no-op loop.
+    Version 1 → 2: Migrate entity IDs to remove category prefixes from display names.
+    Display names like "Inverter - Type" were cleaned to "Type", which changes the
+    entity IDs that HA derives from translated names.
     """
-    coordinator = config_entry.runtime_data.coordinator
+    if config_entry.version > 2:
+        _LOGGER.error(
+            "Cannot downgrade config entry from version %s to 2",
+            config_entry.version,
+        )
+        return False
+
+    if config_entry.version == 1:
+        _LOGGER.info("Migrating config entry from version 1 to 2")
+        await _async_migrate_entity_ids_v2(hass, config_entry)
+        hass.config_entries.async_update_entry(config_entry, version=2)
+        _LOGGER.info("Config entry migration to version 2 complete")
+
+    return True
+
+
+async def _async_migrate_entity_ids_v2(
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+) -> None:
+    """Migrate entity IDs from old display names (with category prefixes) to new ones.
+
+    Runs once during config entry version 1 → 2 migration.
+    Renames entity IDs to match the cleaned display names (e.g., removes
+    "Inverter - ", "Device - ", "System - " prefixes).
+
+    This runs before async_setup_entry, so runtime_data is NOT available.
+    We use the entity registry and translations only.
+    """
     registry = er.async_get(hass)
 
-    # Load English entity translations via HA's built-in translation API
-    # Returns {point_name: translated_name}, e.g. {"watts": "Power AC"}
+    # Load NEW English translations (with cleaned display names)
     sensor_translations = await async_get_entity_translations(hass, DOMAIN)
-
-    # Build device lookup by compact serial
-    device_lookup: dict[str, Any] = {}
-    for device in coordinator.discovered_devices:
-        device_lookup[compact_serial_number(device.device_id)] = device
-
-    # Build prefix mapping using shared helper (handles indexed keys for multi-device setups)
-    prefix_by_device = build_prefix_by_device(
-        coordinator.discovered_devices, dict(config_entry.options)
-    )
 
     entities = er.async_entries_for_config_entry(registry, config_entry.entry_id)
 
-    # Phase 1: Build complete rename plan
-    rename_plan: list[tuple[er.RegistryEntry, str]] = []
-    target_sources: dict[str, list[str]] = defaultdict(list)
+    migrated = 0
 
     for entity_entry in entities:
+        # Parse unique_id: {domain}_{...}_{device_type}_{serial_compact}_{point_name}
         unique_id_parts = entity_entry.unique_id.split("_")
         if len(unique_id_parts) < 8:
             continue
 
-        device_type = unique_id_parts[5]
-        device_sn_compact = unique_id_parts[6]
         point_name = "_".join(unique_id_parts[7:])
 
-        # Get translated name
+        # Get NEW translated name (after prefix cleanup)
         translated_name = sensor_translations.get(point_name, "")
         if not translated_name:
-            continue  # No translation → can't determine if migration needed
-
-        slugified_translation = slugify(translated_name)
-        if slugified_translation == point_name:
-            continue  # Translation matches point_name → no migration needed
-
-        # Check if entity_id uses point_name suffix (buggy pattern)
-        if not entity_entry.entity_id.endswith(f"_{point_name}"):
-            continue  # Already uses translated name or was manually customized
-
-        # Compute correct entity_id
-        discovered = device_lookup.get(device_sn_compact)
-        if not discovered:
             continue
 
-        custom_prefix = prefix_by_device.get(device_sn_compact) or None
-        device_name = format_device_name(
-            manufacturer=discovered.manufacturer or "ABB/FIMER",
-            device_type_simple=device_type,
-            device_model=discovered.device_model,
-            device_sn_original=discovered.device_id,
-            custom_prefix=custom_prefix,
-        )
+        new_suffix = slugify(translated_name)
 
+        # Check if entity_id already ends with the new suffix
+        if entity_entry.entity_id.endswith(f"_{new_suffix}"):
+            continue  # Already up to date
+
+        # Compute new entity_id by replacing the suffix
+        # Entity ID format: sensor.{device_name_slug}_{old_suffix}
+        # We need to find where the device_name ends and the old suffix begins.
+        # Build new entity_id from device name + new translated suffix
         domain = entity_entry.entity_id.split(".")[0]
-        new_entity_id = f"{domain}.{slugify(device_name)}_{slugified_translation}"
+        device_entry = (
+            dr.async_get(hass).async_get(entity_entry.device_id) if entity_entry.device_id else None
+        )
+        if not device_entry or not device_entry.name:
+            continue
 
-        if entity_entry.entity_id != new_entity_id:
-            rename_plan.append((entity_entry, new_entity_id))
-            target_sources[new_entity_id].append(entity_entry.entity_id)
+        new_entity_id = f"{domain}.{slugify(device_entry.name)}_{new_suffix}"
 
-    # Phase 1b: Detect collisions (multiple entities targeting same entity_id)
-    collision_targets: set[str] = set()
-    for target, sources in target_sources.items():
-        if len(sources) > 1:
-            collision_targets.add(target)
-            _LOGGER.warning(
-                "Migration collision: %d entities target '%s': %s (keeping first, skipping rest)",
-                len(sources),
-                target,
-                sorted(sources),
+        if entity_entry.entity_id == new_entity_id:
+            continue  # Already correct
+
+        # Check target is available
+        if registry.async_get(new_entity_id):
+            _LOGGER.debug(
+                "Migration skip: target %s already exists for %s",
+                new_entity_id,
+                entity_entry.entity_id,
             )
+            continue
 
-    # Phase 2: Execute renames
-    migrated = 0
-
-    for entity_entry, new_entity_id in rename_plan:
-        # Skip collision losers (keep first entity alphabetically)
-        if new_entity_id in collision_targets:
-            winner = sorted(target_sources[new_entity_id])[0]
-            if entity_entry.entity_id != winner:
-                _LOGGER.info(
-                    "Skipping migration collision loser: %s → %s (winner: %s)",
-                    entity_entry.entity_id,
-                    new_entity_id,
-                    winner,
-                )
-                continue
-
-        if not registry.async_get(new_entity_id):
+        try:
             registry.async_update_entity(entity_entry.entity_id, new_entity_id=new_entity_id)
             migrated += 1
             _LOGGER.info("Migrated entity ID: %s → %s", entity_entry.entity_id, new_entity_id)
+        except ValueError:
+            _LOGGER.debug(
+                "Migration skip: cannot rename %s → %s",
+                entity_entry.entity_id,
+                new_entity_id,
+            )
 
     if migrated > 0:
-        _LOGGER.info("Migrated %d entity IDs from point_name to translated name format", migrated)
+        _LOGGER.info(
+            "Migrated %d entity IDs to remove category prefixes from display names",
+            migrated,
+        )
     else:
-        _LOGGER.info("Entity ID migration: all entity IDs are up to date, no migration needed")
+        _LOGGER.info("Entity ID migration v2: no changes needed")
 
 
 def _handle_startup_failure(

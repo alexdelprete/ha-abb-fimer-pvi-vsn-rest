@@ -115,13 +115,13 @@
         "name": "Strøm AC - Fase C"
       },
       "batt_ext_ctrl_ena": {
-        "name": "Batteri - Control Aktivert"
+        "name": "Control Aktivert"
       },
       "batt_ext_ctrl_state": {
-        "name": "Batteri - Control Tilstand"
+        "name": "Control Tilstand"
       },
       "batt_num": {
-        "name": "Batteri - Module Antall"
+        "name": "Module Antall"
       },
       "battery_mode": {
         "name": "Batterimodus"
@@ -133,25 +133,25 @@
         "name": "Temperatur - Skap"
       },
       "chc": {
-        "name": "Batteri - Charge Cycles"
+        "name": "Charge Cycles"
       },
       "clock_state": {
         "name": "Status - Clock"
       },
       "commissioning_freeze": {
-        "name": "Vekselretter - Idriftsetting Frys"
+        "name": "Idriftsetting Frys"
       },
       "communication_protocol": {
-        "name": "Device - Kommunikasjonsprotokoll"
+        "name": "Kommunikasjonsprotokoll"
       },
       "cos_phi": {
         "name": "Effektfaktor"
       },
       "country_std": {
-        "name": "Vekselretter - Antallry Standard"
+        "name": "Antallry Standard"
       },
       "cycle_num": {
-        "name": "Batteri - Cycles"
+        "name": "Cycles"
       },
       "d_c1_state": {
         "name": "Status - DC Inngang 1"
@@ -190,19 +190,19 @@
         "name": "Effekt DC"
       },
       "detected_battery_number": {
-        "name": "Batteri - Detected Number"
+        "name": "Detected Number"
       },
       "device_address": {
-        "name": "Device - Modbus Address"
+        "name": "Modbus Address"
       },
       "device_name": {
-        "name": "Device - Name 2"
+        "name": "Name 2"
       },
       "device_type": {
-        "name": "Device - Type 2"
+        "name": "Type 2"
       },
       "dhc": {
-        "name": "Batteri - Discharge Cycles"
+        "name": "Discharge Cycles"
       },
       "di0_mode": {
         "name": "Digital Input - Modus 0"
@@ -214,7 +214,7 @@
         "name": "Status - Digital Input"
       },
       "dynamic_feed_in_ctrl": {
-        "name": "Vekselretter - Dynamic Feed-In Control"
+        "name": "Dynamic Feed-In Control"
       },
       "e0_1_year": {
         "name": "Energi AC - Produsert (Strøm Year)"
@@ -406,7 +406,7 @@
         "name": "Energi DC - PV (Siden Omstart)"
       },
       "energy_policy": {
-        "name": "Vekselretter - Energipolitikk"
+        "name": "Energipolitikk"
       },
       "fan1rpm": {
         "name": "Hastighet - Vifte 1"
@@ -418,31 +418,31 @@
         "name": "Frekvens - Central Controller"
       },
       "firmware_version": {
-        "name": "Firmware - Version"
+        "name": "Firmware Versjon"
       },
       "flash_memory_free": {
-        "name": "System - Available Flash"
+        "name": "Available Flash"
       },
       "free_ram": {
-        "name": "System - Tilgjengelig RAM"
+        "name": "Tilgjengelig RAM"
       },
       "frt_state": {
         "name": "Status - Fault Ride Through (FRT)"
       },
       "fw_build_date": {
-        "name": "Firmware - Build Date"
+        "name": "Firmware Build Dato"
       },
       "fw_build_number": {
-        "name": "Firmware - Build Hash"
+        "name": "Firmware Build Hash"
       },
       "fw_release_number": {
-        "name": "Firmware - Version"
+        "name": "Firmware Versjon"
       },
       "fw_revision": {
-        "name": "Firmware - Revision"
+        "name": "Firmware Revisjon"
       },
       "fw_version": {
-        "name": "Firmware - Version"
+        "name": "Firmware Versjon"
       },
       "glob_state": {
         "name": "Status - Global"
@@ -451,7 +451,7 @@
         "name": "Status - Global"
       },
       "grid_ext_ctrl_ena": {
-        "name": "Nett - External Control Aktivert"
+        "name": "External Control Aktivert"
       },
       "grid_ext_ctrl_state": {
         "name": "Status - Nett External Control"
@@ -508,7 +508,7 @@
         "name": "Strøm DC - Streng 2"
       },
       "input_mode": {
-        "name": "Vekselretter - Inngangsmodus"
+        "name": "Inngangsmodus"
       },
       "inv_state": {
         "name": "Status - Vekselretter"
@@ -526,25 +526,25 @@
         "name": "Motstand - Isolasjon"
       },
       "logger_board_model": {
-        "name": "Datalogger - Board Modusl"
+        "name": "Logger Kort Modusll"
       },
       "logger_hostname": {
-        "name": "Datalogger - Hostname"
+        "name": "Hostname"
       },
       "logger_logger_id": {
-        "name": "Datalogger - ID"
+        "name": "Logger ID"
       },
       "logger_sn": {
-        "name": "Datalogger - Serienummer"
+        "name": "Logger Serienummer"
       },
       "m126_mod_ena": {
-        "name": "Vekselretter - Modusll 126 Aktivert"
+        "name": "Modusll 126 Aktivert"
       },
       "m132_mod_ena": {
-        "name": "Vekselretter - Modusll 132 Aktivert"
+        "name": "Modusll 132 Aktivert"
       },
       "manufacturer": {
-        "name": "Device - Manufacturer"
+        "name": "Manufacturer"
       },
       "meter_fgrid": {
         "name": "Frekvens AC - Måler"
@@ -592,31 +592,31 @@
         "name": "Spenning AC - Måler Fase C"
       },
       "mfg_part_number": {
-        "name": "Device - Delenummer"
+        "name": "Delenummer"
       },
       "mfg_serial_number": {
-        "name": "Device - Serienummer"
+        "name": "Serienummer"
       },
       "mfg_week_year": {
-        "name": "Device - Produksjonsuke/År"
+        "name": "Produksjonsuke/År"
       },
       "model": {
-        "name": "Device - Modusl Identifier"
+        "name": "Modusl Identifier"
       },
       "model_description": {
-        "name": "Device - Modusllbeskrivelse"
+        "name": "Modusllbeskrivelse"
       },
       "model_type": {
-        "name": "Device - Moduslltype"
+        "name": "Moduslltype"
       },
       "month_wh": {
         "name": "Energi AC - Produsert (Strøm Month)"
       },
       "num_of_mppt": {
-        "name": "Vekselretter - MPPT Channel Antall"
+        "name": "MPPT Channel Antall"
       },
       "options": {
-        "name": "Vekselretter - Configuration Options"
+        "name": "Configuration Options"
       },
       "other_temperature": {
         "name": "Temperatur - Annen"
@@ -673,7 +673,7 @@
         "name": "Effekt DC - Streng 2"
       },
       "pn": {
-        "name": "Device - Product Number"
+        "name": "Product Number"
       },
       "power_peak_abs": {
         "name": "Effekt - Topp Total"
@@ -691,34 +691,34 @@
         "name": "Effekt AC - Tilsynelatende Derating Flagg"
       },
       "serial_number": {
-        "name": "Device - Serienummer"
+        "name": "Serienummer"
       },
       "sh_u": {
         "name": "Spenning - Shunt"
       },
       "sn": {
-        "name": "Device - Serienummer"
+        "name": "Serienummer"
       },
       "split_phase": {
-        "name": "Vekselretter - Split Phase"
+        "name": "Split Phase"
       },
       "state_of_charge": {
-        "name": "Batteri - Ladetilstand"
+        "name": "Ladetilstand"
       },
       "state_of_health": {
-        "name": "Batteri - Helsetilstand"
+        "name": "Helsetilstand"
       },
       "storage_size": {
-        "name": "System - Flash Used"
+        "name": "Flash Used"
       },
       "sys_time": {
         "name": "Systemtid"
       },
       "system_load": {
-        "name": "System - Last Average"
+        "name": "Last Average"
       },
       "system_uptime": {
-        "name": "System - Uptime"
+        "name": "Uptime"
       },
       "tba": {
         "name": "Temperatur - Batteri"
@@ -739,7 +739,7 @@
         "name": "Temperatur - Vekselretter"
       },
       "type": {
-        "name": "Vekselretter - Type"
+        "name": "Type"
       },
       "v_bulk": {
         "name": "Spenning DC - Bulk Kondensator"
@@ -763,7 +763,7 @@
         "name": "Spenning - Battericelle Min"
       },
       "version": {
-        "name": "Firmware - Version"
+        "name": "Firmware Versjon"
       },
       "vgrid_l1_n": {
         "name": "Spenning AC - Nett L1-N"
