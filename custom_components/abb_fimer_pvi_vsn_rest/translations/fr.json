@@ -97,10 +97,10 @@
   "entity": {
     "sensor": {
       "alarm_st": {
-        "name": "État Alarme"
+        "name": "État - Alarm"
       },
       "alarm_state": {
-        "name": "État Alarme"
+        "name": "État - Alarm"
       },
       "amps": {
         "name": "Courant AC"
@@ -115,13 +115,13 @@
         "name": "Courant AC - Phase C"
       },
       "batt_ext_ctrl_ena": {
-        "name": "Contrôle Batterie Activé"
+        "name": "Batterie - Control Activé"
       },
       "batt_ext_ctrl_state": {
-        "name": "État Contrôle Batterie"
+        "name": "Batterie - Control État"
       },
       "batt_num": {
-        "name": "Nombre cellules ou modules batterie"
+        "name": "Batterie - Module Compte"
       },
       "battery_mode": {
         "name": "Mode Batterie"
@@ -133,31 +133,31 @@
         "name": "Température - Armoire"
       },
       "chc": {
-        "name": "Compteur cycles charge batterie"
+        "name": "Batterie - Charge Cycles"
       },
       "clock_state": {
-        "name": "État Horloge"
+        "name": "État - Clock"
       },
       "commissioning_freeze": {
-        "name": "Gel Mise en Service"
+        "name": "Onduleur - Gel Mise en Service"
       },
       "communication_protocol": {
-        "name": "Protocole Communication"
+        "name": "Device - Protocole Communication"
       },
       "cos_phi": {
         "name": "Facteur de Puissance"
       },
       "country_std": {
-        "name": "Paramètre standard réseau pays"
+        "name": "Onduleur - Comptery Standard"
       },
       "cycle_num": {
-        "name": "Compte - Cycles Batterie"
+        "name": "Batterie - Cycles"
       },
       "d_c1_state": {
-        "name": "État Entrée DC 1"
+        "name": "État - DC Entrée 1"
       },
       "d_c2_state": {
-        "name": "État Entrée DC 2"
+        "name": "État - DC Entrée 2"
       },
       "day_wh": {
         "name": "Énergie AC - Produite (Aujourd'hui)"
@@ -175,10 +175,10 @@
         "name": "Puissance DC - Chaîne 2"
       },
       "dc_st1": {
-        "name": "État Entrée DC 1"
+        "name": "État - DC Entrée 1"
       },
       "dc_st2": {
-        "name": "État Entrée DC 2"
+        "name": "État - DC Entrée 2"
       },
       "dc_voltage_1": {
         "name": "Tension DC - Chaîne 1"
@@ -190,31 +190,31 @@
         "name": "Puissance DC"
       },
       "detected_battery_number": {
-        "name": "Numéro Batterie Détecté"
+        "name": "Batterie - Detected Number"
       },
       "device_address": {
-        "name": "Adresse Modbus"
+        "name": "Device - Modbus Address"
       },
       "device_name": {
-        "name": "Nom Appareil 2"
+        "name": "Device - Name 2"
       },
       "device_type": {
-        "name": "Type Appareil 2"
+        "name": "Device - Type 2"
       },
       "dhc": {
-        "name": "Compteur cycles décharge batterie"
+        "name": "Batterie - Discharge Cycles"
       },
       "di0_mode": {
-        "name": "Mode Entrée Numérique 0"
+        "name": "Digital Input - Mode 0"
       },
       "di1_mode": {
-        "name": "Mode Entrée Numérique 1"
+        "name": "Digital Input - Mode 1"
       },
       "di_status": {
-        "name": "État Entrée Numérique"
+        "name": "État - Digital Input"
       },
       "dynamic_feed_in_ctrl": {
-        "name": "Contrôle Injection Dynamique"
+        "name": "Onduleur - Dynamic Feed-In Control"
       },
       "e0_1_year": {
         "name": "Énergie AC - Produite (Courant Year)"
@@ -406,7 +406,7 @@
         "name": "Énergie DC - PV (Depuis Redémarrage)"
       },
       "energy_policy": {
-        "name": "Politique Énergétique"
+        "name": "Onduleur - Politique Énergétique"
       },
       "fan1rpm": {
         "name": "Vitesse - Ventilateur 1"
@@ -415,46 +415,46 @@
         "name": "Vitesse - Ventilateur 2"
       },
       "fcc": {
-        "name": "Fréquence contrôleur central"
+        "name": "Fréquence - Central Controller"
       },
       "firmware_version": {
-        "name": "Version Firmware"
+        "name": "Firmware - Version"
       },
       "flash_memory_free": {
-        "name": "Stockage flash disponible"
+        "name": "System - Available Flash"
       },
       "free_ram": {
-        "name": "RAM disponible"
+        "name": "System - RAM disponible"
       },
       "frt_state": {
-        "name": "État Fault Ride Through (FRT)"
+        "name": "État - Fault Ride Through (FRT)"
       },
       "fw_build_date": {
-        "name": "Date Build Firmware"
+        "name": "Firmware - Build Date"
       },
       "fw_build_number": {
-        "name": "Hash Build Firmware"
+        "name": "Firmware - Build Hash"
       },
       "fw_release_number": {
-        "name": "Version Firmware"
+        "name": "Firmware - Version"
       },
       "fw_revision": {
-        "name": "Révision Firmware"
+        "name": "Firmware - Revision"
       },
       "fw_version": {
-        "name": "Version Fw"
+        "name": "Firmware - Version"
       },
       "glob_state": {
-        "name": "État opérationnel global"
+        "name": "État - Global"
       },
       "global_st": {
-        "name": "État Global"
+        "name": "État - Global"
       },
       "grid_ext_ctrl_ena": {
-        "name": "Contrôle Externe Réseau Activé"
+        "name": "Réseau - External Control Activé"
       },
       "grid_ext_ctrl_state": {
-        "name": "État Contrôle Externe Réseau"
+        "name": "État - Réseau External Control"
       },
       "house_igrid_l1": {
         "name": "Courant AC - Maison Phase A"
@@ -508,10 +508,10 @@
         "name": "Courant DC - Chaîne 2"
       },
       "input_mode": {
-        "name": "Mode Entrée"
+        "name": "Onduleur - Mode Entrée"
       },
       "inv_state": {
-        "name": "État Onduleur"
+        "name": "État - Onduleur"
       },
       "inverter_id": {
         "name": "ID Onduleur"
@@ -526,25 +526,25 @@
         "name": "Résistance - Isolation"
       },
       "logger_board_model": {
-        "name": "Modèle Carte Logger"
+        "name": "Datalogger - Board Model"
       },
       "logger_hostname": {
-        "name": "Hostname Logger"
+        "name": "Datalogger - Hostname"
       },
       "logger_logger_id": {
-        "name": "ID Logger"
+        "name": "Datalogger - ID"
       },
       "logger_sn": {
-        "name": "Numéro de Série Logger"
+        "name": "Datalogger - Numéro de Série"
       },
       "m126_mod_ena": {
-        "name": "Modèle 126 Activé"
+        "name": "Onduleur - Modèle 126 Activé"
       },
       "m132_mod_ena": {
-        "name": "Modèle 132 Activé"
+        "name": "Onduleur - Modèle 132 Activé"
       },
       "manufacturer": {
-        "name": "Nom fabricant"
+        "name": "Device - Manufacturer"
       },
       "meter_fgrid": {
         "name": "Fréquence AC - Compteur"
@@ -592,31 +592,31 @@
         "name": "Tension AC - Compteur Phase C"
       },
       "mfg_part_number": {
-        "name": "Numéro Pièce"
+        "name": "Device - Numéro Pièce"
       },
       "mfg_serial_number": {
-        "name": "Numéro de Série"
+        "name": "Device - Numéro de Série"
       },
       "mfg_week_year": {
-        "name": "Semaine/Année Production"
+        "name": "Device - Semaine/Année Production"
       },
       "model": {
-        "name": "Identifiant modèle"
+        "name": "Device - Model Identifier"
       },
       "model_description": {
-        "name": "Description Modèle"
+        "name": "Device - Description Modèle"
       },
       "model_type": {
-        "name": "Type Modèle"
+        "name": "Device - Type Modèle"
       },
       "month_wh": {
         "name": "Énergie AC - Produite (Courant Month)"
       },
       "num_of_mppt": {
-        "name": "Compte - MPPT Canaux"
+        "name": "Onduleur - MPPT Channel Compte"
       },
       "options": {
-        "name": "Options de configuration"
+        "name": "Onduleur - Configuration Options"
       },
       "other_temperature": {
         "name": "Température - Autre"
@@ -628,7 +628,7 @@
         "name": "Puissance - Décharge Batterie"
       },
       "pac_derating_flags": {
-        "name": "Flags Réduction Puissance AC"
+        "name": "Puissance AC - Derating Flags"
       },
       "pac_stand_alone": {
         "name": "Puissance AC - Mode Autonome"
@@ -673,7 +673,7 @@
         "name": "Puissance DC - Chaîne 2"
       },
       "pn": {
-        "name": "Numéro produit"
+        "name": "Device - Product Number"
       },
       "power_peak_abs": {
         "name": "Puissance - Crête Total"
@@ -685,40 +685,40 @@
         "name": "Puissance - Crête"
       },
       "qac_derating_flags": {
-        "name": "Réduction Puissance Réactive"
+        "name": "Réactive Puissance - Derating Flags"
       },
       "sac_derating_flags": {
-        "name": "Réduction Puissance Apparentee"
+        "name": "Puissance AC - Apparente Derating Flags"
       },
       "serial_number": {
-        "name": "Device serial number"
+        "name": "Device - Numéro de Série"
       },
       "sh_u": {
         "name": "Tension - Shunt"
       },
       "sn": {
-        "name": "Numéro de série"
+        "name": "Device - Numéro de Série"
       },
       "split_phase": {
-        "name": "Flag configuration split-phase"
+        "name": "Onduleur - Split Phase"
       },
       "state_of_charge": {
-        "name": "État de Charge"
+        "name": "Batterie - État de Charge"
       },
       "state_of_health": {
-        "name": "État de Santé"
+        "name": "Batterie - État de Santé"
       },
       "storage_size": {
-        "name": "Stockage flash utilisé"
+        "name": "System - Flash Used"
       },
       "sys_time": {
         "name": "Heure Système"
       },
       "system_load": {
-        "name": "Charge moyenne système"
+        "name": "System - Charge Average"
       },
       "system_uptime": {
-        "name": "Uptime Système"
+        "name": "System - Uptime"
       },
       "tba": {
         "name": "Température - Batterie"
@@ -739,7 +739,7 @@
         "name": "Température - Onduleur"
       },
       "type": {
-        "name": "Type"
+        "name": "Onduleur - Type"
       },
       "v_bulk": {
         "name": "Tension DC - Condensateur Bulk"
@@ -763,7 +763,7 @@
         "name": "Tension - Cellule Batterie Min"
       },
       "version": {
-        "name": "Version firmware"
+        "name": "Firmware - Version"
       },
       "vgrid_l1_n": {
         "name": "Tension AC - Réseau L1-N"
@@ -781,7 +781,7 @@
         "name": "Puissance - Nominal"
       },
       "warning_flags": {
-        "name": "Flags Avertissement"
+        "name": "État - Flags Avertissement"
       },
       "watthours": {
         "name": "Énergie AC - Produite Total"
@@ -793,31 +793,31 @@
         "name": "Énergie AC - Produite (Courant Week)"
       },
       "wlan0_essid": {
-        "name": "SSID WiFi"
+        "name": "WiFi - SSID"
       },
       "wlan0_ipaddr_local": {
-        "name": "IP Local WiFi"
+        "name": "WiFi - Local IP"
       },
       "wlan0_link_quality": {
-        "name": "Pourcentage qualité lien WiFi"
+        "name": "WiFi - Link Quality"
       },
       "wlan0_mode": {
-        "name": "Mode WiFi"
+        "name": "WiFi - Mode"
       },
       "wlan_0_broadcast": {
         "name": "Broadcast WiFi"
       },
       "wlan_0_dhcp_state": {
-        "name": "État DHCP WiFi"
+        "name": "WiFi - DHCP État"
       },
       "wlan_0_dns": {
-        "name": "Serveur DNS WiFi"
+        "name": "WiFi - DNS Server"
       },
       "wlan_0_gateway": {
         "name": "Passerelle WiFi"
       },
       "wlan_0_ipaddr": {
-        "name": "Adresse IP WiFi"
+        "name": "WiFi - IP Address"
       },
       "wlan_0_netmask": {
         "name": "Masque Réseau WiFi"
@@ -826,10 +826,10 @@
         "name": "État WiFi"
       },
       "wlan_ap_status": {
-        "name": "État AP WiFi"
+        "name": "WiFi - AP État"
       },
       "wlan_fsm_status": {
-        "name": "État FSM WiFi"
+        "name": "WiFi - FSM État"
       },
       "year_wh": {
         "name": "Énergie AC - Produite (Courant Year)"

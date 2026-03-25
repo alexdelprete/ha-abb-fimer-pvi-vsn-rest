@@ -97,10 +97,10 @@
   "entity": {
     "sensor": {
       "alarm_st": {
-        "name": "Häire Olek"
+        "name": "Olek - Alarm"
       },
       "alarm_state": {
-        "name": "Häire Seisund"
+        "name": "Olek - Alarm"
       },
       "amps": {
         "name": "Vool AC"
@@ -115,13 +115,13 @@
         "name": "Vool AC - Faas C"
       },
       "batt_ext_ctrl_ena": {
-        "name": "Aku Juhtimine Lubatud"
+        "name": "Aku - Control Lubatud"
       },
       "batt_ext_ctrl_state": {
-        "name": "Aku Juhtimine Seisund"
+        "name": "Aku - Control Seisund"
       },
       "batt_num": {
-        "name": "Akuelementide või moodulite arv"
+        "name": "Aku - Module Arv"
       },
       "battery_mode": {
         "name": "Aku Režiim"
@@ -133,31 +133,31 @@
         "name": "Temperatuur - Kapp"
       },
       "chc": {
-        "name": "Aku laadimistsüklite loendur"
+        "name": "Aku - Charge Cycles"
       },
       "clock_state": {
-        "name": "Kell Seisund"
+        "name": "Olek - Clock"
       },
       "commissioning_freeze": {
-        "name": "Kasutuselevõtu Külmutamine"
+        "name": "Inverter - Kasutuselevõtu Külmutamine"
       },
       "communication_protocol": {
-        "name": "Kommunikatsiooniprotokoll"
+        "name": "Device - Kommunikatsiooniprotokoll"
       },
       "cos_phi": {
         "name": "Võimsustegur"
       },
       "country_std": {
-        "name": "Riigi võrgu standardseade"
+        "name": "Inverter - Arvry Standard"
       },
       "cycle_num": {
-        "name": "Arv - Aku Tsüklid"
+        "name": "Aku - Cycles"
       },
       "d_c1_state": {
-        "name": "DC Sisend 1 Seisund"
+        "name": "Olek - DC Sisend 1"
       },
       "d_c2_state": {
-        "name": "DC Sisend 2 Seisund"
+        "name": "Olek - DC Sisend 2"
       },
       "day_wh": {
         "name": "Energia AC - Toodetud (Täna)"
@@ -175,10 +175,10 @@
         "name": "Võimsus DC - Ahel 2"
       },
       "dc_st1": {
-        "name": "DC Sisend 1 Olek"
+        "name": "Olek - DC Sisend 1"
       },
       "dc_st2": {
-        "name": "DC Sisend 2 Olek"
+        "name": "Olek - DC Sisend 2"
       },
       "dc_voltage_1": {
         "name": "Pinge DC - Ahel 1"
@@ -190,31 +190,31 @@
         "name": "Võimsus DC"
       },
       "detected_battery_number": {
-        "name": "Tuvastatud Aku Number"
+        "name": "Aku - Detected Number"
       },
       "device_address": {
-        "name": "Modbus aadress"
+        "name": "Device - Modbus Address"
       },
       "device_name": {
-        "name": "Seade 2 Nimi"
+        "name": "Device - Name 2"
       },
       "device_type": {
-        "name": "Seade 2 Tüüp"
+        "name": "Device - Tüüp 2"
       },
       "dhc": {
-        "name": "Aku tühjendamistsüklite loendur"
+        "name": "Aku - Discharge Cycles"
       },
       "di0_mode": {
-        "name": "Digitaalsisend 0 Režiim"
+        "name": "Digital Input - Režiim 0"
       },
       "di1_mode": {
-        "name": "Digitaalsisend 1 Režiim"
+        "name": "Digital Input - Režiim 1"
       },
       "di_status": {
-        "name": "Digitaalsisend Olek"
+        "name": "Olek - Digital Input"
       },
       "dynamic_feed_in_ctrl": {
-        "name": "Dünaamiline Sisestus Juhtimine"
+        "name": "Inverter - Dynamic Feed-In Control"
       },
       "e0_1_year": {
         "name": "Energia AC - Toodetud (Vool Year)"
@@ -406,7 +406,7 @@
         "name": "Energia DC - PV (Alates Taaskäivitusest)"
       },
       "energy_policy": {
-        "name": "Energiapoliitika"
+        "name": "Inverter - Energiapoliitika"
       },
       "fan1rpm": {
         "name": "Kiirus - Ventilaator 1"
@@ -415,46 +415,46 @@
         "name": "Kiirus - Ventilaator 2"
       },
       "fcc": {
-        "name": "Keskkontroller sagedus"
+        "name": "Sagedus - Central Controller"
       },
       "firmware_version": {
-        "name": "Firmware Versioon"
+        "name": "Firmware - Version"
       },
       "flash_memory_free": {
-        "name": "Saadaval flash-mälu"
+        "name": "System - Available Flash"
       },
       "free_ram": {
-        "name": "Saadaval RAM"
+        "name": "System - Saadaval RAM"
       },
       "frt_state": {
-        "name": "Fault Ride Through (FRT) Olek"
+        "name": "Olek - Fault Ride Through (FRT)"
       },
       "fw_build_date": {
-        "name": "Firmware Build Kuupäev"
+        "name": "Firmware - Build Date"
       },
       "fw_build_number": {
-        "name": "Firmware Build Hash"
+        "name": "Firmware - Build Hash"
       },
       "fw_release_number": {
-        "name": "Firmware Versioon"
+        "name": "Firmware - Version"
       },
       "fw_revision": {
-        "name": "Firmware Revisioon"
+        "name": "Firmware - Revision"
       },
       "fw_version": {
-        "name": "Fw Versioon"
+        "name": "Firmware - Version"
       },
       "glob_state": {
-        "name": "Globaalne tööseisund"
+        "name": "Olek - Global"
       },
       "global_st": {
-        "name": "Globaalne Olek"
+        "name": "Olek - Global"
       },
       "grid_ext_ctrl_ena": {
-        "name": "Võrk Väline Juhtimine Lubatud"
+        "name": "Võrk - External Control Lubatud"
       },
       "grid_ext_ctrl_state": {
-        "name": "Võrk Väline Juhtimine Seisund"
+        "name": "Olek - Võrk External Control"
       },
       "house_igrid_l1": {
         "name": "Vool AC - Maja Faas A"
@@ -508,10 +508,10 @@
         "name": "Vool DC - Ahel 2"
       },
       "input_mode": {
-        "name": "Sisendi Režiim"
+        "name": "Inverter - Sisendi Režiim"
       },
       "inv_state": {
-        "name": "Inverter Seisund"
+        "name": "Olek - Inverter"
       },
       "inverter_id": {
         "name": "Inverter ID"
@@ -526,25 +526,25 @@
         "name": "Takistus - Isolatsioon"
       },
       "logger_board_model": {
-        "name": "Logger Kaardi Mudel"
+        "name": "Datalogger - Board Režiiml"
       },
       "logger_hostname": {
-        "name": "Logger Hostname"
+        "name": "Datalogger - Hostname"
       },
       "logger_logger_id": {
-        "name": "Logger ID"
+        "name": "Datalogger - ID"
       },
       "logger_sn": {
-        "name": "Logger Seerianumber"
+        "name": "Datalogger - Seerianumber"
       },
       "m126_mod_ena": {
-        "name": "Mudel 126 Lubatud"
+        "name": "Inverter - Mudel 126 Lubatud"
       },
       "m132_mod_ena": {
-        "name": "Mudel 132 Lubatud"
+        "name": "Inverter - Mudel 132 Lubatud"
       },
       "manufacturer": {
-        "name": "Tootja nimi"
+        "name": "Device - Manufacturer"
       },
       "meter_fgrid": {
         "name": "Sagedus AC - Arvesti"
@@ -592,31 +592,31 @@
         "name": "Pinge AC - Arvesti Faas C"
       },
       "mfg_part_number": {
-        "name": "Osa Number"
+        "name": "Device - Osa Number"
       },
       "mfg_serial_number": {
-        "name": "Seerianumber"
+        "name": "Device - Seerianumber"
       },
       "mfg_week_year": {
-        "name": "Tootmisnädal/Aasta"
+        "name": "Device - Tootmisnädal/Aasta"
       },
       "model": {
-        "name": "Mudeli identifikaator"
+        "name": "Device - Režiiml Identifier"
       },
       "model_description": {
-        "name": "Mudeli Kirjeldus"
+        "name": "Device - Mudeli Kirjeldus"
       },
       "model_type": {
-        "name": "Mudeli Tüüp"
+        "name": "Device - Mudeli Tüüp"
       },
       "month_wh": {
         "name": "Energia AC - Toodetud (Vool Month)"
       },
       "num_of_mppt": {
-        "name": "Arv - MPPT Kanalid"
+        "name": "Inverter - MPPT Channel Arv"
       },
       "options": {
-        "name": "Konfiguratsioonivalikud"
+        "name": "Inverter - Configuration Options"
       },
       "other_temperature": {
         "name": "Temperatuur - Muu"
@@ -628,7 +628,7 @@
         "name": "Võimsus - Aku Tühjendamine"
       },
       "pac_derating_flags": {
-        "name": "AC Võimsus Derating Lipud"
+        "name": "Võimsus AC - Derating Lipud"
       },
       "pac_stand_alone": {
         "name": "Võimsus AC - Autonoomne Režiim"
@@ -673,7 +673,7 @@
         "name": "Võimsus DC - Ahel 2"
       },
       "pn": {
-        "name": "Tootenumber"
+        "name": "Device - Product Number"
       },
       "power_peak_abs": {
         "name": "Võimsus - Tipp Kokku"
@@ -685,40 +685,40 @@
         "name": "Võimsus - Tipp"
       },
       "qac_derating_flags": {
-        "name": "Reaktiivvõimsus Derating"
+        "name": "Reaktiivne Võimsus - Derating Lipud"
       },
       "sac_derating_flags": {
-        "name": "Näiv Võimsus Derating"
+        "name": "Võimsus AC - Näiv Derating Lipud"
       },
       "serial_number": {
-        "name": "Device serial number"
+        "name": "Device - Seerianumber"
       },
       "sh_u": {
         "name": "Pinge - Shunt"
       },
       "sn": {
-        "name": "Seerianumber"
+        "name": "Device - Seerianumber"
       },
       "split_phase": {
-        "name": "Split-phase konfiguratsioonilipp"
+        "name": "Inverter - Split Phase"
       },
       "state_of_charge": {
-        "name": "Laadimisseisund"
+        "name": "Aku - Laadimisseisund"
       },
       "state_of_health": {
-        "name": "Terviseseisund"
+        "name": "Aku - Terviseseisund"
       },
       "storage_size": {
-        "name": "Kasutatud flash-mälu"
+        "name": "System - Flash Used"
       },
       "sys_time": {
         "name": "Süsteemi Aeg"
       },
       "system_load": {
-        "name": "Süsteemi keskmine koormus"
+        "name": "System - Koormus Average"
       },
       "system_uptime": {
-        "name": "Süsteemi Töötamisaeg"
+        "name": "System - Uptime"
       },
       "tba": {
         "name": "Temperatuur - Aku"
@@ -739,7 +739,7 @@
         "name": "Temperatuur - Inverter"
       },
       "type": {
-        "name": "Tüüp"
+        "name": "Inverter - Tüüp"
       },
       "v_bulk": {
         "name": "Pinge DC - Bulk Kondensaator"
@@ -763,7 +763,7 @@
         "name": "Pinge - Aku Element Min"
       },
       "version": {
-        "name": "Firmware versioon"
+        "name": "Firmware - Version"
       },
       "vgrid_l1_n": {
         "name": "Pinge AC - Võrk L1-N"
@@ -781,7 +781,7 @@
         "name": "Võimsus - Nimivõimsus"
       },
       "warning_flags": {
-        "name": "Hoiatuslipud"
+        "name": "Olek - Hoiatuslipud"
       },
       "watthours": {
         "name": "Energia AC - Toodetud Kokku"
@@ -793,31 +793,31 @@
         "name": "Energia AC - Toodetud (Vool Week)"
       },
       "wlan0_essid": {
-        "name": "WiFi SSID"
+        "name": "WiFi - SSID"
       },
       "wlan0_ipaddr_local": {
-        "name": "WiFi Kohalik IP"
+        "name": "WiFi - Local IP"
       },
       "wlan0_link_quality": {
-        "name": "WiFi lingi kvaliteedi protsent"
+        "name": "WiFi - Link Quality"
       },
       "wlan0_mode": {
-        "name": "WiFi Režiim"
+        "name": "WiFi - Režiim"
       },
       "wlan_0_broadcast": {
         "name": "WiFi Broadcast"
       },
       "wlan_0_dhcp_state": {
-        "name": "WiFi DHCP Seisund"
+        "name": "WiFi - DHCP Seisund"
       },
       "wlan_0_dns": {
-        "name": "WiFi DNS Server"
+        "name": "WiFi - DNS Server"
       },
       "wlan_0_gateway": {
         "name": "WiFi Lüüs"
       },
       "wlan_0_ipaddr": {
-        "name": "WiFi IP Aadress"
+        "name": "WiFi - IP Address"
       },
       "wlan_0_netmask": {
         "name": "WiFi Võrgumask"
@@ -826,10 +826,10 @@
         "name": "WiFi Olek"
       },
       "wlan_ap_status": {
-        "name": "WiFi AP Olek"
+        "name": "WiFi - AP Olek"
       },
       "wlan_fsm_status": {
-        "name": "WiFi FSM Olek"
+        "name": "WiFi - FSM Olek"
       },
       "year_wh": {
         "name": "Energia AC - Toodetud (Vool Year)"

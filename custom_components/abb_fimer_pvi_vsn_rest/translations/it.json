@@ -97,10 +97,10 @@
   "entity": {
     "sensor": {
       "alarm_st": {
-        "name": "Stato Allarme"
+        "name": "Stato - Alarm"
       },
       "alarm_state": {
-        "name": "Stato Allarme"
+        "name": "Stato - Alarm"
       },
       "amps": {
         "name": "Corrente AC"
@@ -115,13 +115,13 @@
         "name": "Corrente AC - Fase C"
       },
       "batt_ext_ctrl_ena": {
-        "name": "Controllo Batteria Abilitato"
+        "name": "Batteria - Control Abilitato"
       },
       "batt_ext_ctrl_state": {
-        "name": "Stato Controllo Batteria"
+        "name": "Batteria - Control Stato"
       },
       "batt_num": {
-        "name": "Numero celle o moduli batteria"
+        "name": "Batteria - Module Conteggio"
       },
       "battery_mode": {
         "name": "Modalità Batteria"
@@ -133,31 +133,31 @@
         "name": "Temperatura - Armadio"
       },
       "chc": {
-        "name": "Contatore cicli carica batteria"
+        "name": "Batteria - Charge Cycles"
       },
       "clock_state": {
-        "name": "Stato Orologio"
+        "name": "Stato - Clock"
       },
       "commissioning_freeze": {
-        "name": "Blocco Messa in Servizio"
+        "name": "Inverter - Blocco Messa in Servizio"
       },
       "communication_protocol": {
-        "name": "Protocollo Comunicazione"
+        "name": "Device - Protocollo Comunicazione"
       },
       "cos_phi": {
         "name": "Fattore di Potenza"
       },
       "country_std": {
-        "name": "Impostazione standard rete paese"
+        "name": "Inverter - Conteggiory Standard"
       },
       "cycle_num": {
-        "name": "Conteggio - Cicli Batteria"
+        "name": "Batteria - Cycles"
       },
       "d_c1_state": {
-        "name": "Stato Ingresso DC 1"
+        "name": "Stato - DC Ingresso 1"
       },
       "d_c2_state": {
-        "name": "Stato Ingresso DC 2"
+        "name": "Stato - DC Ingresso 2"
       },
       "day_wh": {
         "name": "Energia AC - Prodotta (Oggi)"
@@ -175,10 +175,10 @@
         "name": "Potenza DC - Stringa 2"
       },
       "dc_st1": {
-        "name": "Stato Ingresso DC 1"
+        "name": "Stato - DC Ingresso 1"
       },
       "dc_st2": {
-        "name": "Stato Ingresso DC 2"
+        "name": "Stato - DC Ingresso 2"
       },
       "dc_voltage_1": {
         "name": "Tensione DC - Stringa 1"
@@ -190,31 +190,31 @@
         "name": "Potenza DC"
       },
       "detected_battery_number": {
-        "name": "Numero Batteria Rilevato"
+        "name": "Batteria - Detected Number"
       },
       "device_address": {
-        "name": "Indirizzo Modbus"
+        "name": "Device - Modbus Address"
       },
       "device_name": {
-        "name": "Nome Dispositivo 2"
+        "name": "Device - Name 2"
       },
       "device_type": {
-        "name": "Tipo Dispositivo 2"
+        "name": "Device - Tipo 2"
       },
       "dhc": {
-        "name": "Contatore cicli scarica batteria"
+        "name": "Batteria - Discharge Cycles"
       },
       "di0_mode": {
-        "name": "Modalità Ingresso Digitale 0"
+        "name": "Digital Input - Modalità 0"
       },
       "di1_mode": {
-        "name": "Modalità Ingresso Digitale 1"
+        "name": "Digital Input - Modalità 1"
       },
       "di_status": {
-        "name": "Stato Ingresso Digitale"
+        "name": "Stato - Digital Input"
       },
       "dynamic_feed_in_ctrl": {
-        "name": "Controllo Immissione Dinamica"
+        "name": "Inverter - Dynamic Feed-In Control"
       },
       "e0_1_year": {
         "name": "Energia AC - Prodotta (Corrente Year)"
@@ -406,7 +406,7 @@
         "name": "Energia DC - PV (Dal Riavvio)"
       },
       "energy_policy": {
-        "name": "Politica Energetica"
+        "name": "Inverter - Politica Energetica"
       },
       "fan1rpm": {
         "name": "Velocità - Ventola 1"
@@ -415,46 +415,46 @@
         "name": "Velocità - Ventola 2"
       },
       "fcc": {
-        "name": "Frequenza controller centrale"
+        "name": "Frequenza - Central Controller"
       },
       "firmware_version": {
-        "name": "Versione Firmware"
+        "name": "Firmware - Version"
       },
       "flash_memory_free": {
-        "name": "Memoria flash disponibile"
+        "name": "System - Available Flash"
       },
       "free_ram": {
-        "name": "RAM disponibile"
+        "name": "System - RAM disponibile"
       },
       "frt_state": {
-        "name": "Stato Fault Ride Through (FRT)"
+        "name": "Stato - Fault Ride Through (FRT)"
       },
       "fw_build_date": {
-        "name": "Data Build Firmware"
+        "name": "Firmware - Build Date"
       },
       "fw_build_number": {
-        "name": "Hash Build Firmware"
+        "name": "Firmware - Build Hash"
       },
       "fw_release_number": {
-        "name": "Versione Firmware"
+        "name": "Firmware - Version"
       },
       "fw_revision": {
-        "name": "Revisione Firmware"
+        "name": "Firmware - Revision"
       },
       "fw_version": {
-        "name": "Versione Fw"
+        "name": "Firmware - Version"
       },
       "glob_state": {
-        "name": "Stato operativo globale"
+        "name": "Stato - Global"
       },
       "global_st": {
-        "name": "Stato Globale"
+        "name": "Stato - Global"
       },
       "grid_ext_ctrl_ena": {
-        "name": "Controllo Esterno Rete Abilitato"
+        "name": "Rete - External Control Abilitato"
       },
       "grid_ext_ctrl_state": {
-        "name": "Stato Controllo Esterno Rete"
+        "name": "Stato - Rete External Control"
       },
       "house_igrid_l1": {
         "name": "Corrente AC - Casa Fase A"
@@ -508,10 +508,10 @@
         "name": "Corrente DC - Stringa 2"
       },
       "input_mode": {
-        "name": "Modalità Ingresso"
+        "name": "Inverter - Modalità Ingresso"
       },
       "inv_state": {
-        "name": "Stato Inverter"
+        "name": "Stato - Inverter"
       },
       "inverter_id": {
         "name": "ID Inverter"
@@ -526,25 +526,25 @@
         "name": "Resistenza - Isolamento"
       },
       "logger_board_model": {
-        "name": "Modalitàllo Scheda Logger"
+        "name": "Datalogger - Board Modalitàl"
       },
       "logger_hostname": {
-        "name": "Hostname Logger"
+        "name": "Datalogger - Hostname"
       },
       "logger_logger_id": {
-        "name": "ID Logger"
+        "name": "Datalogger - ID"
       },
       "logger_sn": {
-        "name": "Numero di Serie Logger"
+        "name": "Datalogger - Numero di Serie"
       },
       "m126_mod_ena": {
-        "name": "Modalitàllo 126 Abilitato"
+        "name": "Inverter - Modalitàllo 126 Abilitato"
       },
       "m132_mod_ena": {
-        "name": "Modalitàllo 132 Abilitato"
+        "name": "Inverter - Modalitàllo 132 Abilitato"
       },
       "manufacturer": {
-        "name": "Nome produttore"
+        "name": "Device - Manufacturer"
       },
       "meter_fgrid": {
         "name": "Frequenza AC - Contatore"
@@ -592,31 +592,31 @@
         "name": "Tensione AC - Contatore Fase C"
       },
       "mfg_part_number": {
-        "name": "Codice Parte"
+        "name": "Device - Codice Parte"
       },
       "mfg_serial_number": {
-        "name": "Numero di Serie"
+        "name": "Device - Numero di Serie"
       },
       "mfg_week_year": {
-        "name": "Settimana/Anno Produzione"
+        "name": "Device - Settimana/Anno Produzione"
       },
       "model": {
-        "name": "Identificatore modello"
+        "name": "Device - Modalitàl Identifier"
       },
       "model_description": {
-        "name": "Descrizione Modalitàllo"
+        "name": "Device - Descrizione Modalitàllo"
       },
       "model_type": {
-        "name": "Tipo Modalitàllo"
+        "name": "Device - Tipo Modalitàllo"
       },
       "month_wh": {
         "name": "Energia AC - Prodotta (Corrente Month)"
       },
       "num_of_mppt": {
-        "name": "Conteggio - MPPT Canali"
+        "name": "Inverter - MPPT Channel Conteggio"
       },
       "options": {
-        "name": "Opzioni di configurazione"
+        "name": "Inverter - Configuration Options"
       },
       "other_temperature": {
         "name": "Temperatura - Altro"
@@ -628,7 +628,7 @@
         "name": "Potenza - Scarica Batteria"
       },
       "pac_derating_flags": {
-        "name": "Flag Riduzione Potenza AC"
+        "name": "Potenza AC - Derating Flag"
       },
       "pac_stand_alone": {
         "name": "Potenza AC - Modalità Stand Alone"
@@ -673,7 +673,7 @@
         "name": "Potenza DC - Stringa 2"
       },
       "pn": {
-        "name": "Codice prodotto"
+        "name": "Device - Product Number"
       },
       "power_peak_abs": {
         "name": "Potenza - Picco Totale"
@@ -685,40 +685,40 @@
         "name": "Potenza - Picco"
       },
       "qac_derating_flags": {
-        "name": "Riduzione Potenza Reattiva"
+        "name": "Reattiva Potenza - Derating Flag"
       },
       "sac_derating_flags": {
-        "name": "Riduzione Potenza Apparentee"
+        "name": "Potenza AC - Apparente Derating Flag"
       },
       "serial_number": {
-        "name": "Device serial number"
+        "name": "Device - Numero di Serie"
       },
       "sh_u": {
         "name": "Tensione - Shunt"
       },
       "sn": {
-        "name": "Numero di serie"
+        "name": "Device - Numero di Serie"
       },
       "split_phase": {
-        "name": "Flag configurazione split-phase"
+        "name": "Inverter - Split Phase"
       },
       "state_of_charge": {
-        "name": "Stato di Carica"
+        "name": "Batteria - Stato di Carica"
       },
       "state_of_health": {
-        "name": "Stato di Salute"
+        "name": "Batteria - Stato di Salute"
       },
       "storage_size": {
-        "name": "Memoria flash utilizzata"
+        "name": "System - Flash Used"
       },
       "sys_time": {
         "name": "Ora Sistema"
       },
       "system_load": {
-        "name": "Carico medio sistema"
+        "name": "System - Carico Average"
       },
       "system_uptime": {
-        "name": "Uptime Sistema"
+        "name": "System - Uptime"
       },
       "tba": {
         "name": "Temperatura - Batteria"
@@ -739,7 +739,7 @@
         "name": "Temperatura - Inverter"
       },
       "type": {
-        "name": "Tipo"
+        "name": "Inverter - Tipo"
       },
       "v_bulk": {
         "name": "Tensione DC - Condensatore Bulk"
@@ -763,7 +763,7 @@
         "name": "Tensione - Cella Batteria Min"
       },
       "version": {
-        "name": "Versione firmware"
+        "name": "Firmware - Version"
       },
       "vgrid_l1_n": {
         "name": "Tensione AC - Rete L1-N"
@@ -781,7 +781,7 @@
         "name": "Potenza - Nominale"
       },
       "warning_flags": {
-        "name": "Flag Avviso"
+        "name": "Stato - Flag Avviso"
       },
       "watthours": {
         "name": "Energia AC - Prodotta Totale"
@@ -793,31 +793,31 @@
         "name": "Energia AC - Prodotta (Corrente Week)"
       },
       "wlan0_essid": {
-        "name": "SSID WiFi"
+        "name": "WiFi - SSID"
       },
       "wlan0_ipaddr_local": {
-        "name": "IP Locale WiFi"
+        "name": "WiFi - Local IP"
       },
       "wlan0_link_quality": {
-        "name": "Percentuale qualità link WiFi"
+        "name": "WiFi - Link Quality"
       },
       "wlan0_mode": {
-        "name": "Modalità WiFi"
+        "name": "WiFi - Modalità"
       },
       "wlan_0_broadcast": {
         "name": "Broadcast WiFi"
       },
       "wlan_0_dhcp_state": {
-        "name": "Stato DHCP WiFi"
+        "name": "WiFi - DHCP Stato"
       },
       "wlan_0_dns": {
-        "name": "Server DNS WiFi"
+        "name": "WiFi - DNS Server"
       },
       "wlan_0_gateway": {
         "name": "Gateway WiFi"
       },
       "wlan_0_ipaddr": {
-        "name": "Indirizzo IP WiFi"
+        "name": "WiFi - IP Address"
       },
       "wlan_0_netmask": {
         "name": "Maschera di Rete WiFi"
@@ -826,10 +826,10 @@
         "name": "Stato WiFi"
       },
       "wlan_ap_status": {
-        "name": "Stato AP WiFi"
+        "name": "WiFi - AP Stato"
       },
       "wlan_fsm_status": {
-        "name": "Stato FSM WiFi"
+        "name": "WiFi - FSM Stato"
       },
       "year_wh": {
         "name": "Energia AC - Prodotta (Corrente Year)"
