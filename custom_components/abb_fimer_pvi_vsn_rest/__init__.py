@@ -369,10 +369,11 @@ async def async_migrate_entry(
     Version 3 → 4: Fix stale original_name in entity registry after prefix removal.
     Version 4 → 5: Clear stale suggested_object_id so HA rename preview uses correct names.
     Version 5 → 6: Clear stale object_id_base so HA rename preview uses original_name.
+    Version 6 → 7: Fix object_id_base — set to original_name (None loses entity name).
     """
-    if config_entry.version > 6:
+    if config_entry.version > 7:
         _LOGGER.error(
-            "Cannot downgrade config entry from version %s to 6",
+            "Cannot downgrade config entry from version %s to 7",
             config_entry.version,
         )
         return False
@@ -412,6 +413,15 @@ async def async_migrate_entry(
         _async_clear_stale_object_id_base_v6(hass, config_entry)
         hass.config_entries.async_update_entry(config_entry, version=6)
         _LOGGER.info("Config entry migration to version 6 complete")
+
+    if config_entry.version < 7:
+        _LOGGER.info(
+            "Migrating config entry from version %s to 7",
+            config_entry.version,
+        )
+        _async_fix_object_id_base_v7(hass, config_entry)
+        hass.config_entries.async_update_entry(config_entry, version=7)
+        _LOGGER.info("Config entry migration to version 7 complete")
 
     return True
 
@@ -670,6 +680,58 @@ def _async_clear_stale_object_id_base_v6(
         )
     else:
         _LOGGER.info("Entity object_id_base migration v6: no changes needed")
+
+
+@callback
+def _async_fix_object_id_base_v7(
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+) -> None:
+    """Set object_id_base to original_name for entities where it is None.
+
+    v6 migration incorrectly set object_id_base to None. When object_id_base is None,
+    HA's _async_get_full_entity_name falls through to just the device name (losing the
+    entity name portion), producing entity IDs like sensor.abb_fimer_datalogger instead
+    of sensor.abb_fimer_datalogger_product_number.
+
+    Fix: set object_id_base = original_name (already correct from v4 migration).
+    """
+    registry = er.async_get(hass)
+    entities = er.async_entries_for_config_entry(registry, config_entry.entry_id)
+
+    fixed = 0
+
+    for entity_entry in entities:
+        if entity_entry.object_id_base is not None:
+            continue
+
+        if not entity_entry.original_name:
+            continue
+
+        try:
+            registry._async_update_entity(  # noqa: SLF001
+                entity_entry.entity_id,
+                object_id_base=entity_entry.original_name,
+            )
+            fixed += 1
+            _LOGGER.info(
+                "Set object_id_base='%s' for %s",
+                entity_entry.original_name,
+                entity_entry.entity_id,
+            )
+        except (ValueError, AttributeError):
+            _LOGGER.debug(
+                "Cannot fix object_id_base for %s",
+                entity_entry.entity_id,
+            )
+
+    if fixed > 0:
+        _LOGGER.info(
+            "Fixed object_id_base for %d entities",
+            fixed,
+        )
+    else:
+        _LOGGER.info("Entity object_id_base migration v7: no changes needed")
 
 
 def _handle_startup_failure(

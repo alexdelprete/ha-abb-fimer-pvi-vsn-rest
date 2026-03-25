@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.4.5] - Unreleased
 
+### Bug Fixes
+
+- **Fix object_id_base migration** - v1.4.4 incorrectly cleared `object_id_base` to `None`,
+  causing HA to generate entity IDs with only the device name (e.g., `sensor.abb_fimer_datalogger`
+  instead of `sensor.abb_fimer_datalogger_product_number`). v7 migration sets `object_id_base`
+  to `original_name` (the correct value).
+
 ## [1.4.4] - 2026-03-25
 
 ### Bug Fixes
