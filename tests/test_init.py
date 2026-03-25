@@ -9,6 +9,7 @@ import pytest
 
 from custom_components.abb_fimer_pvi_vsn_rest import (
     STARTUP_FAILURES_KEY,
+    _async_clear_stale_suggested_object_ids_v5,
     _async_fix_original_names_v4,
     _async_migrate_entity_ids_v2,
     _async_migrate_options,
@@ -1376,6 +1377,137 @@ class TestAsyncFixOriginalNamesV4:
         mock_registry.async_update_entity.assert_not_called()
 
 
+class TestAsyncClearStaleSuggestedObjectIdsV5:
+    """Tests for _async_clear_stale_suggested_object_ids_v5 function."""
+
+    @pytest.fixture
+    def mock_hass(self) -> MagicMock:
+        """Create mock Home Assistant instance."""
+        return MagicMock(spec=HomeAssistant)
+
+    @pytest.fixture
+    def mock_config_entry(self) -> MagicMock:
+        """Create mock config entry."""
+        entry = MagicMock(spec=ConfigEntry)
+        entry.entry_id = "test_entry_id"
+        return entry
+
+    def test_clears_stale_suggested_object_id(
+        self,
+        mock_hass: MagicMock,
+        mock_config_entry: MagicMock,
+    ) -> None:
+        """Test stale suggested_object_id is cleared."""
+        entity = MagicMock()
+        entity.entity_id = "sensor.abb_fimer_datalogger_product_number"
+        entity.suggested_object_id = "ABB FIMER Datalogger Device - Product Number"
+
+        mock_registry = MagicMock()
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.er.async_get",
+                return_value=mock_registry,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.er.async_entries_for_config_entry",
+                return_value=[entity],
+            ),
+        ):
+            _async_clear_stale_suggested_object_ids_v5(mock_hass, mock_config_entry)
+
+        mock_registry._async_update_entity.assert_called_once_with(
+            "sensor.abb_fimer_datalogger_product_number",
+            suggested_object_id=None,
+        )
+
+    def test_skips_none_suggested_object_id(
+        self,
+        mock_hass: MagicMock,
+        mock_config_entry: MagicMock,
+    ) -> None:
+        """Test entity with None suggested_object_id is skipped."""
+        entity = MagicMock()
+        entity.entity_id = "sensor.abb_fimer_datalogger_product_number"
+        entity.suggested_object_id = None
+
+        mock_registry = MagicMock()
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.er.async_get",
+                return_value=mock_registry,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.er.async_entries_for_config_entry",
+                return_value=[entity],
+            ),
+        ):
+            _async_clear_stale_suggested_object_ids_v5(mock_hass, mock_config_entry)
+
+        mock_registry._async_update_entity.assert_not_called()
+
+    def test_handles_value_error(
+        self,
+        mock_hass: MagicMock,
+        mock_config_entry: MagicMock,
+    ) -> None:
+        """Test ValueError during update is handled gracefully."""
+        entity = MagicMock()
+        entity.entity_id = "sensor.abb_fimer_datalogger_product_number"
+        entity.suggested_object_id = "stale value"
+
+        mock_registry = MagicMock()
+        mock_registry._async_update_entity.side_effect = ValueError("test error")
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.er.async_get",
+                return_value=mock_registry,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.er.async_entries_for_config_entry",
+                return_value=[entity],
+            ),
+        ):
+            # Should not raise
+            _async_clear_stale_suggested_object_ids_v5(mock_hass, mock_config_entry)
+
+    def test_clears_multiple_entities(
+        self,
+        mock_hass: MagicMock,
+        mock_config_entry: MagicMock,
+    ) -> None:
+        """Test multiple entities with stale suggested_object_id are all cleared."""
+        entity1 = MagicMock()
+        entity1.entity_id = "sensor.abb_fimer_datalogger_product_number"
+        entity1.suggested_object_id = "stale value 1"
+
+        entity2 = MagicMock()
+        entity2.entity_id = "sensor.abb_fimer_datalogger_uptime"
+        entity2.suggested_object_id = "stale value 2"
+
+        entity3 = MagicMock()
+        entity3.entity_id = "sensor.abb_fimer_datalogger_firmware"
+        entity3.suggested_object_id = None  # Should be skipped
+
+        mock_registry = MagicMock()
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.er.async_get",
+                return_value=mock_registry,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.er.async_entries_for_config_entry",
+                return_value=[entity1, entity2, entity3],
+            ),
+        ):
+            _async_clear_stale_suggested_object_ids_v5(mock_hass, mock_config_entry)
+
+        assert mock_registry._async_update_entity.call_count == 2
+
+
 class TestAsyncMigrateEntry:
     """Tests for async_migrate_entry function."""
 
@@ -1387,8 +1519,8 @@ class TestAsyncMigrateEntry:
         return hass
 
     @pytest.mark.asyncio
-    async def test_migrate_version_1_to_4(self, mock_hass: MagicMock) -> None:
-        """Test config entry migration from version 1 to 4 (runs both v2 and v4 migrations)."""
+    async def test_migrate_version_1_to_5(self, mock_hass: MagicMock) -> None:
+        """Test config entry migration from version 1 to 5 (runs v2, v4, and v5 migrations)."""
         entry = MagicMock(spec=ConfigEntry)
         entry.version = 1
         entry.entry_id = "test_entry_id"
@@ -1402,16 +1534,20 @@ class TestAsyncMigrateEntry:
                 "custom_components.abb_fimer_pvi_vsn_rest._async_fix_original_names_v4",
                 new_callable=AsyncMock,
             ) as mock_migrate_v4,
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest._async_clear_stale_suggested_object_ids_v5",
+            ) as mock_migrate_v5,
         ):
             result = await async_migrate_entry(mock_hass, entry)
 
         assert result is True
         mock_migrate_v2.assert_called_once_with(mock_hass, entry)
         mock_migrate_v4.assert_called_once_with(mock_hass, entry)
+        mock_migrate_v5.assert_called_once_with(mock_hass, entry)
 
     @pytest.mark.asyncio
-    async def test_migrate_version_2_to_4(self, mock_hass: MagicMock) -> None:
-        """Test config entry migration from version 2 to 4 (runs both v2 and v4 migrations)."""
+    async def test_migrate_version_2_to_5(self, mock_hass: MagicMock) -> None:
+        """Test config entry migration from version 2 to 5 (runs v2, v4, and v5 migrations)."""
         entry = MagicMock(spec=ConfigEntry)
         entry.version = 2
         entry.entry_id = "test_entry_id"
@@ -1425,16 +1561,20 @@ class TestAsyncMigrateEntry:
                 "custom_components.abb_fimer_pvi_vsn_rest._async_fix_original_names_v4",
                 new_callable=AsyncMock,
             ) as mock_migrate_v4,
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest._async_clear_stale_suggested_object_ids_v5",
+            ) as mock_migrate_v5,
         ):
             result = await async_migrate_entry(mock_hass, entry)
 
         assert result is True
         mock_migrate_v2.assert_called_once_with(mock_hass, entry)
         mock_migrate_v4.assert_called_once_with(mock_hass, entry)
+        mock_migrate_v5.assert_called_once_with(mock_hass, entry)
 
     @pytest.mark.asyncio
-    async def test_migrate_version_3_to_4(self, mock_hass: MagicMock) -> None:
-        """Test config entry migration from version 3 to 4 (only v4 migration)."""
+    async def test_migrate_version_3_to_5(self, mock_hass: MagicMock) -> None:
+        """Test config entry migration from version 3 to 5 (v4 and v5 migrations only)."""
         entry = MagicMock(spec=ConfigEntry)
         entry.version = 3
         entry.entry_id = "test_entry_id"
@@ -1448,18 +1588,49 @@ class TestAsyncMigrateEntry:
                 "custom_components.abb_fimer_pvi_vsn_rest._async_fix_original_names_v4",
                 new_callable=AsyncMock,
             ) as mock_migrate_v4,
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest._async_clear_stale_suggested_object_ids_v5",
+            ) as mock_migrate_v5,
         ):
             result = await async_migrate_entry(mock_hass, entry)
 
         assert result is True
         mock_migrate_v2.assert_not_called()
         mock_migrate_v4.assert_called_once_with(mock_hass, entry)
+        mock_migrate_v5.assert_called_once_with(mock_hass, entry)
 
     @pytest.mark.asyncio
-    async def test_migrate_version_4_noop(self, mock_hass: MagicMock) -> None:
-        """Test no migration needed when already at version 4."""
+    async def test_migrate_version_4_to_5(self, mock_hass: MagicMock) -> None:
+        """Test config entry migration from version 4 to 5 (only v5 migration)."""
         entry = MagicMock(spec=ConfigEntry)
         entry.version = 4
+        entry.entry_id = "test_entry_id"
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest._async_migrate_entity_ids_v2",
+                new_callable=AsyncMock,
+            ) as mock_migrate_v2,
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest._async_fix_original_names_v4",
+                new_callable=AsyncMock,
+            ) as mock_migrate_v4,
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest._async_clear_stale_suggested_object_ids_v5",
+            ) as mock_migrate_v5,
+        ):
+            result = await async_migrate_entry(mock_hass, entry)
+
+        assert result is True
+        mock_migrate_v2.assert_not_called()
+        mock_migrate_v4.assert_not_called()
+        mock_migrate_v5.assert_called_once_with(mock_hass, entry)
+
+    @pytest.mark.asyncio
+    async def test_migrate_version_5_noop(self, mock_hass: MagicMock) -> None:
+        """Test no migration needed when already at version 5."""
+        entry = MagicMock(spec=ConfigEntry)
+        entry.version = 5
 
         result = await async_migrate_entry(mock_hass, entry)
 
@@ -1470,7 +1641,7 @@ class TestAsyncMigrateEntry:
     async def test_migrate_future_version_fails(self, mock_hass: MagicMock) -> None:
         """Test downgrade from future version fails."""
         entry = MagicMock(spec=ConfigEntry)
-        entry.version = 5
+        entry.version = 6
 
         result = await async_migrate_entry(mock_hass, entry)
 

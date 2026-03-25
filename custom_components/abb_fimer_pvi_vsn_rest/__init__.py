@@ -367,10 +367,11 @@ async def async_migrate_entry(
     Version 1 → 2: Migrate entity IDs to remove category prefixes from display names.
     Version 2 → 3: Re-run migration to fix entities missed by buggy endswith check.
     Version 3 → 4: Fix stale original_name in entity registry after prefix removal.
+    Version 4 → 5: Clear stale suggested_object_id so HA rename preview uses correct names.
     """
-    if config_entry.version > 4:
+    if config_entry.version > 5:
         _LOGGER.error(
-            "Cannot downgrade config entry from version %s to 4",
+            "Cannot downgrade config entry from version %s to 5",
             config_entry.version,
         )
         return False
@@ -392,6 +393,15 @@ async def async_migrate_entry(
         await _async_fix_original_names_v4(hass, config_entry)
         hass.config_entries.async_update_entry(config_entry, version=4)
         _LOGGER.info("Config entry migration to version 4 complete")
+
+    if config_entry.version < 5:
+        _LOGGER.info(
+            "Migrating config entry from version %s to 5",
+            config_entry.version,
+        )
+        _async_clear_stale_suggested_object_ids_v5(hass, config_entry)
+        hass.config_entries.async_update_entry(config_entry, version=5)
+        _LOGGER.info("Config entry migration to version 5 complete")
 
     return True
 
@@ -540,6 +550,56 @@ async def _async_fix_original_names_v4(
         )
     else:
         _LOGGER.info("Entity original_name migration v4: no changes needed")
+
+
+@callback
+def _async_clear_stale_suggested_object_ids_v5(
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+) -> None:
+    """Clear stale suggested_object_id in entity registry.
+
+    HA's "rename device entity IDs" preview uses suggested_object_id (persisted in the
+    entity registry) to compute proposed entity IDs. This field is only updated when the
+    entity platform loads. If entities are in "restored" state (device offline), the field
+    retains old values from before the v1.4.1 display name cleanup (with category prefixes).
+
+    Clearing suggested_object_id forces HA to fall through to original_name (fixed in v4)
+    for the rename preview computation. The field will be repopulated with correct values
+    when the entity platform next loads.
+    """
+    registry = er.async_get(hass)
+    entities = er.async_entries_for_config_entry(registry, config_entry.entry_id)
+
+    cleared = 0
+
+    for entity_entry in entities:
+        # Only clear if suggested_object_id is set (non-None)
+        if entity_entry.suggested_object_id is None:
+            continue
+
+        try:
+            # Use private API to clear suggested_object_id — the public
+            # async_update_entity() does not expose this field.
+            # Safe: field is repopulated by entity platform on next load.
+            registry._async_update_entity(  # noqa: SLF001
+                entity_entry.entity_id,
+                suggested_object_id=None,
+            )
+            cleared += 1
+        except (ValueError, AttributeError):
+            _LOGGER.debug(
+                "Cannot clear suggested_object_id for %s",
+                entity_entry.entity_id,
+            )
+
+    if cleared > 0:
+        _LOGGER.info(
+            "Cleared stale suggested_object_id for %d entities (will refresh on next load)",
+            cleared,
+        )
+    else:
+        _LOGGER.info("Entity suggested_object_id migration v5: no changes needed")
 
 
 def _handle_startup_failure(
