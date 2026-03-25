@@ -346,6 +346,10 @@ def mock_hass() -> MagicMock:
     mock.services = MagicMock()
     mock.services.async_call = AsyncMock()
 
+    # Add states registry for entity state lookups (e.g., stale-value guard)
+    mock.states = MagicMock()
+    mock.states.get = MagicMock(return_value=None)
+
     return mock
 
 
