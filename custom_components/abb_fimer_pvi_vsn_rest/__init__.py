@@ -366,10 +366,11 @@ async def async_migrate_entry(
 
     Version 1 → 2: Migrate entity IDs to remove category prefixes from display names.
     Version 2 → 3: Re-run migration to fix entities missed by buggy endswith check.
+    Version 3 → 4: Fix stale original_name in entity registry after prefix removal.
     """
-    if config_entry.version > 3:
+    if config_entry.version > 4:
         _LOGGER.error(
-            "Cannot downgrade config entry from version %s to 3",
+            "Cannot downgrade config entry from version %s to 4",
             config_entry.version,
         )
         return False
@@ -382,6 +383,15 @@ async def async_migrate_entry(
         await _async_migrate_entity_ids_v2(hass, config_entry)
         hass.config_entries.async_update_entry(config_entry, version=3)
         _LOGGER.info("Config entry migration to version 3 complete")
+
+    if config_entry.version < 4:
+        _LOGGER.info(
+            "Migrating config entry from version %s to 4",
+            config_entry.version,
+        )
+        await _async_fix_original_names_v4(hass, config_entry)
+        hass.config_entries.async_update_entry(config_entry, version=4)
+        _LOGGER.info("Config entry migration to version 4 complete")
 
     return True
 
@@ -463,6 +473,73 @@ async def _async_migrate_entity_ids_v2(
         )
     else:
         _LOGGER.info("Entity ID migration v2: no changes needed")
+
+
+async def _async_fix_original_names_v4(
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+) -> None:
+    """Fix stale original_name in entity registry after category prefix removal.
+
+    The v2/v3 migration renamed entity_ids but did not update original_name.
+    This caused HA's "rename device entity IDs" feature to propose wrong IDs
+    based on the old cached names (e.g., "Device - Product Number" instead of
+    "Product Number").
+    """
+    registry = er.async_get(hass)
+
+    # Load current English translations (with cleaned display names)
+    sensor_translations = await async_get_entity_translations(hass, DOMAIN)
+
+    entities = er.async_entries_for_config_entry(registry, config_entry.entry_id)
+
+    fixed = 0
+
+    for entity_entry in entities:
+        # Parse unique_id: {domain}_{...}_{device_type}_{serial_compact}_{point_name}
+        unique_id_parts = entity_entry.unique_id.split("_")
+        if len(unique_id_parts) < 8:
+            continue
+
+        point_name = "_".join(unique_id_parts[7:])
+
+        # Get current translated name (after prefix cleanup)
+        translated_name = sensor_translations.get(point_name, "")
+        if not translated_name:
+            continue
+
+        # Check if original_name is stale (differs from current translation)
+        if entity_entry.original_name == translated_name:
+            continue
+
+        if entity_entry.original_name is None:
+            continue
+
+        try:
+            registry.async_update_entity(
+                entity_entry.entity_id,
+                original_name=translated_name,
+            )
+            fixed += 1
+            _LOGGER.info(
+                "Fixed original_name: %s → %s (entity: %s)",
+                entity_entry.original_name,
+                translated_name,
+                entity_entry.entity_id,
+            )
+        except ValueError:
+            _LOGGER.debug(
+                "Cannot fix original_name for %s",
+                entity_entry.entity_id,
+            )
+
+    if fixed > 0:
+        _LOGGER.info(
+            "Fixed %d entity original_name values to match current translations",
+            fixed,
+        )
+    else:
+        _LOGGER.info("Entity original_name migration v4: no changes needed")
 
 
 def _handle_startup_failure(
