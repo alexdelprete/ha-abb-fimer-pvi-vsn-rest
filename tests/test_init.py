@@ -636,14 +636,19 @@ class TestAsyncMigrateEntityIdsV2:
         self,
         mock_hass: MagicMock,
         mock_config_entry: MagicMock,
+        mock_device_entry: MagicMock,
     ) -> None:
         """Test entities already using translated suffix are skipped."""
         mock_entity = MagicMock()
         mock_entity.unique_id = "abb_fimer_pvi_vsn_rest_inverter_0779093g823112_watts"
         mock_entity.entity_id = "sensor.abb_fimer_inverter_power_ac"
+        mock_entity.device_id = "device_123"
 
         mock_registry = MagicMock()
         mock_registry.async_update_entity = MagicMock()
+
+        mock_device_registry = MagicMock()
+        mock_device_registry.async_get.return_value = mock_device_entry
 
         with (
             patch(
@@ -653,6 +658,10 @@ class TestAsyncMigrateEntityIdsV2:
             patch(
                 "custom_components.abb_fimer_pvi_vsn_rest.er.async_entries_for_config_entry",
                 return_value=[mock_entity],
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.dr.async_get",
+                return_value=mock_device_registry,
             ),
             patch(
                 "custom_components.abb_fimer_pvi_vsn_rest.async_get_entity_translations",
