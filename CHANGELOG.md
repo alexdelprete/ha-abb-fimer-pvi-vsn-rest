@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.4.4] - Unreleased
 
+### Bug Fixes
+
+- **Stale Entity ID Rename Preview (actual fix)** - Fixed HA's "rename device entity IDs"
+  preview proposing wrong entity IDs with old category prefixes. Root cause: the `object_id_base`
+  field in HA's entity registry (verified via `.storage/core.entity_registry`) retained old
+  prefixed names (e.g., "Device - Product Number") while `original_name` was already correct.
+  HA's rename preview uses `object_id_base` as priority over `original_name`. New v6 config
+  entry migration clears stale `object_id_base` values. v1.4.3 incorrectly targeted
+  `suggested_object_id` which was already `None`.
+
 ## [1.4.3] - 2026-03-25
 
 ### Bug Fixes

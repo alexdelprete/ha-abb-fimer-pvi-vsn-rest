@@ -368,10 +368,11 @@ async def async_migrate_entry(
     Version 2 → 3: Re-run migration to fix entities missed by buggy endswith check.
     Version 3 → 4: Fix stale original_name in entity registry after prefix removal.
     Version 4 → 5: Clear stale suggested_object_id so HA rename preview uses correct names.
+    Version 5 → 6: Clear stale object_id_base so HA rename preview uses original_name.
     """
-    if config_entry.version > 5:
+    if config_entry.version > 6:
         _LOGGER.error(
-            "Cannot downgrade config entry from version %s to 5",
+            "Cannot downgrade config entry from version %s to 6",
             config_entry.version,
         )
         return False
@@ -402,6 +403,15 @@ async def async_migrate_entry(
         _async_clear_stale_suggested_object_ids_v5(hass, config_entry)
         hass.config_entries.async_update_entry(config_entry, version=5)
         _LOGGER.info("Config entry migration to version 5 complete")
+
+    if config_entry.version < 6:
+        _LOGGER.info(
+            "Migrating config entry from version %s to 6",
+            config_entry.version,
+        )
+        _async_clear_stale_object_id_base_v6(hass, config_entry)
+        hass.config_entries.async_update_entry(config_entry, version=6)
+        _LOGGER.info("Config entry migration to version 6 complete")
 
     return True
 
@@ -600,6 +610,66 @@ def _async_clear_stale_suggested_object_ids_v5(
         )
     else:
         _LOGGER.info("Entity suggested_object_id migration v5: no changes needed")
+
+
+@callback
+def _async_clear_stale_object_id_base_v6(
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+) -> None:
+    """Clear stale object_id_base in entity registry.
+
+    HA's "rename device entity IDs" preview computes proposed entity IDs from
+    object_id_base (passed as original_name to _async_get_full_entity_name).
+    This field is only updated when the entity platform loads. For entities in
+    "restored" state (device offline), it retains old values with category prefixes
+    (e.g., "Device - Product Number" instead of "Product Number").
+
+    Verified via .storage/core.entity_registry: object_id_base holds old prefixed
+    names while original_name is already correct (fixed in v4). Clearing object_id_base
+    forces HA to fall through to original_name for rename preview computation.
+    The field will be repopulated by the entity platform on next load.
+    """
+    registry = er.async_get(hass)
+    entities = er.async_entries_for_config_entry(registry, config_entry.entry_id)
+
+    cleared = 0
+
+    for entity_entry in entities:
+        if entity_entry.object_id_base is None:
+            continue
+
+        # Only clear if object_id_base differs from original_name (i.e., stale)
+        if entity_entry.object_id_base == entity_entry.original_name:
+            continue
+
+        try:
+            # Use private API — public async_update_entity() does not expose
+            # object_id_base. Safe: repopulated by entity platform on next load.
+            registry._async_update_entity(  # noqa: SLF001
+                entity_entry.entity_id,
+                object_id_base=None,
+            )
+            cleared += 1
+            _LOGGER.info(
+                "Cleared stale object_id_base '%s' for %s (original_name='%s')",
+                entity_entry.object_id_base,
+                entity_entry.entity_id,
+                entity_entry.original_name,
+            )
+        except (ValueError, AttributeError):
+            _LOGGER.debug(
+                "Cannot clear object_id_base for %s",
+                entity_entry.entity_id,
+            )
+
+    if cleared > 0:
+        _LOGGER.info(
+            "Cleared stale object_id_base for %d entities (will refresh on next load)",
+            cleared,
+        )
+    else:
+        _LOGGER.info("Entity object_id_base migration v6: no changes needed")
 
 
 def _handle_startup_failure(
