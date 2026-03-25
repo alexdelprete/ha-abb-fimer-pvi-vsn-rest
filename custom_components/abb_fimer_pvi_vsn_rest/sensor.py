@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 import logging
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity, SensorStateClass
 from homeassistant.config_entries import ConfigEntry
@@ -22,6 +22,9 @@ from .helpers import (
     get_device_type_simple,
     simplify_device_type,
 )
+
+if TYPE_CHECKING:
+    from .abb_fimer_vsn_rest_client.discovery import DiscoveredDevice
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -98,7 +101,7 @@ def _simplify_device_type(device_type: str) -> str:
     return simplify_device_type(device_type)
 
 
-def _get_device_type_simple(device: object) -> str:
+def _get_device_type_simple(device: DiscoveredDevice) -> str:
     """Get simplified device type from a DiscoveredDevice.
 
     Delegates to helpers.get_device_type_simple().
