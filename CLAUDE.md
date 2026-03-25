@@ -29,8 +29,6 @@ This is the **ha-abb-fimer-pvi-vsn-rest** integration for Home Assistant. It pro
 PVI inverters through VSN300 or VSN700 dataloggers via their
 REST API.
 
-**Current Status**: v1.1.7 - Active development
-
 **Key Features**:
 
 - Automatic VSN300/VSN700 detection
@@ -1876,45 +1874,3 @@ When a release fixes a specific GitHub issue:
 - **ha-abb-powerone-pvi-sunspec**: Legacy v4.x (Modbus only)
 
 This integration is the REST API variant that works through VSN dataloggers.
-
-______________________________________________________________________
-
-## Release History
-
-### v1.3.0 - CI/CD Alignment & Code Quality
-
-**Date:** January 2026
-
-- Aligned CI/CD workflows with ha-sinapsi-alfa (lint.yml, test.yml, validate.yml, release.yml)
-- Added ty type checker for faster type checking
-- Removed fallback imports from client library for cleaner code
-- Added comprehensive test infrastructure
-- Updated Python requirement to >=3.13.2
-
-### v1.2.0 - Sensor Mapping Overhaul
-
-**Date:** December 2025
-
-- Unified sensor mapping generator script
-- VSN name normalization for duplicate detection
-- Display name standardization (TYPE-first pattern)
-- 253 unique sensor points with comprehensive metadata
-
-### v1.1.0 - Modern Entity Naming
-
-**Date:** November 2025
-
-- Modern `has_entity_name=True` pattern
-- Domain prefix for entity IDs
-- Comprehensive sensor attributes (14+ fields)
-- Aurora protocol integration for timestamps and state mapping
-
-### v1.0.0 - First Stable Release
-
-**Date:** October 2025
-
-- Automatic VSN300/VSN700 detection
-- Multi-device support (inverters, meters, batteries)
-- SunSpec-normalized data schema
-- Custom icon support
-- Human-readable state translations

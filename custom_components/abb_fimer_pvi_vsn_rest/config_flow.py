@@ -500,7 +500,7 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
         return self.async_show_form(
             step_id="init",
             data_schema=vol.Schema(schema_dict),
-            description_placeholders=description_placeholders if description_placeholders else None,
+            description_placeholders=description_placeholders or None,
         )
 
     async def _regenerate_entity_ids(self, new_options: dict[str, Any]) -> None:

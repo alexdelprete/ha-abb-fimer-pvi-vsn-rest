@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.3.8] - TBD
+## [1.4.0] - 2026-03-25
 
 ### New Features
 
@@ -13,13 +13,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   classifies all 40 `total_increasing` sensors by their reset behavior
 - **Stale-Value Guard** - Lifetime sensors reject values lower than current HA state,
   preventing dashboard spikes from stale datalogger startup data (PR #42 by @bryanyork)
+- **Display Name Standardization** - All display names standardized to "Type - Details" pattern
+- **Local Brand Assets** - Added local brand assets for HA 2026.3 brands proxy API
 
 ### Bug Fixes
 
 - **Display Name Consistency** - Removed parentheses from "Lifetime" suffix across 7 sensors,
   standardized ECt/EDt display names to follow "Energy - ..." pattern
 
-**See**: [v1.3.8 Release Notes](docs/releases/v1.3.8.md)
+### Infrastructure
+
+- **Devcontainer Consolidation** - Removed old `.devcontainer/` folder, unified configuration
+- **CI Lint Enhancements** - Added yamllint and pymarkdown to CI lint workflow
+- **ty Type Checker** - Added ty type checker to pre-commit config
+- **Coverage Flags** - Moved coverage flags from pytest addopts to CI-only
+
+**See**: [v1.4.0 Release Notes](docs/releases/v1.4.0.md)
 
 ## [1.3.7] - 2026-03-01
 
