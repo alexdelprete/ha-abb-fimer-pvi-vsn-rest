@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.4.6] - Unreleased
 
+### Added
+
+- **Known devices persistence** - The integration now remembers all discovered devices across
+  restarts in `config_entry.data["known_devices"]`
+- **Partial discovery repair notification** - When known devices are missing at startup
+  (e.g., inverter off at night), a warning notification lists the missing devices
+- **Automatic re-discovery** - The coordinator re-discovers missing devices every poll cycle
+  and automatically reloads when they come back online
+- **Idempotent device detection** - Unknown devices appearing in data trigger automatic reload
+  for seamless device creation
+
+### Changed
+
+- **Device deletion always allowed** - Users can always delete devices via HA UI; deleted
+  devices are removed from the known list but re-added if still physically connected
+- **Removed automatic orphan cleanup** - Devices are never auto-deleted; only manual removal
+  via HA UI
+
+### Migration
+
+- **Config entry v7 → v8** - Populates `known_devices` from existing device registry
+
 ## [1.4.5] - 2026-03-25
 
 ### Bug Fixes

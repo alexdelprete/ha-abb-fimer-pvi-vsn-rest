@@ -200,6 +200,8 @@ Home Assistant DataUpdateCoordinator for managing polling.
 - Error handling and retries
 - Store discovery result
 - Distribute data to sensors
+- Periodic re-discovery of missing known devices
+- Idempotency check: detect unknown devices in data and trigger reload
 
 **Key Attributes:**
 
@@ -207,6 +209,15 @@ Home Assistant DataUpdateCoordinator for managing polling.
 - `vsn_model`: VSN300 or VSN700
 - `discovery_result`: Full discovery data
 - `discovered_devices`: List of DiscoveredDevice
+- `_missing_devices`: Set of known device IDs not found during last discovery
+- `_reload_scheduled`: Flag to prevent multiple concurrent reloads
+
+**Re-discovery Flow (in `_async_update_data`):**
+
+After each successful data fetch, two checks run:
+
+1. **Missing known devices**: If `_missing_devices` is non-empty, call `discover_vsn_device()` to check if they're back. On full recovery, schedule `config_entry.async_reload()`.
+2. **Unknown devices in data**: Compare data device IDs against `known_devices` in `config_entry.data`. If unknown devices found, schedule reload for idempotent device creation.
 
 #### 6. Config Flow (`config_flow.py`)
 
@@ -314,6 +325,30 @@ All HA device info fields populated from discovery:
 - `via_device`: Link to datalogger (for inverters/meters)
 
 ## Key Architectural Decisions
+
+### Known Devices Persistence & Partial Discovery (v1.4.6)
+
+**Decision**: Persist expected devices in `config_entry.data["known_devices"]` and treat missing devices as temporary unavailability, not orphans to delete.
+
+**Problem**: When HA starts before sunrise, the inverter is off and not in the `/v1/livedata` response. Discovery only finds the datalogger. The old `_cleanup_orphaned_devices()` then deleted the inverter device and all its entities. The coordinator never re-discovered, requiring manual reload.
+
+**Implementation**:
+
+- `config_entry.data["known_devices"]`: Persisted list of `{device_id, device_type, is_datalogger}` dicts
+- On startup: merge discovered devices into known list (union — only adds, never auto-removes)
+- If known non-datalogger devices are missing: create `WARNING`-level repair notification
+- Coordinator re-discovers missing devices every poll cycle (60s)
+- When all missing devices recover: clear repair notification, `async_reload()` to create entities
+- Idempotency check: if data contains device IDs not in `known_devices`, trigger reload
+- Device deletion via HA UI: always allowed, removes from `known_devices`. If device still physically exists, next discovery re-adds it
+- Config entry migration v7→v8 populates `known_devices` from existing device registry
+
+**Key Files**:
+
+- `__init__.py`: Known devices management, partial discovery detection, migration v8
+- `coordinator.py`: `_attempt_rediscovery()`, idempotency check in `_async_update_data()`
+- `repairs.py`: `create_partial_discovery_issue()`, `delete_partial_discovery_issue()`
+- `const.py`: `CONF_KNOWN_DEVICES`
 
 ### Mapping Structure (v2 - Deduplicated)
 
@@ -1155,6 +1190,7 @@ From config_entry:
 - `password`: Auth password (default: `""`)
 - `vsn_model`: Detected VSN model (`"VSN300"` or `"VSN700"`)
 - `scan_interval`: Polling interval in seconds (default: 60, range: 30-600)
+- `known_devices`: Persisted list of known devices (auto-managed, not user-configurable)
 
 ## Entity Unique IDs
 

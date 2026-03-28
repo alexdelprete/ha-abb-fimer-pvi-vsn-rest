@@ -28,6 +28,7 @@ SunSpec-compatible format for consistent Home Assistant entity creation.
 - ✅ **SunSpec Normalization**: VSN data mapped to SunSpec standard format
 - ✅ **Device Hierarchy**: Proper device relationships (inverters via datalogger)
 - ✅ **Complete Metadata**: Model, manufacturer, firmware version, serial numbers
+- ✅ **Smart Device Recovery**: Automatic re-discovery of offline devices with repair notifications
 - ✅ **Configuration UI**: Easy setup through Home Assistant UI
 - ✅ **Multi-Language**: 10 European languages (EN, IT, FR, ES, PT, DE, SV, NB, FI, ET)
 
@@ -188,6 +189,30 @@ power_cycle_datalogger:
         title: "Datalogger Recovery"
         message: "Power cycled {{ device_name }} after {{ failures_count }} failures"
 ```
+
+### Partial Discovery & Device Recovery
+
+In systems without battery storage, the entire system (datalogger + inverter) is powered off
+at night. When the sun rises, the datalogger powers up first and becomes reachable, but the
+inverter may take longer to come online. If Home Assistant starts or restarts during this
+window, the integration discovers the datalogger but not the inverter. The integration
+handles this gracefully:
+
+**How It Works:**
+
+1. The integration maintains a **known devices** list that persists across restarts
+1. On startup, if known devices are missing from discovery, a **warning notification** appears listing the missing devices
+1. Every poll cycle (default: 60s), the integration **re-discovers** missing devices
+1. When all devices come back online, the notification clears and entities are automatically restored
+1. If a new device appears in the data that isn't in the known list, the integration detects it and reloads
+
+**Device Management:**
+
+- **Deleting a device**: Always allowed via the HA UI. The device is removed from the
+  known list. If the device still physically exists, it will be re-discovered and re-added
+  on the next poll cycle.
+- **Disabling a device**: Use this if you want to hide a device permanently. Disabled
+  devices remain in the registry but their entities stop updating.
 
 ### Reconfiguration
 
