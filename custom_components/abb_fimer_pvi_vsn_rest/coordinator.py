@@ -17,7 +17,11 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 from homeassistant.util import dt as dt_util
 
 from .abb_fimer_vsn_rest_client.client import ABBFimerVSNRestClient
-from .abb_fimer_vsn_rest_client.discovery import DiscoveredDevice, DiscoveryResult
+from .abb_fimer_vsn_rest_client.discovery import (
+    DiscoveredDevice,
+    DiscoveryResult,
+    discover_vsn_device,
+)
 from .abb_fimer_vsn_rest_client.exceptions import (
     VSNAuthenticationError,
     VSNClientError,
@@ -26,13 +30,20 @@ from .abb_fimer_vsn_rest_client.exceptions import (
 from .const import (
     CONF_ENABLE_REPAIR_NOTIFICATION,
     CONF_FAILURES_THRESHOLD,
+    CONF_KNOWN_DEVICES,
     CONF_RECOVERY_SCRIPT,
     DEFAULT_ENABLE_REPAIR_NOTIFICATION,
     DEFAULT_FAILURES_THRESHOLD,
     DEFAULT_RECOVERY_SCRIPT,
     DOMAIN,
 )
-from .repairs import create_connection_issue, create_recovery_notification, delete_connection_issue
+from .repairs import (
+    create_connection_issue,
+    create_partial_discovery_issue,
+    create_recovery_notification,
+    delete_connection_issue,
+    delete_partial_discovery_issue,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -49,6 +60,7 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         entry_id: str | None = None,
         host: str | None = None,
         config_entry: ConfigEntry | None = None,
+        missing_devices: set[str] | None = None,
     ) -> None:
         """Initialize the coordinator.
 
@@ -60,6 +72,7 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             entry_id: Config entry ID for repair issues
             host: Device host for repair issues
             config_entry: Config entry for accessing options
+            missing_devices: Set of known device IDs not found during discovery
 
         """
         super().__init__(
@@ -78,6 +91,11 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         # Failure tracking for repair issues
         self._entry_id = entry_id
         self._host = host
+        self._config_entry = config_entry
+
+        # Partial discovery tracking
+        self._missing_devices: set[str] = missing_devices or set()
+        self._reload_scheduled = False
         self._consecutive_failures = 0
         self._repair_issue_created = False
         self._failure_start_time: float | None = None
@@ -141,6 +159,29 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
             # Reset failure counter on success
             self._consecutive_failures = 0
+
+            # --- Re-discovery and idempotency checks ---
+            if not self._reload_scheduled:
+                # Check 1: Re-discover missing known devices
+                if self._missing_devices:
+                    await self._attempt_rediscovery()
+
+                # Check 2: Detect unknown devices in data (idempotency)
+                if not self._reload_scheduled and self._config_entry:
+                    data_device_ids = set(data.get("devices", {}).keys())
+                    known_device_ids = {
+                        d["device_id"] for d in self._config_entry.data.get(CONF_KNOWN_DEVICES, [])
+                    }
+                    unknown_devices = data_device_ids - known_device_ids
+                    if unknown_devices:
+                        _LOGGER.info(
+                            "Unknown devices detected in data: %s — scheduling reload",
+                            ", ".join(sorted(unknown_devices)),
+                        )
+                        self._reload_scheduled = True
+                        self.hass.async_create_task(
+                            self.hass.config_entries.async_reload(self._entry_id)
+                        )
 
             return data  # noqa: TRY300
 
@@ -276,6 +317,92 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._last_error_type = None
         self._recovery_script_executed = False
         self._script_executed_time = None
+
+    async def _attempt_rediscovery(self) -> None:
+        """Attempt to re-discover missing devices.
+
+        Runs discover_vsn_device() to check if previously missing devices are now
+        available. On full recovery, schedules a config entry reload to create entities.
+        """
+        if not self._missing_devices or self._reload_scheduled:
+            return
+
+        try:
+            discovery_result = await discover_vsn_device(
+                session=self.client.session,
+                base_url=self.client.base_url,
+                username=self.client.username,
+                password=self.client.password,
+                timeout=self.client.timeout,
+            )
+
+            discovered_ids = {d.device_id for d in discovery_result.devices}
+            recovered = self._missing_devices & discovered_ids
+
+            if not recovered:
+                _LOGGER.debug(
+                    "Re-discovery: %d devices still missing",
+                    len(self._missing_devices),
+                )
+                return
+
+            _LOGGER.info(
+                "Re-discovery found previously missing devices: %s",
+                ", ".join(sorted(recovered)),
+            )
+
+            # Update discovery state
+            self.discovery_result = discovery_result
+            self.discovered_devices = discovery_result.devices
+            self._missing_devices -= recovered
+
+            # Update known_devices in config_entry.data with any new devices
+            if self._config_entry:
+                known_devices = list(self._config_entry.data.get(CONF_KNOWN_DEVICES, []))
+                known_ids = {d["device_id"] for d in known_devices}
+                known_devices.extend(
+                    {
+                        "device_id": device.device_id,
+                        "device_type": device.device_type,
+                        "is_datalogger": device.is_datalogger,
+                    }
+                    for device in discovery_result.devices
+                    if device.device_id not in known_ids
+                )
+                if len(known_devices) != len(self._config_entry.data.get(CONF_KNOWN_DEVICES, [])):
+                    self.hass.config_entries.async_update_entry(
+                        self._config_entry,
+                        data={
+                            **self._config_entry.data,
+                            CONF_KNOWN_DEVICES: known_devices,
+                        },
+                    )
+
+            if not self._missing_devices:
+                # All devices recovered — clear repair and reload
+                if self._entry_id:
+                    delete_partial_discovery_issue(self.hass, self._entry_id)
+                _LOGGER.info("All known devices recovered, scheduling reload")
+                self._reload_scheduled = True
+                self.hass.async_create_task(self.hass.config_entries.async_reload(self._entry_id))
+            else:
+                # Partially recovered — update repair issue
+                _LOGGER.info(
+                    "Still missing %d devices: %s",
+                    len(self._missing_devices),
+                    ", ".join(sorted(self._missing_devices)),
+                )
+                if self._entry_id:
+                    device_name = self._get_device_name()
+                    create_partial_discovery_issue(
+                        self.hass,
+                        self._entry_id,
+                        device_name,
+                        sorted(self._missing_devices),
+                    )
+
+        except (VSNConnectionError, VSNAuthenticationError, VSNClientError):
+            _LOGGER.debug("Re-discovery failed, will retry next cycle", exc_info=True)
 
     async def _execute_recovery_script(self) -> None:
         """Execute the configured recovery script."""

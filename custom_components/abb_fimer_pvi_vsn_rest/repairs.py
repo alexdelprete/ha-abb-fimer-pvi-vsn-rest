@@ -19,6 +19,7 @@ _LOGGER = logging.getLogger(__name__)
 
 # Issue IDs
 ISSUE_CONNECTION_FAILED = "connection_failed"
+ISSUE_PARTIAL_DISCOVERY = "partial_discovery"
 
 # Notification IDs
 NOTIFICATION_RECOVERY = "recovery"
@@ -136,3 +137,50 @@ def create_recovery_notification(
         downtime,
         script_name,
     )
+
+
+def create_partial_discovery_issue(
+    hass: HomeAssistant,
+    entry_id: str,
+    device_name: str,
+    missing_devices: list[str],
+) -> None:
+    """Create a repair issue for partial device discovery.
+
+    Args:
+        hass: HomeAssistant instance
+        entry_id: Config entry ID
+        device_name: Name of the datalogger device
+        missing_devices: List of missing device IDs
+
+    """
+    ir.async_create_issue(
+        hass,
+        DOMAIN,
+        f"{ISSUE_PARTIAL_DISCOVERY}_{entry_id}",
+        is_fixable=False,
+        is_persistent=True,
+        severity=ir.IssueSeverity.WARNING,
+        translation_key=ISSUE_PARTIAL_DISCOVERY,
+        translation_placeholders={
+            "device_name": device_name,
+            "missing_devices": ", ".join(missing_devices),
+        },
+    )
+    _LOGGER.debug(
+        "Created partial discovery issue for %s: missing %s",
+        device_name,
+        ", ".join(missing_devices),
+    )
+
+
+def delete_partial_discovery_issue(hass: HomeAssistant, entry_id: str) -> None:
+    """Delete the partial discovery repair issue.
+
+    Args:
+        hass: HomeAssistant instance
+        entry_id: Config entry ID
+
+    """
+    ir.async_delete_issue(hass, DOMAIN, f"{ISSUE_PARTIAL_DISCOVERY}_{entry_id}")
+    _LOGGER.debug("Deleted partial discovery issue for entry: %s", entry_id)

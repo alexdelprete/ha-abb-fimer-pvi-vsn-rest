@@ -900,6 +900,10 @@
     "recovery_success": {
       "title": "{device_name} si è ripreso",
       "description": "Il datalogger ABB/FIMER VSN sta rispondendo di nuovo.\n\n**Inizio guasto:** {started_at}\n**Tempo di recupero:** {ended_at}\n**Tempo di inattività totale:** {downtime}"
+    },
+    "partial_discovery": {
+      "title": "Incomplete device discovery for {device_name}",
+      "description": "The following devices were previously discovered but are currently not responding:\n\n{missing_devices}\n\n**Possible causes:**\n- Inverter is off (nighttime/no solar production)\n- Device is temporarily disconnected\n\nThe integration will automatically re-discover devices as they come online. This notification will clear automatically when all devices are found.\n\nIf a device has been permanently removed, you can delete it manually from the device page in Settings."
     }
   },
   "device_automation": {

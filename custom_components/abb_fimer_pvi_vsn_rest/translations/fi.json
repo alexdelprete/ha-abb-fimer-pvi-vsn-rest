@@ -900,6 +900,10 @@
     "recovery_success": {
       "title": "{device_name} on palautunut",
       "description": "ABB/FIMER VSN -dataloggerisi vastaa jälleen.\n\n**Vika alkoi:** {started_at}\n**Palautumisaika:** {ended_at}\n**Kokonaiskatkosaika:** {downtime}"
+    },
+    "partial_discovery": {
+      "title": "Incomplete device discovery for {device_name}",
+      "description": "The following devices were previously discovered but are currently not responding:\n\n{missing_devices}\n\n**Possible causes:**\n- Inverter is off (nighttime/no solar production)\n- Device is temporarily disconnected\n\nThe integration will automatically re-discover devices as they come online. This notification will clear automatically when all devices are found.\n\nIf a device has been permanently removed, you can delete it manually from the device page in Settings."
     }
   },
   "device_automation": {

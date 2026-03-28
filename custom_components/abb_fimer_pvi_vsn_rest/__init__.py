@@ -23,6 +23,7 @@ from .const import (
     CONF_ENABLE_REPAIR_NOTIFICATION,
     CONF_ENABLE_STARTUP_NOTIFICATION,
     CONF_FAILURES_THRESHOLD,
+    CONF_KNOWN_DEVICES,
     CONF_PREFIX_DATALOGGER,
     CONF_RECOVERY_SCRIPT,
     CONF_SCAN_INTERVAL,
@@ -38,7 +39,12 @@ from .const import (
 )
 from .coordinator import ABBFimerPVIVSNRestCoordinator
 from .helpers import async_get_entity_translations, format_device_name
-from .repairs import create_connection_issue, delete_connection_issue
+from .repairs import (
+    create_connection_issue,
+    create_partial_discovery_issue,
+    delete_connection_issue,
+    delete_partial_discovery_issue,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -144,6 +150,53 @@ async def async_setup_entry(
         )
         raise ConfigEntryNotReady(f"Discovery failed: {err}") from err
 
+    # --- Known devices management ---
+    # Merge discovered devices into the persisted known_devices list (union — only adds)
+    known_devices = list(config_entry.data.get(CONF_KNOWN_DEVICES, []))
+    known_device_ids = {d["device_id"] for d in known_devices}
+    discovered_device_ids = {d.device_id for d in discovery_result.devices}
+
+    known_devices.extend(
+        {
+            "device_id": device.device_id,
+            "device_type": device.device_type,
+            "is_datalogger": device.is_datalogger,
+        }
+        for device in discovery_result.devices
+        if device.device_id not in known_device_ids
+    )
+
+    # Update config_entry.data if new devices were found
+    if len(known_devices) != len(config_entry.data.get(CONF_KNOWN_DEVICES, [])):
+        hass.config_entries.async_update_entry(
+            config_entry, data={**config_entry.data, CONF_KNOWN_DEVICES: known_devices}
+        )
+        _LOGGER.info(
+            "Updated known_devices list: %d devices",
+            len(known_devices),
+        )
+
+    known_device_ids = {d["device_id"] for d in known_devices}
+
+    # Detect missing devices (exclude datalogger — if it's down, discovery fails entirely)
+    known_non_datalogger_ids = {d["device_id"] for d in known_devices if not d.get("is_datalogger")}
+    missing_device_ids = known_non_datalogger_ids - discovered_device_ids
+
+    # Create or clear partial discovery repair notification
+    if missing_device_ids:
+        _LOGGER.warning(
+            "Partial discovery: %d of %d known devices missing: %s",
+            len(missing_device_ids),
+            len(known_device_ids),
+            ", ".join(sorted(missing_device_ids)),
+        )
+        device_name = discovery_result.get_title()
+        create_partial_discovery_issue(
+            hass, config_entry.entry_id, device_name, sorted(missing_device_ids)
+        )
+    else:
+        delete_partial_discovery_issue(hass, config_entry.entry_id)
+
     # Initialize REST client with discovered VSN model and devices
     client = ABBFimerVSNRestClient(
         session=session,
@@ -156,7 +209,7 @@ async def async_setup_entry(
         requires_auth=discovery_result.requires_auth,
     )
 
-    # Initialize coordinator with discovery result and config entry
+    # Initialize coordinator with discovery result, config entry, and missing devices
     coordinator = ABBFimerPVIVSNRestCoordinator(
         hass=hass,
         client=client,
@@ -165,6 +218,7 @@ async def async_setup_entry(
         entry_id=config_entry.entry_id,
         host=host,
         config_entry=config_entry,
+        missing_devices=missing_device_ids,
     )
 
     # Perform initial data fetch
@@ -181,9 +235,6 @@ async def async_setup_entry(
 
     # Register datalogger device FIRST so child devices can reference it via via_device
     async_update_device_registry(hass, config_entry)
-
-    # Remove orphaned devices no longer in discovery (e.g., beta.1 duplicate datalogger)
-    _cleanup_orphaned_devices(hass, config_entry)
 
     # Forward setup to platforms (datalogger device already exists for via_device references)
     await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
@@ -262,33 +313,6 @@ def async_update_device_registry(
         _LOGGER.debug("Device ID stored in coordinator: %s", device.id)
 
 
-@callback
-def _cleanup_orphaned_devices(
-    hass: HomeAssistant, config_entry: ABBFimerPVIVSNRestConfigEntry
-) -> None:
-    """Remove devices from registry that are no longer in discovery.
-
-    Handles stale devices left behind by earlier bugs (e.g., beta.1 duplicate datalogger).
-    Runs during setup after device registration and before platform setup.
-    """
-    coordinator = config_entry.runtime_data.coordinator
-    device_registry = dr.async_get(hass)
-    discovered_ids = {d.device_id for d in coordinator.discovered_devices}
-
-    for device_entry in dr.async_entries_for_config_entry(device_registry, config_entry.entry_id):
-        device_id = next(
-            (ident[1] for ident in device_entry.identifiers if ident[0] == DOMAIN),
-            None,
-        )
-        if device_id and device_id not in discovered_ids:
-            _LOGGER.info(
-                "Removing orphaned device '%s' (%s) — no longer discovered",
-                device_entry.name,
-                device_id,
-            )
-            device_registry.async_remove_device(device_entry.id)
-
-
 async def async_unload_entry(
     hass: HomeAssistant, config_entry: ABBFimerPVIVSNRestConfigEntry
 ) -> bool:
@@ -311,19 +335,33 @@ async def async_unload_entry(
 async def async_remove_config_entry_device(
     hass: HomeAssistant, config_entry: ConfigEntry, device_entry: dr.DeviceEntry
 ) -> bool:
-    """Allow deletion of orphaned devices not in current discovery.
+    """Allow device deletion and sync known_devices list.
 
-    Devices still present in discovery are protected from manual deletion.
-    Orphaned devices (no longer discovered) can be removed via the UI.
+    Always allows deletion. Removes the device from the persisted known_devices
+    list so it won't trigger a "missing device" repair notification. If the device
+    still physically exists, next discovery will find it and re-add it naturally.
     """
-    coordinator = config_entry.runtime_data.coordinator
-    discovered_ids = {d.device_id for d in coordinator.discovered_devices}
+    device_id = next(
+        (ident[1] for ident in device_entry.identifiers if ident[0] == DOMAIN),
+        None,
+    )
 
-    for identifier in device_entry.identifiers:
-        if identifier[0] == DOMAIN and identifier[1] in discovered_ids:
-            return False  # Still discovered — block deletion
+    if device_id:
+        # Remove from known_devices so we don't flag it as "missing"
+        known_devices = list(config_entry.data.get(CONF_KNOWN_DEVICES, []))
+        updated = [d for d in known_devices if d["device_id"] != device_id]
+        if len(updated) != len(known_devices):
+            hass.config_entries.async_update_entry(
+                config_entry, data={**config_entry.data, CONF_KNOWN_DEVICES: updated}
+            )
+            _LOGGER.info(
+                "Removed device '%s' from known_devices list",
+                device_id,
+            )
 
-    return True  # Not discovered (orphaned) — allow deletion
+    # Always allow deletion — if device still physically exists,
+    # next discovery will find it and re-add it naturally
+    return True
 
 
 async def _async_migrate_options(
@@ -370,10 +408,11 @@ async def async_migrate_entry(
     Version 4 → 5: Clear stale suggested_object_id so HA rename preview uses correct names.
     Version 5 → 6: Clear stale object_id_base so HA rename preview uses original_name.
     Version 6 → 7: Fix object_id_base — set to original_name (None loses entity name).
+    Version 7 → 8: Populate known_devices list from device registry.
     """
-    if config_entry.version > 7:
+    if config_entry.version > 8:
         _LOGGER.error(
-            "Cannot downgrade config entry from version %s to 7",
+            "Cannot downgrade config entry from version %s to 8",
             config_entry.version,
         )
         return False
@@ -422,6 +461,15 @@ async def async_migrate_entry(
         _async_fix_object_id_base_v7(hass, config_entry)
         hass.config_entries.async_update_entry(config_entry, version=7)
         _LOGGER.info("Config entry migration to version 7 complete")
+
+    if config_entry.version < 8:
+        _LOGGER.info(
+            "Migrating config entry from version %s to 8",
+            config_entry.version,
+        )
+        _async_populate_known_devices_v8(hass, config_entry)
+        hass.config_entries.async_update_entry(config_entry, version=8)
+        _LOGGER.info("Config entry migration to version 8 complete")
 
     return True
 
@@ -732,6 +780,41 @@ def _async_fix_object_id_base_v7(
         )
     else:
         _LOGGER.info("Entity object_id_base migration v7: no changes needed")
+
+
+@callback
+def _async_populate_known_devices_v8(
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+) -> None:
+    """Populate known_devices from existing device registry entries.
+
+    Reads the device registry for this config entry and builds the initial
+    known_devices list. Infers is_datalogger from the model field.
+    """
+    device_registry = dr.async_get(hass)
+    known_devices: list[dict] = []
+
+    for device_entry in dr.async_entries_for_config_entry(device_registry, config_entry.entry_id):
+        for identifier in device_entry.identifiers:
+            if identifier[0] == DOMAIN:
+                model = device_entry.model or ""
+                is_datalogger = "VSN300" in model or "VSN700" in model
+                known_devices.append(
+                    {
+                        "device_id": identifier[1],
+                        "device_type": "datalogger" if is_datalogger else "unknown",
+                        "is_datalogger": is_datalogger,
+                    }
+                )
+                break
+
+    new_data = {**config_entry.data, CONF_KNOWN_DEVICES: known_devices}
+    hass.config_entries.async_update_entry(config_entry, data=new_data)
+    _LOGGER.info(
+        "Populated known_devices with %d devices from registry",
+        len(known_devices),
+    )
 
 
 def _handle_startup_failure(

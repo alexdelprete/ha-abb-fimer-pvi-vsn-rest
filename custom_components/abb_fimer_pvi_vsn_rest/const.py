@@ -20,6 +20,7 @@ CONF_PASSWORD = "password"  # noqa: S105
 CONF_SCAN_INTERVAL = "scan_interval"
 CONF_VSN_MODEL = "vsn_model"  # Cached detection result
 CONF_REQUIRES_AUTH = "requires_auth"  # Whether device requires authentication
+CONF_KNOWN_DEVICES = "known_devices"  # Persisted list of known devices across restarts
 
 # Device name prefix options (empty = use default naming)
 # When a single device of a type exists, use the base key (e.g., "prefix_battery").
