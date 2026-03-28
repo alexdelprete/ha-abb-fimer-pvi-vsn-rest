@@ -15,7 +15,7 @@ from custom_components.abb_fimer_pvi_vsn_rest import (
     _async_fix_original_names_v4,
     _async_migrate_entity_ids_v2,
     _async_migrate_options,
-    _cleanup_orphaned_devices,
+    _async_populate_known_devices_v8,
     _clear_startup_failure,
     _handle_startup_failure,
     async_migrate_entry,
@@ -137,7 +137,7 @@ class TestAsyncSetupEntry:
                 return_value=mock_coordinator,
             ),
             patch("custom_components.abb_fimer_pvi_vsn_rest.async_update_device_registry"),
-            patch("custom_components.abb_fimer_pvi_vsn_rest._cleanup_orphaned_devices"),
+            patch("custom_components.abb_fimer_pvi_vsn_rest.delete_partial_discovery_issue"),
         ):
             result = await async_setup_entry(mock_hass, mock_config_entry)
 
@@ -235,7 +235,7 @@ class TestAsyncSetupEntry:
                 return_value=mock_coordinator,
             ),
             patch("custom_components.abb_fimer_pvi_vsn_rest.async_update_device_registry"),
-            patch("custom_components.abb_fimer_pvi_vsn_rest._cleanup_orphaned_devices"),
+            patch("custom_components.abb_fimer_pvi_vsn_rest.delete_partial_discovery_issue"),
         ):
             result = await async_setup_entry(mock_hass, mock_config_entry)
 
@@ -273,7 +273,7 @@ class TestAsyncSetupEntry:
                 return_value=mock_coordinator,
             ),
             patch("custom_components.abb_fimer_pvi_vsn_rest.async_update_device_registry"),
-            patch("custom_components.abb_fimer_pvi_vsn_rest._cleanup_orphaned_devices"),
+            patch("custom_components.abb_fimer_pvi_vsn_rest.delete_partial_discovery_issue"),
         ):
             # First call - startup message should be logged
             await async_setup_entry(mock_hass, mock_config_entry)
@@ -492,59 +492,74 @@ class TestAsyncRemoveConfigEntryDevice:
 
     @pytest.fixture
     def mock_config_entry(self) -> MagicMock:
-        """Create mock config entry with discovered devices."""
+        """Create mock config entry with known devices."""
         entry = MagicMock(spec=ConfigEntry)
-        # Mock discovered devices for the smart deletion logic
-        mock_coordinator = MagicMock()
-        mock_coordinator.discovered_devices = [
-            MagicMock(device_id="111033-3N16-1421"),
-            MagicMock(device_id="077909-3G82-3112"),
-        ]
+        entry.data = {
+            "known_devices": [
+                {
+                    "device_id": "111033-3N16-1421",
+                    "device_type": "datalogger",
+                    "is_datalogger": True,
+                },
+                {
+                    "device_id": "077909-3G82-3112",
+                    "device_type": "inverter_3phases",
+                    "is_datalogger": False,
+                },
+            ],
+        }
         entry.runtime_data = MagicMock()
-        entry.runtime_data.coordinator = mock_coordinator
         return entry
 
     @pytest.mark.asyncio
-    async def test_remove_device_blocked_for_discovered(
+    async def test_remove_device_always_allowed(
         self,
         mock_hass: MagicMock,
         mock_config_entry: MagicMock,
     ) -> None:
-        """Test device removal is blocked for devices still in discovery."""
+        """Test device removal is always allowed (even for known devices)."""
         mock_device = MagicMock()
-        mock_device.identifiers = {(DOMAIN, "111033-3N16-1421")}
-
-        result = await async_remove_config_entry_device(mock_hass, mock_config_entry, mock_device)
-
-        assert result is False
-
-    @pytest.mark.asyncio
-    async def test_remove_device_allowed_for_orphaned(
-        self,
-        mock_hass: MagicMock,
-        mock_config_entry: MagicMock,
-    ) -> None:
-        """Test device removal is allowed for orphaned devices not in discovery."""
-        mock_device = MagicMock()
-        mock_device.identifiers = {(DOMAIN, "orphaned-device-id")}
+        mock_device.identifiers = {(DOMAIN, "077909-3G82-3112")}
 
         result = await async_remove_config_entry_device(mock_hass, mock_config_entry, mock_device)
 
         assert result is True
 
     @pytest.mark.asyncio
-    async def test_remove_device_allowed_for_other_domain(
+    async def test_remove_device_syncs_known_devices(
         self,
         mock_hass: MagicMock,
         mock_config_entry: MagicMock,
     ) -> None:
-        """Test device removal is allowed for other domain devices."""
+        """Test device removal updates known_devices in config_entry.data."""
+        mock_device = MagicMock()
+        mock_device.identifiers = {(DOMAIN, "077909-3G82-3112")}
+
+        await async_remove_config_entry_device(mock_hass, mock_config_entry, mock_device)
+
+        # Verify config entry was updated with device removed from known_devices
+        mock_hass.config_entries.async_update_entry.assert_called_once()
+        call_args = mock_hass.config_entries.async_update_entry.call_args
+        new_data = call_args.kwargs.get("data", call_args[1].get("data", {}))
+        known = new_data.get("known_devices", [])
+        assert len(known) == 1
+        assert known[0]["device_id"] == "111033-3N16-1421"
+
+    @pytest.mark.asyncio
+    async def test_remove_device_other_domain(
+        self,
+        mock_hass: MagicMock,
+        mock_config_entry: MagicMock,
+    ) -> None:
+        """Test device removal with other domain identifiers."""
         mock_device = MagicMock()
         mock_device.identifiers = {("other_domain", "device_123")}
 
         result = await async_remove_config_entry_device(mock_hass, mock_config_entry, mock_device)
 
         assert result is True
+        # known_devices should not be updated
+        mock_hass.config_entries.async_update_entry.assert_not_called()
 
     @pytest.mark.asyncio
     async def test_remove_device_empty_identifiers(
@@ -760,8 +775,8 @@ class TestAsyncMigrateEntityIdsV2:
         mock_registry.async_update_entity.assert_not_called()
 
 
-class TestCleanupOrphanedDevices:
-    """Tests for _cleanup_orphaned_devices function."""
+class TestPopulateKnownDevicesV8:
+    """Tests for _async_populate_known_devices_v8 migration function."""
 
     @pytest.fixture
     def mock_hass(self) -> MagicMock:
@@ -770,92 +785,47 @@ class TestCleanupOrphanedDevices:
 
     @pytest.fixture
     def mock_config_entry(self) -> MagicMock:
-        """Create mock config entry with discovered devices."""
+        """Create mock config entry."""
         entry = MagicMock(spec=ConfigEntry)
         entry.entry_id = "test_entry_id"
-        mock_coordinator = MagicMock()
-        mock_coordinator.discovered_devices = [
-            MagicMock(device_id="111033-3N16-1421"),
-            MagicMock(device_id="077909-3G82-3112"),
-        ]
-        entry.runtime_data = MagicMock()
-        entry.runtime_data.coordinator = mock_coordinator
+        entry.data = {"host": "192.168.1.100"}
         return entry
 
-    def test_removes_orphaned_device(
+    def test_populates_known_devices_from_registry(
         self,
         mock_hass: MagicMock,
         mock_config_entry: MagicMock,
     ) -> None:
-        """Test orphaned devices are removed from registry."""
-        orphan_device = MagicMock()
-        orphan_device.identifiers = {(DOMAIN, "orphan-device-id")}
-        orphan_device.name = "Orphan Device"
-        orphan_device.id = "orphan_entry_id"
+        """Test known_devices is populated from device registry."""
+        datalogger = MagicMock()
+        datalogger.identifiers = {(DOMAIN, "1110333n161421")}
+        datalogger.model = "VSN300"
 
-        mock_device_registry = MagicMock()
-
-        with (
-            patch(
-                "custom_components.abb_fimer_pvi_vsn_rest.dr.async_get",
-                return_value=mock_device_registry,
-            ),
-            patch(
-                "custom_components.abb_fimer_pvi_vsn_rest.dr.async_entries_for_config_entry",
-                return_value=[orphan_device],
-            ),
-        ):
-            _cleanup_orphaned_devices(mock_hass, mock_config_entry)
-
-        mock_device_registry.async_remove_device.assert_called_once_with("orphan_entry_id")
-
-    def test_keeps_discovered_device(
-        self,
-        mock_hass: MagicMock,
-        mock_config_entry: MagicMock,
-    ) -> None:
-        """Test discovered devices are NOT removed from registry."""
-        active_device = MagicMock()
-        active_device.identifiers = {(DOMAIN, "111033-3N16-1421")}
-        active_device.name = "Active Device"
-
-        mock_device_registry = MagicMock()
+        inverter = MagicMock()
+        inverter.identifiers = {(DOMAIN, "0779093g823112")}
+        inverter.model = "PVI-10.0-OUTD"
 
         with (
             patch(
                 "custom_components.abb_fimer_pvi_vsn_rest.dr.async_get",
-                return_value=mock_device_registry,
+                return_value=MagicMock(),
             ),
             patch(
                 "custom_components.abb_fimer_pvi_vsn_rest.dr.async_entries_for_config_entry",
-                return_value=[active_device],
+                return_value=[datalogger, inverter],
             ),
         ):
-            _cleanup_orphaned_devices(mock_hass, mock_config_entry)
+            _async_populate_known_devices_v8(mock_hass, mock_config_entry)
 
-        mock_device_registry.async_remove_device.assert_not_called()
-
-    def test_no_devices_in_registry(
-        self,
-        mock_hass: MagicMock,
-        mock_config_entry: MagicMock,
-    ) -> None:
-        """Test no-op when registry has no devices."""
-        mock_device_registry = MagicMock()
-
-        with (
-            patch(
-                "custom_components.abb_fimer_pvi_vsn_rest.dr.async_get",
-                return_value=mock_device_registry,
-            ),
-            patch(
-                "custom_components.abb_fimer_pvi_vsn_rest.dr.async_entries_for_config_entry",
-                return_value=[],
-            ),
-        ):
-            _cleanup_orphaned_devices(mock_hass, mock_config_entry)
-
-        mock_device_registry.async_remove_device.assert_not_called()
+        # Verify config entry was updated with known devices
+        call_args = mock_hass.config_entries.async_update_entry.call_args
+        new_data = call_args.kwargs.get("data", call_args[1].get("data", {}))
+        known = new_data.get("known_devices", [])
+        assert len(known) == 2
+        assert known[0]["device_id"] == "1110333n161421"
+        assert known[0]["is_datalogger"] is True
+        assert known[1]["device_id"] == "0779093g823112"
+        assert known[1]["is_datalogger"] is False
 
 
 class TestHandleStartupFailure:
@@ -1758,8 +1728,8 @@ class TestAsyncMigrateEntry:
         return hass
 
     @pytest.mark.asyncio
-    async def test_migrate_version_1_to_7(self, mock_hass: MagicMock) -> None:
-        """Test config entry migration from version 1 to 7 (runs all migrations)."""
+    async def test_migrate_version_1_to_8(self, mock_hass: MagicMock) -> None:
+        """Test config entry migration from version 1 to 8 (runs all migrations)."""
         entry = MagicMock(spec=ConfigEntry)
         entry.version = 1
         entry.entry_id = "test_entry_id"
@@ -1782,6 +1752,9 @@ class TestAsyncMigrateEntry:
             patch(
                 "custom_components.abb_fimer_pvi_vsn_rest._async_fix_object_id_base_v7",
             ) as mock_v7,
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest._async_populate_known_devices_v8",
+            ) as mock_v8,
         ):
             result = await async_migrate_entry(mock_hass, entry)
 
@@ -1791,12 +1764,13 @@ class TestAsyncMigrateEntry:
         mock_v5.assert_called_once()
         mock_v6.assert_called_once()
         mock_v7.assert_called_once()
+        mock_v8.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_migrate_version_6_to_7(self, mock_hass: MagicMock) -> None:
-        """Test config entry migration from version 6 to 7 (only v7 migration)."""
+    async def test_migrate_version_7_to_8(self, mock_hass: MagicMock) -> None:
+        """Test config entry migration from version 7 to 8 (only v8 migration)."""
         entry = MagicMock(spec=ConfigEntry)
-        entry.version = 6
+        entry.version = 7
         entry.entry_id = "test_entry_id"
 
         with (
@@ -1817,6 +1791,9 @@ class TestAsyncMigrateEntry:
             patch(
                 "custom_components.abb_fimer_pvi_vsn_rest._async_fix_object_id_base_v7",
             ) as mock_v7,
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest._async_populate_known_devices_v8",
+            ) as mock_v8,
         ):
             result = await async_migrate_entry(mock_hass, entry)
 
@@ -1825,13 +1802,14 @@ class TestAsyncMigrateEntry:
         mock_v4.assert_not_called()
         mock_v5.assert_not_called()
         mock_v6.assert_not_called()
-        mock_v7.assert_called_once()
+        mock_v7.assert_not_called()
+        mock_v8.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_migrate_version_7_noop(self, mock_hass: MagicMock) -> None:
-        """Test no migration needed when already at version 7."""
+    async def test_migrate_version_8_noop(self, mock_hass: MagicMock) -> None:
+        """Test no migration needed when already at version 8."""
         entry = MagicMock(spec=ConfigEntry)
-        entry.version = 7
+        entry.version = 8
 
         result = await async_migrate_entry(mock_hass, entry)
 
@@ -1842,7 +1820,7 @@ class TestAsyncMigrateEntry:
     async def test_migrate_future_version_fails(self, mock_hass: MagicMock) -> None:
         """Test downgrade from future version fails."""
         entry = MagicMock(spec=ConfigEntry)
-        entry.version = 8
+        entry.version = 9
 
         result = await async_migrate_entry(mock_hass, entry)
 
