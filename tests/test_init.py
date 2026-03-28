@@ -197,6 +197,7 @@ class TestAsyncSetupEntry:
                 "custom_components.abb_fimer_pvi_vsn_rest.ABBFimerPVIVSNRestCoordinator",
                 return_value=mock_coordinator,
             ),
+            patch("custom_components.abb_fimer_pvi_vsn_rest.delete_partial_discovery_issue"),
             pytest.raises(ConfigEntryNotReady, match="Failed to fetch data"),
         ):
             await async_setup_entry(mock_hass, mock_config_entry)
