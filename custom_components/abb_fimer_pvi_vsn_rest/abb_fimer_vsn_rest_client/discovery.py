@@ -33,6 +33,9 @@ class DiscoveredDevice:
     firmware_version: str | None  # C008, B185, etc. (inverter firmware)
     hardware_version: str | None  # Hardware version if available
     is_datalogger: bool  # True if this is the datalogger device
+    livedata_device_id: str | None = (
+        None  # Livedata key when different from device_id (e.g., MAC for datalogger)
+    )
 
 
 @dataclass
@@ -402,7 +405,9 @@ def _extract_devices(
         # Skip datalogger entries from livedata — already added from status_data above.
         # VSN700 includes the datalogger MAC in livedata with an empty points array,
         # which would create a duplicate device with less metadata.
+        # Store the livedata key (MAC) so client injection can match by it.
         if is_datalogger:
+            datalogger_device.livedata_device_id = raw_device_id
             _LOGGER.debug(
                 "Skipping datalogger entry '%s' from livedata (already created from status)",
                 raw_device_id,
