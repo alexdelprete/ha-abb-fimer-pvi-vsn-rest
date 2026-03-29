@@ -152,11 +152,29 @@ async def async_setup_entry(
 
     # --- Known devices management ---
     # Merge discovered devices into the persisted known_devices list (union — only adds)
+    # Also update device_type for existing entries from discovery (e.g., migration sets "unknown")
     known_devices = list(config_entry.data.get(CONF_KNOWN_DEVICES, []))
     known_device_ids = {d["device_id"] for d in known_devices}
     discovered_device_ids = {d.device_id for d in discovery_result.devices}
+    discovered_by_id = {d.device_id: d for d in discovery_result.devices}
+    known_changed = False
 
-    known_devices.extend(
+    # Update device_type for existing entries where discovery has better info
+    for known in known_devices:
+        discovered = discovered_by_id.get(known["device_id"])
+        if discovered and known.get("device_type") != discovered.device_type:
+            _LOGGER.info(
+                "Updated device_type for %s: %s → %s",
+                known["device_id"],
+                known.get("device_type"),
+                discovered.device_type,
+            )
+            known["device_type"] = discovered.device_type
+            known["is_datalogger"] = discovered.is_datalogger
+            known_changed = True
+
+    # Add newly discovered devices
+    new_devices = [
         {
             "device_id": device.device_id,
             "device_type": device.device_type,
@@ -164,10 +182,13 @@ async def async_setup_entry(
         }
         for device in discovery_result.devices
         if device.device_id not in known_device_ids
-    )
+    ]
+    if new_devices:
+        known_devices.extend(new_devices)
+        known_changed = True
 
-    # Update config_entry.data if new devices were found
-    if len(known_devices) != len(config_entry.data.get(CONF_KNOWN_DEVICES, [])):
+    # Persist changes if anything was added or updated
+    if known_changed:
         hass.config_entries.async_update_entry(
             config_entry, data={**config_entry.data, CONF_KNOWN_DEVICES: known_devices}
         )
