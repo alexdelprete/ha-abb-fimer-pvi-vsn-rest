@@ -148,6 +148,79 @@ class TestAsyncSetupEntry:
         mock_hass.config_entries.async_forward_entry_setups.assert_called_once()
 
     @pytest.mark.asyncio
+    async def test_setup_entry_partial_discovery(
+        self,
+        mock_hass: MagicMock,
+        mock_config_entry: MagicMock,
+    ) -> None:
+        """Test setup entry creates repair issue when devices are missing."""
+        # Config has known inverter, but discovery only finds datalogger
+        mock_config_entry.data["known_devices"] = [
+            {"device_id": "111033-3N16-1421", "device_type": "datalogger", "is_datalogger": True},
+            {
+                "device_id": "077909-3G82-3112",
+                "device_type": "inverter_3phases",
+                "is_datalogger": False,
+            },
+        ]
+
+        # Discovery returns only datalogger
+        partial_result = DiscoveryResult(
+            vsn_model="VSN300",
+            requires_auth=True,
+            logger_sn="111033-3N16-1421",
+            logger_model="VSN300",
+            firmware_version="1.9.2",
+            hostname=None,
+            devices=[
+                DiscoveredDevice(
+                    device_id="111033-3N16-1421",
+                    raw_device_id="111033-3N16-1421",
+                    device_type="datalogger",
+                    device_model="VSN300",
+                    manufacturer="ABB",
+                    firmware_version="1.9.2",
+                    hardware_version=None,
+                    is_datalogger=True,
+                ),
+            ],
+            status_data={},
+        )
+
+        mock_coordinator = MagicMock()
+        mock_coordinator.async_config_entry_first_refresh = AsyncMock()
+        mock_coordinator.vsn_model = "VSN300"
+        mock_coordinator.discovery_result = partial_result
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.async_get_clientsession",
+                return_value=MagicMock(),
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.discover_vsn_device",
+                new_callable=AsyncMock,
+                return_value=partial_result,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.ABBFimerVSNRestClient",
+                return_value=MagicMock(),
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.ABBFimerPVIVSNRestCoordinator",
+                return_value=mock_coordinator,
+            ),
+            patch("custom_components.abb_fimer_pvi_vsn_rest.async_update_device_registry"),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.create_partial_discovery_issue",
+            ) as mock_create_issue,
+        ):
+            result = await async_setup_entry(mock_hass, mock_config_entry)
+
+        assert result is True
+        mock_create_issue.assert_called_once()
+
+    @pytest.mark.asyncio
     async def test_setup_entry_discovery_failure(
         self,
         mock_hass: MagicMock,

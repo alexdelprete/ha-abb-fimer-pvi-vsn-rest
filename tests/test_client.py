@@ -629,3 +629,26 @@ class TestDeviceTypeInjection:
         client._inject_device_types(raw_data)
 
         assert "device_type" not in raw_data["inv-001"]
+
+    def test_ensure_device_type_map_skips_device_without_type(self) -> None:
+        """Test map skips devices with no device_type."""
+        session = MagicMock(spec=aiohttp.ClientSession)
+        devices = [
+            DiscoveredDevice(
+                device_id="no-type-device",
+                raw_device_id="no-type-device",
+                device_type="",  # Empty device_type
+                device_model=None,
+                manufacturer=None,
+                firmware_version=None,
+                hardware_version=None,
+                is_datalogger=False,
+            ),
+        ]
+        client = ABBFimerVSNRestClient(
+            session=session, base_url="http://test", discovered_devices=devices
+        )
+
+        client._ensure_device_type_map()
+
+        assert client._device_type_map == {}
