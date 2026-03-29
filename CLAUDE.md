@@ -113,15 +113,23 @@ Handles communication with VSN datalogger REST API.
 
 - Authenticate with VSN300 (X-Digest) or VSN700 (Basic Auth)
 - Fetch `/v1/status`, `/v1/livedata`, `/v1/feeds` endpoints
-- Merge livedata + feeds data
+- Inject `device_type` from discovery into raw livedata before normalization
 - Pass raw data to normalizer
 - Return normalized data
 
 **Key Methods:**
 
 - `connect()`: Detect VSN model and authenticate
-- `get_normalized_data()`: Fetch and normalize data
+- `get_normalized_data()`: Fetch, inject device types, and normalize data
+- `update_discovered_devices()`: Sync device list and invalidate cached maps (called by coordinator after re-discovery)
 - `close()`: Clean up resources
+
+**Device Type Injection:**
+
+The API may not include `device_type` for all devices (e.g., datalogger). The client maintains
+a `_device_type_map` (dict of livedata key → device_type) built lazily from `_discovered_devices`
+on first poll. This map is invalidated when `update_discovered_devices()` is called after
+re-discovery, ensuring the client stays in sync with the coordinator.
 
 #### 3. Authentication (`abb_fimer_vsn_rest_client/auth.py`)
 
@@ -335,18 +343,22 @@ All HA device info fields populated from discovery:
 **Implementation**:
 
 - `config_entry.data["known_devices"]`: Persisted list of `{device_id, device_type, is_datalogger}` dicts
-- On startup: merge discovered devices into known list (union — only adds, never auto-removes)
-- If known non-datalogger devices are missing: create `WARNING`-level repair notification
-- Coordinator re-discovers missing devices every poll cycle (60s)
-- When all missing devices recover: clear repair notification, `async_reload()` to create entities
-- Idempotency check: if data contains device IDs not in `known_devices`, trigger reload
+- On startup: `_sync_known_devices()` merges discovered devices into known list (union — only adds, never auto-removes) and updates stale `device_type` values from discovery
+- `_detect_missing_devices()` identifies known non-datalogger devices absent from discovery
+- If missing: create `WARNING`-level repair notification
+- Coordinator `_attempt_rediscovery()` runs `discover_vsn_device()` every poll cycle when devices are missing
+- On recovery: `_update_discovery_state()` syncs coordinator AND client (via `client.update_discovered_devices()` which invalidates `_device_type_map`)
+- `_handle_full_recovery()`: clear repair notification, `async_reload()` to create entities
+- `_handle_partial_recovery()`: update repair issue with remaining missing devices
+- Idempotency check in `_async_update_data()`: if data contains device IDs not in `known_devices`, trigger reload
 - Device deletion via HA UI: always allowed, removes from `known_devices`. If device still physically exists, next discovery re-adds it
 - Config entry migration v7→v8 populates `known_devices` from existing device registry
 
 **Key Files**:
 
-- `__init__.py`: Known devices management, partial discovery detection, migration v8
-- `coordinator.py`: `_attempt_rediscovery()`, idempotency check in `_async_update_data()`
+- `__init__.py`: `_sync_known_devices()`, `_detect_missing_devices()`, migration v8
+- `coordinator.py`: `_attempt_rediscovery()`, `_update_discovery_state()`, `_sync_known_devices()`, idempotency check
+- `client.py`: `update_discovered_devices()`, `_ensure_device_type_map()`, `_inject_device_types()`
 - `repairs.py`: `create_partial_discovery_issue()`, `delete_partial_discovery_issue()`
 - `const.py`: `CONF_KNOWN_DEVICES`
 

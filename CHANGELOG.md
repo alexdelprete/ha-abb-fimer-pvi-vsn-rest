@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.4.6-beta.1] - 2026-03-28
+## [1.4.6-beta.3] - 2026-03-29
 
 ### Added
 
@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and automatically reloads when they come back online
 - **Idempotent device detection** - Unknown devices appearing in data trigger automatic reload
   for seamless device creation
+- **Datalogger livedata_device_id** - Added `livedata_device_id` field to `DiscoveredDevice`
+  for consistent device matching when livedata key differs from device_id (e.g., MAC vs S/N)
 
 ### Changed
 
@@ -24,6 +26,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   devices are removed from the known list but re-added if still physically connected
 - **Removed automatic orphan cleanup** - Devices are never auto-deleted; only manual removal
   via HA UI
+- **Client device sync on re-discovery** - `client.update_discovered_devices()` keeps client
+  device list and device_type map in sync with coordinator after re-discovery
+- **Device type map optimized** - Built lazily on first poll as a dict lookup, not rebuilt
+  every cycle. Invalidated on re-discovery via `update_discovered_devices()`
+- **Known devices device_type sync** - Existing entries with `"unknown"` device_type
+  (from v8 migration) are updated from discovery results on each startup
+
+### Refactored
+
+- **client.py** - Extracted `update_discovered_devices()`, `_ensure_device_type_map()`,
+  `_inject_device_types()` helpers
+- **coordinator.py** - Extracted `_update_discovery_state()`, `_sync_known_devices()`,
+  `_handle_full_recovery()`, `_handle_partial_recovery()` from `_attempt_rediscovery()`
+- **\_\_init\_\_.py** - Extracted `_sync_known_devices()`, `_detect_missing_devices()` from
+  `async_setup_entry()`
 
 ### Migration
 
