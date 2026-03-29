@@ -52,6 +52,7 @@ class ABBFimerVSNRestClient:
         self._normalizer: VSNDataNormalizer | None = None
         self._discovered_devices = discovered_devices or []
         self.requires_auth = requires_auth
+        self._injected_device_types: set[str] = set()  # Track logged injections
 
     async def connect(self) -> str:
         """Connect and detect VSN model.
@@ -239,11 +240,13 @@ class ABBFimerVSNRestClient:
                         # Inject device_type from discovery
                         if discovered_device.device_type:
                             device_data["device_type"] = discovered_device.device_type
-                            _LOGGER.debug(
-                                "Injected device_type '%s' for device %s from discovery",
-                                discovered_device.device_type,
-                                device_id,
-                            )
+                            if device_id not in self._injected_device_types:
+                                _LOGGER.debug(
+                                    "Injected device_type '%s' for device %s from discovery",
+                                    discovered_device.device_type,
+                                    device_id,
+                                )
+                                self._injected_device_types.add(device_id)
 
         normalized_data = self._normalizer.normalize(raw_data)
 
