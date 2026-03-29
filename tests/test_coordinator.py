@@ -975,6 +975,65 @@ class TestAttemptRediscovery:
         mock_delete.assert_called_once()
 
     @pytest.mark.asyncio
+    async def test_attempt_rediscovery_partial_recovery(
+        self,
+        coordinator_with_missing: ABBFimerPVIVSNRestCoordinator,
+    ) -> None:
+        """Test re-discovery when some devices recover but others remain missing."""
+        # Add a second missing device
+        coordinator_with_missing._missing_devices = {TEST_INVERTER_SN, "meter-001"}
+
+        # Discovery finds inverter but not meter
+        partial_result = MockDiscoveryResult(
+            vsn_model=TEST_VSN_MODEL,
+            logger_sn=TEST_LOGGER_SN,
+            logger_model="WIFI LOGGER CARD",
+            firmware_version="1.9.2",
+            hostname=None,
+            devices=[
+                MockDiscoveredDevice(
+                    device_id=TEST_LOGGER_SN,
+                    raw_device_id=TEST_LOGGER_SN,
+                    device_type="datalogger",
+                    device_model="VSN300",
+                    manufacturer="ABB",
+                    firmware_version="1.9.2",
+                    hardware_version=None,
+                    is_datalogger=True,
+                ),
+                MockDiscoveredDevice(
+                    device_id=TEST_INVERTER_SN,
+                    raw_device_id=TEST_INVERTER_SN,
+                    device_type="inverter_3phases",
+                    device_model="PVI-10.0-OUTD",
+                    manufacturer="Power-One",
+                    firmware_version="C008",
+                    hardware_version=None,
+                    is_datalogger=False,
+                ),
+            ],
+            status_data={},
+        )
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.coordinator.discover_vsn_device",
+                new_callable=AsyncMock,
+                return_value=partial_result,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.coordinator.create_partial_discovery_issue",
+            ) as mock_create,
+        ):
+            await coordinator_with_missing._attempt_rediscovery()
+
+        # Inverter recovered, meter still missing
+        assert TEST_INVERTER_SN not in coordinator_with_missing._missing_devices
+        assert "meter-001" in coordinator_with_missing._missing_devices
+        assert not coordinator_with_missing._reload_scheduled
+        mock_create.assert_called_once()
+
+    @pytest.mark.asyncio
     async def test_attempt_rediscovery_skips_when_no_missing(
         self,
         coordinator_with_missing: ABBFimerPVIVSNRestCoordinator,
@@ -1091,6 +1150,20 @@ class TestAttemptRediscovery:
             d for d in new_data[CONF_KNOWN_DEVICES] if d["device_id"] == TEST_INVERTER_SN
         )
         assert inverter["device_type"] == "inverter_3phases"
+
+    def test_sync_known_devices_no_config_entry(
+        self,
+        coordinator_with_missing: ABBFimerPVIVSNRestCoordinator,
+        mock_discovery_result: MockDiscoveryResult,
+    ) -> None:
+        """Test _sync_known_devices is a no-op without config entry."""
+        coordinator_with_missing._config_entry = None
+
+        # Should not raise
+        coordinator_with_missing._sync_known_devices(mock_discovery_result)
+
+        # No update should happen
+        coordinator_with_missing.hass.config_entries.async_update_entry.assert_not_called()
 
     def test_handle_full_recovery(
         self,
