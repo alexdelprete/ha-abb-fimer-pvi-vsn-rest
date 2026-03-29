@@ -328,7 +328,7 @@ device hierarchy in Home Assistant with all standard device fields.
 
 **Smart Device ID Handling:**
 
-- VSN300 datalogger: Extract `sn` point → `"111033-3N16-1421"`
+- VSN300 datalogger: Extract `sn` point → `"110033-3A16-1234"`
 - VSN700 datalogger: Strip colons from MAC → `"ac1f0fb050b5"` (no underscores!)
 - Inverters: Use serial number as-is
 
@@ -359,7 +359,7 @@ class DiscoveryResult:
     logger_sn: str              # Logger serial number
     logger_model: str | None    # WIFI LOGGER CARD
     firmware_version: str | None # 1.9.2
-    hostname: str | None        # ABB-077909-3G82-3112.local
+    hostname: str | None        # ABB-076543-3F71-2345.local
     devices: list[DiscoveredDevice]
     status_data: dict[str, Any]
 ```text
@@ -396,14 +396,14 @@ All standard Home Assistant device fields now populated:
 
 | Field | Description | Example |
 |-------|-------------|---------|
-| `identifiers` | Stable device identifier | `{("abb_fimer_pvi_vsn_rest", "077909-3G82-3112")}` |
-| `name` | Model + Serial | `"PVI-10.0-OUTD (077909-3G82-3112)"` |
+| `identifiers` | Stable device identifier | `{("abb_fimer_pvi_vsn_rest", "076543-3F71-2345")}` |
+| `name` | Model + Serial | `"PVI-10.0-OUTD (076543-3F71-2345)"` |
 | `manufacturer` | From SunSpec `C_Mn` | `"Power-One"`, `"ABB"`, `"FIMER"` |
 | `model` | Device model | `"PVI-10.0-OUTD"`, `"REACT2-5.0-TL"` |
-| `serial_number` | Device S/N or clean MAC | `"077909-3G82-3112"` |
+| `serial_number` | Device S/N or clean MAC | `"076543-3F71-2345"` |
 | `sw_version` | **Firmware version** | `"C008"` (inverter), `"1.9.2"` (datalogger) |
 | `hw_version` | Hardware version | (if available) |
-| `configuration_url` | Datalogger web UI | `"http://ABB-077909-3G82-3112.local"` |
+| `configuration_url` | Datalogger web UI | `"http://ABB-076543-3F71-2345.local"` |
 | `via_device` | Device hierarchy | Links inverters to datalogger |
 
 **Key Fix:** Changed `sw_version` from VSN model (`"VSN300"`) to actual firmware version (`"C008"`, `"1.9.2"`)
@@ -413,10 +413,10 @@ All standard Home Assistant device fields now populated:
 Proper device relationships established:
 
 ```text
-VSN300 Datalogger (111033-3N16-1421)
+VSN300 Datalogger (110033-3A16-1234)
   ├─ configuration_url: http://abb-vsn300.local
   └─ Contains:
-      ├─ PVI-10.0-OUTD Inverter (077909-3G82-3112)
+      ├─ PVI-10.0-OUTD Inverter (076543-3F71-2345)
       │   └─ via_device: VSN300
       ├─ Energy Meter (if present)
       │   └─ via_device: VSN300
@@ -479,15 +479,15 @@ VSN300 Datalogger (111033-3N16-1421)
 **Before (Generic):**
 
 ```text
-Device: "VSN Device 077909-3G82-3112"
-Entity: sensor.vsn_device_077909_3g82_3112_watts
+Device: "VSN Device 076543-3F71-2345"
+Entity: sensor.vsn_device_076543_3f71_2345_watts
 ```text
 
 **After (Proper):**
 
 ```text
-Device: "PVI-10.0-OUTD (077909-3G82-3112)"
-Entity: sensor.pvi_10_0_outd_077909_3g82_3112_watts
+Device: "PVI-10.0-OUTD (076543-3F71-2345)"
+Entity: sensor.pvi_10_0_outd_076543_3f71_2345_watts
 ```text
 
 ### Commits (Discovery)
@@ -630,7 +630,7 @@ entity format using the VSN-SunSpec point mapping.
 **Device:** VSN300 at abb-vsn300.axel.dom
 
 - ✅ Device detection: VSN300
-- ✅ /v1/status: OK (logger: 111033-3N16-1421, inverter: PVI-10.0-OUTD)
+- ✅ /v1/status: OK (logger: 110033-3A16-1234, inverter: PVI-10.0-OUTD)
 - ✅ /v1/livedata: OK (2 devices, 52 raw points)
 - ✅ /v1/feeds: OK (2 feeds)
 - ⚠️ Normalization: Skipped (mapping file not in GitHub yet)

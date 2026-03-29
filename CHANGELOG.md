@@ -242,7 +242,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Datalogger Device Name** - Fixed datalogger device name not updating when custom name set via options flow
 - **Wrong Manufacturer** - Fixed Device Info showing "WIFI LOGGER CARD" as manufacturer instead of "ABB"/"FIMER"
 - **Default Device Name** - Fixed datalogger using ugly technical name instead of friendly format (e.g., "ABB Datalogger
-  VSN300 (111033-3N16-1421)")
+  VSN300 (110033-3A16-1234)")
 
 ### Refactoring
 
@@ -426,7 +426,7 @@ Thanks to **@ivanfmartinez** for the feature request in [Issue #19](https://gith
 
 **How It Works**:
 
-- Leave prefix empty → default naming (e.g., "Power-One Inverter PVI-10.0-OUTD (077909-3G82-3112)")
+- Leave prefix empty → default naming (e.g., "Power-One Inverter PVI-10.0-OUTD (076543-3F71-2345)")
 - Set custom prefix → completely replaces device name (e.g., "My Solar Inverter")
 - Entity IDs preserved by default (automations keep working)
 - Optional checkbox to regenerate entity IDs (breaks automations)
@@ -1335,10 +1335,10 @@ Thank you to all beta testers who helped make this release possible! 🙏
   - Users can now display uptime beautifully in dashboards while preserving statistics
 
 - **Device Names and Entity Friendly Names**: Switched from technical to friendly device names for beautiful UI
-  - Beta.25 had ugly technical device names: `abb_fimer_pvi_vsn_rest_datalogger_1110333n161421`
-  - Beta.25 had ugly entity friendly names: `abb_fimer_pvi_vsn_rest_datalogger_1110333n161421 Firmware Version`
-  - Now uses friendly format: `ABB Datalogger VSN300 (111033-3N16-1421)`
-  - Entity friendly names now beautiful: `ABB Datalogger VSN300 (111033-3N16-1421) Firmware Version`
+  - Beta.25 had ugly technical device names: `abb_fimer_pvi_vsn_rest_datalogger_1100333a161234`
+  - Beta.25 had ugly entity friendly names: `abb_fimer_pvi_vsn_rest_datalogger_1100333a161234 Firmware Version`
+  - Now uses friendly format: `ABB Datalogger VSN300 (110033-3A16-1234)`
+  - Entity friendly names now beautiful: `ABB Datalogger VSN300 (110033-3A16-1234) Firmware Version`
   - Follows Home Assistant best practices for modern integrations
 
 ### Technical Changes
@@ -1353,10 +1353,10 @@ Thank you to all beta testers who helped make this release possible! 🙏
 ⚠️ **IMPORTANT**: This release contains breaking changes requiring manual migration:
 
 1. **Entity IDs will change** (friendly device name is slugified by Home Assistant):
-   - FROM: `sensor.abb_fimer_pvi_vsn_rest_datalogger_1110333n161421_firmware_version`
-   - TO: `sensor.abb_datalogger_vsn300_111033_3n16_1421_firmware_version`
-   - FROM: `sensor.abb_fimer_pvi_vsn_rest_inverter_0779093g823112_power_peak_lifetime`
-   - TO: `sensor.power_one_inverter_pvi_10_0_outd_077909_3g82_3112_power_peak_lifetime`
+   - FROM: `sensor.abb_fimer_pvi_vsn_rest_datalogger_1100333a161234_firmware_version`
+   - TO: `sensor.abb_datalogger_vsn300_110033_3a16_1234_firmware_version`
+   - FROM: `sensor.abb_fimer_pvi_vsn_rest_inverter_0765433f712345_power_peak_lifetime`
+   - TO: `sensor.power_one_inverter_pvi_10_0_outd_076543_3f71_2345_power_peak_lifetime`
 
 2. **Device names and friendly names now beautiful** in UI
 
@@ -1383,7 +1383,7 @@ device names.
   - Beta.24's fix was incorrect: `suggested_object_id` is ONLY used when `has_entity_name=True`
   - When `has_entity_name=False`, Home Assistant completely ignores `suggested_object_id`
   - Implemented correct approach: `has_entity_name=True` + technical device names + simplified `suggested_object_id`
-  - Entity IDs now: `sensor.abb_fimer_pvi_vsn_rest_datalogger_1110333n161421_wlan0_essid` ✅
+  - Entity IDs now: `sensor.abb_fimer_pvi_vsn_rest_datalogger_1100333a161234_wlan0_essid` ✅
   - Entity names on device page: "WiFi SSID" ✅ (clean and friendly)
   - Device names: Technical format but acceptable trade-off for predictable entity IDs
 
@@ -1391,7 +1391,7 @@ device names.
 
 - Set `has_entity_name = True` (required for `suggested_object_id` to work)
 - Changed `suggested_object_id` to just point name (e.g., `"wlan0_essid"`)
-- Use technical device names: `abb_fimer_pvi_vsn_rest_datalogger_1110333n161421`
+- Use technical device names: `abb_fimer_pvi_vsn_rest_datalogger_1100333a161234`
 - Home Assistant combines device_name + suggested_object_id for predictable entity IDs
 
 ### Breaking Changes
@@ -1415,8 +1415,8 @@ device names.
 
 - **Entity ID Generation**: Fixed critical bug where `has_entity_name` was incorrectly set to `True` (introduced in beta.13)
   - Entity IDs were not following the intended format due to Home Assistant ignoring `suggested_object_id` when `has_entity_name=True`
-  - Users were seeing: `sensor.abb_fimer_datalogger_vsn300_111033_3n16_1421_system_load_average`
-  - Now correctly generates: `sensor.abb_fimer_pvi_vsn_rest_datalogger_1110333n161421_system_load_average`
+  - Users were seeing: `sensor.abb_fimer_datalogger_vsn300_110033_3a16_1234_system_load_average`
+  - Now correctly generates: `sensor.abb_fimer_pvi_vsn_rest_datalogger_1100333a161234_system_load_average`
   - Reverted `has_entity_name` from `True` back to `False` (beta.12 behavior)
   - Corrected misleading comments about how `has_entity_name=True` interacts with `suggested_object_id`
 
@@ -1550,8 +1550,8 @@ restores correct behavior from beta.12.
 
 ### Fixed
 
-- **Device Name Serial Number**: Fixed device names to show full serial number (e.g., `111033-3N16-1421`) instead of
-  truncated 8-character version (e.g., `111033-3N`)
+- **Device Name Serial Number**: Fixed device names to show full serial number (e.g., `110033-3A16-1234`) instead of
+  truncated 8-character version (e.g., `110033-3A`)
   - Updated `_format_device_name()` to use full original serial number with dashes preserved
   - Affects both hub device name and all device names in Home Assistant UI
   - Better device identification and consistency
@@ -1751,19 +1751,19 @@ professional naming conventions.
 ### Changed - Phase 2: Modern Entity Naming Pattern
 
 - **Simplified Template**: Removed model from entity IDs for cleaner naming
-  - Old: `sensor.abb_vsn_rest_inverter_0779093g823112_m103_watts`
-  - New: `sensor.abb_vsn_rest_inverter_0779093g823112_ac_power`
+  - Old: `sensor.abb_vsn_rest_inverter_0765433f712345_m103_watts`
+  - New: `sensor.abb_vsn_rest_inverter_0765433f712345_ac_power`
   - Template: `sensor.abb_vsn_rest_{device_type}_{serial}_{entity_name}`
 
 - **Modern Naming Pattern**: Implemented `has_entity_name=True`
-  - Device name: `abb_vsn_rest_{device_type}_{serial}` (e.g., `abb_vsn_rest_inverter_0779093g823112`)
+  - Device name: `abb_vsn_rest_{device_type}_{serial}` (e.g., `abb_vsn_rest_inverter_0765433f712345`)
   - Entity name: Friendly display name (e.g., "AC Power", "DC Current #1")
   - Entity ID: Auto-generated by HA from device + entity name
   - Device card display: Just entity name (no redundant device prefix)
 
 - **Unique ID Format**: Simplified without model
   - Format: `abb_vsn_rest_{device_type}_{serial}_{point_name}`
-  - Example: `abb_vsn_rest_inverter_0779093g823112_ac_power`
+  - Example: `abb_vsn_rest_inverter_0765433f712345_ac_power`
 
 ### Added
 
@@ -1802,10 +1802,10 @@ professional naming conventions.
 **Expected Results:**
 
 ```text
-Entity ID: sensor.abb_vsn_rest_inverter_0779093g823112_ac_power
-Friendly Name: "abb_vsn_rest_inverter_0779093g823112 AC Power" (auto by HA)
+Entity ID: sensor.abb_vsn_rest_inverter_0765433f712345_ac_power
+Friendly Name: "abb_vsn_rest_inverter_0765433f712345 AC Power" (auto by HA)
 Device Card Shows: "AC Power" (clean, no prefix)
-Unique ID: abb_vsn_rest_inverter_0779093g823112_ac_power
+Unique ID: abb_vsn_rest_inverter_0765433f712345_ac_power
 
 Attributes:
   friendly_name: "AC Power"
@@ -1845,8 +1845,8 @@ Attributes:
   - **Issue:** Beta.11 fix didn't work - entity IDs still showed only point name (e.g., `sensor.dc_current_2`)
   - **Root Cause:** Setting `self.entity_id` directly doesn't work reliably in modern Home Assistant
   - **Correct Fix:** With `has_entity_name=False`, HA slugifies `_attr_name` to create entity_id
-  - **Solution:** Set `_attr_name` to the full template string (e.g., `"abb_vsn_rest_inverter_0779093g823112_m160_dc_current_1"`)
-  - **Result:** Entity ID now correctly displays as `sensor.abb_vsn_rest_inverter_0779093g823112_m160_dc_current_1`
+  - **Solution:** Set `_attr_name` to the full template string (e.g., `"abb_vsn_rest_inverter_0765433f712345_m160_dc_current_1"`)
+  - **Result:** Entity ID now correctly displays as `sensor.abb_vsn_rest_inverter_0765433f712345_m160_dc_current_1`
   - **Friendly Name:** Moved to `extra_state_attributes["friendly_name"]` so users can still see "DC Current #1"
 
 ### Changed
@@ -1864,7 +1864,7 @@ Attributes:
 ### Fixed
 
 - **CRITICAL: Entity ID Generation Bug**: Fixed entity IDs showing only point name instead of full template format
-  - **Issue:** Entity IDs displayed as `sensor.dc_current_1` instead of `sensor.abb_vsn_rest_inverter_0779093g823112_m160_dc_current_1`
+  - **Issue:** Entity IDs displayed as `sensor.dc_current_1` instead of `sensor.abb_vsn_rest_inverter_0765433f712345_m160_dc_current_1`
   - **Root Cause:** Template string was assigned to `_attr_unique_id` (internal registry ID) but not to `entity_id` property
   - **Fix:** Added explicit `self.entity_id = f"sensor.{entity_id}"` assignment in [sensor.py:243](custom_components/abb_fimer_pvi_vsn_rest/sensor.py#L243)
   - **Impact:** This hotfix corrects the beta.10 release which had non-functional entity IDs
@@ -1879,12 +1879,12 @@ Attributes:
 ### ⚠️ BREAKING CHANGES
 
 - **Entity ID Template Redesign**: ALL entity IDs have changed to include full device context
-  - **Old format:** `sensor.{serial}_{point}` (e.g., `sensor.0779093g823112_watts`)
+  - **Old format:** `sensor.{serial}_{point}` (e.g., `sensor.0765433f712345_watts`)
   - **New format:** `sensor.abb_vsn_rest_{device_type}_{serial}_{model}_{point}`
   - **Examples:**
-    - Inverter M103: `sensor.abb_vsn_rest_inverter_0779093g823112_m103_watts`
-    - Inverter M160: `sensor.abb_vsn_rest_inverter_0779093g823112_m160_dc_current_1`
-    - Datalogger: `sensor.abb_vsn_rest_datalogger_1110333n161421_vsn300_uptime`
+    - Inverter M103: `sensor.abb_vsn_rest_inverter_0765433f712345_m103_watts`
+    - Inverter M160: `sensor.abb_vsn_rest_inverter_0765433f712345_m160_dc_current_1`
+    - Datalogger: `sensor.abb_vsn_rest_datalogger_1100333a161234_vsn300_uptime`
   - **Reason:** Prevents entity ID collisions in multi-device systems, provides clear device identification
   - **Impact:** All existing entities will be recreated with new IDs
   - **Action Required:**
@@ -2161,9 +2161,9 @@ v1.0.0-beta.7 had a critical bug that prevented mapping rows from loading. All u
   - Fixed M64061 points using technical names instead of labels (line 1233, 1289)
 
 - **Integration Title Format**: Changed hub/integration title to use parentheses for consistency with device names ([discovery.py:54](custom_components/abb_fimer_pvi_vsn_rest/abb_fimer_vsn_rest_client/discovery.py#L54))
-  - Changed from: `VSN300 - 111033-3N16-1421` (hyphen separator)
-  - Changed to: `VSN300 (111033-3N16-1421)` (parentheses)
-  - Now matches device naming format: `VSN300 (111033-3N16-1421)`, `PVI-10.0-OUTD (077909-3G82-3112)`
+  - Changed from: `VSN300 - 110033-3A16-1234` (hyphen separator)
+  - Changed to: `VSN300 (110033-3A16-1234)` (parentheses)
+  - Now matches device naming format: `VSN300 (110033-3A16-1234)`, `PVI-10.0-OUTD (076543-3F71-2345)`
   - Provides consistent naming across integration title, datalogger device, and inverter devices
 
 ### Fixed
@@ -2448,7 +2448,7 @@ After updating:
 
 **For Users:**
 
-- Devices now show proper names: "PVI-10.0-OUTD (077909-3G82-3112)"
+- Devices now show proper names: "PVI-10.0-OUTD (076543-3F71-2345)"
 - Device hierarchy shows inverters connected through datalogger
 - Firmware versions visible in device info
 - Click datalogger device to access web interface

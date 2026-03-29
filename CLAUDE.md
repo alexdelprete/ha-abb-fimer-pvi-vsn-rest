@@ -71,7 +71,7 @@ Centralized device discovery that runs during setup and configuration.
 - Extract logger metadata (S/N, model, firmware, hostname)
 - Discover all connected devices (inverters, meters, batteries)
 - Handle device identification:
-  - VSN300 datalogger: Extract `sn` point → `"111033-3N16-1421"`
+  - VSN300 datalogger: Extract `sn` point → `"110033-3A16-1234"`
   - VSN700 datalogger: Strip colons from MAC → `"ac1f0fb050b5"`
   - Inverters: Use serial number as-is
 - Extract device metadata:
@@ -100,7 +100,7 @@ class DiscoveryResult:
     logger_sn: str              # Logger serial number
     logger_model: str | None    # WIFI LOGGER CARD
     firmware_version: str | None # 1.9.2
-    hostname: str | None        # ABB-077909-3G82-3112.local
+    hostname: str | None        # ABB-076543-3F71-2345.local
     devices: list[DiscoveredDevice]
     status_data: dict[str, Any]
 ```text
@@ -256,7 +256,7 @@ Creates Home Assistant sensor entities using modern naming pattern.
 
   - Format: `{DOMAIN}_{device_type}_{serial_compact}`
   - Uses DOMAIN constant from manifest.json: `abb_fimer_pvi_vsn_rest`
-  - Example: `abb_fimer_pvi_vsn_rest_inverter_0779093g823112`
+  - Example: `abb_fimer_pvi_vsn_rest_inverter_0765433f712345`
   - Device type simplified: `inverter`, `datalogger`, `meter`, `battery`
   - Serial compacted: remove `-`, `:`, `_` and lowercase
 
@@ -282,7 +282,7 @@ Creates Home Assistant sensor entities using modern naming pattern.
 - **Unique ID**: Stable identifier (v1.0.0-beta.22+)
 
   - Format: `{domain}_{device_type}_{serial_compact}_{point_name}`
-  - Example: `abb_fimer_pvi_vsn_rest_inverter_0779093g823112_wlan0_essid`
+  - Example: `abb_fimer_pvi_vsn_rest_inverter_0765433f712345_wlan0_essid`
   - Never changes once set
 
 **Sensor Attributes (Comprehensive):**
@@ -292,7 +292,7 @@ All sensors include rich metadata attributes:
 ```python
 {
     # Identity
-    "device_id": "077909-3G82-3112",
+    "device_id": "076543-3F71-2345",
     "device_type": "inverter_3phases",
     "point_name": "watts",
 
@@ -323,7 +323,7 @@ All sensors include rich metadata attributes:
 All HA device info fields populated from discovery:
 
 - `identifiers`: `(DOMAIN, device_id)`
-- `name`: Device identifier (e.g., `"abb_vsn_rest_inverter_0779093g823112"`)
+- `name`: Device identifier (e.g., `"abb_vsn_rest_inverter_0765433f712345"`)
 - `manufacturer`: From `C_Mn` point
 - `model`: Device model
 - `serial_number`: Device S/N or clean MAC
@@ -493,9 +493,9 @@ if vsn_model == "VSN700" and point_name in A_TO_MA_POINTS:
 
 **Implementation**:
 
-- Old: `abb_vsn_rest_inverter_0779093g823112_m103_watts`
-- New: `abb_vsn_rest_inverter_0779093g823112_watts`
-- Unique ID: `abb_vsn_rest_inverter_0779093g823112_watts`
+- Old: `abb_vsn_rest_inverter_0765433f712345_m103_watts`
+- New: `abb_vsn_rest_inverter_0765433f712345_watts`
+- Unique ID: `abb_vsn_rest_inverter_0765433f712345_watts`
 
 ### Entity ID Standardization with Domain Prefix (v1.0.0-beta.22)
 
@@ -512,14 +512,14 @@ if vsn_model == "VSN700" and point_name in A_TO_MA_POINTS:
 
 **Before (beta.21)**:
 
-- Entity ID: `sensor.inverter_0779093g823112_ac_power`
-- Unique ID: `abb_vsn_rest_inverter_0779093g823112_ac_power`
+- Entity ID: `sensor.inverter_0765433f712345_ac_power`
+- Unique ID: `abb_vsn_rest_inverter_0765433f712345_ac_power`
 - Issue: No domain prefix in entity_id, inconsistent formats
 
 **After (beta.22)**:
 
-- Entity ID: `sensor.abb_fimer_pvi_vsn_rest_inverter_0779093g823112_ac_power`
-- Unique ID: `abb_fimer_pvi_vsn_rest_inverter_0779093g823112_ac_power`
+- Entity ID: `sensor.abb_fimer_pvi_vsn_rest_inverter_0765433f712345_ac_power`
+- Unique ID: `abb_fimer_pvi_vsn_rest_inverter_0765433f712345_ac_power`
 - Both use DOMAIN constant: `abb_fimer_pvi_vsn_rest`
 
 **Code Changes**:
@@ -548,10 +548,10 @@ device_name = format_device_name(
     device_model=device_model,
     device_sn_original=self._device_id,
 )
-# Result: "ABB Datalogger VSN300 (111033-3N16-1421)"
-# Entity ID: sensor.abb_datalogger_vsn300_111033_3n16_1421_firmware_version
+# Result: "ABB Datalogger VSN300 (110033-3A16-1234)"
+# Entity ID: sensor.abb_datalogger_vsn300_110033_3a16_1234_firmware_version
 #   (derived from slugify(device_name) + slugify(translated_display_name))
-# Friendly Name: "ABB Datalogger VSN300 (111033-3N16-1421) Firmware Version"
+# Friendly Name: "ABB Datalogger VSN300 (110033-3A16-1234) Firmware Version"
 ```text
 
 **Breaking Change (v1.4.1)**: Removed category prefixes from 57 display names (e.g., "Inverter - Type" → "Type"). Entity IDs changed accordingly. One-time config entry migration (version 1→2) auto-renames existing entity IDs.
@@ -875,8 +875,8 @@ Use this data to verify mapping and normalization.
 
 **Example Device IDs:**
 
-- Inverter: `"077909-3G82-3112"`
-- Datalogger MAC: `"a4:06:e9:7f:42:49"` → S/N: `"111033-3N16-1421"`
+- Inverter: `"076543-3F71-2345"`
+- Datalogger MAC: `"a8:03:e7:4c:31:5a"` → S/N: `"110033-3A16-1234"`
 
 ### VSN700
 
@@ -1209,24 +1209,24 @@ From config_entry:
 **Config Entry:**
 
 - Based on logger serial number: `logger_sn.lower()`
-- Example: `"111033-3n16-1421"`
+- Example: `"110033-3a16-1421"`
 
 **Devices:**
 
 - Identifier: `(DOMAIN, device_id)`
 - Device Name: `abb_vsn_rest_{device_type}_{serial_compact}`
-- Example: `abb_vsn_rest_inverter_0779093g823112`
+- Example: `abb_vsn_rest_inverter_0765433f712345`
 
 **Sensors:**
 
 - **Unique ID** (internal): `{device_identifier}_{point_name}`
 
-  - Example: `abb_vsn_rest_inverter_0779093g823112_watts`
+  - Example: `abb_vsn_rest_inverter_0765433f712345_watts`
   - Format: Simplified without model
 
 - **Entity ID** (visible): Auto-generated by HA from device + entity name
 
-  - Example: `sensor.abb_vsn_rest_inverter_0779093g823112_ac_power`
+  - Example: `sensor.abb_vsn_rest_inverter_0765433f712345_ac_power`
   - Pattern: `sensor.{device_name}_{slugified_entity_name}`
 
 **Serial Number Compacting:**
@@ -1234,9 +1234,9 @@ From config_entry:
 - Remove separators: `-`, `:`, `_`
 - Convert to lowercase
 - Examples:
-  - `077909-3G82-3112` → `0779093g823112`
+  - `076543-3F71-2345` → `0765433f712345`
   - `ac:1f:0f:b0:50:b5` → `ac1f0fb050b5`
-  - `111033-3N16-1421` → `1110333n161421`
+  - `110033-3A16-1234` → `1100333a161234`
 
 ## Dependencies
 
