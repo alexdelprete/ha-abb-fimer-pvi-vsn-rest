@@ -501,3 +501,131 @@ class TestABBFimerVSNRestClientClose:
         await client.close()
 
         assert client._normalizer is None
+
+
+class TestUpdateDiscoveredDevices:
+    """Tests for update_discovered_devices method."""
+
+    def test_updates_device_list(self) -> None:
+        """Test that update_discovered_devices replaces the device list."""
+        session = MagicMock(spec=aiohttp.ClientSession)
+        client = ABBFimerVSNRestClient(session=session, base_url="http://test")
+
+        new_devices = [
+            DiscoveredDevice(
+                device_id="new-device",
+                raw_device_id="new-device",
+                device_type="meter",
+                device_model=None,
+                manufacturer=None,
+                firmware_version=None,
+                hardware_version=None,
+                is_datalogger=False,
+            )
+        ]
+        client.update_discovered_devices(new_devices)
+
+        assert client._discovered_devices == new_devices
+
+    def test_invalidates_device_type_map(self) -> None:
+        """Test that update_discovered_devices invalidates the cached map."""
+        session = MagicMock(spec=aiohttp.ClientSession)
+        client = ABBFimerVSNRestClient(session=session, base_url="http://test")
+        # Simulate a cached map
+        client._device_type_map = {"old-key": "old-type"}
+
+        client.update_discovered_devices([])
+
+        assert client._device_type_map is None
+
+
+class TestDeviceTypeInjection:
+    """Tests for _ensure_device_type_map and _inject_device_types."""
+
+    def test_ensure_device_type_map_builds_from_devices(self) -> None:
+        """Test map is built from discovered devices."""
+        session = MagicMock(spec=aiohttp.ClientSession)
+        devices = [
+            DiscoveredDevice(
+                device_id="inv-001",
+                raw_device_id="inv-001",
+                device_type="inverter_3phases",
+                device_model=None,
+                manufacturer=None,
+                firmware_version=None,
+                hardware_version=None,
+                is_datalogger=False,
+            ),
+            DiscoveredDevice(
+                device_id="logger-sn",
+                raw_device_id="logger-sn",
+                device_type="datalogger",
+                device_model=None,
+                manufacturer=None,
+                firmware_version=None,
+                hardware_version=None,
+                is_datalogger=True,
+                livedata_device_id="aa:bb:cc:dd:ee:ff",
+            ),
+        ]
+        client = ABBFimerVSNRestClient(
+            session=session, base_url="http://test", discovered_devices=devices
+        )
+
+        client._ensure_device_type_map()
+
+        assert client._device_type_map is not None
+        assert client._device_type_map["inv-001"] == "inverter_3phases"
+        assert client._device_type_map["logger-sn"] == "datalogger"
+        assert client._device_type_map["aa:bb:cc:dd:ee:ff"] == "datalogger"
+
+    def test_ensure_device_type_map_skips_if_cached(self) -> None:
+        """Test map is not rebuilt if already cached."""
+        session = MagicMock(spec=aiohttp.ClientSession)
+        client = ABBFimerVSNRestClient(session=session, base_url="http://test")
+        client._device_type_map = {"existing": "type"}
+
+        client._ensure_device_type_map()
+
+        assert client._device_type_map == {"existing": "type"}
+
+    def test_ensure_device_type_map_skips_if_no_devices(self) -> None:
+        """Test map is not built if no discovered devices."""
+        session = MagicMock(spec=aiohttp.ClientSession)
+        client = ABBFimerVSNRestClient(session=session, base_url="http://test")
+
+        client._ensure_device_type_map()
+
+        assert client._device_type_map is None
+
+    def test_inject_device_types(self) -> None:
+        """Test device types are injected into raw data."""
+        session = MagicMock(spec=aiohttp.ClientSession)
+        client = ABBFimerVSNRestClient(session=session, base_url="http://test")
+        client._device_type_map = {
+            "inv-001": "inverter_3phases",
+            "aa:bb:cc:dd:ee:ff": "datalogger",
+        }
+
+        raw_data = {
+            "inv-001": {"points": []},
+            "aa:bb:cc:dd:ee:ff": {"points": []},
+            "unknown-device": {"points": []},
+        }
+
+        client._inject_device_types(raw_data)
+
+        assert raw_data["inv-001"]["device_type"] == "inverter_3phases"
+        assert raw_data["aa:bb:cc:dd:ee:ff"]["device_type"] == "datalogger"
+        assert "device_type" not in raw_data["unknown-device"]
+
+    def test_inject_device_types_noop_when_no_map(self) -> None:
+        """Test injection is a no-op when map is empty."""
+        session = MagicMock(spec=aiohttp.ClientSession)
+        client = ABBFimerVSNRestClient(session=session, base_url="http://test")
+        client._device_type_map = {}
+
+        raw_data = {"inv-001": {"points": []}}
+        client._inject_device_types(raw_data)
+
+        assert "device_type" not in raw_data["inv-001"]

@@ -55,6 +55,7 @@ class MockDiscoveredDevice:
     firmware_version: str | None
     hardware_version: str | None
     is_datalogger: bool
+    livedata_device_id: str | None = None
 
 
 @dataclass

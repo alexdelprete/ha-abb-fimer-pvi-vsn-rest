@@ -9,10 +9,13 @@ import pytest
 from custom_components.abb_fimer_pvi_vsn_rest.const import DOMAIN
 from custom_components.abb_fimer_pvi_vsn_rest.repairs import (
     ISSUE_CONNECTION_FAILED,
+    ISSUE_PARTIAL_DISCOVERY,
     NOTIFICATION_RECOVERY,
     create_connection_issue,
+    create_partial_discovery_issue,
     create_recovery_notification,
     delete_connection_issue,
+    delete_partial_discovery_issue,
 )
 from homeassistant.core import HomeAssistant
 
@@ -23,6 +26,10 @@ class TestIssueConstants:
     def test_connection_failed_issue_id(self) -> None:
         """Test connection failed issue ID."""
         assert ISSUE_CONNECTION_FAILED == "connection_failed"
+
+    def test_partial_discovery_issue_id(self) -> None:
+        """Test partial discovery issue ID."""
+        assert ISSUE_PARTIAL_DISCOVERY == "partial_discovery"
 
     def test_notification_recovery_id(self) -> None:
         """Test recovery notification ID."""
@@ -159,3 +166,43 @@ class TestCreateRecoveryNotification:
 
         # The notification ID format should be: {DOMAIN}_{NOTIFICATION_RECOVERY}_{entry_id}
         # This is verified by the function implementation
+
+
+class TestPartialDiscoveryIssue:
+    """Tests for partial discovery repair issue functions."""
+
+    @pytest.fixture
+    def mock_hass(self) -> MagicMock:
+        """Create mock HomeAssistant instance."""
+        return MagicMock(spec=HomeAssistant)
+
+    def test_create_partial_discovery_issue(self, mock_hass: MagicMock) -> None:
+        """Test creating a partial discovery issue."""
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.repairs.ir.async_create_issue"
+        ) as mock_create:
+            create_partial_discovery_issue(
+                mock_hass,
+                entry_id="entry_123",
+                device_name="VSN300 (111033-3N16-1421)",
+                missing_devices=["077909-3G82-3112"],
+            )
+
+        mock_create.assert_called_once()
+        call_kwargs = mock_create.call_args[1]
+        assert call_kwargs["is_fixable"] is False
+        assert call_kwargs["is_persistent"] is True
+        assert call_kwargs["translation_key"] == ISSUE_PARTIAL_DISCOVERY
+        assert call_kwargs["translation_placeholders"]["device_name"] == "VSN300 (111033-3N16-1421)"
+        assert "077909-3G82-3112" in call_kwargs["translation_placeholders"]["missing_devices"]
+
+    def test_delete_partial_discovery_issue(self, mock_hass: MagicMock) -> None:
+        """Test deleting a partial discovery issue."""
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.repairs.ir.async_delete_issue"
+        ) as mock_delete:
+            delete_partial_discovery_issue(mock_hass, entry_id="entry_123")
+
+        mock_delete.assert_called_once_with(
+            mock_hass, DOMAIN, f"{ISSUE_PARTIAL_DISCOVERY}_entry_123"
+        )

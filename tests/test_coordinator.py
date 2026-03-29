@@ -16,6 +16,7 @@ from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.exceptio
 from custom_components.abb_fimer_pvi_vsn_rest.const import (
     CONF_ENABLE_REPAIR_NOTIFICATION,
     CONF_FAILURES_THRESHOLD,
+    CONF_KNOWN_DEVICES,
     CONF_RECOVERY_SCRIPT,
     DEFAULT_ENABLE_REPAIR_NOTIFICATION,
     DEFAULT_FAILURES_THRESHOLD,
@@ -32,6 +33,7 @@ from .conftest import (
     TEST_LOGGER_SN,
     TEST_SCAN_INTERVAL,
     TEST_VSN_MODEL,
+    MockDiscoveredDevice,
     MockDiscoveryResult,
 )
 
@@ -862,3 +864,298 @@ class TestRecoveryScript:
         assert call_kwargs["script_name"] == "script.my_script"
         # script_executed_at should be a formatted time string
         assert call_kwargs["script_executed_at"] is not None
+
+
+class TestAttemptRediscovery:
+    """Tests for _attempt_rediscovery and related helper methods."""
+
+    @pytest.fixture
+    def coordinator_with_missing(
+        self,
+        mock_hass: MagicMock,
+        mock_vsn_client: MagicMock,
+        mock_discovery_result: MockDiscoveryResult,
+    ) -> ABBFimerPVIVSNRestCoordinator:
+        """Create coordinator with missing devices."""
+        entry = MagicMock()
+        entry.entry_id = "test_entry_id"
+        entry.options = {
+            CONF_ENABLE_REPAIR_NOTIFICATION: True,
+            CONF_FAILURES_THRESHOLD: DEFAULT_FAILURES_THRESHOLD,
+            CONF_RECOVERY_SCRIPT: "",
+        }
+        entry.data = {
+            CONF_KNOWN_DEVICES: [
+                {"device_id": TEST_LOGGER_SN, "device_type": "datalogger", "is_datalogger": True},
+                {
+                    "device_id": TEST_INVERTER_SN,
+                    "device_type": "inverter_3phases",
+                    "is_datalogger": False,
+                },
+            ],
+        }
+        return ABBFimerPVIVSNRestCoordinator(
+            hass=mock_hass,
+            client=mock_vsn_client,
+            update_interval=timedelta(seconds=TEST_SCAN_INTERVAL),
+            discovery_result=mock_discovery_result,
+            entry_id="test_entry_id",
+            host=TEST_HOST,
+            config_entry=entry,
+            missing_devices={TEST_INVERTER_SN},
+        )
+
+    @pytest.mark.asyncio
+    async def test_attempt_rediscovery_devices_still_missing(
+        self, coordinator_with_missing: ABBFimerPVIVSNRestCoordinator
+    ) -> None:
+        """Test re-discovery when devices are still missing."""
+        # Discovery returns only datalogger
+        datalogger_only = MockDiscoveryResult(
+            vsn_model=TEST_VSN_MODEL,
+            logger_sn=TEST_LOGGER_SN,
+            logger_model="WIFI LOGGER CARD",
+            firmware_version="1.9.2",
+            hostname=None,
+            devices=[
+                MockDiscoveredDevice(
+                    device_id=TEST_LOGGER_SN,
+                    raw_device_id=TEST_LOGGER_SN,
+                    device_type="datalogger",
+                    device_model="VSN300",
+                    manufacturer="ABB",
+                    firmware_version="1.9.2",
+                    hardware_version=None,
+                    is_datalogger=True,
+                ),
+            ],
+            status_data={},
+        )
+
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.coordinator.discover_vsn_device",
+            new_callable=AsyncMock,
+            return_value=datalogger_only,
+        ):
+            await coordinator_with_missing._attempt_rediscovery()
+
+        # Inverter still missing
+        assert TEST_INVERTER_SN in coordinator_with_missing._missing_devices
+        assert not coordinator_with_missing._reload_scheduled
+
+    @pytest.mark.asyncio
+    async def test_attempt_rediscovery_full_recovery(
+        self,
+        coordinator_with_missing: ABBFimerPVIVSNRestCoordinator,
+        mock_discovery_result: MockDiscoveryResult,
+    ) -> None:
+        """Test re-discovery when all devices recover."""
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.coordinator.discover_vsn_device",
+                new_callable=AsyncMock,
+                return_value=mock_discovery_result,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.coordinator.delete_partial_discovery_issue",
+            ) as mock_delete,
+        ):
+            await coordinator_with_missing._attempt_rediscovery()
+
+        assert len(coordinator_with_missing._missing_devices) == 0
+        assert coordinator_with_missing._reload_scheduled is True
+        mock_delete.assert_called_once()
+
+    @pytest.mark.asyncio
+    async def test_attempt_rediscovery_skips_when_no_missing(
+        self,
+        coordinator_with_missing: ABBFimerPVIVSNRestCoordinator,
+    ) -> None:
+        """Test re-discovery is skipped when no devices are missing."""
+        coordinator_with_missing._missing_devices = set()
+
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.coordinator.discover_vsn_device",
+            new_callable=AsyncMock,
+        ) as mock_discover:
+            await coordinator_with_missing._attempt_rediscovery()
+
+        mock_discover.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_attempt_rediscovery_skips_when_reload_scheduled(
+        self,
+        coordinator_with_missing: ABBFimerPVIVSNRestCoordinator,
+    ) -> None:
+        """Test re-discovery is skipped when reload already scheduled."""
+        coordinator_with_missing._reload_scheduled = True
+
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.coordinator.discover_vsn_device",
+            new_callable=AsyncMock,
+        ) as mock_discover:
+            await coordinator_with_missing._attempt_rediscovery()
+
+        mock_discover.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_attempt_rediscovery_handles_connection_error(
+        self,
+        coordinator_with_missing: ABBFimerPVIVSNRestCoordinator,
+    ) -> None:
+        """Test re-discovery gracefully handles connection errors."""
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.coordinator.discover_vsn_device",
+            new_callable=AsyncMock,
+            side_effect=VSNConnectionError("Connection refused"),
+        ):
+            await coordinator_with_missing._attempt_rediscovery()
+
+        # Should not crash, devices still missing
+        assert TEST_INVERTER_SN in coordinator_with_missing._missing_devices
+        assert not coordinator_with_missing._reload_scheduled
+
+    def test_update_discovery_state_syncs_client(
+        self,
+        coordinator_with_missing: ABBFimerPVIVSNRestCoordinator,
+        mock_discovery_result: MockDiscoveryResult,
+    ) -> None:
+        """Test _update_discovery_state syncs coordinator and client."""
+        coordinator_with_missing._update_discovery_state(mock_discovery_result)
+
+        assert coordinator_with_missing.discovery_result == mock_discovery_result
+        assert coordinator_with_missing.discovered_devices == mock_discovery_result.devices
+        # Client should have been updated
+        coordinator_with_missing.client.update_discovered_devices.assert_called_once_with(
+            mock_discovery_result.devices
+        )
+
+    def test_sync_known_devices_adds_new(
+        self,
+        coordinator_with_missing: ABBFimerPVIVSNRestCoordinator,
+    ) -> None:
+        """Test _sync_known_devices adds new devices to config entry."""
+        new_device = MockDiscoveredDevice(
+            device_id="new-device-001",
+            raw_device_id="new-device-001",
+            device_type="meter",
+            device_model="Meter-1",
+            manufacturer="ABB",
+            firmware_version="1.0",
+            hardware_version=None,
+            is_datalogger=False,
+        )
+        new_result = MockDiscoveryResult(
+            vsn_model=TEST_VSN_MODEL,
+            logger_sn=TEST_LOGGER_SN,
+            logger_model="WIFI LOGGER CARD",
+            firmware_version="1.9.2",
+            hostname=None,
+            devices=[*coordinator_with_missing.discovered_devices, new_device],
+            status_data={},
+        )
+
+        coordinator_with_missing._sync_known_devices(new_result)
+
+        # Config entry should have been updated
+        call_args = coordinator_with_missing.hass.config_entries.async_update_entry.call_args
+        new_data = call_args.kwargs.get("data", call_args[1].get("data", {}))
+        known = new_data[CONF_KNOWN_DEVICES]
+        device_ids = {d["device_id"] for d in known}
+        assert "new-device-001" in device_ids
+
+    def test_sync_known_devices_updates_device_type(
+        self,
+        coordinator_with_missing: ABBFimerPVIVSNRestCoordinator,
+        mock_discovery_result: MockDiscoveryResult,
+    ) -> None:
+        """Test _sync_known_devices updates stale device_type."""
+        # Set inverter type to "unknown" (as migration would)
+        coordinator_with_missing._config_entry.data[CONF_KNOWN_DEVICES][1]["device_type"] = (
+            "unknown"
+        )
+
+        coordinator_with_missing._sync_known_devices(mock_discovery_result)
+
+        call_args = coordinator_with_missing.hass.config_entries.async_update_entry.call_args
+        new_data = call_args.kwargs.get("data", call_args[1].get("data", {}))
+        inverter = next(
+            d for d in new_data[CONF_KNOWN_DEVICES] if d["device_id"] == TEST_INVERTER_SN
+        )
+        assert inverter["device_type"] == "inverter_3phases"
+
+    def test_handle_full_recovery(
+        self,
+        coordinator_with_missing: ABBFimerPVIVSNRestCoordinator,
+    ) -> None:
+        """Test _handle_full_recovery clears issue and schedules reload."""
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.coordinator.delete_partial_discovery_issue",
+        ) as mock_delete:
+            coordinator_with_missing._handle_full_recovery()
+
+        mock_delete.assert_called_once_with(coordinator_with_missing.hass, "test_entry_id")
+        assert coordinator_with_missing._reload_scheduled is True
+
+    def test_handle_partial_recovery(
+        self,
+        coordinator_with_missing: ABBFimerPVIVSNRestCoordinator,
+    ) -> None:
+        """Test _handle_partial_recovery updates repair issue."""
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.coordinator.create_partial_discovery_issue",
+        ) as mock_create:
+            coordinator_with_missing._handle_partial_recovery()
+
+        mock_create.assert_called_once()
+
+
+class TestIdempotencyCheck:
+    """Tests for unknown device detection in _async_update_data."""
+
+    @pytest.fixture
+    def coordinator_with_known(
+        self,
+        mock_hass: MagicMock,
+        mock_vsn_client: MagicMock,
+        mock_discovery_result: MockDiscoveryResult,
+    ) -> ABBFimerPVIVSNRestCoordinator:
+        """Create coordinator with known_devices configured."""
+        entry = MagicMock()
+        entry.entry_id = "test_entry_id"
+        entry.options = {
+            CONF_ENABLE_REPAIR_NOTIFICATION: True,
+            CONF_FAILURES_THRESHOLD: DEFAULT_FAILURES_THRESHOLD,
+            CONF_RECOVERY_SCRIPT: "",
+        }
+        entry.data = {
+            CONF_KNOWN_DEVICES: [
+                {"device_id": TEST_LOGGER_SN, "device_type": "datalogger", "is_datalogger": True},
+            ],
+        }
+        return ABBFimerPVIVSNRestCoordinator(
+            hass=mock_hass,
+            client=mock_vsn_client,
+            update_interval=timedelta(seconds=TEST_SCAN_INTERVAL),
+            discovery_result=mock_discovery_result,
+            entry_id="test_entry_id",
+            host=TEST_HOST,
+            config_entry=entry,
+        )
+
+    @pytest.mark.asyncio
+    async def test_unknown_device_triggers_reload(
+        self,
+        coordinator_with_known: ABBFimerPVIVSNRestCoordinator,
+        mock_normalized_data: dict,
+    ) -> None:
+        """Test that unknown devices in data trigger a reload."""
+        # Data contains inverter, but known_devices only has datalogger
+        coordinator_with_known.client.get_normalized_data = AsyncMock(
+            return_value=mock_normalized_data
+        )
+
+        await coordinator_with_known._async_update_data()
+
+        assert coordinator_with_known._reload_scheduled is True
+        coordinator_with_known.hass.async_create_task.assert_called()

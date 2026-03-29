@@ -17,7 +17,9 @@ from custom_components.abb_fimer_pvi_vsn_rest import (
     _async_migrate_options,
     _async_populate_known_devices_v8,
     _clear_startup_failure,
+    _detect_missing_devices,
     _handle_startup_failure,
+    _sync_known_devices,
     async_migrate_entry,
     async_remove_config_entry_device,
     async_setup_entry,
@@ -1826,3 +1828,291 @@ class TestAsyncMigrateEntry:
         result = await async_migrate_entry(mock_hass, entry)
 
         assert result is False
+
+
+class TestSyncKnownDevices:
+    """Tests for _sync_known_devices helper function."""
+
+    @pytest.fixture
+    def mock_hass(self) -> MagicMock:
+        """Create mock Home Assistant instance."""
+        hass = MagicMock(spec=HomeAssistant)
+        hass.config_entries = MagicMock()
+        return hass
+
+    @pytest.fixture
+    def mock_config_entry(self) -> MagicMock:
+        """Create mock config entry with known devices."""
+        entry = MagicMock(spec=ConfigEntry)
+        entry.entry_id = "test_entry_id"
+        entry.data = {
+            "known_devices": [
+                {
+                    "device_id": "111033-3N16-1421",
+                    "device_type": "datalogger",
+                    "is_datalogger": True,
+                },
+                {"device_id": "077909-3G82-3112", "device_type": "unknown", "is_datalogger": False},
+            ],
+        }
+        return entry
+
+    @pytest.fixture
+    def mock_discovery_result(self) -> DiscoveryResult:
+        """Create discovery result with both devices."""
+        return DiscoveryResult(
+            vsn_model="VSN300",
+            requires_auth=True,
+            logger_sn="111033-3N16-1421",
+            logger_model="VSN300",
+            firmware_version="1.9.2",
+            hostname=None,
+            devices=[
+                DiscoveredDevice(
+                    device_id="111033-3N16-1421",
+                    raw_device_id="111033-3N16-1421",
+                    device_type="datalogger",
+                    device_model="VSN300",
+                    manufacturer="ABB",
+                    firmware_version="1.9.2",
+                    hardware_version=None,
+                    is_datalogger=True,
+                ),
+                DiscoveredDevice(
+                    device_id="077909-3G82-3112",
+                    raw_device_id="077909-3G82-3112",
+                    device_type="inverter_3phases",
+                    device_model="PVI-10.0-OUTD",
+                    manufacturer="Power-One",
+                    firmware_version="C008",
+                    hardware_version=None,
+                    is_datalogger=False,
+                ),
+            ],
+            status_data={},
+        )
+
+    def test_updates_stale_device_type(
+        self,
+        mock_hass: MagicMock,
+        mock_config_entry: MagicMock,
+        mock_discovery_result: DiscoveryResult,
+    ) -> None:
+        """Test that stale device_type is updated from discovery."""
+        _sync_known_devices(mock_hass, mock_config_entry, mock_discovery_result)
+
+        call_args = mock_hass.config_entries.async_update_entry.call_args
+        new_data = call_args.kwargs.get("data", call_args[1].get("data", {}))
+        inverter = next(
+            d for d in new_data["known_devices"] if d["device_id"] == "077909-3G82-3112"
+        )
+        assert inverter["device_type"] == "inverter_3phases"
+
+    def test_adds_new_devices(
+        self,
+        mock_hass: MagicMock,
+        mock_config_entry: MagicMock,
+    ) -> None:
+        """Test that newly discovered devices are added."""
+        mock_config_entry.data = {"known_devices": []}
+        result = DiscoveryResult(
+            vsn_model="VSN300",
+            requires_auth=True,
+            logger_sn="111033-3N16-1421",
+            logger_model="VSN300",
+            firmware_version="1.9.2",
+            hostname=None,
+            devices=[
+                DiscoveredDevice(
+                    device_id="new-device",
+                    raw_device_id="new-device",
+                    device_type="meter",
+                    device_model="Meter-1",
+                    manufacturer="ABB",
+                    firmware_version="1.0",
+                    hardware_version=None,
+                    is_datalogger=False,
+                ),
+            ],
+            status_data={},
+        )
+
+        _sync_known_devices(mock_hass, mock_config_entry, result)
+
+        call_args = mock_hass.config_entries.async_update_entry.call_args
+        new_data = call_args.kwargs.get("data", call_args[1].get("data", {}))
+        assert len(new_data["known_devices"]) == 1
+        assert new_data["known_devices"][0]["device_id"] == "new-device"
+
+    def test_no_update_when_unchanged(
+        self,
+        mock_hass: MagicMock,
+        mock_config_entry: MagicMock,
+    ) -> None:
+        """Test no config entry update when nothing changed."""
+        # Set correct device_type so no update needed
+        mock_config_entry.data["known_devices"][1]["device_type"] = "inverter_3phases"
+        result = DiscoveryResult(
+            vsn_model="VSN300",
+            requires_auth=True,
+            logger_sn="111033-3N16-1421",
+            logger_model="VSN300",
+            firmware_version="1.9.2",
+            hostname=None,
+            devices=[
+                DiscoveredDevice(
+                    device_id="111033-3N16-1421",
+                    raw_device_id="111033-3N16-1421",
+                    device_type="datalogger",
+                    device_model="VSN300",
+                    manufacturer="ABB",
+                    firmware_version="1.9.2",
+                    hardware_version=None,
+                    is_datalogger=True,
+                ),
+                DiscoveredDevice(
+                    device_id="077909-3G82-3112",
+                    raw_device_id="077909-3G82-3112",
+                    device_type="inverter_3phases",
+                    device_model="PVI-10.0-OUTD",
+                    manufacturer="Power-One",
+                    firmware_version="C008",
+                    hardware_version=None,
+                    is_datalogger=False,
+                ),
+            ],
+            status_data={},
+        )
+
+        _sync_known_devices(mock_hass, mock_config_entry, result)
+
+        mock_hass.config_entries.async_update_entry.assert_not_called()
+
+
+class TestDetectMissingDevices:
+    """Tests for _detect_missing_devices helper function."""
+
+    def test_detects_missing_non_datalogger(self) -> None:
+        """Test detection of missing non-datalogger devices."""
+        entry = MagicMock(spec=ConfigEntry)
+        entry.data = {
+            "known_devices": [
+                {"device_id": "logger-001", "device_type": "datalogger", "is_datalogger": True},
+                {"device_id": "inv-001", "device_type": "inverter_3phases", "is_datalogger": False},
+            ],
+        }
+        # Discovery only finds datalogger
+        result = DiscoveryResult(
+            vsn_model="VSN300",
+            requires_auth=True,
+            logger_sn="logger-001",
+            logger_model="VSN300",
+            firmware_version="1.9.2",
+            hostname=None,
+            devices=[
+                DiscoveredDevice(
+                    device_id="logger-001",
+                    raw_device_id="logger-001",
+                    device_type="datalogger",
+                    device_model="VSN300",
+                    manufacturer="ABB",
+                    firmware_version="1.9.2",
+                    hardware_version=None,
+                    is_datalogger=True,
+                ),
+            ],
+            status_data={},
+        )
+
+        missing = _detect_missing_devices(entry, result)
+
+        assert missing == {"inv-001"}
+
+    def test_no_missing_when_all_found(self) -> None:
+        """Test no missing devices when all are discovered."""
+        entry = MagicMock(spec=ConfigEntry)
+        entry.data = {
+            "known_devices": [
+                {"device_id": "logger-001", "device_type": "datalogger", "is_datalogger": True},
+                {"device_id": "inv-001", "device_type": "inverter_3phases", "is_datalogger": False},
+            ],
+        }
+        result = DiscoveryResult(
+            vsn_model="VSN300",
+            requires_auth=True,
+            logger_sn="logger-001",
+            logger_model="VSN300",
+            firmware_version="1.9.2",
+            hostname=None,
+            devices=[
+                DiscoveredDevice(
+                    device_id="logger-001",
+                    raw_device_id="logger-001",
+                    device_type="datalogger",
+                    device_model="VSN300",
+                    manufacturer="ABB",
+                    firmware_version="1.9.2",
+                    hardware_version=None,
+                    is_datalogger=True,
+                ),
+                DiscoveredDevice(
+                    device_id="inv-001",
+                    raw_device_id="inv-001",
+                    device_type="inverter_3phases",
+                    device_model="PVI-10.0",
+                    manufacturer="Power-One",
+                    firmware_version="C008",
+                    hardware_version=None,
+                    is_datalogger=False,
+                ),
+            ],
+            status_data={},
+        )
+
+        missing = _detect_missing_devices(entry, result)
+
+        assert missing == set()
+
+    def test_excludes_datalogger_from_missing(self) -> None:
+        """Test that datalogger is never flagged as missing."""
+        entry = MagicMock(spec=ConfigEntry)
+        entry.data = {
+            "known_devices": [
+                {"device_id": "logger-001", "device_type": "datalogger", "is_datalogger": True},
+            ],
+        }
+        # Empty discovery (shouldn't happen — discovery fails if datalogger is down)
+        result = DiscoveryResult(
+            vsn_model="VSN300",
+            requires_auth=True,
+            logger_sn="logger-001",
+            logger_model="VSN300",
+            firmware_version="1.9.2",
+            hostname=None,
+            devices=[],
+            status_data={},
+        )
+
+        missing = _detect_missing_devices(entry, result)
+
+        assert missing == set()
+
+    def test_empty_known_devices(self) -> None:
+        """Test no missing when known_devices is empty."""
+        entry = MagicMock(spec=ConfigEntry)
+        entry.data = {"known_devices": []}
+
+        result = DiscoveryResult(
+            vsn_model="VSN300",
+            requires_auth=True,
+            logger_sn="logger-001",
+            logger_model="VSN300",
+            firmware_version="1.9.2",
+            hostname=None,
+            devices=[],
+            status_data={},
+        )
+
+        missing = _detect_missing_devices(entry, result)
+
+        assert missing == set()
