@@ -52,7 +52,9 @@ class ABBFimerVSNRestClient:
         self._normalizer: VSNDataNormalizer | None = None
         self._discovered_devices = discovered_devices or []
         self.requires_auth = requires_auth
-        self._device_type_map: dict[str, str] | None = None  # Livedata key → device_type
+        # Maps livedata device keys to device_type for injection before normalization.
+        # Built lazily on first poll from _discovered_devices, invalidated on update.
+        self._device_type_map: dict[str, str] | None = None
 
     async def connect(self) -> str:
         """Connect and detect VSN model.
@@ -85,6 +87,18 @@ class ABBFimerVSNRestClient:
             self.requires_auth,
         )
         return self.vsn_model
+
+    def update_discovered_devices(self, devices: list[Any]) -> None:
+        """Update the discovered devices list and invalidate cached mappings.
+
+        Called by the coordinator after re-discovery to keep client in sync.
+        """
+        self._discovered_devices = devices
+        self._device_type_map = None  # Force rebuild on next data fetch
+        _LOGGER.debug(
+            "Updated discovered devices: %d devices",
+            len(devices),
+        )
 
     async def get_livedata(self) -> dict[str, Any]:
         """Fetch livedata from VSN device.
@@ -223,31 +237,11 @@ class ABBFimerVSNRestClient:
 
         raw_data = await self.get_livedata()
 
-        # Inject device_type from discovered devices into raw_data before normalization.
-        # Build the mapping once on first poll, then reuse on subsequent polls.
-        if self._device_type_map is None and self._discovered_devices:
-            self._device_type_map = {}
-            for discovered_device in self._discovered_devices:
-                if not discovered_device.device_type:
-                    continue
-                # Map all possible livedata keys to the device_type
-                for key in (
-                    discovered_device.device_id,
-                    discovered_device.raw_device_id,
-                    discovered_device.livedata_device_id,
-                ):
-                    if key:
-                        self._device_type_map[key] = discovered_device.device_type
-            _LOGGER.debug(
-                "Built device_type injection map: %s",
-                self._device_type_map,
-            )
-
-        if self._device_type_map:
-            for device_id, device_data in raw_data.items():
-                device_type = self._device_type_map.get(device_id)
-                if device_type:
-                    device_data["device_type"] = device_type
+        # Inject device_type into raw livedata before normalization.
+        # The API may not include device_type for all devices (e.g., datalogger).
+        # The map is built lazily from discovered devices and invalidated on re-discovery.
+        self._ensure_device_type_map()
+        self._inject_device_types(raw_data)
 
         normalized_data = self._normalizer.normalize(raw_data)
 
@@ -273,6 +267,39 @@ class ABBFimerVSNRestClient:
                 )
 
         return normalized_data
+
+    def _ensure_device_type_map(self) -> None:
+        """Build the device_type injection map if not already cached.
+
+        Maps all possible livedata keys (device_id, raw_device_id, livedata_device_id)
+        to the corresponding device_type from discovery. This allows fast O(1) lookup
+        during injection instead of iterating discovered devices on every poll.
+        """
+        if self._device_type_map is not None or not self._discovered_devices:
+            return
+
+        self._device_type_map = {}
+        for device in self._discovered_devices:
+            if not device.device_type:
+                continue
+            for key in (device.device_id, device.raw_device_id, device.livedata_device_id):
+                if key:
+                    self._device_type_map[key] = device.device_type
+
+        _LOGGER.debug("Built device_type injection map: %s", self._device_type_map)
+
+    def _inject_device_types(self, raw_data: dict[str, Any]) -> None:
+        """Inject device_type from discovery into raw livedata entries.
+
+        Some devices (e.g., datalogger) don't include device_type in the API response.
+        This ensures all devices have consistent device_type before normalization.
+        """
+        if not self._device_type_map:
+            return
+        for device_id, device_data in raw_data.items():
+            device_type = self._device_type_map.get(device_id)
+            if device_type:
+                device_data["device_type"] = device_type
 
     async def close(self) -> None:
         """Close the client (session management is external)."""

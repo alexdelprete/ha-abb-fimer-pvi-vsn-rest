@@ -351,58 +351,95 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 ", ".join(sorted(recovered)),
             )
 
-            # Update discovery state
-            self.discovery_result = discovery_result
-            self.discovered_devices = discovery_result.devices
+            # Sync all components with new discovery state
+            self._update_discovery_state(discovery_result)
             self._missing_devices -= recovered
 
-            # Update known_devices in config_entry.data with any new devices
-            if self._config_entry:
-                known_devices = list(self._config_entry.data.get(CONF_KNOWN_DEVICES, []))
-                known_ids = {d["device_id"] for d in known_devices}
-                known_devices.extend(
+            # Sync known_devices in config_entry.data
+            self._sync_known_devices(discovery_result)
+
+            # Handle recovery outcome
+            if not self._missing_devices:
+                self._handle_full_recovery()
+            else:
+                self._handle_partial_recovery()
+
+        except (VSNConnectionError, VSNAuthenticationError, VSNClientError):
+            _LOGGER.debug("Re-discovery failed, will retry next cycle", exc_info=True)
+
+    def _update_discovery_state(self, discovery_result: DiscoveryResult) -> None:
+        """Update coordinator and client with new discovery results.
+
+        Ensures all components (coordinator, client, device_type map) stay in sync.
+        """
+        self.discovery_result = discovery_result
+        self.discovered_devices = discovery_result.devices
+        # Keep client's device list and type map in sync
+        self.client.update_discovered_devices(discovery_result.devices)
+
+    def _sync_known_devices(self, discovery_result: DiscoveryResult) -> None:
+        """Sync config_entry known_devices with newly discovered devices.
+
+        Adds any devices found in discovery that aren't already in the persisted list.
+        Also updates device_type for existing entries with stale values.
+        """
+        if not self._config_entry:
+            return
+
+        known_devices = list(self._config_entry.data.get(CONF_KNOWN_DEVICES, []))
+        known_ids = {d["device_id"] for d in known_devices}
+        changed = False
+
+        # Update device_type for existing entries where discovery has better info
+        discovered_by_id = {d.device_id: d for d in discovery_result.devices}
+        for known in known_devices:
+            discovered = discovered_by_id.get(known["device_id"])
+            if discovered and known.get("device_type") != discovered.device_type:
+                known["device_type"] = discovered.device_type
+                known["is_datalogger"] = discovered.is_datalogger
+                changed = True
+
+        # Add newly discovered devices not yet in known list
+        for device in discovery_result.devices:
+            if device.device_id not in known_ids:
+                known_devices.append(
                     {
                         "device_id": device.device_id,
                         "device_type": device.device_type,
                         "is_datalogger": device.is_datalogger,
                     }
-                    for device in discovery_result.devices
-                    if device.device_id not in known_ids
                 )
-                if len(known_devices) != len(self._config_entry.data.get(CONF_KNOWN_DEVICES, [])):
-                    self.hass.config_entries.async_update_entry(
-                        self._config_entry,
-                        data={
-                            **self._config_entry.data,
-                            CONF_KNOWN_DEVICES: known_devices,
-                        },
-                    )
+                changed = True
 
-            if not self._missing_devices:
-                # All devices recovered — clear repair and reload
-                if self._entry_id:
-                    delete_partial_discovery_issue(self.hass, self._entry_id)
-                _LOGGER.info("All known devices recovered, scheduling reload")
-                self._reload_scheduled = True
-                self.hass.async_create_task(self.hass.config_entries.async_reload(self._entry_id))
-            else:
-                # Partially recovered — update repair issue
-                _LOGGER.info(
-                    "Still missing %d devices: %s",
-                    len(self._missing_devices),
-                    ", ".join(sorted(self._missing_devices)),
-                )
-                if self._entry_id:
-                    device_name = self._get_device_name()
-                    create_partial_discovery_issue(
-                        self.hass,
-                        self._entry_id,
-                        device_name,
-                        sorted(self._missing_devices),
-                    )
+        if changed:
+            self.hass.config_entries.async_update_entry(
+                self._config_entry,
+                data={**self._config_entry.data, CONF_KNOWN_DEVICES: known_devices},
+            )
 
-        except (VSNConnectionError, VSNAuthenticationError, VSNClientError):
-            _LOGGER.debug("Re-discovery failed, will retry next cycle", exc_info=True)
+    def _handle_full_recovery(self) -> None:
+        """Handle full recovery when all missing devices are found."""
+        if self._entry_id:
+            delete_partial_discovery_issue(self.hass, self._entry_id)
+        _LOGGER.info("All known devices recovered, scheduling reload")
+        self._reload_scheduled = True
+        self.hass.async_create_task(self.hass.config_entries.async_reload(self._entry_id))
+
+    def _handle_partial_recovery(self) -> None:
+        """Handle partial recovery when some devices are still missing."""
+        _LOGGER.info(
+            "Still missing %d devices: %s",
+            len(self._missing_devices),
+            ", ".join(sorted(self._missing_devices)),
+        )
+        if self._entry_id:
+            device_name = self._get_device_name()
+            create_partial_discovery_issue(
+                self.hass,
+                self._entry_id,
+                device_name,
+                sorted(self._missing_devices),
+            )
 
     async def _execute_recovery_script(self) -> None:
         """Execute the configured recovery script."""

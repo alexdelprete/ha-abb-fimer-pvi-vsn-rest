@@ -18,7 +18,7 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.util import slugify
 
 from .abb_fimer_vsn_rest_client.client import ABBFimerVSNRestClient
-from .abb_fimer_vsn_rest_client.discovery import discover_vsn_device
+from .abb_fimer_vsn_rest_client.discovery import DiscoveryResult, discover_vsn_device
 from .const import (
     CONF_ENABLE_REPAIR_NOTIFICATION,
     CONF_ENABLE_STARTUP_NOTIFICATION,
@@ -150,70 +150,21 @@ async def async_setup_entry(
         )
         raise ConfigEntryNotReady(f"Discovery failed: {err}") from err
 
-    # --- Known devices management ---
-    # Merge discovered devices into the persisted known_devices list (union — only adds)
-    # Also update device_type for existing entries from discovery (e.g., migration sets "unknown")
-    known_devices = list(config_entry.data.get(CONF_KNOWN_DEVICES, []))
-    known_device_ids = {d["device_id"] for d in known_devices}
-    discovered_device_ids = {d.device_id for d in discovery_result.devices}
-    discovered_by_id = {d.device_id: d for d in discovery_result.devices}
-    known_changed = False
-
-    # Update device_type for existing entries where discovery has better info
-    for known in known_devices:
-        discovered = discovered_by_id.get(known["device_id"])
-        if discovered and known.get("device_type") != discovered.device_type:
-            _LOGGER.info(
-                "Updated device_type for %s: %s → %s",
-                known["device_id"],
-                known.get("device_type"),
-                discovered.device_type,
-            )
-            known["device_type"] = discovered.device_type
-            known["is_datalogger"] = discovered.is_datalogger
-            known_changed = True
-
-    # Add newly discovered devices
-    new_devices = [
-        {
-            "device_id": device.device_id,
-            "device_type": device.device_type,
-            "is_datalogger": device.is_datalogger,
-        }
-        for device in discovery_result.devices
-        if device.device_id not in known_device_ids
-    ]
-    if new_devices:
-        known_devices.extend(new_devices)
-        known_changed = True
-
-    # Persist changes if anything was added or updated
-    if known_changed:
-        hass.config_entries.async_update_entry(
-            config_entry, data={**config_entry.data, CONF_KNOWN_DEVICES: known_devices}
-        )
-        _LOGGER.info(
-            "Updated known_devices list: %d devices",
-            len(known_devices),
-        )
-
-    known_device_ids = {d["device_id"] for d in known_devices}
-
-    # Detect missing devices (exclude datalogger — if it's down, discovery fails entirely)
-    known_non_datalogger_ids = {d["device_id"] for d in known_devices if not d.get("is_datalogger")}
-    missing_device_ids = known_non_datalogger_ids - discovered_device_ids
+    # Sync known_devices with discovery and detect missing devices
+    _sync_known_devices(hass, config_entry, discovery_result)
+    missing_device_ids = _detect_missing_devices(config_entry, discovery_result)
 
     # Create or clear partial discovery repair notification
     if missing_device_ids:
         _LOGGER.warning(
-            "Partial discovery: %d of %d known devices missing: %s",
-            len(missing_device_ids),
-            len(known_device_ids),
+            "Partial discovery: missing %s",
             ", ".join(sorted(missing_device_ids)),
         )
-        device_name = discovery_result.get_title()
         create_partial_discovery_issue(
-            hass, config_entry.entry_id, device_name, sorted(missing_device_ids)
+            hass,
+            config_entry.entry_id,
+            discovery_result.get_title(),
+            sorted(missing_device_ids),
         )
     else:
         delete_partial_discovery_issue(hass, config_entry.entry_id)
@@ -383,6 +334,72 @@ async def async_remove_config_entry_device(
     # Always allow deletion — if device still physically exists,
     # next discovery will find it and re-add it naturally
     return True
+
+
+@callback
+def _sync_known_devices(
+    hass: HomeAssistant,
+    config_entry: ABBFimerPVIVSNRestConfigEntry,
+    discovery_result: DiscoveryResult,
+) -> None:
+    """Sync persisted known_devices list with discovery results.
+
+    - Updates device_type for existing entries (e.g., v8 migration sets "unknown")
+    - Adds newly discovered devices not yet in the list
+    - Persists changes to config_entry.data
+    """
+    known_devices = list(config_entry.data.get(CONF_KNOWN_DEVICES, []))
+    known_ids = {d["device_id"] for d in known_devices}
+    discovered_by_id = {d.device_id: d for d in discovery_result.devices}
+    changed = False
+
+    # Update device_type for existing entries where discovery has better info
+    for known in known_devices:
+        discovered = discovered_by_id.get(known["device_id"])
+        if discovered and known.get("device_type") != discovered.device_type:
+            _LOGGER.info(
+                "Updated device_type for %s: %s → %s",
+                known["device_id"],
+                known.get("device_type"),
+                discovered.device_type,
+            )
+            known["device_type"] = discovered.device_type
+            known["is_datalogger"] = discovered.is_datalogger
+            changed = True
+
+    # Add newly discovered devices
+    for device in discovery_result.devices:
+        if device.device_id not in known_ids:
+            known_devices.append(
+                {
+                    "device_id": device.device_id,
+                    "device_type": device.device_type,
+                    "is_datalogger": device.is_datalogger,
+                }
+            )
+            changed = True
+
+    if changed:
+        hass.config_entries.async_update_entry(
+            config_entry, data={**config_entry.data, CONF_KNOWN_DEVICES: known_devices}
+        )
+        _LOGGER.info("Updated known_devices list: %d devices", len(known_devices))
+
+
+@callback
+def _detect_missing_devices(
+    config_entry: ABBFimerPVIVSNRestConfigEntry,
+    discovery_result: DiscoveryResult,
+) -> set[str]:
+    """Detect known non-datalogger devices not found in current discovery.
+
+    Dataloggers are excluded — if the datalogger is down, discovery fails entirely
+    with ConfigEntryNotReady, so it can never be "partially missing".
+    """
+    known_devices = config_entry.data.get(CONF_KNOWN_DEVICES, [])
+    known_non_datalogger_ids = {d["device_id"] for d in known_devices if not d.get("is_datalogger")}
+    discovered_ids = {d.device_id for d in discovery_result.devices}
+    return known_non_datalogger_ids - discovered_ids
 
 
 async def _async_migrate_options(
