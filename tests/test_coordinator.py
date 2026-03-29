@@ -877,6 +877,14 @@ class TestAttemptRediscovery:
         mock_discovery_result: MockDiscoveryResult,
     ) -> ABBFimerPVIVSNRestCoordinator:
         """Create coordinator with missing devices."""
+        # Add client attributes needed by _attempt_rediscovery
+        mock_vsn_client.session = MagicMock()
+        mock_vsn_client.base_url = f"http://{TEST_HOST}"
+        mock_vsn_client.username = "guest"
+        mock_vsn_client.password = ""
+        mock_vsn_client.timeout = 10
+        mock_vsn_client.update_discovered_devices = MagicMock()
+
         entry = MagicMock()
         entry.entry_id = "test_entry_id"
         entry.options = {
