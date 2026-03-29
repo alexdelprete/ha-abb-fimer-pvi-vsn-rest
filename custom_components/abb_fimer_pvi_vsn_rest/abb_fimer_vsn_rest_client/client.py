@@ -52,7 +52,7 @@ class ABBFimerVSNRestClient:
         self._normalizer: VSNDataNormalizer | None = None
         self._discovered_devices = discovered_devices or []
         self.requires_auth = requires_auth
-        self._injected_device_types: set[str] = set()  # Track logged injections
+        self._device_type_map: dict[str, str] | None = None  # Livedata key → device_type
 
     async def connect(self) -> str:
         """Connect and detect VSN model.
@@ -223,30 +223,31 @@ class ABBFimerVSNRestClient:
 
         raw_data = await self.get_livedata()
 
-        # Inject device_type from discovered devices into raw_data before normalization
-        # This is needed because the datalogger doesn't appear in livedata with device_type
-        if self._discovered_devices:
+        # Inject device_type from discovered devices into raw_data before normalization.
+        # Build the mapping once on first poll, then reuse on subsequent polls.
+        if self._device_type_map is None and self._discovered_devices:
+            self._device_type_map = {}
             for discovered_device in self._discovered_devices:
-                # Match by device_id (with or without formatting)
-                for device_id, device_data in raw_data.items():
-                    # Check all known IDs for this device (clean, raw, livedata key)
-                    match_ids = (
-                        discovered_device.device_id,
-                        discovered_device.raw_device_id,
-                    )
-                    if discovered_device.livedata_device_id:
-                        match_ids = (*match_ids, discovered_device.livedata_device_id)
-                    if device_id in match_ids:
-                        # Inject device_type from discovery
-                        if discovered_device.device_type:
-                            device_data["device_type"] = discovered_device.device_type
-                            if device_id not in self._injected_device_types:
-                                _LOGGER.debug(
-                                    "Injected device_type '%s' for device %s from discovery",
-                                    discovered_device.device_type,
-                                    device_id,
-                                )
-                                self._injected_device_types.add(device_id)
+                if not discovered_device.device_type:
+                    continue
+                # Map all possible livedata keys to the device_type
+                for key in (
+                    discovered_device.device_id,
+                    discovered_device.raw_device_id,
+                    discovered_device.livedata_device_id,
+                ):
+                    if key:
+                        self._device_type_map[key] = discovered_device.device_type
+            _LOGGER.debug(
+                "Built device_type injection map: %s",
+                self._device_type_map,
+            )
+
+        if self._device_type_map:
+            for device_id, device_data in raw_data.items():
+                device_type = self._device_type_map.get(device_id)
+                if device_type:
+                    device_data["device_type"] = device_type
 
         normalized_data = self._normalizer.normalize(raw_data)
 
