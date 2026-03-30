@@ -47,7 +47,7 @@ MODEL_FLAGS = [
     "ABB_Proprietary",
 ]
 
-# Full Excel headers (29 columns total - added "Sensor Scope" in v1.3.8)
+# Full Excel headers (30 columns total - added "Accumulation Mode" in v1.5.1)
 EXCEL_HEADERS = [
     *MODEL_FLAGS,
     "REST Name (VSN700)",
@@ -67,6 +67,7 @@ EXCEL_HEADERS = [
     "Entity Category",
     "Suggested Display Precision",
     "Sensor Scope",
+    "Accumulation Mode",
     "Available in Modbus",
     "Data Source",
     "Model_Notes",
@@ -1051,207 +1052,347 @@ TEMPERATURE_UNIT_FIX = {
 # ==============================================================================
 
 SUNSPEC_TO_HA_METADATA = {
-    # Energy measurements (kWh, total_increasing, lifetime)
+    # Energy measurements (kWh, lifetime)
+    # accumulation_mode: "monotonic" = only increases, drives state_class to "total_increasing"
+    # sensor_scope: "lifetime"/"runtime"/"periodic" = when it resets, drives stale-value guard
     "WH": {
         "device_class": "energy",
-        "state_class": "total_increasing",
         "unit": "kWh",
+        "accumulation_mode": "monotonic",
         "sensor_scope": "lifetime",
     },
     "TotWhExp": {
         "device_class": "energy",
-        "state_class": "total_increasing",
         "unit": "kWh",
+        "accumulation_mode": "monotonic",
         "sensor_scope": "lifetime",
     },
     "TotWhImp": {
         "device_class": "energy",
-        "state_class": "total_increasing",
         "unit": "kWh",
+        "accumulation_mode": "monotonic",
         "sensor_scope": "lifetime",
     },
     "ETotal": {
         "device_class": "energy",
-        "state_class": "total_increasing",
         "unit": "kWh",
+        "accumulation_mode": "monotonic",
         "sensor_scope": "lifetime",
     },
     "Ein": {
         "device_class": "energy",
-        "state_class": "total_increasing",
         "unit": "kWh",
+        "accumulation_mode": "monotonic",
         "sensor_scope": "lifetime",
     },
     "ECharge": {
         "device_class": "energy",
-        "state_class": "total_increasing",
         "unit": "kWh",
+        "accumulation_mode": "monotonic",
         "sensor_scope": "lifetime",
     },
     "EDischarge": {
         "device_class": "energy",
-        "state_class": "total_increasing",
         "unit": "kWh",
+        "accumulation_mode": "monotonic",
         "sensor_scope": "lifetime",
     },
     "ETotCharge": {
         "device_class": "energy",
-        "state_class": "total_increasing",
         "unit": "kWh",
+        "accumulation_mode": "monotonic",
         "sensor_scope": "lifetime",
     },
     "ETotDischarge": {
         "device_class": "energy",
-        "state_class": "total_increasing",
         "unit": "kWh",
+        "accumulation_mode": "monotonic",
         "sensor_scope": "lifetime",
     },
     "EGridImport": {
         "device_class": "energy",
-        "state_class": "total_increasing",
         "unit": "kWh",
+        "accumulation_mode": "monotonic",
         "sensor_scope": "lifetime",
     },
     "EGridExport": {
         "device_class": "energy",
-        "state_class": "total_increasing",
         "unit": "kWh",
+        "accumulation_mode": "monotonic",
         "sensor_scope": "lifetime",
     },
     "ETotalAbsorbed": {
         "device_class": "energy",
-        "state_class": "total_increasing",
         "unit": "kWh",
+        "accumulation_mode": "monotonic",
         "sensor_scope": "lifetime",
     },
     "ETotalApparent": {
         "device_class": "energy",
-        "state_class": "total",
         "unit": "kVAh",
+        "accumulation_mode": "monotonic",
+        "sensor_scope": "lifetime",
     },
-    # Energy counters by period (total)
+    # Energy counters by period (periodic, monotonic)
     # Note: Values come as Wh from API, normalizer converts to kWh, so unit must be kWh
-    "DayWH": {"device_class": "energy", "state_class": "total", "unit": "kWh"},
-    "WeekWH": {"device_class": "energy", "state_class": "total", "unit": "kWh"},
-    "MonthWH": {"device_class": "energy", "state_class": "total", "unit": "kWh"},
-    "YearWH": {"device_class": "energy", "state_class": "total", "unit": "kWh"},
-    # Energy counters - E series (Wh, total)
+    "DayWH": {
+        "device_class": "energy",
+        "unit": "kWh",
+        "accumulation_mode": "monotonic",
+        "sensor_scope": "periodic",
+    },
+    "WeekWH": {
+        "device_class": "energy",
+        "unit": "kWh",
+        "accumulation_mode": "monotonic",
+        "sensor_scope": "periodic",
+    },
+    "MonthWH": {
+        "device_class": "energy",
+        "unit": "kWh",
+        "accumulation_mode": "monotonic",
+        "sensor_scope": "periodic",
+    },
+    "YearWH": {
+        "device_class": "energy",
+        "unit": "kWh",
+        "accumulation_mode": "monotonic",
+        "sensor_scope": "periodic",
+    },
+    # Energy counters - E series (Wh)
     "E0_runtime": {
         "device_class": "energy",
-        "state_class": "total_increasing",
         "unit": "Wh",
+        "accumulation_mode": "monotonic",
         "sensor_scope": "runtime",
     },
-    "E0_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
-    "E0_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
-    "E0_1Y": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "E0_7D": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "accumulation_mode": "monotonic",
+        "sensor_scope": "periodic",
+    },
+    "E0_30D": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "accumulation_mode": "monotonic",
+        "sensor_scope": "periodic",
+    },
+    "E0_1Y": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "accumulation_mode": "monotonic",
+        "sensor_scope": "periodic",
+    },
     "E1_runtime": {
         "device_class": "energy",
-        "state_class": "total_increasing",
         "unit": "Wh",
+        "accumulation_mode": "monotonic",
         "sensor_scope": "runtime",
     },
-    "E1_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
-    "E1_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "E1_7D": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "accumulation_mode": "monotonic",
+        "sensor_scope": "periodic",
+    },
+    "E1_30D": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "accumulation_mode": "monotonic",
+        "sensor_scope": "periodic",
+    },
     "E3_runtime": {
         "device_class": "energy",
-        "state_class": "total_increasing",
         "unit": "Wh",
+        "accumulation_mode": "monotonic",
         "sensor_scope": "runtime",
     },
-    "E3_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
-    "E3_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "E3_7D": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "accumulation_mode": "monotonic",
+        "sensor_scope": "periodic",
+    },
+    "E3_30D": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "accumulation_mode": "monotonic",
+        "sensor_scope": "periodic",
+    },
     "E6_runtime": {
         "device_class": "energy",
-        "state_class": "total_increasing",
         "unit": "Wh",
+        "accumulation_mode": "monotonic",
         "sensor_scope": "runtime",
     },
-    "E6_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
-    "E6_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "E6_7D": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "accumulation_mode": "monotonic",
+        "sensor_scope": "periodic",
+    },
+    "E6_30D": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "accumulation_mode": "monotonic",
+        "sensor_scope": "periodic",
+    },
     "E6_total": {
         "device_class": "energy",
-        "state_class": "total_increasing",
         "unit": "Wh",
+        "accumulation_mode": "monotonic",
         "sensor_scope": "lifetime",
     },
     "E7_runtime": {
         "device_class": "energy",
-        "state_class": "total_increasing",
         "unit": "Wh",
+        "accumulation_mode": "monotonic",
         "sensor_scope": "runtime",
     },
-    "E7_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
-    "E7_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "E7_7D": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "accumulation_mode": "monotonic",
+        "sensor_scope": "periodic",
+    },
+    "E7_30D": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "accumulation_mode": "monotonic",
+        "sensor_scope": "periodic",
+    },
     "E7_total": {
         "device_class": "energy",
-        "state_class": "total_increasing",
         "unit": "Wh",
+        "accumulation_mode": "monotonic",
         "sensor_scope": "lifetime",
     },
     "E8_runtime": {
         "device_class": "energy",
-        "state_class": "total_increasing",
         "unit": "Wh",
+        "accumulation_mode": "monotonic",
         "sensor_scope": "runtime",
     },
-    "E8_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
-    "E8_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "E8_7D": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "accumulation_mode": "monotonic",
+        "sensor_scope": "periodic",
+    },
+    "E8_30D": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "accumulation_mode": "monotonic",
+        "sensor_scope": "periodic",
+    },
     "E15_runtime": {
         "device_class": "energy",
-        "state_class": "total_increasing",
         "unit": "Wh",
+        "accumulation_mode": "monotonic",
         "sensor_scope": "runtime",
     },
-    "E15_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
-    "E15_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "E15_7D": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "accumulation_mode": "monotonic",
+        "sensor_scope": "periodic",
+    },
+    "E15_30D": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "accumulation_mode": "monotonic",
+        "sensor_scope": "periodic",
+    },
     "Ein_runtime": {
         "device_class": "energy",
-        "state_class": "total_increasing",
         "unit": "Wh",
+        "accumulation_mode": "monotonic",
         "sensor_scope": "runtime",
     },
-    "Ein_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
-    "Ein_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "Ein_7D": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "accumulation_mode": "monotonic",
+        "sensor_scope": "periodic",
+    },
+    "Ein_30D": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "accumulation_mode": "monotonic",
+        "sensor_scope": "periodic",
+    },
     "ECharge_runtime": {
         "device_class": "energy",
-        "state_class": "total_increasing",
         "unit": "Wh",
+        "accumulation_mode": "monotonic",
         "sensor_scope": "runtime",
     },
-    "ECharge_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
-    "ECharge_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "ECharge_7D": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "accumulation_mode": "monotonic",
+        "sensor_scope": "periodic",
+    },
+    "ECharge_30D": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "accumulation_mode": "monotonic",
+        "sensor_scope": "periodic",
+    },
     "EDischarge_runtime": {
         "device_class": "energy",
-        "state_class": "total_increasing",
         "unit": "Wh",
+        "accumulation_mode": "monotonic",
         "sensor_scope": "runtime",
     },
-    "EDischarge_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
-    "EDischarge_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "EDischarge_7D": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "accumulation_mode": "monotonic",
+        "sensor_scope": "periodic",
+    },
+    "EDischarge_30D": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "accumulation_mode": "monotonic",
+        "sensor_scope": "periodic",
+    },
     "ETotCharge_runtime": {
         "device_class": "energy",
-        "state_class": "total_increasing",
         "unit": "Wh",
+        "accumulation_mode": "monotonic",
         "sensor_scope": "runtime",
     },
-    "ETotCharge_7D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
-    "ETotCharge_30D": {"device_class": "energy", "state_class": "total", "unit": "Wh"},
+    "ETotCharge_7D": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "accumulation_mode": "monotonic",
+        "sensor_scope": "periodic",
+    },
+    "ETotCharge_30D": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "accumulation_mode": "monotonic",
+        "sensor_scope": "periodic",
+    },
     "ETotDischarge_runtime": {
         "device_class": "energy",
-        "state_class": "total_increasing",
         "unit": "Wh",
+        "accumulation_mode": "monotonic",
         "sensor_scope": "runtime",
     },
     "ETotDischarge_7D": {
         "device_class": "energy",
-        "state_class": "total",
         "unit": "Wh",
+        "accumulation_mode": "monotonic",
+        "sensor_scope": "periodic",
     },
     "ETotDischarge_30D": {
         "device_class": "energy",
-        "state_class": "total",
         "unit": "Wh",
+        "accumulation_mode": "monotonic",
+        "sensor_scope": "periodic",
     },
     # Power measurements (W, measurement)
     "W": {"device_class": "power", "state_class": "measurement", "unit": "W"},
@@ -1565,32 +1706,34 @@ SUNSPEC_TO_HA_METADATA = {
         "state_class": "measurement",
         "unit": "MB",
     },
-    # Duration (s, total_increasing)
+    # Duration (s, monotonic)
     "uptime": {
         "device_class": "duration",
-        "state_class": "total_increasing",
         "unit": "s",
+        "accumulation_mode": "monotonic",
         "sensor_scope": "runtime",
     },
     # Apparent Energy (VAh) - no standard HA device_class, use energy icon
     "E2_runtime": {
         "device_class": None,
-        "state_class": "total_increasing",
         "unit": "VAh",
         "icon": "mdi:lightning-bolt",
+        "accumulation_mode": "monotonic",
         "sensor_scope": "runtime",
     },
     "E2_7D": {
         "device_class": None,
-        "state_class": "total",
         "unit": "VAh",
         "icon": "mdi:lightning-bolt",
+        "accumulation_mode": "monotonic",
+        "sensor_scope": "periodic",
     },
     "E2_30D": {
         "device_class": None,
-        "state_class": "total",
         "unit": "VAh",
         "icon": "mdi:lightning-bolt",
+        "accumulation_mode": "monotonic",
+        "sensor_scope": "periodic",
     },
     # Peak Power (W, measurement) - power device_class
     # Note: Uses W (not kW) per SunSpec specification and livedata format
@@ -1607,27 +1750,27 @@ SUNSPEC_TO_HA_METADATA = {
     },
     "Ppeak": {"device_class": "power", "state_class": "measurement", "unit": "W"},
     # ===========================================================================
-    # CYCLE COUNTERS (v1.1.5+) - No unit, state_class=total_increasing, precision=0
+    # CYCLE COUNTERS (v1.1.5+) - No unit, monotonic, precision=0
     # ===========================================================================
     "Chc": {
         "device_class": None,
-        "state_class": "total_increasing",
         "unit": "",
         "precision": 0,
+        "accumulation_mode": "monotonic",
         "sensor_scope": "lifetime",
     },
     "Dhc": {
         "device_class": None,
-        "state_class": "total_increasing",
         "unit": "",
         "precision": 0,
+        "accumulation_mode": "monotonic",
         "sensor_scope": "lifetime",
     },
     "CycleNum": {
         "device_class": None,
-        "state_class": "total_increasing",
         "unit": "",
         "precision": 0,
+        "accumulation_mode": "monotonic",
         "sensor_scope": "lifetime",
     },
     # ===========================================================================
@@ -1867,78 +2010,78 @@ SUNSPEC_TO_HA_METADATA = {
     "ECt": {
         "device_class": "energy",
         "unit": "Wh",
-        "state_class": "total_increasing",
         "precision": 2,
+        "accumulation_mode": "monotonic",
         "sensor_scope": "lifetime",
     },
     "EDt": {
         "device_class": "energy",
         "unit": "Wh",
-        "state_class": "total_increasing",
         "precision": 2,
+        "accumulation_mode": "monotonic",
         "sensor_scope": "lifetime",
     },
     "E4_runtime": {
         "device_class": "energy",
         "unit": "Wh",
-        "state_class": "total_increasing",
         "precision": 2,
+        "accumulation_mode": "monotonic",
         "sensor_scope": "runtime",
     },
     "E4_7D": {
         "device_class": "energy",
         "unit": "Wh",
-        "state_class": "total_increasing",
         "precision": 2,
+        "accumulation_mode": "monotonic",
         "sensor_scope": "periodic",
     },
     "E4_30D": {
         "device_class": "energy",
         "unit": "Wh",
-        "state_class": "total_increasing",
         "precision": 2,
+        "accumulation_mode": "monotonic",
         "sensor_scope": "periodic",
     },
     "E5_runtime": {
         "device_class": "energy",
         "unit": "Wh",
-        "state_class": "total_increasing",
         "precision": 2,
+        "accumulation_mode": "monotonic",
         "sensor_scope": "runtime",
     },
     "E5_7D": {
         "device_class": "energy",
         "unit": "Wh",
-        "state_class": "total_increasing",
         "precision": 2,
+        "accumulation_mode": "monotonic",
         "sensor_scope": "periodic",
     },
     "E5_30D": {
         "device_class": "energy",
         "unit": "Wh",
-        "state_class": "total_increasing",
         "precision": 2,
+        "accumulation_mode": "monotonic",
         "sensor_scope": "periodic",
     },
     "Ein1": {
         "device_class": "energy",
         "unit": "Wh",
-        "state_class": "total_increasing",
         "precision": 2,
+        "accumulation_mode": "monotonic",
         "sensor_scope": "lifetime",
     },
     "Ein2": {
         "device_class": "energy",
         "unit": "Wh",
-        "state_class": "total_increasing",
         "precision": 2,
+        "accumulation_mode": "monotonic",
         "sensor_scope": "lifetime",
     },
     "EBackup": {
         "device_class": "energy",
         "unit": "Wh",
-        "state_class": "total_increasing",
         "precision": 2,
+        "accumulation_mode": "monotonic",
         "sensor_scope": "lifetime",
     },
     # ===========================================================================
@@ -3333,6 +3476,7 @@ def create_row_with_model_flags(
         "model_notes": model_notes,
         "icon": "",
         "sensor_scope": "",
+        "accumulation_mode": "",
     }
 
     # Apply corrections
@@ -3385,6 +3529,19 @@ def create_row_with_model_flags(
         # Apply sensor_scope if specified in metadata (lifetime, runtime, periodic)
         if metadata.get("sensor_scope"):
             row["sensor_scope"] = metadata.get("sensor_scope")
+        # Apply accumulation_mode if specified in metadata
+        if metadata.get("accumulation_mode"):
+            row["accumulation_mode"] = metadata.get("accumulation_mode")
+
+        # Derive state_class from accumulation_mode (overrides any previous value)
+        # This is the authoritative source for state_class on accumulating sensors:
+        #   monotonic → total_increasing (value only goes up, drops = meter reset)
+        #   bidirectional → total (value can go up and down, e.g., net metering)
+        accumulation_mode = metadata.get("accumulation_mode")
+        if accumulation_mode == "monotonic":
+            row["state_class"] = "total_increasing"
+        elif accumulation_mode == "bidirectional":
+            row["state_class"] = "total"
 
     # Update category if needed
     if row["category"] in ["Unknown", "", None]:
@@ -4024,6 +4181,8 @@ def _get_cell_value_for_header(header, row_data):
         return row_data.get("precision", "")
     if header == "Sensor Scope":
         return row_data.get("sensor_scope", "")
+    if header == "Accumulation Mode":
+        return row_data.get("accumulation_mode", "")
     if header == "Available in Modbus":
         return row_data.get("available_in_modbus", "")
     if header == "Data Source":

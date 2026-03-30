@@ -129,26 +129,50 @@
       "device_address": {
         "name": "Modbus Address"
       },
-      "e_charge": {
-        "name": "Energy - Battery Charge Lifetime"
-      },
-      "alarm_state": {
-        "name": "Status - Alarm"
-      },
       "battery_mode": {
         "name": "Battery Mode"
       },
       "e_discharge": {
         "name": "Energy - Battery Discharge Lifetime"
       },
-      "country_std": {
-        "name": "Country Standard"
+      "e_charge": {
+        "name": "Energy - Battery Charge Lifetime"
+      },
+      "alarm_state": {
+        "name": "Status - Alarm"
+      },
+      "house_igrid_l3": {
+        "name": "Current AC - House Phase C"
+      },
+      "house_pgrid_l3": {
+        "name": "Power AC - House Phase C"
+      },
+      "house_pgrid_l1": {
+        "name": "Power AC - House Phase A"
       },
       "state_of_health": {
         "name": "State of Health"
       },
+      "country_std": {
+        "name": "Country Standard"
+      },
+      "split_phase": {
+        "name": "Split Phase"
+      },
+      "dhc": {
+        "name": "Discharge Cycles"
+      },
+      "batt_num": {
+        "name": "Module Count"
+      },
       "house_igrid_l1": {
         "name": "Current AC - House Phase A"
+      },
+      "state_of_charge": {
+        "name": "State of Charge"
+      },
+      "house_pgrid_l2": {
+        "name": "Power AC - House Phase B"
       },
       "sys_time": {
         "name": "System Time"
@@ -159,191 +183,278 @@
       "chc": {
         "name": "Charge Cycles"
       },
-      "house_pgrid_l3": {
-        "name": "Power AC - House Phase C"
-      },
-      "dhc": {
-        "name": "Discharge Cycles"
-      },
-      "batt_num": {
-        "name": "Module Count"
-      },
-      "house_igrid_l3": {
-        "name": "Current AC - House Phase C"
-      },
-      "house_pgrid_l2": {
-        "name": "Power AC - House Phase B"
-      },
-      "split_phase": {
-        "name": "Split Phase"
-      },
-      "house_pgrid_l1": {
-        "name": "Power AC - House Phase A"
-      },
-      "state_of_charge": {
-        "name": "State of Charge"
-      },
-      "ph_vph_b_c": {
-        "name": "Voltage AC - Phase B-C"
-      },
-      "dc_watts": {
-        "name": "Power DC"
-      },
-      "v_bulk_mid": {
-        "name": "Voltage DC - Bus Midpoint"
-      },
-      "week_wh": {
-        "name": "Energy AC - Produced (Current Week)"
-      },
-      "dc_st1": {
-        "name": "Status - DC Input 1"
-      },
-      "phase_voltage_bn": {
-        "name": "Voltage AC - Phase B-N"
+      "wlan0_essid": {
+        "name": "WiFi - SSID"
       },
       "global_st": {
         "name": "Status - Global"
       },
-      "month_wh": {
-        "name": "Energy AC - Produced (Current Month)"
-      },
-      "dc_power_1": {
-        "name": "Power DC - String 1"
-      },
-      "i_leak_dc_ac": {
-        "name": "Current DC - Leakage DC-AC"
-      },
-      "dc_st2": {
-        "name": "Status - DC Input 2"
-      },
-      "booster_tmp": {
-        "name": "Temperature - Booster"
-      },
-      "v_bulk": {
-        "name": "Voltage DC - Bulk Capacitor"
-      },
-      "ph_vph_c_a": {
-        "name": "Voltage AC - Phase C-A"
-      },
-      "other_temperature": {
-        "name": "Temperature - Other"
-      },
-      "amps_phasea": {
-        "name": "Current AC - Phase A"
-      },
-      "wlan0_ipaddr_local": {
-        "name": "WiFi - Local IP"
-      },
-      "dc_power_2": {
-        "name": "Power DC - String 2"
-      },
-      "system_load": {
-        "name": "Load Average"
-      },
-      "wlan0_mode": {
-        "name": "WiFi - Mode"
-      },
-      "phase_voltage_cn": {
-        "name": "Voltage AC - Phase C-N"
-      },
-      "hz_a": {
-        "name": "Frequency AC - Phase A"
-      },
-      "alarm_st": {
-        "name": "Status - Alarm"
-      },
-      "isolation_ohm1": {
-        "name": "Resistance - Insulation"
+      "wlan0_link_quality": {
+        "name": "WiFi - Link Quality"
       },
       "type": {
         "name": "Type"
       },
-      "sn": {
-        "name": "Serial Number"
-      },
-      "system_uptime": {
-        "name": "Uptime"
-      },
-      "v_gnd": {
-        "name": "Voltage - Ground"
-      },
-      "power_peak_abs": {
-        "name": "Power - Peak Lifetime"
-      },
-      "firmware_version": {
-        "name": "Firmware Version"
-      },
-      "wlan0_link_quality": {
-        "name": "WiFi - Link Quality"
-      },
-      "dc_current_1": {
-        "name": "Current DC - String 1"
-      },
-      "dc_voltage_1": {
-        "name": "Voltage DC - String 1"
-      },
-      "i_leak_dc_dc": {
-        "name": "Current DC - Leakage DC-DC"
-      },
-      "storage_size": {
-        "name": "Flash Used"
-      },
-      "pn": {
-        "name": "Product Number"
-      },
-      "flash_memory_free": {
-        "name": "Available Flash"
-      },
-      "wlan0_essid": {
-        "name": "WiFi - SSID"
-      },
-      "cabinet_temperature": {
-        "name": "Temperature - Cabinet"
-      },
-      "free_ram": {
-        "name": "Available RAM"
-      },
-      "amps_phasec": {
-        "name": "Current AC - Phase C"
-      },
-      "hz_c": {
-        "name": "Frequency AC - Phase C"
-      },
-      "power_peak_today": {
-        "name": "Power - Peak (Today)"
-      },
-      "dc_voltage_2": {
-        "name": "Voltage DC - String 2"
-      },
-      "inverter_st": {
-        "name": "Inverter Status"
-      },
-      "dc_current_2": {
-        "name": "Current DC - String 2"
+      "day_wh": {
+        "name": "Energy AC - Produced (Today)"
       },
       "hz_b": {
         "name": "Frequency AC - Phase B"
       },
-      "pf": {
-        "name": "Power Factor"
-      },
-      "year_wh": {
-        "name": "Energy AC - Produced (Current Year)"
-      },
       "amps_phaseb": {
         "name": "Current AC - Phase B"
       },
-      "watthours": {
-        "name": "Energy AC - Produced Lifetime"
+      "pf": {
+        "name": "Power Factor"
+      },
+      "phase_voltage_cn": {
+        "name": "Voltage AC - Phase C-N"
+      },
+      "hz_c": {
+        "name": "Frequency AC - Phase C"
+      },
+      "system_load": {
+        "name": "Load Average"
+      },
+      "system_uptime": {
+        "name": "Uptime"
+      },
+      "ph_vph_b_c": {
+        "name": "Voltage AC - Phase B-C"
+      },
+      "month_wh": {
+        "name": "Energy AC - Produced (Current Month)"
+      },
+      "storage_size": {
+        "name": "Flash Used"
+      },
+      "wlan0_ipaddr_local": {
+        "name": "WiFi - Local IP"
+      },
+      "i_leak_dc_ac": {
+        "name": "Current DC - Leakage DC-AC"
+      },
+      "v_gnd": {
+        "name": "Voltage - Ground"
+      },
+      "v_bulk_mid": {
+        "name": "Voltage DC - Bus Midpoint"
+      },
+      "alarm_st": {
+        "name": "Status - Alarm"
+      },
+      "i_leak_dc_dc": {
+        "name": "Current DC - Leakage DC-DC"
+      },
+      "other_temperature": {
+        "name": "Temperature - Other"
+      },
+      "ph_vph_c_a": {
+        "name": "Voltage AC - Phase C-A"
+      },
+      "power_peak_abs": {
+        "name": "Power - Peak Lifetime"
       },
       "ph_vph_a_b": {
         "name": "Voltage AC - Phase A-B"
       },
-      "day_wh": {
-        "name": "Energy AC - Produced (Today)"
+      "dc_voltage_1": {
+        "name": "Voltage DC - String 1"
       },
-      "e3_last_month": {
-        "name": "Energy AC - Grid Export (Current Month)"
+      "dc_current_1": {
+        "name": "Current DC - String 1"
+      },
+      "sn": {
+        "name": "Serial Number"
+      },
+      "pn": {
+        "name": "Product Number"
+      },
+      "amps_phasec": {
+        "name": "Current AC - Phase C"
+      },
+      "cabinet_temperature": {
+        "name": "Temperature - Cabinet"
+      },
+      "dc_voltage_2": {
+        "name": "Voltage DC - String 2"
+      },
+      "week_wh": {
+        "name": "Energy AC - Produced (Current Week)"
+      },
+      "free_ram": {
+        "name": "Available RAM"
+      },
+      "dc_watts": {
+        "name": "Power DC"
+      },
+      "firmware_version": {
+        "name": "Firmware Version"
+      },
+      "flash_memory_free": {
+        "name": "Available Flash"
+      },
+      "dc_current_2": {
+        "name": "Current DC - String 2"
+      },
+      "wlan0_mode": {
+        "name": "WiFi - Mode"
+      },
+      "v_bulk": {
+        "name": "Voltage DC - Bulk Capacitor"
+      },
+      "inverter_st": {
+        "name": "Inverter Status"
+      },
+      "booster_tmp": {
+        "name": "Temperature - Booster"
+      },
+      "watthours": {
+        "name": "Energy AC - Produced Lifetime"
+      },
+      "power_peak_today": {
+        "name": "Power - Peak (Today)"
+      },
+      "amps_phasea": {
+        "name": "Current AC - Phase A"
+      },
+      "isolation_ohm1": {
+        "name": "Resistance - Insulation"
+      },
+      "dc_power_1": {
+        "name": "Power DC - String 1"
+      },
+      "phase_voltage_bn": {
+        "name": "Voltage AC - Phase B-N"
+      },
+      "dc_st1": {
+        "name": "Status - DC Input 1"
+      },
+      "dc_st2": {
+        "name": "Status - DC Input 2"
+      },
+      "year_wh": {
+        "name": "Energy AC - Produced (Current Year)"
+      },
+      "dc_power_2": {
+        "name": "Power DC - String 2"
+      },
+      "hz_a": {
+        "name": "Frequency AC - Phase A"
+      },
+      "e4_last_week": {
+        "name": "Energy - Self-Consumed (Current Week)"
+      },
+      "e7_last_month": {
+        "name": "Energy - House Consumption (Current Month)"
+      },
+      "energy_policy": {
+        "name": "Energy Policy"
+      },
+      "e_grid_import": {
+        "name": "Energy AC - Grid Import Lifetime"
+      },
+      "meter_pgrid_l3": {
+        "name": "Power AC - Meter Phase C"
+      },
+      "e5_last_month": {
+        "name": "Energy - Battery Charge (Current Month)"
+      },
+      "clock_state": {
+        "name": "Status - Clock"
+      },
+      "e4_since_restart": {
+        "name": "Energy - Self-Consumed (Since Restart)"
+      },
+      "tc_max": {
+        "name": "Temperature - Cabinet Max"
+      },
+      "cos_phi": {
+        "name": "Power Factor"
+      },
+      "e_tot_charge": {
+        "name": "Energy - Battery Charge Total Lifetime"
+      },
+      "e1_since_restart": {
+        "name": "Energy AC - Absorbed (Since Restart)"
+      },
+      "e_tot_discharge_last_month": {
+        "name": "Energy - Battery Discharge Total (Current Month)"
+      },
+      "grid_ext_ctrl_ena": {
+        "name": "External Control Enabled"
+      },
+      "e_charge_last_month": {
+        "name": "Energy - Battery Charge (Current Month)"
+      },
+      "glob_state": {
+        "name": "Status - Global"
+      },
+      "qac_derating_flags": {
+        "name": "Reactive Power - Derating Flags"
+      },
+      "w_rtg": {
+        "name": "Power - Rating"
+      },
+      "num_of_mppt": {
+        "name": "MPPT Channel Count"
+      },
+      "input_mode": {
+        "name": "Input Mode"
+      },
+      "e_total": {
+        "name": "Energy AC - Produced Lifetime"
+      },
+      "e8_last_month": {
+        "name": "Energy AC - Grid Import (Current Month)"
+      },
+      "e8_last_week": {
+        "name": "Energy AC - Grid Import (Current Week)"
+      },
+      "meter_vgrid_l1": {
+        "name": "Voltage AC - Meter Phase A"
+      },
+      "tba": {
+        "name": "Temperature - Battery"
+      },
+      "e3_last_week": {
+        "name": "Energy AC - Grid Export (Current Week)"
+      },
+      "fan1rpm": {
+        "name": "Speed - Fan 1"
+      },
+      "e5_since_restart": {
+        "name": "Energy - Battery Charge (Since Restart)"
+      },
+      "vc_max": {
+        "name": "Voltage - Battery Cell Max"
+      },
+      "vc_min": {
+        "name": "Voltage - Battery Cell Min"
+      },
+      "ein_since_restart": {
+        "name": "Energy DC - PV Input (Since Restart)"
+      },
+      "pba_t": {
+        "name": "Power - Battery Aggregate"
+      },
+      "e7_total": {
+        "name": "Energy - House Consumption Lifetime"
+      },
+      "temp_inv": {
+        "name": "Temperature - Inverter"
+      },
+      "e_tot_charge_since_restart": {
+        "name": "Energy - Battery Charge Total (Since Restart)"
+      },
+      "e15_since_restart": {
+        "name": "Energy AC - Backup Output (Since Restart)"
+      },
+      "fan2rpm": {
+        "name": "Speed - Fan 2"
+      },
+      "e_dt": {
+        "name": "Energy - Direct Transducer (DT) Lifetime"
       },
       "e_ct": {
         "name": "Energy - Current Transformer (CT) Lifetime"
@@ -351,260 +462,179 @@
       "meter_pgrid_l1": {
         "name": "Power AC - Meter Phase A"
       },
-      "grid_ext_ctrl_state": {
-        "name": "Status - Grid External Control"
-      },
-      "cos_phi": {
-        "name": "Power Factor"
-      },
-      "vin2": {
-        "name": "Voltage DC - Input 2"
-      },
-      "vgrid_l2_n": {
-        "name": "Voltage AC - Grid L2-N"
-      },
-      "ein_since_restart": {
-        "name": "Energy DC - PV Input (Since Restart)"
-      },
-      "meter_pgrid_l3": {
-        "name": "Power AC - Meter Phase C"
-      },
-      "e_charge_last_month": {
-        "name": "Energy - Battery Charge (Current Month)"
-      },
-      "d_c1_state": {
-        "name": "Status - DC Input 1"
-      },
-      "e4_last_month": {
-        "name": "Energy - Self-Consumed (Current Month)"
-      },
-      "e0_last_month": {
-        "name": "Energy AC - Produced (Current Month)"
-      },
-      "warning_flags": {
-        "name": "Status - Warning Flags"
-      },
-      "e15_since_restart": {
-        "name": "Energy AC - Backup Output (Since Restart)"
-      },
-      "e_grid_import": {
-        "name": "Energy AC - Grid Import Lifetime"
-      },
-      "pac_derating_flags": {
-        "name": "Power AC - Derating Flags"
-      },
-      "di1_mode": {
-        "name": "Digital Input - Mode 1"
-      },
-      "e8_last_month": {
-        "name": "Energy AC - Grid Import (Current Month)"
-      },
-      "temp_bst": {
-        "name": "Temperature - Booster"
-      },
-      "vc_max": {
-        "name": "Voltage - Battery Cell Max"
-      },
-      "e_tot_charge": {
-        "name": "Energy - Battery Charge Total Lifetime"
-      },
-      "pin2": {
-        "name": "Power DC - String 2"
-      },
-      "e_charge_last_week": {
-        "name": "Energy - Battery Charge (Current Week)"
-      },
-      "e7_last_week": {
-        "name": "Energy - House Consumption (Current Week)"
-      },
-      "d_c2_state": {
-        "name": "Status - DC Input 2"
-      },
-      "frt_state": {
-        "name": "Status - Fault Ride Through (FRT)"
-      },
-      "qac_derating_flags": {
-        "name": "Reactive Power - Derating Flags"
-      },
-      "e_dt": {
-        "name": "Energy - Direct Transducer (DT) Lifetime"
-      },
-      "p_dh": {
-        "name": "Power - Battery Discharge"
-      },
-      "e0_1_year": {
-        "name": "Energy AC - Produced (Current Year)"
-      },
-      "e_discharge_last_week": {
-        "name": "Energy - Battery Discharge (Current Week)"
-      },
-      "e15_last_month": {
-        "name": "Energy AC - Backup Output (Current Month)"
-      },
-      "e_total_absorbed": {
-        "name": "Energy AC - Absorbed Lifetime"
-      },
-      "pin": {
-        "name": "Power DC - Input Total"
-      },
-      "ppeak": {
-        "name": "Power - Peak"
-      },
-      "e3_last_week": {
-        "name": "Energy AC - Grid Export (Current Week)"
-      },
-      "meter_igrid_l2": {
-        "name": "Current AC - Meter Phase B"
-      },
-      "e5_last_month": {
-        "name": "Energy - Battery Charge (Current Month)"
-      },
-      "meter_vgrid_l2": {
-        "name": "Voltage AC - Meter Phase B"
-      },
-      "e3_since_restart": {
-        "name": "Energy AC - Grid Export (Since Restart)"
-      },
-      "meter_qgrid_tot": {
-        "name": "Reactive Power AC - Meter Total"
-      },
-      "e_grid_export": {
-        "name": "Energy AC - Grid Export Lifetime"
-      },
-      "meter_vgrid_l3": {
-        "name": "Voltage AC - Meter Phase C"
-      },
       "e8_since_restart": {
         "name": "Energy AC - Grid Import (Since Restart)"
-      },
-      "e_total": {
-        "name": "Energy AC - Produced Lifetime"
-      },
-      "e6_last_month": {
-        "name": "Energy - House from Inverter (Current Month)"
-      },
-      "vba": {
-        "name": "Voltage - Battery"
-      },
-      "fcc": {
-        "name": "Frequency - Central Controller"
-      },
-      "input_mode": {
-        "name": "Input Mode"
-      },
-      "clock_state": {
-        "name": "Status - Clock"
-      },
-      "tba": {
-        "name": "Temperature - Battery"
-      },
-      "pba": {
-        "name": "Power - Battery Total"
-      },
-      "commissioning_freeze": {
-        "name": "Commissioning Freeze"
-      },
-      "m126_mod_ena": {
-        "name": "Model 126 Enabled"
-      },
-      "ein": {
-        "name": "Energy DC - PV Input Lifetime"
-      },
-      "iin1": {
-        "name": "Current DC - String 1"
-      },
-      "m132_mod_ena": {
-        "name": "Model 132 Enabled"
-      },
-      "e_discharge_last_month": {
-        "name": "Energy - Battery Discharge (Current Month)"
-      },
-      "cycle_num": {
-        "name": "Cycles"
-      },
-      "vin1": {
-        "name": "Voltage DC - Input 1"
-      },
-      "glob_state": {
-        "name": "Status - Global"
       },
       "e_tot_discharge_last_week": {
         "name": "Energy - Battery Discharge Total (Current Week)"
       },
-      "e_tot_discharge_since_restart": {
-        "name": "Energy - Battery Discharge Total (Since Restart)"
-      },
-      "pba_t": {
-        "name": "Power - Battery Aggregate"
-      },
-      "temp1": {
-        "name": "Temperature - Sensor 1"
-      },
-      "e6_last_week": {
-        "name": "Energy - House from Inverter (Current Week)"
-      },
-      "e2_last_week": {
-        "name": "Energy AC - Apparent (Current Week)"
-      },
-      "di_status": {
-        "name": "Status - Digital Input"
-      },
-      "iba": {
-        "name": "Current - Battery"
-      },
-      "e6_since_restart": {
-        "name": "Energy - House from Inverter (Since Restart)"
-      },
-      "e8_last_week": {
-        "name": "Energy AC - Grid Import (Current Week)"
-      },
-      "inv_state": {
-        "name": "Status - Inverter"
-      },
-      "energy_policy": {
-        "name": "Energy Policy"
-      },
-      "e1_last_week": {
-        "name": "Energy AC - Absorbed (Current Week)"
-      },
-      "batt_ext_ctrl_state": {
-        "name": "Control State"
-      },
-      "meter_qgrid_l1": {
-        "name": "Reactive Power AC - Meter Phase A"
-      },
-      "ein_last_week": {
-        "name": "Energy DC - PV Input (Current Week)"
-      },
-      "e_total_apparent": {
-        "name": "Energy AC - Apparent Lifetime"
-      },
-      "e5_last_week": {
+      "e_charge_last_week": {
         "name": "Energy - Battery Charge (Current Week)"
-      },
-      "e_tot_discharge": {
-        "name": "Energy - Battery Discharge Total Lifetime"
-      },
-      "e2_last_month": {
-        "name": "Energy AC - Apparent (Current Month)"
-      },
-      "p_ch": {
-        "name": "Power - Battery Charge"
-      },
-      "fan1rpm": {
-        "name": "Speed - Fan 1"
-      },
-      "e4_last_week": {
-        "name": "Energy - Self-Consumed (Current Week)"
-      },
-      "e_tot_discharge_last_month": {
-        "name": "Energy - Battery Discharge Total (Current Month)"
       },
       "e15_last_week": {
         "name": "Energy AC - Backup Output (Current Week)"
       },
+      "e3_last_month": {
+        "name": "Energy AC - Grid Export (Current Month)"
+      },
+      "p_dh": {
+        "name": "Power - Battery Discharge"
+      },
+      "ein1": {
+        "name": "Energy DC - String 1 Lifetime"
+      },
+      "di_status": {
+        "name": "Status - Digital Input"
+      },
+      "d_c2_state": {
+        "name": "Status - DC Input 2"
+      },
+      "vgrid_l1_n": {
+        "name": "Voltage AC - Grid L1-N"
+      },
+      "house_p_inverter": {
+        "name": "Power - Home PV"
+      },
+      "ein_last_month": {
+        "name": "Energy DC - PV Input (Current Month)"
+      },
+      "e1_last_week": {
+        "name": "Energy AC - Absorbed (Current Week)"
+      },
+      "warning_flags": {
+        "name": "Status - Warning Flags"
+      },
+      "meter_vgrid_l3": {
+        "name": "Voltage AC - Meter Phase C"
+      },
+      "e_tot_discharge_since_restart": {
+        "name": "Energy - Battery Discharge Total (Since Restart)"
+      },
+      "e6_last_week": {
+        "name": "Energy - House from Inverter (Current Week)"
+      },
+      "e2_last_month": {
+        "name": "Energy AC - Apparent (Current Month)"
+      },
+      "frt_state": {
+        "name": "Status - Fault Ride Through (FRT)"
+      },
+      "ein_last_week": {
+        "name": "Energy DC - PV Input (Current Week)"
+      },
+      "ein": {
+        "name": "Energy DC - PV Input Lifetime"
+      },
+      "e_backup": {
+        "name": "Energy AC - Backup Output Lifetime"
+      },
+      "detected_battery_number": {
+        "name": "Detected Number"
+      },
+      "e7_since_restart": {
+        "name": "Energy - House Consumption (Since Restart)"
+      },
+      "e_total_absorbed": {
+        "name": "Energy AC - Absorbed Lifetime"
+      },
+      "temp1": {
+        "name": "Temperature - Sensor 1"
+      },
+      "iin1": {
+        "name": "Current DC - String 1"
+      },
+      "e7_last_week": {
+        "name": "Energy - House Consumption (Current Week)"
+      },
+      "e6_last_month": {
+        "name": "Energy - House from Inverter (Current Month)"
+      },
       "meter_qgrid_l3": {
         "name": "Reactive Power AC - Meter Phase C"
+      },
+      "e_tot_discharge": {
+        "name": "Energy - Battery Discharge Total Lifetime"
+      },
+      "dynamic_feed_in_ctrl": {
+        "name": "Dynamic Feed-In Control"
+      },
+      "meter_pgrid_l2": {
+        "name": "Power AC - Meter Phase B"
+      },
+      "vin2": {
+        "name": "Voltage DC - Input 2"
+      },
+      "e6_since_restart": {
+        "name": "Energy - House from Inverter (Since Restart)"
+      },
+      "e3_since_restart": {
+        "name": "Energy AC - Grid Export (Since Restart)"
+      },
+      "sac_derating_flags": {
+        "name": "Power AC - Apparent Derating Flags"
+      },
+      "meter_igrid_l1": {
+        "name": "Current AC - Meter Phase A"
+      },
+      "e_discharge_last_week": {
+        "name": "Energy - Battery Discharge (Current Week)"
+      },
+      "e_total_apparent": {
+        "name": "Energy AC - Apparent Lifetime"
+      },
+      "meter_qgrid_l2": {
+        "name": "Reactive Power AC - Meter Phase B"
+      },
+      "di0_mode": {
+        "name": "Digital Input - Mode 0"
+      },
+      "temp_bst": {
+        "name": "Temperature - Booster"
+      },
+      "inv_state": {
+        "name": "Status - Inverter"
+      },
+      "pba": {
+        "name": "Power - Battery Total"
+      },
+      "pac_togrid": {
+        "name": "Power AC - Export to Grid"
+      },
+      "pac_stand_alone": {
+        "name": "Power AC - Stand Alone Mode"
+      },
+      "e4_last_month": {
+        "name": "Energy - Self-Consumed (Current Month)"
+      },
+      "tc_min": {
+        "name": "Temperature - Cabinet Min"
+      },
+      "fcc": {
+        "name": "Frequency - Central Controller"
+      },
+      "house_pgrid_tot": {
+        "name": "Power AC - House Load Total"
+      },
+      "di1_mode": {
+        "name": "Digital Input - Mode 1"
+      },
+      "ein2": {
+        "name": "Energy DC - String 2 Lifetime"
+      },
+      "pac_derating_flags": {
+        "name": "Power AC - Derating Flags"
+      },
+      "meter_qgrid_l1": {
+        "name": "Reactive Power AC - Meter Phase A"
+      },
+      "e_tot_charge_last_month": {
+        "name": "Energy - Battery Charge Total (Current Month)"
+      },
+      "vgrid_l2_n": {
+        "name": "Voltage AC - Grid L2-N"
+      },
+      "pin1": {
+        "name": "Power DC - String 1"
       },
       "e0_since_restart": {
         "name": "Energy AC - Produced (Since Restart)"
@@ -612,143 +642,113 @@
       "meter_pgrid_tot": {
         "name": "Power AC - Meter Total"
       },
-      "e7_total": {
-        "name": "Energy - House Consumption Lifetime"
+      "pin": {
+        "name": "Power DC - Input Total"
       },
-      "sac_derating_flags": {
-        "name": "Power AC - Apparent Derating Flags"
+      "meter_qgrid_tot": {
+        "name": "Reactive Power AC - Meter Total"
       },
-      "pin1": {
-        "name": "Power DC - String 1"
+      "e0_last_month": {
+        "name": "Energy AC - Produced (Current Month)"
       },
-      "vgrid_l1_n": {
-        "name": "Voltage AC - Grid L1-N"
+      "e_discharge_last_month": {
+        "name": "Energy - Battery Discharge (Current Month)"
       },
-      "w_rtg": {
-        "name": "Power - Rating"
+      "pin2": {
+        "name": "Power DC - String 2"
       },
-      "pac_stand_alone": {
-        "name": "Power AC - Stand Alone Mode"
+      "d_c1_state": {
+        "name": "Status - DC Input 1"
       },
-      "ein_last_month": {
-        "name": "Energy DC - PV Input (Current Month)"
-      },
-      "di0_mode": {
-        "name": "Digital Input - Mode 0"
-      },
-      "e6_total": {
-        "name": "Energy - House from Inverter Lifetime"
-      },
-      "e1_since_restart": {
-        "name": "Energy AC - Absorbed (Since Restart)"
-      },
-      "e_backup": {
-        "name": "Energy AC - Backup Output Lifetime"
-      },
-      "temp_inv": {
-        "name": "Temperature - Inverter"
-      },
-      "e4_since_restart": {
-        "name": "Energy - Self-Consumed (Since Restart)"
-      },
-      "meter_qgrid_l2": {
-        "name": "Reactive Power AC - Meter Phase B"
-      },
-      "grid_ext_ctrl_ena": {
-        "name": "External Control Enabled"
-      },
-      "meter_vgrid_l1": {
-        "name": "Voltage AC - Meter Phase A"
-      },
-      "e0_last_week": {
-        "name": "Energy AC - Produced (Current Week)"
-      },
-      "e7_since_restart": {
-        "name": "Energy - House Consumption (Since Restart)"
-      },
-      "e_charge_since_restart": {
-        "name": "Energy - Battery Charge (Since Restart)"
-      },
-      "house_pgrid_tot": {
-        "name": "Power AC - House Load Total"
-      },
-      "e_discharge_since_restart": {
-        "name": "Energy - Battery Discharge (Since Restart)"
-      },
-      "meter_fgrid": {
-        "name": "Frequency AC - Meter"
-      },
-      "dynamic_feed_in_ctrl": {
-        "name": "Dynamic Feed-In Control"
-      },
-      "meter_igrid_l1": {
-        "name": "Current AC - Meter Phase A"
-      },
-      "meter_pgrid_l2": {
-        "name": "Power AC - Meter Phase B"
-      },
-      "pac_togrid": {
-        "name": "Power AC - Export to Grid"
-      },
-      "e5_since_restart": {
-        "name": "Energy - Battery Charge (Since Restart)"
-      },
-      "tc_min": {
-        "name": "Temperature - Cabinet Min"
-      },
-      "iin2": {
-        "name": "Current DC - String 2"
-      },
-      "meter_igrid_l3": {
-        "name": "Current AC - Meter Phase C"
-      },
-      "ein1": {
-        "name": "Energy DC - String 1 Lifetime"
-      },
-      "house_p_inverter": {
-        "name": "Power - Home PV"
-      },
-      "sh_u": {
-        "name": "Voltage - Shunt"
-      },
-      "num_of_mppt": {
-        "name": "MPPT Channel Count"
-      },
-      "detected_battery_number": {
-        "name": "Detected Number"
+      "iba": {
+        "name": "Current - Battery"
       },
       "batt_ext_ctrl_ena": {
         "name": "Control Enabled"
       },
-      "e_tot_charge_last_month": {
-        "name": "Energy - Battery Charge Total (Current Month)"
+      "m132_mod_ena": {
+        "name": "Model 132 Enabled"
       },
-      "vc_min": {
-        "name": "Voltage - Battery Cell Min"
+      "commissioning_freeze": {
+        "name": "Commissioning Freeze"
       },
-      "fan2rpm": {
-        "name": "Speed - Fan 2"
+      "e2_since_restart": {
+        "name": "Energy AC - Apparent (Since Restart)"
       },
-      "e7_last_month": {
-        "name": "Energy - House Consumption (Current Month)"
-      },
-      "e_tot_charge_since_restart": {
-        "name": "Energy - Battery Charge Total (Since Restart)"
-      },
-      "e1_last_month": {
-        "name": "Energy AC - Absorbed (Current Month)"
-      },
-      "ein2": {
-        "name": "Energy DC - String 2 Lifetime"
+      "e_discharge_since_restart": {
+        "name": "Energy - Battery Discharge (Since Restart)"
       },
       "e_tot_charge_last_week": {
         "name": "Energy - Battery Charge Total (Current Week)"
       },
-      "tc_max": {
-        "name": "Temperature - Cabinet Max"
+      "e1_last_month": {
+        "name": "Energy AC - Absorbed (Current Month)"
       },
-      "e2_since_restart": {
-        "name": "Energy AC - Apparent (Since Restart)"
+      "e6_total": {
+        "name": "Energy - House from Inverter Lifetime"
+      },
+      "batt_ext_ctrl_state": {
+        "name": "Control State"
+      },
+      "vba": {
+        "name": "Voltage - Battery"
+      },
+      "m126_mod_ena": {
+        "name": "Model 126 Enabled"
+      },
+      "grid_ext_ctrl_state": {
+        "name": "Status - Grid External Control"
+      },
+      "iin2": {
+        "name": "Current DC - String 2"
+      },
+      "meter_igrid_l2": {
+        "name": "Current AC - Meter Phase B"
+      },
+      "ppeak": {
+        "name": "Power - Peak"
+      },
+      "p_ch": {
+        "name": "Power - Battery Charge"
+      },
+      "vin1": {
+        "name": "Voltage DC - Input 1"
+      },
+      "e15_last_month": {
+        "name": "Energy AC - Backup Output (Current Month)"
+      },
+      "meter_vgrid_l2": {
+        "name": "Voltage AC - Meter Phase B"
+      },
+      "sh_u": {
+        "name": "Voltage - Shunt"
+      },
+      "e2_last_week": {
+        "name": "Energy AC - Apparent (Current Week)"
+      },
+      "e_charge_since_restart": {
+        "name": "Energy - Battery Charge (Since Restart)"
+      },
+      "meter_fgrid": {
+        "name": "Frequency AC - Meter"
+      },
+      "e_grid_export": {
+        "name": "Energy AC - Grid Export Lifetime"
+      },
+      "e0_1_year": {
+        "name": "Energy AC - Produced (Current Year)"
+      },
+      "meter_igrid_l3": {
+        "name": "Current AC - Meter Phase C"
+      },
+      "e5_last_week": {
+        "name": "Energy - Battery Charge (Current Week)"
+      },
+      "e0_last_week": {
+        "name": "Energy AC - Produced (Current Week)"
+      },
+      "cycle_num": {
+        "name": "Cycles"
       },
       "mfg_part_number": {
         "name": "Part Number"
