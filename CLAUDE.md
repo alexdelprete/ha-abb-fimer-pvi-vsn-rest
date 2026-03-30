@@ -362,6 +362,45 @@ All HA device info fields populated from discovery:
 - `repairs.py`: `create_partial_discovery_issue()`, `delete_partial_discovery_issue()`
 - `const.py`: `CONF_KNOWN_DEVICES`
 
+### Energy Sensor State Class & Accumulation Mode (v1.5.1)
+
+**Decision**: Introduce `accumulation_mode` attribute to drive `state_class` derivation, separate from `sensor_scope` which drives the stale-value guard.
+
+**Problem**: 32 periodic energy sensors (DayWH, WeekWH, MonthWH, YearWH, all `_7D`/`_30D`/`_1Y` series) had `state_class: "total"` instead of `"total_increasing"`. Per [HA developer docs](https://developers.home-assistant.io/docs/core/entity/sensor/#state-class-sensorstateclasstotal), `total` calculates negative deltas when values drop (e.g., 5kWh → 0 = -5kWh), causing negative solar production on the Energy Dashboard. These sensors match HA's Scenario 2: "Resets to zero, increases only" → `total_increasing`.
+
+**Separation of Concerns — Two Independent Attributes:**
+
+| Attribute | Question it Answers | Values | Used by |
+|-----------|-------------------|--------|---------|
+| `accumulation_mode` | Can the value decrease? | `monotonic`, `bidirectional` | Generator → derives `state_class` |
+| `sensor_scope` | When does it reset? | `lifetime`, `runtime`, `periodic` | `sensor.py` stale-value guard |
+
+- `accumulation_mode: "monotonic"` → value only goes up, drops = meter reset → `state_class: "total_increasing"`
+- `accumulation_mode: "bidirectional"` → value can go up and down (net metering) → `state_class: "total"`
+- `sensor_scope: "lifetime"` → never resets → guard rejects decreasing values
+- `sensor_scope: "runtime"` → resets on reboot → guard allows it
+- `sensor_scope: "periodic"` → resets at period boundary → guard allows it
+
+**Why Not Derive state_class from sensor_scope?** Because they answer different questions. All three scopes happen to be `total_increasing` (monotonically increasing within their scope), but that's a coincidence of our current sensor set. A future net metering sensor could be `lifetime` scope (never resets) but `bidirectional` accumulation (value goes up and down).
+
+**Generator Rule** (in `create_row_with_model_flags`):
+
+```python
+accumulation_mode = metadata.get("accumulation_mode")
+if accumulation_mode == "monotonic":
+    row["state_class"] = "total_increasing"
+elif accumulation_mode == "bidirectional":
+    row["state_class"] = "total"
+```text
+
+**Current State**: All 72 accumulating sensors are `monotonic`. Zero `bidirectional` sensors exist (no net metering support yet). Zero sensors have `state_class: "total"`.
+
+**Key Files**:
+
+- `generate_mapping.py`: `SUNSPEC_TO_HA_METADATA` entries with `accumulation_mode` and `sensor_scope`
+- `mapping_loader.py`: `PointMapping` dataclass with `accumulation_mode` field
+- `sensor.py`: Reads `sensor_scope` for stale-value guard (unchanged)
+
 ### Mapping Structure (v2 - Deduplicated)
 
 **Decision**: Use deduplicated Excel mapping with model flags instead of duplicate rows.
@@ -988,11 +1027,19 @@ scripts/vsn-mapping-generator/generate_mapping.py
 SUNSPEC_TO_HA_METADATA = {
     # ... existing entries ...
 
+    # Instantaneous measurement (power, voltage, current, etc.)
     "MyNewSensor": {
         "device_class": "current",
         "state_class": "measurement",
         "unit": "A",
-        "precision": 2,  # ← Source of truth!
+        "precision": 2,
+    },
+    # Accumulating energy sensor (use accumulation_mode, NOT state_class)
+    "MyEnergySensor": {
+        "device_class": "energy",
+        "unit": "Wh",
+        "accumulation_mode": "monotonic",  # → state_class derived as "total_increasing"
+        "sensor_scope": "periodic",  # → stale-value guard allows resets
     },
 }
 ```text
@@ -1003,9 +1050,17 @@ Then regenerate files.
 
 All sensor attributes live in `generate_mapping.py`:
 
-| Attribute Type | Location in Generator | |----------------|----------------------| | Units, device_class, state_class | `SUNSPEC_TO_HA_METADATA` dictionary | | Precision values |
-`SUNSPEC_TO_HA_METADATA` or auto-calculated by `_get_suggested_precision()` | | Icons | `SUNSPEC_TO_HA_METADATA` (custom icons like `mdi:omega`) | | Entity categories |
-`SUNSPEC_TO_HA_METADATA` or `DEVICE_CLASS_FIXES` | | Display names | `DISPLAY_NAME_STANDARDIZATION` dictionary | | Descriptions | `DESCRIPTION_IMPROVEMENTS` dictionary |
+| Attribute Type | Location in Generator |
+|----------------|----------------------|
+| Units, device_class | `SUNSPEC_TO_HA_METADATA` dictionary |
+| state_class (energy sensors) | Derived from `accumulation_mode` in `SUNSPEC_TO_HA_METADATA` |
+| state_class (other sensors) | Explicit `state_class` in `SUNSPEC_TO_HA_METADATA` |
+| accumulation_mode, sensor_scope | `SUNSPEC_TO_HA_METADATA` dictionary |
+| Precision values | `SUNSPEC_TO_HA_METADATA` or auto-calculated by `_get_suggested_precision()` |
+| Icons | `SUNSPEC_TO_HA_METADATA` (custom icons like `mdi:omega`) |
+| Entity categories | `SUNSPEC_TO_HA_METADATA` or `DEVICE_CLASS_FIXES` |
+| Display names | `DISPLAY_NAME_STANDARDIZATION` dictionary |
+| Descriptions | `DESCRIPTION_IMPROVEMENTS` dictionary |
 
 ### Runtime Code Guidelines
 
@@ -1102,7 +1157,8 @@ NEVER manually edit any of these generated files — changes will be overwritten
 - **Descriptions**: Use SunSpec specifications for standard models
 - **Categories**: Proper categorization (Inverter, MPPT, Battery, Meter, System Monitoring, etc.)
 - **HA Device Classes**: Use correct SensorDeviceClass (power, energy, current, voltage, etc.)
-- **HA State Classes**: Use correct SensorStateClass (measurement, total, total_increasing)
+- **HA State Classes**: Use `accumulation_mode` for energy sensors (never hardcode
+  `state_class` directly). Use `measurement` for instantaneous readings
 - **Display Names**: User-friendly, concise, descriptive
 
 ### Issue References in Release Notes

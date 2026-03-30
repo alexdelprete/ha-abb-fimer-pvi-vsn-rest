@@ -71,6 +71,8 @@ Each mapping entry contains:
 | HA State Class | Home Assistant state class (SensorStateClass) | `measurement` |
 | HA Device Class | Home Assistant device class | `power` |
 | Entity Category | HA entity category (diagnostic, config, etc.) | `` or `diagnostic` |
+| Sensor Scope | When the sensor resets (drives stale-value guard) | `lifetime`, `runtime`, `periodic` |
+| Accumulation Mode | Whether value can decrease (drives state_class) | `monotonic`, `bidirectional` |
 | Available in Modbus | In Modbus protocol | `true`/`false` |
 | Data Source | Origin of mapping metadata | `SunSpec Description (M103)` |
 | Model_Notes | Additional notes about model compatibility | `` |

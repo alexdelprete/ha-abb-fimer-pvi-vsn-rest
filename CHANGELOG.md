@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.1] - Unreleased
+
+### Bug Fixes
+
+- **Fix negative energy values on periodic counter reset** (Fixes #43) - 32 periodic energy
+  sensors (DayWH, WeekWH, MonthWH, YearWH, all `_7D`/`_30D`/`_1Y` series) had
+  `state_class: "total"` instead of `"total_increasing"`, causing negative values on the
+  HA Energy Dashboard when counters reset at period boundaries. Thanks to @nonth for
+  reporting this issue.
+
+### Added
+
+- **Accumulation Mode attribute** - New `accumulation_mode` field in sensor mapping
+  (`"monotonic"` or `"bidirectional"`) drives `state_class` derivation in the generator.
+  Separation of concerns: `accumulation_mode` determines state_class, `sensor_scope`
+  determines stale-value guard behavior.
+
 ## [1.5.0] - 2026-03-29
 
 ### Added
