@@ -34,7 +34,7 @@ dev = [
     "ruff>=0.15.10",
     "ty",
     "pytest>=9.0.3",
-    "pytest-asyncio>=0.23.0",
+    "pytest-asyncio>=1.3.0",
     "pytest-cov",
     "pytest-homeassistant-custom-component>=0.13.316",
     "pytest-timeout",
@@ -52,7 +52,7 @@ lint = [
 ]
 pytest = [
     "pytest>=9.0.3",
-    "pytest-asyncio>=0.23.0",
+    "pytest-asyncio>=1.3.0",
     "pytest-cov",
     "pytest-homeassistant-custom-component>=0.13.316",
     "pytest-timeout",
