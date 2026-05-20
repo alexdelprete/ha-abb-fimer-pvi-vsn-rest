@@ -760,6 +760,7 @@ standalone test script.**
 - Result: ✅ Normalized JSON now shows correct kWh values
 
 **Files Modified**:
+
 - `custom_components/.../sensor.py` (attribute validation + exception handling)
 - `scripts/vsn_client.py` (mapping URL + energy conversion)
 - Version bump to v1.1.11
@@ -792,6 +793,7 @@ works properly.
 - Result: Energy sensors now correctly display in kWh after fresh installation
 
 **Files Modified**:
+
 - `custom_components/.../normalizer.py` (use local variable pattern)
 - Version bump to v1.1.10
 
@@ -830,6 +832,7 @@ works properly.
 - Result: SysTime loads without errors and displays formatted date/time string
 
 **Files Modified**:
+
 - `scripts/vsn-mapping-generator/generate_mapping.py` (3 changes: energy units, TIMESTAMP_SENSORS, SysTime precision)
 - Regenerated all mapping files (Excel + 3 JSON copies)
 - Version bump to v1.1.9
@@ -881,6 +884,7 @@ works properly.
 - Result: ALL energy sensors now convert correctly and display in kWh with proper values
 
 **Files Modified**:
+
 - `scripts/vsn-mapping-generator/generate_mapping.py` (4 changes: state sensor precision, SysTime device_class)
 - `custom_components/.../sensor.py` (defensive precision check)
 - `custom_components/.../normalizer.py` (device_class-based energy conversion)
@@ -932,6 +936,7 @@ values (critical data error).
 - Updated current version to v1.1.7
 
 **Benefits:**
+
 - Generator is now single source of truth for ALL sensor metadata
 - All fixes from v1.1.3-v1.1.7 permanently codified in generator
 - No risk of manual edits being lost during regeneration
@@ -977,6 +982,7 @@ values (critical data error).
 - Commit: [df7557f](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/df7557f)
 
 **Affected Sensors** (now display correctly without decimals):
+
 - Chc → 82277504 (no decimals, no unit)
 - Dhc → 183048368 (no decimals, no unit)
 - CycleNum → 707 (no decimals, no unit)
@@ -1002,6 +1008,7 @@ This is a known limitation already documented in sensor.py for system_load.
 - Commit: [12d0ea6](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/12d0ea6)
 
 **Affected Sensors** (now display correctly with 0 decimals):
+
 - Chc (Battery charge cycles counter)
 - Dhc (Battery discharge cycles counter)
 - CycleNum (Count - Battery Cycles)
@@ -1035,6 +1042,7 @@ This is a known limitation already documented in sensor.py for system_load.
 - Commit: [86c47dc](https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/commit/86c47dc)
 
 **Sensors Fixed by Type**:
+
 - Current (5): Iba, Iin1, Iin2, IleakInv, IleakDC → device_class=current, unit=A, precision=2
 - Voltage (4): Vba, ShU, Vin1, Vin2 → device_class=voltage, unit=V, precision=1
 - Power (5): Pba, MeterPgrid_L1/L2/L3 → device_class=power, unit=W, precision=0
@@ -1046,12 +1054,14 @@ This is a known limitation already documented in sensor.py for system_load.
 ### 🛠️ Tools Added
 
 **Mapping Maintenance Scripts**:
+
 - `scripts/update_mapping_metadata.py` - Systematic metadata updates
 - `scripts/generate_mapping_analysis.py` - Generate XLSX analysis files
 
 ### 📚 Documentation
 
 **README Improvements**:
+
 - Updated shields/badges to match legacy integration style (reference-style, for-the-badge)
 - Added HACS quick installation badge
 - Added Coffee section

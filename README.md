@@ -119,6 +119,7 @@ described below:
 | **Recovery script** | (none) | Script to execute when failures threshold is reached (e.g., `script.restart_router`) |
 
 **Runtime vs Startup Notifications:**
+
 - **Runtime**: Monitors failures during normal operation after HA is running
 - **Startup**: Monitors failures when HA starts/restarts and can't connect to the device
 
