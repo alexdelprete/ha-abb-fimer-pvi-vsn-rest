@@ -17,10 +17,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Assistant already tracks update timing natively via the core
   `last_changed`/`last_updated`/`last_reported` state fields. Thanks to @fabioquarantini
   for the detailed report.
-- **Fix unsatisfiable dependency resolution in CI** - A Dependabot update had pinned
-  `aiohttp>=3.13.5` in `pyproject.toml`, which conflicts with the `aiohttp==3.13.3`
-  exact pin of the Home Assistant versions installable on Python 3.13. The constraint
-  is realigned to `>=3.13.3`, matching `manifest.json` and `requirements.txt`.
+- **Fix unsatisfiable dependency resolution in CI** - Dependabot updates had tightened
+  `pyproject.toml` dev constraints to `aiohttp>=3.13.5` and `pytest>=9.0.3`. On Python
+  3.13, the installable Home Assistant versions pin `aiohttp==3.13.3` and
+  `pytest-homeassistant-custom-component` pins `pytest==9.0.0`, making the `[dev]` extra
+  unresolvable. The constraints are realigned to `aiohttp>=3.13.3` and `pytest>=9.0.0`.
 
 ### Breaking Changes
 
