@@ -5,7 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.5.1] - Unreleased
+## [1.5.2] - Unreleased
+
+### Bug Fixes
+
+- **Remove `last_updated` sensor attribute to stop recorder database growth** (Fixes #56) -
+  Every sensor exposed a `last_updated` attribute sourced from the coordinator timestamp,
+  which changed on every poll. This defeated the recorder's `state_attributes`
+  deduplication, forcing a new attributes row per state write for every entity (368 MB
+  `state_attributes` table in the reporter's setup). The attribute is now removed; Home
+  Assistant already tracks update timing natively via the core
+  `last_changed`/`last_updated`/`last_reported` state fields. Thanks to @fabioquarantini
+  for the detailed report.
+
+### Breaking Changes
+
+- The `last_updated` attribute is no longer present on integration sensors. Automations or
+  templates reading `state_attr('sensor.x', 'last_updated')` should use the core state
+  property `states.sensor.x.last_updated` (or `last_changed`) instead.
+
+## [1.5.1] - 2026-03-30
 
 ### Bug Fixes
 

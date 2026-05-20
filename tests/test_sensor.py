@@ -1506,12 +1506,17 @@ class TestVSNSensorStateMapping:
 class TestVSNSensorExtraStateAttributesEdgeCases:
     """Additional tests for extra_state_attributes edge cases."""
 
-    def test_extra_state_attributes_with_timestamp(
+    def test_extra_state_attributes_omits_last_updated(
         self,
         mock_coordinator: MagicMock,
         mock_sensor_config_entry: MagicMock,
     ) -> None:
-        """Test extra state attributes include timestamp when available."""
+        """Test extra state attributes do not include a last_updated timestamp.
+
+        The coordinator timestamp changes on every poll; exposing it as an
+        attribute defeats the recorder's state_attributes deduplication and
+        bloats the database (issue #56). HA tracks update timing natively.
+        """
         point_data = {
             "value": 5000,
             "ha_display_name": "Power AC",
@@ -1536,7 +1541,7 @@ class TestVSNSensorExtraStateAttributesEdgeCases:
         )
 
         attrs = sensor.extra_state_attributes
-        assert attrs["last_updated"] == "2025-01-01T12:00:00"
+        assert "last_updated" not in attrs
 
     def test_extra_state_attributes_with_state_mapping(
         self,

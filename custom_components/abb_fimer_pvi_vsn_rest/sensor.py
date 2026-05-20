@@ -717,9 +717,11 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], SensorEntity):
             "category": point_data.get("category", ""),
         }
 
-        # Add timestamp if available
-        if timestamp := device_data.get("timestamp"):
-            attributes["last_updated"] = timestamp
+        # Note: a "last_updated" attribute is intentionally NOT added here.
+        # The coordinator timestamp changes on every poll, which defeats the
+        # recorder's state_attributes deduplication and bloats the database
+        # (see issue #56). Home Assistant already tracks update timing natively
+        # via the core last_changed/last_updated/last_reported state fields.
 
         # Add raw state code if state translation is active
         if self._state_mapping:
