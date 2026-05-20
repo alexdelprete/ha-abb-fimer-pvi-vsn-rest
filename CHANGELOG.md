@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.5.2] - Unreleased
+## [1.5.2] - 2026-05-20
 
 ### Bug Fixes
 
@@ -17,12 +17,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Assistant already tracks update timing natively via the core
   `last_changed`/`last_updated`/`last_reported` state fields. Thanks to @fabioquarantini
   for the detailed report.
+- **Fix unsatisfiable dependency resolution in CI** - A Dependabot update had pinned
+  `aiohttp>=3.13.5` in `pyproject.toml`, which conflicts with the `aiohttp==3.13.3`
+  exact pin of the Home Assistant versions installable on Python 3.13. The constraint
+  is realigned to `>=3.13.3`, matching `manifest.json` and `requirements.txt`.
 
 ### Breaking Changes
 
 - The `last_updated` attribute is no longer present on integration sensors. Automations or
   templates reading `state_attr('sensor.x', 'last_updated')` should use the core state
   property `states.sensor.x.last_updated` (or `last_changed`) instead.
+
+### Dependencies
+
+- Update `pip` requirement to `>=26.1.1,<26.2`
+- Update dev dependencies: `pytest` (`>=9.0.3`), `pytest-asyncio`, `ruff` (`>=0.15.10`),
+  `pytest-homeassistant-custom-component`
+- Bump `softprops/action-gh-release` to `3.0.0` and `dependabot/fetch-metadata` to `3`
+
+### Documentation
+
+- Fix pre-existing MD032 markdown violations in older CHANGELOG and README sections
 
 ## [1.5.1] - 2026-03-30
 

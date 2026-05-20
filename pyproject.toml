@@ -22,7 +22,7 @@ include = ["custom_components*"]
 
 [project.optional-dependencies]
 dev = [
-    "aiohttp>=3.13.5",
+    "aiohttp>=3.13.3",
     "urllib3>=2.6.3",
     "colorlog>=6.10.0",
     "homeassistant>=2026.1.0",
@@ -58,7 +58,7 @@ pytest = [
     "pytest-timeout",
 ]
 dev = [
-    "aiohttp>=3.13.5",
+    "aiohttp>=3.13.3",
     "urllib3>=2.6.3",
     "colorlog>=6.10.0",
     "homeassistant>=2026.1.0",
