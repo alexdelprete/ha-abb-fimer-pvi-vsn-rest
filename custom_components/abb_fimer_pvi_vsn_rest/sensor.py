@@ -690,7 +690,9 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], RestoreSensor)
         # decrease. During startup the datalogger may return 0 or stale values before full
         # inverter communication is established. HA interprets drops as meter resets → spikes.
         # Return None so HA skips this reading without triggering a reset.
-        if isinstance(value, (int, float)):
+        if (self._is_lifetime_sensor or self._is_accumulating_sensor) and isinstance(
+            value, (int, float)
+        ):
             current_state = self.hass.states.get(self.entity_id)
             has_live_state = current_state is not None and current_state.state not in (
                 "unknown",
