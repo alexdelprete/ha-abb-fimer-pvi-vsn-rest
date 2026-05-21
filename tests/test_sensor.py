@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from unittest.mock import MagicMock, PropertyMock, patch
+from unittest.mock import AsyncMock, MagicMock, PropertyMock, patch
 
 import pytest
 
@@ -2435,3 +2435,191 @@ class TestLifetimeSensorGuard:
         mock_coordinator.hass.states.get.return_value = mock_state
 
         assert sensor.native_value == 0.0
+
+
+class TestAccumulatingSensorRestoreGuard:
+    """Tests for RestoreSensor cold-restart baseline on accumulating sensors."""
+
+    def _make_sensor(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+        point_name: str = "etotal",
+        value: float = 500000.0,
+        sensor_scope: str = "lifetime",
+        accumulation_mode: str = "monotonic",
+    ) -> VSNSensor:
+        """Create a sensor for restore-guard tests."""
+        point_data = {
+            "value": value,
+            "ha_display_name": "Energy AC - Produced Lifetime",
+            "device_class": "energy",
+            "state_class": "total_increasing",
+            "units": "kWh",
+            "sensor_scope": sensor_scope,
+            "accumulation_mode": accumulation_mode,
+        }
+        mock_coordinator.data = {
+            "devices": {
+                TEST_INVERTER_SN: {
+                    "points": {point_name: {"value": value}},
+                }
+            }
+        }
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_INVERTER_SN,
+            device_type="inverter_3phases",
+            point_name=point_name,
+            point_data=point_data,
+        )
+        sensor.hass = mock_coordinator.hass
+        return sensor
+
+    async def _restore_sensor(
+        self,
+        sensor: VSNSensor,
+        restored_value: float | None,
+    ) -> None:
+        """Run async_added_to_hass with mocked restore data."""
+        if restored_value is not None:
+            mock_sensor_data = MagicMock()
+            mock_sensor_data.native_value = restored_value
+        else:
+            mock_sensor_data = None
+
+        sensor.async_get_last_sensor_data = AsyncMock(return_value=mock_sensor_data)
+
+        with (
+            patch(
+                "homeassistant.helpers.restore_state.RestoreEntity.async_internal_added_to_hass",
+                new_callable=AsyncMock,
+            ),
+            patch(
+                "homeassistant.helpers.update_coordinator.CoordinatorEntity.async_added_to_hass",
+                new_callable=AsyncMock,
+            ),
+        ):
+            await sensor.async_added_to_hass()
+
+    @pytest.mark.asyncio
+    async def test_restored_baseline_blocks_zero_after_restart(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test restored baseline blocks warm-up 0 after HA cold restart."""
+        sensor = self._make_sensor(mock_coordinator, mock_sensor_config_entry, value=0.0)
+        mock_coordinator.hass.states.get.return_value = None
+
+        await self._restore_sensor(sensor, restored_value=500000.0)
+
+        assert sensor._restored_native_value == 500000.0
+        assert sensor.native_value is None
+
+    @pytest.mark.asyncio
+    async def test_no_restore_data_allows_value(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test fresh install (no restore data) allows polled value through."""
+        sensor = self._make_sensor(mock_coordinator, mock_sensor_config_entry, value=500000.0)
+        mock_coordinator.hass.states.get.return_value = None
+
+        await self._restore_sensor(sensor, restored_value=None)
+
+        assert sensor._restored_native_value is None
+        assert sensor.native_value == 500000.0
+
+    @pytest.mark.asyncio
+    async def test_value_above_restored_baseline_passes(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test real value above restored baseline passes through."""
+        sensor = self._make_sensor(mock_coordinator, mock_sensor_config_entry, value=500001.0)
+        mock_coordinator.hass.states.get.return_value = None
+
+        await self._restore_sensor(sensor, restored_value=500000.0)
+
+        assert sensor.native_value == 500001.0
+
+    @pytest.mark.asyncio
+    async def test_restored_baseline_allows_equal_value(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test value equal to restored baseline passes through."""
+        sensor = self._make_sensor(mock_coordinator, mock_sensor_config_entry, value=500000.0)
+        mock_coordinator.hass.states.get.return_value = None
+
+        await self._restore_sensor(sensor, restored_value=500000.0)
+
+        assert sensor.native_value == 500000.0
+
+    @pytest.mark.asyncio
+    async def test_non_accumulating_sensor_skips_restore(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test non-accumulating sensor (measurement) does not restore baseline."""
+        sensor = self._make_sensor(
+            mock_coordinator,
+            mock_sensor_config_entry,
+            point_name="watts",
+            value=0.0,
+            sensor_scope="",
+            accumulation_mode="",
+        )
+        mock_coordinator.hass.states.get.return_value = None
+
+        await self._restore_sensor(sensor, restored_value=5000.0)
+
+        assert sensor._restored_native_value is None
+        assert sensor.native_value == 0.0
+
+    @pytest.mark.asyncio
+    async def test_periodic_accumulating_sensor_gets_restore_protection(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test periodic accumulating sensor (DayWH) is protected by restore baseline."""
+        sensor = self._make_sensor(
+            mock_coordinator,
+            mock_sensor_config_entry,
+            point_name="daywh",
+            value=0.0,
+            sensor_scope="periodic",
+            accumulation_mode="monotonic",
+        )
+        mock_coordinator.hass.states.get.return_value = None
+
+        await self._restore_sensor(sensor, restored_value=3500.0)
+
+        assert sensor._restored_native_value == 3500.0
+        assert sensor.native_value is None
+
+    @pytest.mark.asyncio
+    async def test_live_state_takes_priority_over_restored(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test live HA state is used over restored baseline when available."""
+        sensor = self._make_sensor(mock_coordinator, mock_sensor_config_entry, value=0.0)
+
+        await self._restore_sensor(sensor, restored_value=500000.0)
+
+        # Simulate live state available (HA has written a value to state machine)
+        mock_state = MagicMock()
+        mock_state.state = "600000.0"
+        mock_coordinator.hass.states.get.return_value = mock_state
+
+        # Blocked by live state guard (lifetime + 600000 > 0), not by restored baseline
+        assert sensor.native_value is None

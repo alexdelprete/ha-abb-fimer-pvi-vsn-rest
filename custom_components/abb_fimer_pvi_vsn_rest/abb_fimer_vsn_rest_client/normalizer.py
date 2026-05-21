@@ -384,6 +384,7 @@ class VSNDataNormalizer:
                     "icon": mapping.icon,
                     "suggested_display_precision": mapping.suggested_display_precision,
                     "sensor_scope": mapping.sensor_scope,
+                    "accumulation_mode": mapping.accumulation_mode,
                 }
 
                 # Use HA entity name as the key for normalized data

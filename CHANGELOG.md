@@ -9,7 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
-- _No changes yet._
+- **Fix energy doubling after HA cold restart for accumulating sensors** — After a cold
+  restart, the datalogger may report 0 or stale values before inverter communication is
+  fully established. The existing stale-value guard (PR #42 by @bryanyork) only protected
+  lifetime sensors during normal operation and could not compare against the previous
+  reading after a restart because `hass.states.get()` returns `None`/unavailable until the
+  entity is restored. The sensor now extends `RestoreSensor` and uses the last persisted
+  `native_value` as a fallback baseline for all accumulating sensors (lifetime, runtime,
+  and periodic — 74 sensors total, gated by `accumulation_mode`), preventing
+  `TOTAL_INCREASING` from interpreting the 0-to-real pattern as a meter reset.
 
 ## [1.5.2] - 2026-05-20
 
