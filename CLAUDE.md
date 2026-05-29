@@ -1494,7 +1494,7 @@ The project includes `.markdownlint.json` configuration:
 Run linting: `npx markdownlint-cli2 *.md docs/*.md`
 
 <!-- BEGIN SHARED:repo-sync -->
-<!-- Synced by repo-sync on 2026-03-18 -->
+<!-- Synced by repo-sync on 2026-05-29 -->
 
 ## Context7 for Documentation
 
@@ -1767,7 +1767,15 @@ This integration tracks [Home Assistant Quality Scale][qs] rules in `quality_sca
 > **STOP: NEVER create git tags or GitHub releases without explicit user command.**
 > This is a hard rule. Always stop after commit/push and wait for user instruction.
 
-**Published releases are FROZEN** - Never modify documentation for released versions.
+**Published releases are FROZEN** - Never modify the git tag, the ZIP asset, or the
+`docs/releases/vX.Y.Z.md` file in a way that changes the meaning of what shipped.
+
+The GitHub *release body* (what shows on the release page) may be edited via
+`gh release edit vX.Y.Z --notes-file docs/releases/vX.Y.Z.md` to fix typos, add
+cross-references to companion files that landed on `main` shortly after the release,
+or clarify scope — as long as the edit doesn't misrepresent what's actually in the
+released ZIP. When you do this, also update the matching `docs/releases/vX.Y.Z.md` so
+the file and the live release body stay in sync.
 
 **Master branch = Next Release** - All commits target the next version with version bumped
 in manifest.json and const.py.
