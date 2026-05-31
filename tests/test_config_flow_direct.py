@@ -14,16 +14,19 @@ from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.exceptio
     VSNAuthenticationError,
     VSNClientError,
     VSNConnectionError,
+    VSNUnsupportedDeviceError,
 )
 from custom_components.abb_fimer_pvi_vsn_rest.config_flow import (
     ERROR_CANNOT_CONNECT,
     ERROR_INVALID_AUTH,
     ERROR_TIMEOUT,
     ERROR_UNKNOWN,
+    ERROR_UNSUPPORTED_DEVICE,
     ABBFimerPVIVSNRestConfigFlow,
     ABBFimerPVIVSNRestOptionsFlow,
     validate_connection,
 )
+from custom_components.abb_fimer_pvi_vsn_rest.const import CONF_REGENERATE_ENTITY_IDS
 
 from .conftest import (
     TEST_HOST,
@@ -566,6 +569,33 @@ class TestConfigFlowAsyncStepUser:
         assert result["errors"]["base"] == ERROR_INVALID_AUTH
 
     @pytest.mark.asyncio
+    async def test_step_user_unsupported_device(
+        self, mock_discovery_result: MockDiscoveryResult
+    ) -> None:
+        """Test handling unsupported device error in user step."""
+
+        flow = ABBFimerPVIVSNRestConfigFlow()
+        flow.hass = MagicMock()
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.validate_connection",
+                new_callable=AsyncMock,
+                side_effect=VSNUnsupportedDeviceError("No VSN REST API endpoints"),
+            ),
+        ):
+            result = await flow.async_step_user(
+                user_input={
+                    "host": TEST_HOST,
+                    "username": TEST_USERNAME,
+                    "password": TEST_PASSWORD,
+                }
+            )
+
+        assert result["type"] == "form"
+        assert result["errors"]["base"] == ERROR_UNSUPPORTED_DEVICE
+
+    @pytest.mark.asyncio
     async def test_step_user_client_error(self, mock_discovery_result: MockDiscoveryResult) -> None:
         """Test handling client error in user step."""
 
@@ -809,6 +839,81 @@ class TestConfigFlowAsyncStepReconfigure:
         assert result["type"] == "form"
         assert result["errors"]["base"] == ERROR_UNKNOWN
 
+    @pytest.mark.asyncio
+    async def test_step_reconfigure_unsupported_device(
+        self, mock_discovery_result: MockDiscoveryResult
+    ) -> None:
+        """Test handling unsupported device error in reconfigure step."""
+
+        flow = ABBFimerPVIVSNRestConfigFlow()
+        flow.hass = MagicMock()
+
+        mock_entry = MagicMock()
+        mock_entry.data = {"host": TEST_HOST, "username": TEST_USERNAME}
+
+        with (
+            patch.object(flow, "_get_reconfigure_entry", return_value=mock_entry),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.validate_connection",
+                new_callable=AsyncMock,
+                side_effect=VSNUnsupportedDeviceError("No VSN REST API endpoints"),
+            ),
+        ):
+            result = await flow.async_step_reconfigure(
+                user_input={
+                    "host": TEST_HOST,
+                    "username": TEST_USERNAME,
+                    "password": TEST_PASSWORD,
+                }
+            )
+
+        assert result["type"] == "form"
+        assert result["errors"]["base"] == ERROR_UNSUPPORTED_DEVICE
+
+    @pytest.mark.asyncio
+    async def test_step_reconfigure_success(
+        self, mock_discovery_result: MockDiscoveryResult
+    ) -> None:
+        """Test successful reconfigure updates the entry and reloads."""
+
+        flow = ABBFimerPVIVSNRestConfigFlow()
+        flow.hass = MagicMock()
+
+        mock_entry = MagicMock()
+        mock_entry.data = {"host": TEST_HOST, "username": TEST_USERNAME}
+
+        sentinel = {"type": "abort", "reason": "reconfigure_successful"}
+
+        with (
+            patch.object(flow, "_get_reconfigure_entry", return_value=mock_entry),
+            patch.object(
+                flow,
+                "async_update_reload_and_abort",
+                return_value=sentinel,
+            ) as mock_reload,
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.config_flow.validate_connection",
+                new_callable=AsyncMock,
+                return_value={
+                    "vsn_model": TEST_VSN_MODEL,
+                    "requires_auth": False,
+                    "title": f"{TEST_VSN_MODEL} ({TEST_LOGGER_SN})",
+                    "logger_sn": TEST_LOGGER_SN,
+                    "devices": [],
+                },
+            ),
+        ):
+            result = await flow.async_step_reconfigure(
+                user_input={
+                    "host": TEST_HOST,
+                    "username": TEST_USERNAME,
+                    "password": TEST_PASSWORD,
+                }
+            )
+
+        assert result is sentinel
+        mock_reload.assert_called_once()
+
 
 class TestOptionsFlow:
     """Tests for ABBFimerPVIVSNRestOptionsFlow."""
@@ -981,6 +1086,93 @@ class TestOptionsFlow:
 
         assert result["type"] == "form"
         assert result["step_id"] == "init"
+
+    @pytest.mark.asyncio
+    async def test_options_step_init_multiple_same_type_devices(self) -> None:
+        """Test options form uses indexed prefix keys when >1 device of a type."""
+
+        mock_coordinator = MagicMock()
+        mock_coordinator.discovered_devices = [
+            MockDiscoveredDevice(
+                device_id="INV-AAA-1",
+                raw_device_id="INV-AAA-1",
+                device_type="inverter_3phases",
+                device_model="PVI-10.0-OUTD",
+                manufacturer="Power-One",
+                firmware_version="C008",
+                hardware_version=None,
+                is_datalogger=False,
+            ),
+            MockDiscoveredDevice(
+                device_id="INV-BBB-2",
+                raw_device_id="INV-BBB-2",
+                device_type="inverter_3phases",
+                device_model="PVI-10.0-OUTD",
+                manufacturer="Power-One",
+                firmware_version="C008",
+                hardware_version=None,
+                is_datalogger=False,
+            ),
+        ]
+
+        mock_runtime_data = MagicMock()
+        mock_runtime_data.coordinator = mock_coordinator
+
+        mock_entry = MagicMock()
+        mock_entry.options = {"scan_interval": 60}
+        mock_entry.runtime_data = mock_runtime_data
+
+        flow = ABBFimerPVIVSNRestOptionsFlow()
+        flow.hass = MagicMock()
+
+        with patch.object(
+            ABBFimerPVIVSNRestOptionsFlow,
+            "config_entry",
+            new_callable=lambda: property(lambda self: mock_entry),
+        ):
+            result = await flow.async_step_init(user_input=None)
+
+        assert result["type"] == "form"
+        assert result["step_id"] == "init"
+        # Two inverters → indexed prefix keys with per-device serial placeholders.
+        placeholders = result["description_placeholders"]
+        assert placeholders["inverter_1_sn"] == "INV-AAA-1"
+        assert placeholders["inverter_2_sn"] == "INV-BBB-2"
+
+    @pytest.mark.asyncio
+    async def test_options_step_init_submit_regenerate(self) -> None:
+        """Submitting with regenerate=True invokes entity-ID regeneration."""
+
+        mock_entry = MagicMock()
+        mock_entry.options = {"scan_interval": 60}
+        mock_entry.runtime_data = None
+
+        flow = ABBFimerPVIVSNRestOptionsFlow()
+        flow.hass = MagicMock()
+
+        with (
+            patch.object(
+                ABBFimerPVIVSNRestOptionsFlow,
+                "config_entry",
+                new_callable=lambda: property(lambda self: mock_entry),
+            ),
+            patch.object(
+                flow,
+                "_regenerate_entity_ids",
+                new_callable=AsyncMock,
+            ) as mock_regen,
+        ):
+            result = await flow.async_step_init(
+                user_input={
+                    "scan_interval": 120,
+                    CONF_REGENERATE_ENTITY_IDS: True,
+                }
+            )
+
+        assert result["type"] == "create_entry"
+        mock_regen.assert_called_once()
+        # The one-time regenerate flag must not be persisted into options.
+        assert CONF_REGENERATE_ENTITY_IDS not in result["data"]
 
 
 class TestOptionsFlowRegenerateEntityIds:
