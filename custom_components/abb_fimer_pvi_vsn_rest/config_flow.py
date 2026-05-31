@@ -448,10 +448,18 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
             )
         )
 
+        # Use description={"suggested_value": ...} instead of default=... so that
+        # clearing the field actually removes it from options. With default=, an
+        # empty submission arrives with the key absent and voluptuous resurrects
+        # the saved value, making the field impossible to clear via the UI.
         schema_dict[
             vol.Optional(
                 CONF_RECOVERY_SCRIPT,
-                default=current_options.get(CONF_RECOVERY_SCRIPT, DEFAULT_RECOVERY_SCRIPT),
+                description={
+                    "suggested_value": current_options.get(
+                        CONF_RECOVERY_SCRIPT, DEFAULT_RECOVERY_SCRIPT
+                    )
+                },
             )
         ] = TextSelector(
             TextSelectorConfig(
@@ -472,14 +480,27 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
                 continue
             has_any_device = True
 
+            # Use description={"suggested_value": ...} (not default=...) so clearing
+            # a prefix to revert to default naming sticks. With default=, an empty
+            # submission omits the key and voluptuous resurrects the saved prefix.
             if len(devices) == 1:
                 # Single device: use base key (backward compatible)
-                schema_dict[vol.Optional(base_key, default=current_options.get(base_key, ""))] = str
+                schema_dict[
+                    vol.Optional(
+                        base_key,
+                        description={"suggested_value": current_options.get(base_key, "")},
+                    )
+                ] = str
             else:
                 # Multiple devices: use indexed keys with serial numbers in descriptions
                 for i, device in enumerate(devices, start=1):
                     key = f"{base_key}_{i}"
-                    schema_dict[vol.Optional(key, default=current_options.get(key, ""))] = str
+                    schema_dict[
+                        vol.Optional(
+                            key,
+                            description={"suggested_value": current_options.get(key, "")},
+                        )
+                    ] = str
                     # Add serial number placeholder for this field's description
                     # e.g., "battery_1_sn" → "113049-3P72-0221"
                     placeholder_key = f"{dtype}_{i}_sn"

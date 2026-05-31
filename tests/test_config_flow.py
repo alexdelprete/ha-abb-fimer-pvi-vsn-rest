@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, PropertyMock, patch
 
 import pytest
 
@@ -11,6 +11,7 @@ from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.exceptio
     VSNAuthenticationError,
     VSNConnectionError,
 )
+from custom_components.abb_fimer_pvi_vsn_rest.config_flow import ABBFimerPVIVSNRestOptionsFlow
 from custom_components.abb_fimer_pvi_vsn_rest.const import (
     CONF_ENABLE_REPAIR_NOTIFICATION,
     CONF_ENABLE_STARTUP_NOTIFICATION,
@@ -271,3 +272,103 @@ async def test_options_flow(
     assert result2["type"] is FlowResultType.CREATE_ENTRY
     # Verify the key option was updated
     assert result2["data"][CONF_SCAN_INTERVAL] == 120
+
+
+def _build_options_form_schema(options: dict, discovered_devices: list):
+    """Build the options-flow schema as the real flow would, for a given state.
+
+    Returns the voluptuous schema from the rendered form so tests can feed it
+    synthetic submissions and exercise the same validation HA runs before
+    calling async_step_init with the validated result.
+    """
+    mock_entry = MagicMock()
+    mock_entry.options = options
+    mock_entry.entry_id = "test_entry_id"
+    mock_entry.runtime_data.coordinator.discovered_devices = discovered_devices
+
+    return ABBFimerPVIVSNRestOptionsFlow(), mock_entry
+
+
+async def test_options_flow_schema_allows_clearing_recovery_script(
+    mock_discovered_devices,
+) -> None:
+    """Clearing the recovery script via the form must remove it from options.
+
+    Regression: vol.Optional(CONF_RECOVERY_SCRIPT, default=...) caused
+    voluptuous to resurrect the saved value whenever the field was cleared,
+    because an empty submission omits the key and the default refilled it.
+    The fix uses description={"suggested_value": ...}.
+
+    This exercises the actual voluptuous schema, which is where the bug lived
+    — direct async_step_init(user_input) calls bypass the form validation that
+    resurrects the default.
+    """
+    flow, mock_entry = _build_options_form_schema(
+        options={
+            CONF_SCAN_INTERVAL: 60,
+            CONF_FAILURES_THRESHOLD: 3,
+            CONF_RECOVERY_SCRIPT: "script.restart_wifi",  # already set
+        },
+        discovered_devices=mock_discovered_devices,
+    )
+
+    with patch.object(
+        type(flow),
+        "config_entry",
+        new_callable=PropertyMock,
+        return_value=mock_entry,
+    ):
+        form = await flow.async_step_init(None)
+
+    schema = form["data_schema"]
+    # Simulate what HA sends when the user CLEARS the field: the key is absent.
+    form_data = {
+        CONF_SCAN_INTERVAL: 60,
+        CONF_ENABLE_REPAIR_NOTIFICATION: True,
+        CONF_ENABLE_STARTUP_NOTIFICATION: False,
+        CONF_FAILURES_THRESHOLD: 3,
+        # CONF_RECOVERY_SCRIPT deliberately absent
+    }
+    validated = schema(form_data)
+
+    assert validated.get(CONF_RECOVERY_SCRIPT, "") in ("", None)
+
+
+async def test_options_flow_schema_allows_clearing_device_prefix(
+    mock_discovered_devices,
+) -> None:
+    """Clearing a device-name prefix via the form must remove it from options.
+
+    Same voluptuous default-resurrection bug as the recovery script: a user who
+    sets a custom prefix then clears it to revert to default naming would have
+    the old prefix refilled by default=. The fix uses
+    description={"suggested_value": ...}.
+    """
+    flow, mock_entry = _build_options_form_schema(
+        options={
+            CONF_SCAN_INTERVAL: 60,
+            CONF_FAILURES_THRESHOLD: 3,
+            CONF_PREFIX_INVERTER: "My Inverter",  # already set
+        },
+        discovered_devices=mock_discovered_devices,
+    )
+
+    with patch.object(
+        type(flow),
+        "config_entry",
+        new_callable=PropertyMock,
+        return_value=mock_entry,
+    ):
+        form = await flow.async_step_init(None)
+
+    schema = form["data_schema"]
+    form_data = {
+        CONF_SCAN_INTERVAL: 60,
+        CONF_ENABLE_REPAIR_NOTIFICATION: True,
+        CONF_ENABLE_STARTUP_NOTIFICATION: False,
+        CONF_FAILURES_THRESHOLD: 3,
+        # CONF_PREFIX_INVERTER deliberately absent
+    }
+    validated = schema(form_data)
+
+    assert validated.get(CONF_PREFIX_INVERTER, "") in ("", None)

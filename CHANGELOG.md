@@ -9,7 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
-- _No changes yet._
+- **Fix inability to clear the Recovery Script via the Options flow** — Clearing the
+  Recovery Script field and submitting left the old value attached to the config entry, and
+  the script kept running on the next connection failure. The field used
+  `vol.Optional(..., default=saved_value)`; when a user clears it, Home Assistant omits the
+  key from the submission and voluptuous refilled it with the saved default, resurrecting
+  the value. The schema now uses `description={"suggested_value": ...}`, which pre-fills the
+  form for display without resurrecting the value on an empty submission. The same fix was
+  applied to the per-device name prefix fields, which had the identical clear-vs-pre-fill
+  bug.
 
 ## [1.5.3] - 2026-05-21
 
