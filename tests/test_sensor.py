@@ -2438,7 +2438,11 @@ class TestLifetimeSensorGuard:
 
 
 class TestAccumulatingSensorRestoreGuard:
-    """Tests for RestoreSensor cold-restart baseline on accumulating sensors."""
+    """Tests for the RestoreSensor cold-restart baseline guard.
+
+    The guard protects LIFETIME sensors only. Periodic (today/week/month) and
+    runtime counters reset legitimately and must never be guarded (issue #61).
+    """
 
     def _make_sensor(
         self,
@@ -2584,12 +2588,12 @@ class TestAccumulatingSensorRestoreGuard:
         assert sensor.native_value == 0.0
 
     @pytest.mark.asyncio
-    async def test_periodic_accumulating_sensor_gets_restore_protection(
+    async def test_periodic_sensor_resets_freely(
         self,
         mock_coordinator: MagicMock,
         mock_sensor_config_entry: MagicMock,
     ) -> None:
-        """Test periodic accumulating sensor (DayWH) is protected by restore baseline."""
+        """Periodic counter (DayWH) is not lifetime → no baseline, no guard (issue #61)."""
         sensor = self._make_sensor(
             mock_coordinator,
             mock_sensor_config_entry,
@@ -2602,8 +2606,61 @@ class TestAccumulatingSensorRestoreGuard:
 
         await self._restore_sensor(sensor, restored_value=3500.0)
 
-        assert sensor._restored_native_value == 3500.0
-        assert sensor.native_value is None
+        # Not a lifetime sensor: no restored baseline is stored and the reset passes through.
+        assert sensor._restored_native_value is None
+        assert sensor.native_value == 0.0
+
+    @pytest.mark.asyncio
+    async def test_periodic_sensor_not_stuck_unknown_after_overnight_reset(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Regression for #61: an overnight reset of a 'today' counter must not be suppressed.
+
+        Before the fix, Guard 2 fired for any accumulating sensor: overnight the entity went
+        unknown, the restored baseline stayed at yesterday's end-of-day total (e.g. 25 kWh),
+        and the next morning's reset to ~0 was discarded on every poll — locking the sensor
+        on ``unknown`` for the whole day.
+        """
+        sensor = self._make_sensor(
+            mock_coordinator,
+            mock_sensor_config_entry,
+            point_name="daywh",
+            value=0.0,
+            sensor_scope="periodic",
+            accumulation_mode="monotonic",
+        )
+        # Entity is unknown (inverter slept overnight) — no live state.
+        mock_coordinator.hass.states.get.return_value = None
+
+        # Yesterday's end-of-day total was persisted by RestoreSensor.
+        await self._restore_sensor(sensor, restored_value=25000.0)
+
+        # The morning reset (≈0) must report the new low value, not stay unknown.
+        assert sensor.native_value == 0.0
+
+    @pytest.mark.asyncio
+    async def test_runtime_sensor_resets_freely(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Runtime counter resets on inverter reboot → not lifetime, never guarded."""
+        sensor = self._make_sensor(
+            mock_coordinator,
+            mock_sensor_config_entry,
+            point_name="e0_runtime",
+            value=0.0,
+            sensor_scope="runtime",
+            accumulation_mode="monotonic",
+        )
+        mock_coordinator.hass.states.get.return_value = None
+
+        await self._restore_sensor(sensor, restored_value=8000.0)
+
+        assert sensor._restored_native_value is None
+        assert sensor.native_value == 0.0
 
     @pytest.mark.asyncio
     async def test_live_state_takes_priority_over_restored(

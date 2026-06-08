@@ -9,7 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
-- _No changes yet._
+- **Fix periodic energy sensors stuck on `unknown` since v1.5.3** (Reported in #61) — The
+  cold-restart stale-value guard added in v1.5.3 ("Guard 2") was gated on
+  `accumulation_mode`, so it also caught **periodic** (today/week/month) and **runtime**
+  counters that are supposed to reset. After the inverter slept overnight the entity went
+  `unknown`, the restored baseline stayed at yesterday's end-of-day total, and the next
+  morning's reset to ~0 was discarded on every poll — locking sensors like "Energy AC –
+  Produced (Today)" on `unknown` for the whole day (a cold HA restart below the persisted
+  value hit the same trap). The guard is now correctly scoped to **lifetime** sensors only,
+  restoring the documented v1.5.1 design where `sensor_scope` (not `accumulation_mode`)
+  drives the stale-value guard. Periodic and runtime counters now reset freely; Home
+  Assistant handles their `total_increasing` resets natively. Thanks to @nonth for the
+  detailed root-cause analysis.
 
 ## [1.5.4] - 2026-05-31
 

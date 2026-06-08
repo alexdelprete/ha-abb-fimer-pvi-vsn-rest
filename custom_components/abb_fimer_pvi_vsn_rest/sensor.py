@@ -340,9 +340,8 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], RestoreSensor)
         initial_value = point_data.get("value")
         is_numeric = isinstance(initial_value, (int, float))
 
-        # Default: not a lifetime/accumulating sensor (overridden by _configure_numeric_sensor)
+        # Default: not a lifetime sensor (overridden by _configure_numeric_sensor)
         self._is_lifetime_sensor = False
-        self._is_accumulating_sensor = False
         # Restored baseline for cold-restart stale-value guard (set in async_added_to_hass)
         self._restored_native_value: float | None = None
 
@@ -440,10 +439,11 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], RestoreSensor)
         # Apply precision from mapping, unit-based defaults, or entity overrides
         self._apply_display_precision(point_data, point_name, device_id, units)
 
-        # Flag for stale-value guard (lifetime sensors should never decrease during normal operation)
+        # Flag for the stale-value guard. Only lifetime sensors must never decrease:
+        # periodic (today/week/month) and runtime counters reset legitimately and must
+        # NOT be guarded, or a daily reset to ~0 would be suppressed forever (issue #61).
+        # sensor_scope drives the guard; accumulation_mode drives state_class (generator).
         self._is_lifetime_sensor = point_data.get("sensor_scope") == "lifetime"
-        # Flag for RestoreSensor baseline (all accumulating sensors need cold-restart protection)
-        self._is_accumulating_sensor = point_data.get("accumulation_mode", "") != ""
 
     def _validate_and_apply_units(
         self,
@@ -531,22 +531,23 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], RestoreSensor)
             self._attr_suggested_display_precision = 2
 
     async def async_added_to_hass(self) -> None:
-        """Restore last known value for accumulating sensors on startup.
+        """Restore last known value for lifetime sensors on startup.
 
         Uses RestoreSensor to persist the last native_value across HA restarts.
-        For accumulating sensors (monotonic or bidirectional), the restored value
-        serves as a fallback baseline in the stale-value guard when
-        hass.states.get() is unavailable after a cold restart — preventing
-        TOTAL_INCREASING from interpreting warm-up zeros as meter resets.
+        For lifetime sensors, the restored value serves as a fallback baseline in
+        the stale-value guard when hass.states.get() is unavailable after a cold
+        restart — preventing TOTAL_INCREASING from interpreting warm-up zeros as
+        meter resets. Periodic and runtime counters reset legitimately and are
+        deliberately not protected (issue #61).
         """
         await super().async_added_to_hass()
 
-        if not self._is_accumulating_sensor:
+        if not self._is_lifetime_sensor:
             return
 
         last_sensor_data = await self.async_get_last_sensor_data()
         if last_sensor_data is None or last_sensor_data.native_value is None:
-            _LOGGER.debug("No restored data for accumulating sensor %s", self._point_name)
+            _LOGGER.debug("No restored data for lifetime sensor %s", self._point_name)
             return
 
         restored_raw = last_sensor_data.native_value
@@ -561,7 +562,7 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], RestoreSensor)
         try:
             self._restored_native_value = float(restored_raw)
             _LOGGER.debug(
-                "Restored baseline %s for accumulating sensor %s",
+                "Restored baseline %s for lifetime sensor %s",
                 self._restored_native_value,
                 self._point_name,
             )
@@ -690,9 +691,10 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], RestoreSensor)
         # decrease. During startup the datalogger may return 0 or stale values before full
         # inverter communication is established. HA interprets drops as meter resets → spikes.
         # Return None so HA skips this reading without triggering a reset.
-        if (self._is_lifetime_sensor or self._is_accumulating_sensor) and isinstance(
-            value, (int, float)
-        ):
+        # Both guards apply to LIFETIME sensors only. Periodic (today/week/month) and
+        # runtime counters reset legitimately, so they are never guarded — guarding them
+        # would suppress a normal reset to ~0 forever (issue #61).
+        if self._is_lifetime_sensor and isinstance(value, (int, float)):
             current_state = self.hass.states.get(self.entity_id)
             has_live_state = current_state is not None and current_state.state not in (
                 "unknown",
@@ -700,8 +702,8 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], RestoreSensor)
                 None,
             )
 
-            # Guard 1: Lifetime sensors must never decrease during normal operation
-            if self._is_lifetime_sensor and has_live_state:
+            # Guard 1: during normal operation, a lifetime total must never decrease
+            if has_live_state:
                 try:
                     current_value = float(current_state.state)
                     if value < current_value:
@@ -716,16 +718,12 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], RestoreSensor)
                 except (ValueError, TypeError):
                     pass  # Current state not numeric, allow through
 
-            # Guard 2: All accumulating sensors use restored baseline after cold restart
-            if (
-                self._is_accumulating_sensor
-                and not has_live_state
-                and self._restored_native_value is not None
-                and value < self._restored_native_value
-            ):
+            # Guard 2: after a cold restart (no live state yet), fall back to the
+            # restored baseline so warm-up zeros aren't read as a meter reset
+            elif self._restored_native_value is not None and value < self._restored_native_value:
                 _LOGGER.debug(
                     "Discarding stale value %s for %s (restored baseline: %s) — "
-                    "accumulating sensor cannot decrease after restart",
+                    "lifetime sensor cannot decrease after restart",
                     value,
                     self._point_name,
                     self._restored_native_value,
