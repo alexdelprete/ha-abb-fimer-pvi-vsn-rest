@@ -372,14 +372,25 @@ All HA device info fields populated from discovery:
 
 | Attribute | Question it Answers | Values | Used by |
 |-----------|-------------------|--------|---------|
-| `accumulation_mode` | Can the value decrease? | `monotonic`, `bidirectional` | Generator → derives `state_class` |
-| `sensor_scope` | When does it reset? | `lifetime`, `runtime`, `periodic` | `sensor.py` stale-value guard |
+| `accumulation_mode` | When the value drops, is it a reset or a real decrease? | `monotonic`, `bidirectional` | Generator → derives `state_class` |
+| `sensor_scope` | When (if ever) does it reset? | `lifetime`, `runtime`, `periodic` | `sensor.py` stale-value guard |
 
-- `accumulation_mode: "monotonic"` → value only goes up, drops = meter reset → `state_class: "total_increasing"`
-- `accumulation_mode: "bidirectional"` → value can go up and down (net metering) → `state_class: "total"`
-- `sensor_scope: "lifetime"` → never resets → guard rejects decreasing values
+- `accumulation_mode: "monotonic"` → a drop is a **meter reset, not a real decrease** → `state_class: "total_increasing"`
+- `accumulation_mode: "bidirectional"` → value can go up and down for real (net metering) → `state_class: "total"`
+- `sensor_scope: "lifetime"` → **never resets** → guard rejects decreasing values
 - `sensor_scope: "runtime"` → resets on reboot → guard allows it
 - `sensor_scope: "periodic"` → resets at period boundary → guard allows it
+
+> **"monotonic" does NOT mean "never decreases."** It means "increases *within its reset
+> scope*; drops are resets." Of the 72 `monotonic` sensors, only the **21 `lifetime`** ones
+> never reset — the **35 `periodic` + 16 `runtime`** ones legitimately drop to ~0 at their
+> scope boundary. The only attribute that means "never decreases" is `sensor_scope ==
+> "lifetime"`.
+>
+> **Critical (issue #61):** the stale-value guard MUST gate on `sensor_scope == "lifetime"`,
+> never on `accumulation_mode == "monotonic"`. Gating on `monotonic` also caught the
+> periodic/runtime counters and suppressed their normal reset to ~0 forever, stranding them
+> on `unknown`.
 
 **Why Not Derive state_class from sensor_scope?** Because they answer different questions. All three scopes happen to be `total_increasing` (monotonically increasing within their scope), but that's a coincidence of our current sensor set. A future net metering sensor could be `lifetime` scope (never resets) but `bidirectional` accumulation (value goes up and down).
 
@@ -393,7 +404,7 @@ elif accumulation_mode == "bidirectional":
     row["state_class"] = "total"
 ```text
 
-**Current State**: All 72 accumulating sensors are `monotonic`. Zero `bidirectional` sensors exist (no net metering support yet). Zero sensors have `state_class: "total"`.
+**Current State**: All 72 accumulating sensors are `monotonic` → `total_increasing` (21 `lifetime`, 35 `periodic`, 16 `runtime`). Only the 21 `lifetime` sensors never reset; the other 51 reset at reboot/period boundary. Zero `bidirectional` sensors exist (no net metering support yet). Zero sensors have `state_class: "total"`.
 
 **Key Files**:
 

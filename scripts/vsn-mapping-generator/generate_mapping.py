@@ -3535,8 +3535,11 @@ def create_row_with_model_flags(
 
         # Derive state_class from accumulation_mode (overrides any previous value)
         # This is the authoritative source for state_class on accumulating sensors:
-        #   monotonic → total_increasing (value only goes up, drops = meter reset)
-        #   bidirectional → total (value can go up and down, e.g., net metering)
+        #   monotonic → total_increasing (a drop is a meter reset, not a real decrease;
+        #     NOT "never resets" — periodic/runtime monotonic sensors reset at their scope
+        #     boundary. "Never decreases" is sensor_scope == "lifetime", which drives the
+        #     stale-value guard in sensor.py — see issue #61)
+        #   bidirectional → total (value can go up and down for real, e.g. net metering)
         accumulation_mode = metadata.get("accumulation_mode")
         if accumulation_mode == "monotonic":
             row["state_class"] = "total_increasing"
