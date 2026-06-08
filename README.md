@@ -486,6 +486,29 @@ All authentication methods are handled automatically by the integration - no con
 1. Check datalogger web interface shows inverter data
 1. Enable debug logging (see below)
 
+### Lifetime Energy Sensor Stuck on "unknown"
+
+**Symptom**: A **lifetime** total (e.g. "Energy AC - Produced Lifetime", or a battery
+cycle count) is stuck on `unknown`, while periodic ("Today"/"Week"/"Month") and other
+sensors update normally.
+
+**Cause**: Lifetime totals are protected by a guard that rejects any *decrease*, because
+a true lifetime counter only ever increases and Home Assistant would otherwise read a drop
+as a meter reset and double-count energy. In rare cases the reference the guard compares
+against becomes wrong and every real reading then looks like a decrease:
+
+- a **corrupt high reading** from the datalogger was accepted and is now the reference, so
+  all subsequent (correct, lower) readings are rejected; or
+- the inverter's lifetime counter was **genuinely reset** (factory/service reset, register
+  overflow, or a meter reset behind a grid total).
+
+This is by design — the guard deliberately does not auto-recover, because relaxing it would
+re-open the energy double-counting it prevents.
+
+**Solution**: Reload the integration (Settings → Devices & Services → ABB/FIMER PVI VSN REST
+→ ⋮ → Reload). The guard re-reads a fresh reference and the sensor recovers. If the value
+was a genuine reset, the lifetime total will resume from the new, lower value.
+
 ### Debug Logging
 
 To enable debug logging for this integration, add the following to your `configuration.yaml`:

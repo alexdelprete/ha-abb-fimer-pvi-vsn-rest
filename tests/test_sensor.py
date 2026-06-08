@@ -2680,3 +2680,51 @@ class TestAccumulatingSensorRestoreGuard:
 
         # Blocked by live state guard (lifetime + 600000 > 0), not by restored baseline
         assert sensor.native_value is None
+
+    @pytest.mark.asyncio
+    async def test_lifetime_cycle_counter_is_guarded(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Integer-formatted lifetime counters are guarded too (item #1).
+
+        cycle_num hits an int() early-return in native_value; the guard must run
+        before that formatting, so a cold-restart warm-up 0 is still suppressed.
+        """
+        sensor = self._make_sensor(
+            mock_coordinator,
+            mock_sensor_config_entry,
+            point_name="cycle_num",
+            value=0.0,
+            sensor_scope="lifetime",
+            accumulation_mode="monotonic",
+        )
+        mock_coordinator.hass.states.get.return_value = None
+
+        await self._restore_sensor(sensor, restored_value=500.0)
+
+        # Guarded despite being an integer-formatted sensor.
+        assert sensor.native_value is None
+
+    @pytest.mark.asyncio
+    async def test_lifetime_cycle_counter_kept_value_is_int(
+        self,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """A kept lifetime cycle-counter value still gets integer formatting (item #1)."""
+        sensor = self._make_sensor(
+            mock_coordinator,
+            mock_sensor_config_entry,
+            point_name="cycle_num",
+            value=600.7,
+            sensor_scope="lifetime",
+            accumulation_mode="monotonic",
+        )
+        mock_coordinator.hass.states.get.return_value = None
+
+        await self._restore_sensor(sensor, restored_value=500.0)
+
+        # Above baseline → kept, and still integer-formatted.
+        assert sensor.native_value == 600

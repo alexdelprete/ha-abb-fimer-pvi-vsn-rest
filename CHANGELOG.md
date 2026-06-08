@@ -21,6 +21,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   drives the stale-value guard. Periodic and runtime counters now reset freely; Home
   Assistant handles their `total_increasing` resets natively. Thanks to @nonth for the
   detailed root-cause analysis.
+- **Extend the lifetime stale-value guard to integer-formatted counters** — Lifetime
+  battery cycle counters (`chc`, `dhc`, `cycle_num`) hit an `int()` early-return in
+  `native_value` before the guard ran, so they were not protected against cold-restart
+  warm-up zeros (a transient `0` could be read as a meter reset). The guard now runs before
+  display formatting, so these counters get the same protection as energy totals.
+
+### Documentation
+
+- **Document a lifetime-sensor guard limitation** — Added a Troubleshooting entry for the
+  rare case where a lifetime total sticks on `unknown` (a corrupt high reading poisoning the
+  guard reference, or a genuine counter reset). The guard intentionally does not auto-recover
+  — that would re-admit the energy double-count it prevents — so the documented workaround is
+  to reload the integration.
 
 ## [1.5.4] - 2026-05-31
 

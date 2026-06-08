@@ -629,6 +629,17 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], RestoreSensor)
 
         value = point_data.get("value")
 
+        # Stale-value guard for lifetime sensors. Run this BEFORE any display
+        # formatting (integer rounding etc.) so integer-formatted lifetime counters
+        # (battery cycle counts) are protected too. Periodic and runtime counters
+        # reset legitimately and are never guarded (issue #61).
+        if (
+            self._is_lifetime_sensor
+            and isinstance(value, (int, float))
+            and self._is_stale_lifetime_value(value)
+        ):
+            return None
+
         # Convert Aurora timestamps for sys_time sensor
         # Aurora protocol uses Jan 1, 2000 epoch instead of Unix epoch (Jan 1, 1970)
         # The inverter returns sys_time as LOCAL time seconds since Aurora epoch,
@@ -686,53 +697,64 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], RestoreSensor)
         ) and isinstance(value, (int, float)):
             return int(value)
 
-        # Guard lifetime sensors against stale/lower values from datalogger startup.
-        # Per HA docs, the integration must ensure total_increasing values don't erroneously
-        # decrease. During startup the datalogger may return 0 or stale values before full
-        # inverter communication is established. HA interprets drops as meter resets → spikes.
-        # Return None so HA skips this reading without triggering a reset.
-        # Both guards apply to LIFETIME sensors only. Periodic (today/week/month) and
-        # runtime counters reset legitimately, so they are never guarded — guarding them
-        # would suppress a normal reset to ~0 forever (issue #61).
-        if self._is_lifetime_sensor and isinstance(value, (int, float)):
-            current_state = self.hass.states.get(self.entity_id)
-            has_live_state = current_state is not None and current_state.state not in (
-                "unknown",
-                "unavailable",
-                None,
-            )
-
-            # Guard 1: during normal operation, a lifetime total must never decrease
-            if has_live_state:
-                try:
-                    current_value = float(current_state.state)
-                    if value < current_value:
-                        _LOGGER.debug(
-                            "Discarding stale value %s for %s (current: %s) — "
-                            "lifetime sensor cannot decrease",
-                            value,
-                            self._point_name,
-                            current_value,
-                        )
-                        return None
-                except (ValueError, TypeError):
-                    pass  # Current state not numeric, allow through
-
-            # Guard 2: after a cold restart (no live state yet), fall back to the
-            # restored baseline so warm-up zeros aren't read as a meter reset
-            elif self._restored_native_value is not None and value < self._restored_native_value:
-                _LOGGER.debug(
-                    "Discarding stale value %s for %s (restored baseline: %s) — "
-                    "lifetime sensor cannot decrease after restart",
-                    value,
-                    self._point_name,
-                    self._restored_native_value,
-                )
-                return None
-
         # Return raw numeric value (native_value must be numeric for sensors with state_class)
         # For system_uptime, the formatted version is available as an attribute
         return value
+
+    def _is_stale_lifetime_value(self, value: float) -> bool:
+        """Return True if a lifetime value should be discarded as a spurious decrease.
+
+        Two guards, both lifetime-only (``sensor_scope == "lifetime"``):
+
+        - Guard 1 (normal operation): a live numeric state exists and the new value
+          is lower → discard. A true lifetime total never decreases; HA would read a
+          drop as a meter reset and double-count.
+        - Guard 2 (cold restart): no live state yet → fall back to the restored
+          baseline so datalogger warm-up zeros aren't read as a reset.
+
+        Known limitation: if a lifetime value stays *persistently* below its reference
+        — a rare counter reset/replacement, or a corrupt high reading that poisoned the
+        persisted baseline — the sensor stays ``unknown`` until the value climbs back
+        above the reference. Workaround: reload the integration (see the Troubleshooting
+        section in README). This is accepted by design: relaxing the guard to
+        auto-recover would re-admit the warm-up double-count it exists to prevent.
+        """
+        current_state = self.hass.states.get(self.entity_id)
+        has_live_state = current_state is not None and current_state.state not in (
+            "unknown",
+            "unavailable",
+            None,
+        )
+
+        # Guard 1: during normal operation, a lifetime total must never decrease
+        if has_live_state:
+            try:
+                if value < float(current_state.state):
+                    _LOGGER.debug(
+                        "Discarding stale value %s for %s (current: %s) — "
+                        "lifetime sensor cannot decrease",
+                        value,
+                        self._point_name,
+                        current_state.state,
+                    )
+                    return True
+            except (ValueError, TypeError):
+                return False  # Current state not numeric, allow through
+            return False
+
+        # Guard 2: after a cold restart (no live state yet), fall back to the
+        # restored baseline so warm-up zeros aren't read as a meter reset
+        if self._restored_native_value is not None and value < self._restored_native_value:
+            _LOGGER.debug(
+                "Discarding stale value %s for %s (restored baseline: %s) — "
+                "lifetime sensor cannot decrease after restart",
+                value,
+                self._point_name,
+                self._restored_native_value,
+            )
+            return True
+
+        return False
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
