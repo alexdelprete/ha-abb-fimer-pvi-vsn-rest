@@ -23,6 +23,30 @@ The GitHub MCP `get_job_logs` tool is currently broken. To get workflow run logs
 1. Use `gh` CLI to fetch logs: `gh run view <run_id> --repo owner/repo --log`
 1. Filter with grep: `gh run view <run_id> --repo owner/repo --log | grep "TOTAL\|coverage"`
 
+## ⚠️ Editing rules for this file
+
+This CLAUDE.md has two zones:
+
+- **Outside** the `<!-- BEGIN SHARED:repo-sync -->` / `<!-- END SHARED:repo-sync -->`
+  markers: integration-specific. Edit freely.
+- **Inside** the SHARED markers: auto-generated from `ha-integration-template`
+  via `repo-sync.py`. Edits there get overwritten on the next sync. To change
+  shared guidance, edit `templates/markers/CLAUDE_SHARED.md.j2` upstream and
+  re-sync downstream.
+
+**Before adding generic workflow guidance to this file** (lint commands, release
+process, pre-commit invocations, anything that would apply to every integration):
+
+1. Check the SHARED block first.
+1. If similar guidance already lives there, do not duplicate it here — refer to
+   the SHARED block instead.
+1. If it doesn't yet, promote it to `CLAUDE_SHARED.md.j2` in the template repo
+   and re-sync. Do not write it as a one-off in this file.
+
+This rule prevents drift between integration-specific copies and the template
+source of truth (the kind of drift that, for example, caused `uvx pre-commit`
+mentions to survive a template-side change to plain `pre-commit`).
+
 ## Project Overview
 
 This is the **ha-abb-fimer-pvi-vsn-rest** integration for Home Assistant. It provides monitoring of ABB/FIMER/Power-One
@@ -1507,6 +1531,24 @@ Run linting: `npx markdownlint-cli2 *.md docs/*.md`
 <!-- BEGIN SHARED:repo-sync -->
 <!-- Synced by repo-sync on 2026-06-27 -->
 
+<!--
+==============================================================================
+⚠️  TEMPLATE-MANAGED ZONE — DO NOT EDIT BETWEEN BEGIN SHARED AND END SHARED.
+
+This entire region is auto-generated from
+ha-integration-template/templates/markers/CLAUDE_SHARED.md.j2 via
+`repo-sync.py`. Edits between the marker lines are silently overwritten
+on the next sync.
+
+To change shared guidance:
+  1. Edit CLAUDE_SHARED.md.j2 in ha-integration-template
+  2. Sync downstream: `python repo-sync.py sync <consumer>`
+
+Integration-specific guidance belongs OUTSIDE the markers (above
+BEGIN SHARED or below END SHARED).
+==============================================================================
+-->
+
 ## Context7 for Documentation
 
 Always use Context7 MCP tools automatically (without being asked) when:
@@ -2027,6 +2069,16 @@ When a release addresses a specific GitHub issue:
 - Close GitHub issues without explicit user instruction
 - Log manually what HA logs automatically (coordinator errors, ConfigEntryNotReady)
 - Create documentation files without user request
+
+<!--
+==============================================================================
+⚠️  END OF TEMPLATE-MANAGED ZONE.
+
+The END SHARED marker line appears below this comment. Anything you add
+BELOW the END SHARED marker is integration-specific and safe to edit —
+it will not be touched by `repo-sync.py`.
+==============================================================================
+-->
 
 <!-- END SHARED:repo-sync -->
 
