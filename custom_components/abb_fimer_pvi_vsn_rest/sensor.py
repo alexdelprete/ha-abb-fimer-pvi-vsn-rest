@@ -566,7 +566,7 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], RestoreSensor)
                 self._restored_native_value,
                 self._point_name,
             )
-        except (ValueError, TypeError):
+        except ValueError, TypeError:
             _LOGGER.debug(
                 "Could not convert restored value %s to float for %s",
                 restored_raw,
@@ -738,7 +738,7 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], RestoreSensor)
                         current_state.state,
                     )
                     return True
-            except (ValueError, TypeError):
+            except ValueError, TypeError:
                 return False  # Current state not numeric, allow through
             return False
 

@@ -693,7 +693,7 @@ def _async_clear_stale_suggested_object_ids_v5(
                 suggested_object_id=None,
             )
             cleared += 1
-        except (ValueError, AttributeError):
+        except ValueError, AttributeError:
             _LOGGER.debug(
                 "Cannot clear suggested_object_id for %s",
                 entity_entry.entity_id,
@@ -753,7 +753,7 @@ def _async_clear_stale_object_id_base_v6(
                 entity_entry.entity_id,
                 entity_entry.original_name,
             )
-        except (ValueError, AttributeError):
+        except ValueError, AttributeError:
             _LOGGER.debug(
                 "Cannot clear object_id_base for %s",
                 entity_entry.entity_id,
@@ -805,7 +805,7 @@ def _async_fix_object_id_base_v7(
                 entity_entry.original_name,
                 entity_entry.entity_id,
             )
-        except (ValueError, AttributeError):
+        except ValueError, AttributeError:
             _LOGGER.debug(
                 "Cannot fix object_id_base for %s",
                 entity_entry.entity_id,

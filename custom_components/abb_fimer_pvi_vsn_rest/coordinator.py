@@ -364,7 +364,7 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             else:
                 self._handle_partial_recovery()
 
-        except (VSNConnectionError, VSNAuthenticationError, VSNClientError):
+        except VSNConnectionError, VSNAuthenticationError, VSNClientError:
             _LOGGER.debug("Re-discovery failed, will retry next cycle", exc_info=True)
 
     def _update_discovery_state(self, discovery_result: DiscoveryResult) -> None:
