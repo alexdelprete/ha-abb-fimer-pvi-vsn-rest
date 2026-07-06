@@ -5,27 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.5.6-beta.2] - Unreleased
+## [1.5.6] - 2026-07-06
 
-### Added
-
-- **3-phase AC grid measurements for TRIO-TM (and other 3-phase inverters)** (Reported in
-  #64) — Added per-phase grid **voltage** (`VgridR/S/T` → Phase A-N / B-N / C-N), **line-to-line
-  voltage** (`VgridRS/ST/TR` → A-B / B-C / C-A), and per-phase **current** (`IgridR/S/T` →
-  Phase A / B / C), plus the inverter **Internal (DC-box) temperature** (`TempInt`). Point
-  meanings were verified against the device's live values (234 V phase-N, 405 V line-line,
-  ~14 A per phase) and the FIMER register map. Previously a 3-phase inverter exposed no
-  per-phase AC voltage/current entities.
-- The single collision — 1-phase inverters report phase A-N as `Vgrid` while the 3-phase
-  TRIO reports it as `VgridR` (same register) — is resolved with a runtime normalization
-  alias, so both device families share the one "Voltage AC - Phase A-N" sensor.
-
-### Documentation
-
-- Documented the datapoint relationship model (predominantly 1:1:1 VSN700:VSN300:SunSpec,
-  with N:1 exceptions handled by the normalization layers) in `CLAUDE.md`.
-
-## [1.5.6-beta.1] - 2026-07-06
+All changes since v1.5.5. Previously published as v1.5.6-beta.1 and v1.5.6-beta.2.
 
 ### Added
 
@@ -33,8 +15,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   independent MPPT inputs (e.g. TRIO-TM-50.0-400-EU) now expose String 3 Voltage, Current,
   Power, per-string Energy, and DC-input State entities, at full parity with String 1 and 2.
   Previously only String 1 and 2 were mapped, so all String 3 data points were missing.
-  Thanks to @truonganvna for the report and datalogger data. **(Beta test focus:** please
-  confirm the String 3 entities appear and populate on real hardware.)
+- **3-phase AC grid measurements for TRIO-TM (and other 3-phase inverters)** (Reported in
+  #64) — Added per-phase grid **voltage** (`VgridR/S/T` → Phase A-N / B-N / C-N),
+  **line-to-line voltage** (`VgridRS/ST/TR` → A-B / B-C / C-A), and per-phase **current**
+  (`IgridR/S/T` → Phase A / B / C), plus the inverter **Internal (DC-box) temperature**
+  (`TempInt`). Point meanings were verified against the device's live values (234 V phase-N,
+  405 V line-line, ~14 A per phase) and the FIMER register map. Previously a 3-phase inverter
+  exposed no per-phase AC voltage/current entities. 1-phase inverters report phase A-N as
+  `Vgrid` while the 3-phase TRIO reports it as `VgridR` (same register); this is resolved
+  with a runtime normalization alias, so both device families share the one
+  "Voltage AC - Phase A-N" sensor.
 
 ### Bug Fixes
 
@@ -43,7 +33,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   sensors) are reported by the datalogger in µA, but were being multiplied by 1000 as if
   they were Amps — yielding values a million times too large (e.g. ~11.89 mA displayed as
   ~11,890,000 mA). They are now correctly converted µA → mA (÷1000). This affects all
-  VSN700 installations. Thanks to @truonganvna for the report.
+  VSN700 installations.
+
+### Documentation
+
+- Documented the datapoint relationship model (predominantly 1:1:1 VSN700:VSN300:SunSpec,
+  with N:1 exceptions handled by the normalization layers) in `CLAUDE.md`.
+
+Thanks to @truonganvna for the detailed report and datalogger data (#64).
 
 ## [1.5.5] - 2026-06-08
 
