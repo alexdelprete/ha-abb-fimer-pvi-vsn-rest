@@ -878,6 +878,30 @@
       },
       "e_tot_charge_since_restart": {
         "name": "Energie - Batterieladung Total (Seit Neustart)"
+      },
+      "dc_power_3": {
+        "name": "Leistung DC - String 3"
+      },
+      "dc_voltage_3": {
+        "name": "Spannung DC - String 3"
+      },
+      "dc_current_3": {
+        "name": "Strom DC - String 3"
+      },
+      "iin3": {
+        "name": "Strom DC - String 3"
+      },
+      "pin3": {
+        "name": "Leistung DC - String 3"
+      },
+      "vin3": {
+        "name": "Spannung DC - Input 3"
+      },
+      "d_c3_state": {
+        "name": "Status - DC Input 3"
+      },
+      "ein3": {
+        "name": "Energie DC - String 3 Gesamt"
       }
     }
   },

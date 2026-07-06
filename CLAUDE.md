@@ -476,8 +476,8 @@ elif accumulation_mode == "bidirectional":
 Before normalization, duplicate entries existed for 5 sensor pairs:
 
 1. Insulation Resistance: `Isolation_Ohm1` (VSN300) vs `Riso` (VSN700) - different units (MΩ vs MOhm), missing icon
-1. Leakage Current Inverter: `ILeakDcAc` (VSN300, mA) vs `IleakInv` (VSN700, A) - **CRITICAL 1000x unit mismatch**
-1. Leakage Current DC: `ILeakDcDc` (VSN300, mA) vs `IleakDC` (VSN700, A) - **CRITICAL 1000x unit mismatch**
+1. Leakage Current Inverter: `ILeakDcAc` (VSN300, mA) vs `IleakInv` (VSN700, µA) - both report µA/mA, need mA
+1. Leakage Current DC: `ILeakDcDc` (VSN300, mA) vs `IleakDC` (VSN700, µA) - both report µA/mA, need mA
 1. Ground Voltage: `VGnd` (VSN300) vs `Vgnd` (VSN700) - capitalization only
 1. Battery SoC: `Soc` (VSN300) vs `TSoc` (VSN700) - naming convention
 
@@ -507,18 +507,19 @@ row = create_row_with_model_flags(
 **Runtime Value Conversion** (normalizer.py):
 
 ```python
-# VSN700 leakage current sensors report in A, standardize to mA
-A_TO_MA_POINTS = {"IleakInv", "IleakDC"}
+# VSN300 (m64061_1_ILeak*) and VSN700 (IleakInv/IleakDC) report leakage in µA; convert to mA.
+# The VSN300 /feeds endpoint declares units:"uA" for these points.
+UA_TO_MA_POINTS = {"m64061_1_ILeakDcAc", "m64061_1_ILeakDcDc", "IleakInv", "IleakDC"}
 
-if vsn_model == "VSN700" and point_name in A_TO_MA_POINTS:
-    point_value = point_value * 1000  # A → mA
+if point_name in UA_TO_MA_POINTS:
+    point_value = point_value / 1000  # µA → mA
 ```text
 
 **Result**:
 
 - Reduced from 265 to 253 unique points (5 duplicates merged)
 - Single `isolation_ohm1` sensor with both REST names, unit=MOhm, icon=mdi:omega ✅
-- Single `ileakdcac` and `ileakdcdc` sensors with unit=mA, A→mA conversion for VSN700 ✅
+- Single `ileakdcac` and `ileakdcdc` sensors with unit=mA, µA→mA (÷1000) conversion for VSN700 ✅
 - Consistent metadata across both VSN models
 
 ### HA-Prefixed Column Names

@@ -13,20 +13,17 @@ from .mapping_loader import PointMapping, VSNMappingLoader
 
 _LOGGER = logging.getLogger(__name__)
 
-# Unit conversion registry: VSN points that need value conversion
-# These points have uA units in VSN feeds but need mA values for HA compatibility
+# Unit conversion registry: VSN points that report leakage current in uA but need mA for HA.
+# Both VSN300 (m64061_1_*) and VSN700 (IleakInv/IleakDC) report the instantaneous DC-AC/DC-DC
+# leakage current in uA - the VSN300 /feeds endpoint declares units:"uA" for these points, and
+# the VSN700 raw magnitudes (e.g. 1318.82 -> 1.32 mA) only make physical sense as uA. Convert
+# uA -> mA (divide by 1000). Note: the point KEY is matched here, not the feed "title"
+# ("Ileak 1"/"Ileak 2" are VSN300 feed titles, never point keys, so they are not listed).
 UA_TO_MA_POINTS = {
-    "m64061_1_ILeakDcAc",  # VSN300 - Leakage current DC/AC
-    "m64061_1_ILeakDcDc",  # VSN300 - Leakage current DC/DC
-    "Ileak 1",  # VSN700 - Leakage current 1
-    "Ileak 2",  # VSN700 - Leakage current 2
-}
-
-# A to mA conversion registry: VSN700 points in Amps that need mA conversion
-# These points report in A but should be mA (multiply by 1000)
-A_TO_MA_POINTS = {
-    "IleakInv",  # VSN700 - Inverter leakage current (A → mA)
-    "IleakDC",  # VSN700 - DC leakage current (A → mA)
+    "m64061_1_ILeakDcAc",  # VSN300 - Leakage current DC-AC
+    "m64061_1_ILeakDcDc",  # VSN300 - Leakage current DC-DC
+    "IleakInv",  # VSN700 - Inverter (DC-AC) leakage current
+    "IleakDC",  # VSN700 - DC (DC-DC) leakage current
 }
 
 # Temperature correction registry: Points with incorrect scale factor
@@ -183,22 +180,6 @@ class VSNDataNormalizer:
         if point_name in UA_TO_MA_POINTS and isinstance(point_value, (int, float)):
             point_value = point_value / 1000
             _LOGGER.debug("Converted %s from uA to mA: %s", point_name, point_value)
-
-        # A to mA conversion for VSN700 leakage current (multiply by 1000)
-        if (
-            self.vsn_model == "VSN700"
-            and point_name in A_TO_MA_POINTS
-            and isinstance(point_value, (int, float))
-            and point_value != 0
-        ):
-            original_value = point_value
-            point_value = point_value * 1000
-            _LOGGER.debug(
-                "Converted %s from A to mA: %s A → %s mA",
-                point_name,
-                original_value,
-                point_value,
-            )
 
         # Temperature scale factor correction (divide by 10)
         if (

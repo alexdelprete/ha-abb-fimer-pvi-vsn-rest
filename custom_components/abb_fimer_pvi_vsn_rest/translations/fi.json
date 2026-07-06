@@ -878,6 +878,30 @@
       },
       "e_tot_charge_since_restart": {
         "name": "Energia - Akun Lataus Total (Uudelleenkäynnistyksestä)"
+      },
+      "dc_power_3": {
+        "name": "Teho DC - String 3"
+      },
+      "dc_voltage_3": {
+        "name": "Jännite DC - String 3"
+      },
+      "dc_current_3": {
+        "name": "Virta DC - String 3"
+      },
+      "iin3": {
+        "name": "Virta DC - String 3"
+      },
+      "pin3": {
+        "name": "Teho DC - String 3"
+      },
+      "vin3": {
+        "name": "Jännite DC - Input 3"
+      },
+      "d_c3_state": {
+        "name": "Tila - DC Input 3"
+      },
+      "ein3": {
+        "name": "Energia DC - String 3 Yhteensä"
       }
     }
   },
