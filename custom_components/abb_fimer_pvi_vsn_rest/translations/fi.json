@@ -902,6 +902,18 @@
       },
       "ein3": {
         "name": "Energia DC - String 3 Yhteensä"
+      },
+      "vgrid_r_s": {
+        "name": "Jännite AC - Vaihe A-B"
+      },
+      "vgrid_s_t": {
+        "name": "Jännite AC - Vaihe B-C"
+      },
+      "vgrid_t_r": {
+        "name": "Jännite AC - Vaihe C-A"
+      },
+      "temp_int": {
+        "name": "Lämpötila - Internal"
       }
     }
   },

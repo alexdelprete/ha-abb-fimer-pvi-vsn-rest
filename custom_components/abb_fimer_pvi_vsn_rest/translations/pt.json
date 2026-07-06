@@ -902,6 +902,18 @@
       },
       "ein3": {
         "name": "Energia DC - String 3 Total"
+      },
+      "vgrid_r_s": {
+        "name": "Tensão AC - Fase A-B"
+      },
+      "vgrid_s_t": {
+        "name": "Tensão AC - Fase B-C"
+      },
+      "vgrid_t_r": {
+        "name": "Tensão AC - Fase C-A"
+      },
+      "temp_int": {
+        "name": "Temperatura - Internal"
       }
     }
   },

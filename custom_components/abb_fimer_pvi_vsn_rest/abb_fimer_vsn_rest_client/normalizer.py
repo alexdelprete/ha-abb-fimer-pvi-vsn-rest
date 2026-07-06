@@ -61,6 +61,10 @@ B_TO_MB_POINTS = {
 # This maps them to the canonical names used in the mapping file.
 VSN700_NAME_NORMALIZATION = {
     "TSoc": "Soc",  # Battery state of charge (REACT2 systems use TSoc)
+    # Grid phase A-N voltage: 1-phase inverters report the single grid voltage as
+    # "Vgrid" (canonical, = PhVphA); the 3-phase TRIO reports the same phase as
+    # "VgridR". Same ~234 V register, so route VgridR to the Vgrid row.
+    "VgridR": "Vgrid",
 }
 
 

@@ -115,6 +115,12 @@ class TestVSN700PointNameNormalization:
         result = normalizer._normalize_vsn700_point_name("TSoc")
         assert result == "Soc"
 
+    def test_normalize_vgridr_to_vgrid(self) -> None:
+        """Test VgridR (3-phase phase A-N) normalized to Vgrid (canonical PhVphA)."""
+        normalizer = VSNDataNormalizer("VSN700")
+        result = normalizer._normalize_vsn700_point_name("VgridR")
+        assert result == "Vgrid"
+
     def test_no_normalization_for_unmapped_names(self) -> None:
         """Test unmapped names pass through unchanged."""
         normalizer = VSNDataNormalizer("VSN700")

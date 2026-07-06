@@ -522,6 +522,40 @@ if point_name in UA_TO_MA_POINTS:
 - Single `ileakdcac` and `ileakdcdc` sensors with unit=mA, µA→mA (÷1000) conversion for VSN700 ✅
 - Consistent metadata across both VSN models
 
+### Datapoint relationship: 1:1:1, with N:1 handled by normalization
+
+**Model**: Each mapping row is one physical register with **one** canonical VSN700 name,
+**one** canonical VSN300 name, and **one** SunSpec name (1:1:1). This holds for the vast
+majority of points. The dedup step (`merge_duplicate_rows`) enforces it — it keeps only the
+first non-`N/A` name per column.
+
+**N:1 exceptions** — a register that different device firmwares report under *different*
+names — are **not** stored as multiple names in a row. They are resolved by three
+normalization mechanisms so every device name routes to the one canonical row:
+
+1. **VSN300 single/three-phase** — `_normalize_vsn300_point_name` maps `m101_*` / `m102_*` →
+   `m103_*` (a 1-phase PVI and a 3-phase PVI share the SunSpec register).
+1. **Generator build-time** — `VSN_NAME_NORMALIZATION` (`generate_mapping.py`) assigns the
+   canonical SunSpec name so a VSN700 proprietary point merges with its VSN300 twin during
+   generation (e.g. `Riso`→`Isolation_Ohm1`). The merged row keeps the VSN700 name it was
+   built from, so that device resolves directly via `get_by_vsn700`.
+1. **Runtime** — `VSN700_NAME_NORMALIZATION` (`normalizer.py`) rewrites an incoming device
+   name to the stored canonical name *before* lookup — used only when a device sends a name
+   **different** from the one stored on the row.
+
+**Runtime-normalization cases** (`VSN700_NAME_NORMALIZATION`):
+
+| Device sends | Stored canonical | Register | Why |
+| ------------ | ---------------- | -------- | --- |
+| `TSoc` | `Soc` | Soc | REACT2 battery SoC is reported as `TSoc` |
+| `VgridR` | `Vgrid` | PhVphA | 1-phase inverters report phase A-N as `Vgrid`; the 3-phase TRIO reports it as `VgridR` — the same ~234 V register (verified by value) |
+
+> Only phase **A** collides: a 1-phase inverter has a single grid voltage (`Vgrid` = PhVphA),
+> and the 3-phase `VgridR` is that same phase. Phases B/C, the line-to-line voltages, and
+> per-phase currents exist **only** on 3-phase firmware, so their VSN700 slots were empty —
+> the 3-phase names (`VgridS/T`, `VgridRS/ST/TR`, `IgridR/S/T`) fill them directly via
+> `VSN_TO_SUNSPEC_MAP`, no normalization needed.
+
 ### HA-Prefixed Column Names
 
 **Decision**: Use "HA Unit of Measurement", "HA State Class", "HA Device Class" in mapping.

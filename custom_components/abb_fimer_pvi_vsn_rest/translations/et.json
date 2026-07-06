@@ -902,6 +902,18 @@
       },
       "ein3": {
         "name": "Energia DC - String 3 Kokku"
+      },
+      "vgrid_r_s": {
+        "name": "Pinge AC - Faas A-B"
+      },
+      "vgrid_s_t": {
+        "name": "Pinge AC - Faas B-C"
+      },
+      "vgrid_t_r": {
+        "name": "Pinge AC - Faas C-A"
+      },
+      "temp_int": {
+        "name": "Temperatuur - Internal"
       }
     }
   },

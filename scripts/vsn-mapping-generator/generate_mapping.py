@@ -136,6 +136,90 @@ VSN_TO_SUNSPEC_MAP = {
         "in_modbus": "YES",
         "modbus": "m103_1_PhVphA",
     },
+    # 3-phase grid voltages/currents (TRIO-TM). Phase A-N is handled by Vgrid above
+    # + the runtime VgridR->Vgrid alias; the rest fill the previously-empty VSN700
+    # slots on the existing M103 phase registers (values verified: ~234 V phase-N,
+    # ~405 V line-line, ~14 A per phase).
+    "VgridS": {
+        "sunspec": "PhVphB",
+        "model": "M103",
+        "category": "Inverter",
+        "units": "V",
+        "state_class": "measurement",
+        "device_class": "voltage",
+        "in_modbus": "YES",
+        "modbus": "m103_1_PhVphB",
+    },
+    "VgridT": {
+        "sunspec": "PhVphC",
+        "model": "M103",
+        "category": "Inverter",
+        "units": "V",
+        "state_class": "measurement",
+        "device_class": "voltage",
+        "in_modbus": "YES",
+        "modbus": "m103_1_PhVphC",
+    },
+    "VgridRS": {
+        "sunspec": "PhVphAB",
+        "model": "M103",
+        "category": "Inverter",
+        "units": "V",
+        "state_class": "measurement",
+        "device_class": "voltage",
+        "in_modbus": "YES",
+        "modbus": "m103_1_PhVphAB",
+    },
+    "VgridST": {
+        "sunspec": "PhVphBC",
+        "model": "M103",
+        "category": "Inverter",
+        "units": "V",
+        "state_class": "measurement",
+        "device_class": "voltage",
+        "in_modbus": "YES",
+        "modbus": "m103_1_PhVphBC",
+    },
+    "VgridTR": {
+        "sunspec": "PhVphCA",
+        "model": "M103",
+        "category": "Inverter",
+        "units": "V",
+        "state_class": "measurement",
+        "device_class": "voltage",
+        "in_modbus": "YES",
+        "modbus": "m103_1_PhVphCA",
+    },
+    "IgridR": {
+        "sunspec": "AphA",
+        "model": "M103",
+        "category": "Inverter",
+        "units": "A",
+        "state_class": "measurement",
+        "device_class": "current",
+        "in_modbus": "YES",
+        "modbus": "m103_1_AphA",
+    },
+    "IgridS": {
+        "sunspec": "AphB",
+        "model": "M103",
+        "category": "Inverter",
+        "units": "A",
+        "state_class": "measurement",
+        "device_class": "current",
+        "in_modbus": "YES",
+        "modbus": "m103_1_AphB",
+    },
+    "IgridT": {
+        "sunspec": "AphC",
+        "model": "M103",
+        "category": "Inverter",
+        "units": "A",
+        "state_class": "measurement",
+        "device_class": "current",
+        "in_modbus": "YES",
+        "modbus": "m103_1_AphC",
+    },
     "Etotal": {
         "sunspec": "TotWhExp",
         "model": "M103",
@@ -577,6 +661,7 @@ DISPLAY_NAME_CORRECTIONS = {
     "DC string 3 operating state": "DC Input 3 State",
     # Temperature display names
     "Inverter internal temperature": "Inverter Temperature",
+    "Internal (DC box) temperature": "Internal Temperature",
     "DC-DC boost converter temperature": "Booster Temperature",
     "Additional temperature sensor 1": "Temperature Sensor 1",
     "Battery pack temperature": "Battery Temperature",
@@ -906,6 +991,7 @@ DISPLAY_NAME_STANDARDIZATION = {
     "Other Temperature": "Temperature - Other",
     "Booster temperature": "Temperature - Booster",
     "Inverter Temperature": "Temperature - Inverter",
+    "Internal Temperature": "Temperature - Internal",
     "Booster Temperature": "Temperature - Booster",
     "Cabinet Temperature Max": "Temperature - Cabinet Max",
     "Cabinet Temperature Min": "Temperature - Cabinet Min",
@@ -1717,6 +1803,11 @@ SUNSPEC_TO_HA_METADATA = {
         "state_class": "measurement",
         "unit": "°C",
     },
+    "TempInt": {  # TRIO-TM internal temperature (Modbus reg 1120 "DC Box Temperature")
+        "device_class": "temperature",
+        "state_class": "measurement",
+        "unit": "°C",
+    },
     "Booster_Tmp": {
         "device_class": "temperature",
         "state_class": "measurement",
@@ -2439,6 +2530,7 @@ DESCRIPTION_IMPROVEMENTS = {
     "DA": "Device Modbus address",
     # Temperature/Other Points - Using actual SunSpec names
     "TempInv": "Inverter internal temperature",
+    "TempInt": "Internal (DC box) temperature",
     "TempBst": "DC-DC boost converter temperature",
     "TSoc": "Battery state of charge percentage",
     "Temp1": "Additional temperature sensor 1",
@@ -3367,7 +3459,11 @@ def merge_duplicate_rows(rows_by_sunspec):
         for model_flag in MODEL_FLAGS:
             merged[model_flag] = "YES" if model_flag in all_models else "NO"
 
-        # Merge VSN names (keep both if different)
+        # Collapse to ONE VSN700 + ONE VSN300 name per SunSpec register (the schema is
+        # 1:1:1). If duplicates carry different names, keep the first non-"N/A" one;
+        # alternate device names for the same register are NOT stored here — they are
+        # handled by the normalization layers (m101|m102->m103, generator
+        # VSN_NAME_NORMALIZATION, runtime VSN700_NAME_NORMALIZATION).
         vsn700_names = [
             r.get("vsn700_name")
             for r in group
@@ -3867,7 +3963,10 @@ def _process_sunspec_points(
             )
 
             if not label:
-                label = generate_label_from_name(vsn_name)
+                # Fall back to the canonical SunSpec name (not the proprietary VSN700
+                # name) so ha_name/entity_id stays stable regardless of which device
+                # firmware's name is attached to the register.
+                label = generate_label_from_name(sunspec_name)
 
             ha_name = generate_simplified_point_name(label, model)
 
