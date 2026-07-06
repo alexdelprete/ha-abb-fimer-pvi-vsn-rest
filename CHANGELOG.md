@@ -5,11 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.5.6] - Unreleased
+## [1.5.6-beta.1] - 2026-07-06
+
+### Added
+
+- **Support for a 3rd MPPT channel (String 3)** (Reported in #64) — Inverters with three
+  independent MPPT inputs (e.g. TRIO-TM-50.0-400-EU) now expose String 3 Voltage, Current,
+  Power, per-string Energy, and DC-input State entities, at full parity with String 1 and 2.
+  Previously only String 1 and 2 were mapped, so all String 3 data points were missing.
+  Thanks to @truonganvna for the report and datalogger data. **(Beta test focus:** please
+  confirm the String 3 entities appear and populate on real hardware.)
 
 ### Bug Fixes
 
-- _No changes yet._
+- **Fix VSN700 leakage current reported 1,000,000× too high** (Reported in #64) — The
+  VSN700 leakage-current points (`IleakInv`/`IleakDC`, i.e. the DC-AC and DC-DC leakage
+  sensors) are reported by the datalogger in µA, but were being multiplied by 1000 as if
+  they were Amps — yielding values a million times too large (e.g. ~11.89 mA displayed as
+  ~11,890,000 mA). They are now correctly converted µA → mA (÷1000). This affects all
+  VSN700 installations. Thanks to @truonganvna for the report.
 
 ## [1.5.5] - 2026-06-08
 
