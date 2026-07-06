@@ -10,7 +10,6 @@ from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.mapping_
     PointMapping,
 )
 from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.normalizer import (
-    A_TO_MA_POINTS,
     B_TO_MB_POINTS,
     STRING_STRIP_POINTS,
     TEMP_CORRECTION_POINTS,
@@ -146,24 +145,26 @@ class TestValueTransformations:
         result = normalizer._apply_value_transformations("m64061_1_ILeakDcAc", 0)
         assert result == 0.0
 
-    def test_a_to_ma_conversion_vsn700(self) -> None:
-        """Test A to mA conversion for VSN700 (multiply by 1000)."""
-        normalizer = VSNDataNormalizer("VSN700")
-        for point_name in A_TO_MA_POINTS:
-            result = normalizer._apply_value_transformations(point_name, 0.005)
-            assert result == 5.0  # 0.005 A = 5 mA
+    def test_vsn700_leakage_ua_to_ma_conversion(self) -> None:
+        """VSN700 leakage points (IleakInv/IleakDC) convert uA -> mA (divide by 1000).
 
-    def test_a_to_ma_skipped_for_vsn300(self) -> None:
-        """Test A to mA conversion skipped for VSN300."""
-        normalizer = VSNDataNormalizer("VSN300")
-        result = normalizer._apply_value_transformations("IleakInv", 0.005)
-        assert result == 0.005  # Not converted
-
-    def test_a_to_ma_skipped_for_zero(self) -> None:
-        """Test A to mA conversion skipped for zero values."""
+        Regression for issue #64: these were previously multiplied by 1000, yielding
+        values 1,000,000x too high (e.g. ~11.89 mA shown as ~11,890,000 mA).
+        """
         normalizer = VSNDataNormalizer("VSN700")
-        result = normalizer._apply_value_transformations("IleakInv", 0)
-        assert result == 0
+        for point_name in ("IleakInv", "IleakDC"):
+            assert point_name in UA_TO_MA_POINTS
+            # 11890 uA -> 11.89 mA (the value from the issue #64 report)
+            assert normalizer._apply_value_transformations(point_name, 11890.0) == 11.89
+            # 1318.82 uA -> ~1.32 mA
+            assert normalizer._apply_value_transformations(point_name, 1318.82) == pytest.approx(
+                1.31882
+            )
+
+    def test_leakage_conversion_with_zero(self) -> None:
+        """Leakage uA -> mA conversion with a zero value stays zero."""
+        normalizer = VSNDataNormalizer("VSN700")
+        assert normalizer._apply_value_transformations("IleakInv", 0) == 0
 
     def test_temperature_correction_above_threshold(self) -> None:
         """Test temperature correction when value exceeds threshold."""
@@ -751,9 +752,9 @@ class TestValueTransformationsAdditional:
         """Test that transformations are applied correctly when multiple apply."""
         normalizer = VSNDataNormalizer("VSN700")
 
-        # IleakInv should get A to mA conversion
-        result = normalizer._apply_value_transformations("IleakInv", 0.003)
-        assert result == 3.0  # 0.003 A = 3 mA
+        # IleakInv gets uA -> mA conversion (divide by 1000)
+        result = normalizer._apply_value_transformations("IleakInv", 3000.0)
+        assert result == 3.0  # 3000 uA = 3 mA
 
     def test_temperature_correction_exactly_at_threshold(self) -> None:
         """Test temperature at exact threshold is not corrected."""
