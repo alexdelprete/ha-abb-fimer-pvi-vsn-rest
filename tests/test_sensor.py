@@ -563,6 +563,40 @@ class TestVSNSensorNativeValue:
         # Value should be translated to text
         assert sensor.native_value == GLOBAL_STATE_MAP.get(6, "Unknown (6)")
 
+    def test_native_value_state_translation_vsn700_float(
+        self,
+        sample_device: MockDiscoveredDevice,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """VSN700 status codes decode to text (VSN700 name alias + float value).
+
+        Regression for issue #64: the VSN700 datalogger sends state codes as JSON
+        floats (6.0) under VSN700 names (GlobState), which previously failed both the
+        int-only guard and the VSN300-keyed mapping, showing a raw number.
+        """
+        point_data = {
+            "value": 6.0,  # VSN700 sends floats
+            "ha_display_name": "Status - Global",
+            "sunspec_name": "GlobState",  # VSN700 name (aliased to GLOBAL_STATE_MAP)
+        }
+        mock_coordinator.data = {
+            "devices": {
+                TEST_INVERTER_SN: {
+                    "points": {"glob_state": {"value": 6.0, "sunspec_name": "GlobState"}}
+                }
+            }
+        }
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=sample_device.device_id,
+            device_type=sample_device.device_type,
+            point_name="glob_state",
+            point_data=point_data,
+        )
+        assert sensor.native_value == "Run"
+
     def test_native_value_unknown_state_code(
         self,
         sample_device: MockDiscoveredDevice,

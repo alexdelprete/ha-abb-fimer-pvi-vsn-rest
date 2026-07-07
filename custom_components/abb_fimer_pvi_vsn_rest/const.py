@@ -70,13 +70,20 @@ VSN_MODEL_700 = "VSN700"
 # The state map data itself is imported from the client library above.
 # Keys must match the SunSpec normalized names from vsn-sunspec-point-mapping.json
 STATE_ENTITY_MAPPINGS = {
+    # VSN300 (SunSpec) names
     "GlobalSt": GLOBAL_STATE_MAP,  # VSN300: m64061_1_GlobalSt
     "DcSt1": DCDC_STATE_MAP,  # VSN300: m64061_1_DcSt1
     "DcSt2": DCDC_STATE_MAP,  # VSN300: m64061_1_DcSt2
     "DcSt3": DCDC_STATE_MAP,  # VSN300: m64061_1_DcSt3 (TRIO-TM 3rd MPPT)
     "InverterSt": INVERTER_STATE_MAP,  # VSN300: m64061_1_InverterSt
-    "AlarmState": ALARM_STATE_MAP,
     "AlarmSt": ALARM_STATE_MAP,  # VSN300: m64061_1_AlarmSt
+    # VSN700 names (different from the VSN300/SunSpec names for the same states)
+    "GlobState": GLOBAL_STATE_MAP,  # VSN700
+    "InvState": INVERTER_STATE_MAP,  # VSN700
+    "DC1State": DCDC_STATE_MAP,  # VSN700
+    "DC2State": DCDC_STATE_MAP,  # VSN700
+    "DC3State": DCDC_STATE_MAP,  # VSN700 (TRIO-TM 3rd MPPT)
+    "AlarmState": ALARM_STATE_MAP,  # shared VSN700/VSN300 name
 }
 
 STARTUP_MESSAGE = f"""

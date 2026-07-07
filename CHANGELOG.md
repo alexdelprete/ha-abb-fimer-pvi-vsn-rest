@@ -9,7 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
-- _No changes yet._
+- **Status entities showed raw numbers instead of text on VSN700** (Reported in #64) — The
+  operating-state entities (Global State, Inverter State, DC Input 1/2/3 State) displayed
+  as raw codes (`6.0`, `2.0`, …) on VSN700 dataloggers instead of human-readable text
+  ("Run", "MPPT", …). Two causes: (1) the state-code maps were keyed only on the VSN300
+  names (`GlobalSt`/`InverterSt`/`DcSt1-3`) while VSN700 uses different names
+  (`GlobState`/`InvState`/`DC1-3State`), and (2) VSN700 encodes the codes as JSON floats
+  (`6.0`) while the decoder only accepted ints. Both are fixed: VSN700 names are aliased to
+  the existing state maps, and the decoder now accepts float-encoded codes. (Bit-field
+  entities like Warning Flags and the Derating Flags remain numeric — their bit definitions
+  are not published by ABB.)
 
 ## [1.5.6] - 2026-07-06
 

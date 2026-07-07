@@ -661,14 +661,16 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], RestoreSensor)
                 )
                 return None
 
-        # Translate integer state codes to descriptive strings using Aurora protocol mappings
-        # If this entity has a state mapping and the value is an integer, translate it
-        if self._state_mapping and isinstance(value, int):
-            state_text = self._state_mapping.get(value)
+        # Translate numeric state codes to descriptive strings using Aurora protocol mappings.
+        # State codes are whole numbers but the datalogger encodes them differently: VSN300
+        # sends JSON ints (6), VSN700 sends JSON floats (6.0). Accept both and key on int.
+        if self._state_mapping is not None and isinstance(value, (int, float)):
+            code = int(value)
+            state_text = self._state_mapping.get(code)
             if state_text:
                 return state_text
             # Unknown state code - return with code for debugging
-            return f"Unknown ({value})"
+            return f"Unknown ({code})"
 
         # Round system_load to 2 decimals (suggested_display_precision not working without units)
         if self._point_name == "system_load" and isinstance(value, (int, float)):
