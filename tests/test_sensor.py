@@ -563,27 +563,28 @@ class TestVSNSensorNativeValue:
         # Value should be translated to text
         assert sensor.native_value == GLOBAL_STATE_MAP.get(6, "Unknown (6)")
 
-    def test_native_value_state_translation_vsn700_float(
+    def test_native_value_state_translation_vsn700_name(
         self,
         sample_device: MockDiscoveredDevice,
         mock_coordinator: MagicMock,
         mock_sensor_config_entry: MagicMock,
     ) -> None:
-        """VSN700 status codes decode to text (VSN700 name alias + float value).
+        """VSN700 status codes decode to text via the VSN700 name alias.
 
-        Regression for issue #64: the VSN700 datalogger sends state codes as JSON
-        floats (6.0) under VSN700 names (GlobState), which previously failed both the
-        int-only guard and the VSN300-keyed mapping, showing a raw number.
+        Regression for issue #64: VSN700 uses different point names (GlobState vs
+        GlobalSt) that were not in STATE_ENTITY_MAPPINGS. The value is an int here
+        because the normalizer casts the VSN700 float (6.0) to int, so the sensor
+        takes the same int path as the already-working VSN300 mapping.
         """
         point_data = {
-            "value": 6.0,  # VSN700 sends floats
+            "value": 6,  # int (normalizer casts VSN700 float 6.0 -> 6)
             "ha_display_name": "Status - Global",
             "sunspec_name": "GlobState",  # VSN700 name (aliased to GLOBAL_STATE_MAP)
         }
         mock_coordinator.data = {
             "devices": {
                 TEST_INVERTER_SN: {
-                    "points": {"glob_state": {"value": 6.0, "sunspec_name": "GlobState"}}
+                    "points": {"glob_state": {"value": 6, "sunspec_name": "GlobState"}}
                 }
             }
         }
@@ -595,7 +596,7 @@ class TestVSNSensorNativeValue:
             point_name="glob_state",
             point_data=point_data,
         )
-        assert sensor.native_value == "Run"
+        assert sensor.native_value == GLOBAL_STATE_MAP.get(6, "Unknown (6)")
 
     def test_native_value_unknown_state_code(
         self,

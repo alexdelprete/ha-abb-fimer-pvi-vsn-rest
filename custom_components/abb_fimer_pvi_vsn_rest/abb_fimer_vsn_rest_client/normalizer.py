@@ -56,6 +56,32 @@ B_TO_MB_POINTS = {
     "store_size",  # VSN300 - Flash storage used
 }
 
+# Integer state/flag registry: enum state codes and flag bitfields.
+# VSN300 sends these as JSON ints (6); VSN700 sends them as JSON floats (6.0). Cast the
+# VSN700 floats to int so the state->text mapping in sensor.py takes the same path as the
+# already-working VSN300 mapping (which keys on int).
+STATE_INT_POINTS = {
+    # VSN700 names
+    "GlobState",
+    "InvState",
+    "DC1State",
+    "DC2State",
+    "DC3State",
+    "AlarmState",
+    "WarningFlags",
+    "PACDeratingFlags",
+    "QACDeratingFlags",
+    "SACDeratingFlags",
+    # VSN300 names (already ints; cast is a harmless no-op, kept for completeness)
+    "m64061_1_GlobalSt",
+    "m64061_1_InverterSt",
+    "m64061_1_DcSt1",
+    "m64061_1_DcSt2",
+    "m64061_1_DcSt3",
+    "m64061_1_AlarmState",
+    "m64061_1_AlarmSt",
+}
+
 # VSN700 name normalization registry: Alternate VSN700 names → canonical names
 # Some VSN700 devices use different names for the same data point.
 # This maps them to the canonical names used in the mapping file.
@@ -179,6 +205,11 @@ class VSNDataNormalizer:
         """
         if point_value is None:
             return point_value
+
+        # Integer state/flag codes: cast VSN700 floats (6.0) to int so they map to text the
+        # same way the VSN300 (int) values already do.
+        if point_name in STATE_INT_POINTS and isinstance(point_value, float):
+            point_value = int(point_value)
 
         # uA to mA conversion (divide by 1000)
         if point_name in UA_TO_MA_POINTS and isinstance(point_value, (int, float)):

@@ -9,7 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
-- _No changes yet._
+- **VSN700 status entities showed `Unavailable` after v1.5.7** (Reported in #64) — The v1.5.7
+  status-text fix made the VSN700 operating-state entities (Global / Inverter / DC Input
+  State) go `Unavailable`. Root cause: VSN700 sends the state codes as floats (`6.0`), and
+  the v1.5.7 approach translated them to text in `native_value` while the entity was still
+  configured from a float value. The fix mirrors the already-working VSN300 path: the
+  normalizer now casts the VSN700 state/flag codes to **int** (so they arrive exactly like
+  VSN300's ints), and `native_value` keeps its original int-only mapping — both datalogger
+  models now take the identical, proven path. (Flag bitfields like Warning Flags / Derating
+  Flags now also display as clean integers instead of `64.0`.)
 
 ## [1.5.7] - 2026-07-07
 

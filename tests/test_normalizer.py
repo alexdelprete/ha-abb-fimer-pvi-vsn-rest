@@ -11,6 +11,7 @@ from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.mapping_
 )
 from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.normalizer import (
     B_TO_MB_POINTS,
+    STATE_INT_POINTS,
     STRING_STRIP_POINTS,
     TEMP_CORRECTION_POINTS,
     TEMP_THRESHOLD_CELSIUS,
@@ -171,6 +172,26 @@ class TestValueTransformations:
         """Leakage uA -> mA conversion with a zero value stays zero."""
         normalizer = VSNDataNormalizer("VSN700")
         assert normalizer._apply_value_transformations("IleakInv", 0) == 0
+
+    def test_state_points_float_cast_to_int(self) -> None:
+        """VSN700 state/flag codes arrive as floats (6.0) and are cast to int.
+
+        Regression for issue #64: the state->text mapping keys on int (VSN300 sends
+        ints); casting the VSN700 floats to int makes both models take the same path.
+        """
+        normalizer = VSNDataNormalizer("VSN700")
+        for point_name in ("GlobState", "InvState", "DC1State", "AlarmState", "WarningFlags"):
+            assert point_name in STATE_INT_POINTS
+            result = normalizer._apply_value_transformations(point_name, 6.0)
+            assert result == 6
+            assert isinstance(result, int)
+
+    def test_state_points_int_passthrough(self) -> None:
+        """VSN300 state codes are already ints and pass through unchanged."""
+        normalizer = VSNDataNormalizer("VSN300")
+        result = normalizer._apply_value_transformations("m64061_1_GlobalSt", 6)
+        assert result == 6
+        assert isinstance(result, int)
 
     def test_temperature_correction_above_threshold(self) -> None:
         """Test temperature correction when value exceeds threshold."""
