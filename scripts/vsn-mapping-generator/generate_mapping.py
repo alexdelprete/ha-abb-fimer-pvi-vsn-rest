@@ -1969,6 +1969,43 @@ SUNSPEC_TO_HA_METADATA = {
         "entity_category": "diagnostic",
         "icon": "mdi:information-box-outline",
     },
+    # VSN700 state names (same states as the VSN300 names above; text sensors, NO precision
+    # so HA does not treat the mapped-to-text value as numeric). Issue #64.
+    "GlobState": {
+        "device_class": None,
+        "state_class": None,
+        "unit": "",
+        "entity_category": "diagnostic",
+        "icon": "mdi:information-box-outline",
+    },
+    "InvState": {
+        "device_class": None,
+        "state_class": None,
+        "unit": "",
+        "entity_category": "diagnostic",
+        "icon": "mdi:information-box-outline",
+    },
+    "DC1State": {
+        "device_class": None,
+        "state_class": None,
+        "unit": "",
+        "entity_category": "diagnostic",
+        "icon": "mdi:information-box-outline",
+    },
+    "DC2State": {
+        "device_class": None,
+        "state_class": None,
+        "unit": "",
+        "entity_category": "diagnostic",
+        "icon": "mdi:information-box-outline",
+    },
+    "DC3State": {
+        "device_class": None,
+        "state_class": None,
+        "unit": "",
+        "entity_category": "diagnostic",
+        "icon": "mdi:information-box-outline",
+    },
     # ===========================================================================
     # INTEGER COUNT SENSORS (v1.1.7+) - Precision=0
     # ===========================================================================
@@ -3556,7 +3593,22 @@ def _get_suggested_precision(sunspec_name, device_class, units, state_class, ent
     # State sensors with state mappings should NOT have precision at all (they display text, not numbers)
     # These sensors have integer state codes mapped to human-readable strings in const.py
     # Return None so they don't get a precision field in the mapping
-    state_sensors = {"GlobalSt", "DcSt1", "DcSt2", "InverterSt", "AlarmState", "AlarmSt"}
+    state_sensors = {
+        # VSN300 (SunSpec) names
+        "GlobalSt",
+        "DcSt1",
+        "DcSt2",
+        "DcSt3",
+        "InverterSt",
+        "AlarmState",
+        "AlarmSt",
+        # VSN700 names (same states, different names) - issue #64
+        "GlobState",
+        "InvState",
+        "DC1State",
+        "DC2State",
+        "DC3State",
+    }
     if sunspec_name in state_sensors:
         return None  # No precision field - these are text-based sensors
 

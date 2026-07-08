@@ -3,11 +3,20 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import json
+from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, PropertyMock, patch
 
 import pytest
 
-from custom_components.abb_fimer_pvi_vsn_rest.const import DOMAIN, GLOBAL_STATE_MAP
+from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client import (
+    mapping_loader as _mapping_loader,
+)
+from custom_components.abb_fimer_pvi_vsn_rest.const import (
+    DOMAIN,
+    GLOBAL_STATE_MAP,
+    STATE_ENTITY_MAPPINGS,
+)
 from custom_components.abb_fimer_pvi_vsn_rest.helpers import (
     compact_serial_number,
     format_device_name,
@@ -2763,3 +2772,33 @@ class TestAccumulatingSensorRestoreGuard:
 
         # Above baseline → kept, and still integer-formatted.
         assert sensor.native_value == 600
+
+
+def test_state_mapped_points_not_numeric_in_mapping() -> None:
+    """State-mapped points must not be numeric in the generated mapping.
+
+    Regression for issue #64: a state-mapped point (Global/Inverter/DC state) that
+    carries a numeric ``Suggested Display Precision`` (or device_class/state_class)
+    makes Home Assistant treat its mapped-to-text value ("Run") as numeric, so the
+    entity fails to add and shows ``Unavailable``. This asserts the mapping keeps
+    those points text-only (matching the already-working VSN300 points), for both
+    the VSN300 and VSN700 names.
+    """
+    mapping_file = Path(_mapping_loader.__file__).parent / "data" / "vsn-sunspec-point-mapping.json"
+    rows = json.loads(mapping_file.read_text())
+    state_keys = set(STATE_ENTITY_MAPPINGS)
+
+    checked = 0
+    for row in rows:
+        if row.get("SunSpec Normalized Name") in state_keys:
+            checked += 1
+            name = row.get("SunSpec Normalized Name")
+            assert row.get("Suggested Display Precision") in ("", None), (
+                f"state point {name} has numeric precision "
+                f"{row.get('Suggested Display Precision')!r} — HA will reject its text state"
+            )
+            assert not row.get("HA Device Class"), f"state point {name} has a device_class"
+            assert not row.get("HA State Class"), f"state point {name} has a state_class"
+
+    # Sanity: both VSN300 and VSN700 state names are present and were checked.
+    assert checked >= 8

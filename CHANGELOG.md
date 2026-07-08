@@ -9,7 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
-- _No changes yet._
+- **VSN700 status entities still went `Unavailable` (v1.5.8 follow-up)** (Reported in #64) —
+  The v1.5.8 fix wasn't enough: the VSN700 state points still carried a numeric
+  `Suggested Display Precision` of `0` in the generated mapping, while the working VSN300
+  state points have none. That precision made Home Assistant treat the mapped-to-text value
+  ("Run") as numeric, so it tried `int("Run")`, raised `ValueError`, and the entity failed to
+  add (`Unavailable`). The VSN700 state names (`GlobState`, `InvState`, `DC1/2/3State`) are
+  now managed **exactly** like the VSN300 names — no device_class, no state_class, and no
+  display precision — so the state entities render as text (`Run`, `MPPT`, `No Alarm`). A
+  regression test now asserts every state-mapped point stays text-only in the mapping.
 
 ## [1.5.8] - 2026-07-07
 
