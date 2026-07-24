@@ -3517,7 +3517,7 @@ def merge_duplicate_rows(rows_by_sunspec):
 
         # Choose best description
         descriptions = [(r.get("description"), r.get("data_source")) for r in group]
-        best_desc = sorted(
+        best_desc = min(
             descriptions,
             key=lambda x: (
                 0
@@ -3530,7 +3530,7 @@ def merge_duplicate_rows(rows_by_sunspec):
                 if "Cross-Reference" in x[1]
                 else 4
             ),
-        )[0]
+        )
         merged["description"] = best_desc[0]
         merged["data_source"] = best_desc[1]
 

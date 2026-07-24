@@ -638,7 +638,7 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
 
             # Skip collision losers (keep first entity alphabetically)
             if needs_id_update and new_entity_id in collision_targets:
-                winner = sorted(target_sources[new_entity_id])[0]
+                winner = min(target_sources[new_entity_id])
                 if entity_entry.entity_id != winner:
                     _LOGGER.info(
                         "Skipping collision loser: %s → %s (winner: %s)",
