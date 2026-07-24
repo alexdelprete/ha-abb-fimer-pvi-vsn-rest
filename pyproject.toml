@@ -67,7 +67,7 @@ dev = [
 ]
 
 # <!-- BEGIN SHARED:repo-sync -->
-# Synced by repo-sync on 2026-06-27
+# Synced by repo-sync on 2026-07-24
 
 
 [tool.codespell]
@@ -116,6 +116,10 @@ extend-exclude = [
     "vendor",
     "build",
     "dist",
+    # Keep ruff >= 0.16 from reformatting Python code blocks inside Markdown
+    # (docs snippets and the repo-sync-managed CLAUDE.md SHARED zone are
+    # hand-formatted; the linter never processed .md files anyway)
+    "*.md",
 ]
 
 [tool.ruff.format]
