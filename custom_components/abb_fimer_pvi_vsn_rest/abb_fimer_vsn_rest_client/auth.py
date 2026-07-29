@@ -14,9 +14,7 @@ from __future__ import annotations
 import base64
 import hashlib
 import logging
-import os
 import re
-import time
 
 import aiohttp
 
@@ -127,11 +125,10 @@ def build_digest_header(
 
     # For VSN300, we typically don't use qop, but handle it if present
     if qop:
-        nc = "00000001"
-        # Generate cnonce like stdlib: H(nonce:time:random)
-
-        cnonce_input = f"{nonce}:{time.time()}:{os.urandom(8).hex()}"
-        cnonce = hashlib.md5(cnonce_input.encode()).hexdigest()[:16]  # noqa: S324
+        # VSN300 firmware (auth-filter.js) validates against these EXACT constants.
+        # Any other nc/cnonce -> HTTP 401. See issue #68.
+        nc = "00000002"
+        cnonce = "ddf4bfcaf87acba9"
         response = calculate_digest_response(
             username, password, realm, nonce, method, uri, qop, nc, cnonce
         )

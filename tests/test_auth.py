@@ -175,6 +175,23 @@ class TestBuildDigestHeader:
 
         assert 'opaque="xyz789"' in result
 
+    def test_build_header_uses_vsn300_firmware_constants(self) -> None:
+        """VSN300 firmware only accepts the hardcoded nc/cnonce constants."""
+        challenge_params = {
+            "realm": "registered_user@power-one.com",
+            "nonce": "abc123",
+            "qop": "auth",
+        }
+        result = build_digest_header(
+            username="guest",
+            password="password",  # noqa: S106
+            challenge_params=challenge_params,
+            method="GET",
+            uri="/v1/status",
+        )
+        assert "nc=00000002" in result
+        assert 'cnonce="ddf4bfcaf87acba9"' in result
+
 
 class TestGetVSN700BasicAuth:
     """Tests for get_vsn700_basic_auth function."""
