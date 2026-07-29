@@ -652,3 +652,39 @@ class TestDeviceTypeInjection:
         client._ensure_device_type_map()
 
         assert client._device_type_map == {}
+
+
+async def test_get_livedata_decodes_latin1_body() -> None:
+    """VSN serves ISO-8859-1 JSON with application/json; must not UnicodeDecodeError."""
+    from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.client import (
+        ABBFimerVSNRestClient,
+    )
+
+    # 0xB4 is the acute-accent byte that crashes utf-8 json()
+    payload = {"ser4:X": {"points": [{"name": "lbl", "value": "caf´"}]}}
+
+    mock_resp = MagicMock()
+    mock_resp.status = 200
+
+    async def _json(encoding=None, content_type=None):
+        assert encoding == "latin-1"
+        assert content_type is None
+        return payload
+
+    mock_resp.json = _json
+    mock_ctx = MagicMock()
+    mock_ctx.__aenter__ = AsyncMock(return_value=mock_resp)
+    mock_ctx.__aexit__ = AsyncMock(return_value=False)
+
+    session = MagicMock()
+    session.get = MagicMock(return_value=mock_ctx)
+
+    client = ABBFimerVSNRestClient(
+        session=session, base_url="http://host", vsn_model="VSN700", requires_auth=False
+    )
+    with patch(
+        "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.client.check_socket_connection",
+        new=AsyncMock(),
+    ):
+        data = await client.get_livedata()
+    assert data == payload

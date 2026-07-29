@@ -205,7 +205,7 @@ async def _fetch_status(
             )
 
             if response.status == 200:
-                data = await response.json()
+                data = await response.json(encoding="latin-1", content_type=None)
                 _LOGGER.debug(
                     "[Discovery Status] Successfully fetched status data (%d bytes)",
                     len(str(data)),
@@ -297,7 +297,7 @@ async def _fetch_livedata(
             )
 
             if response.status == 200:
-                data = await response.json()
+                data = await response.json(encoding="latin-1", content_type=None)
                 _LOGGER.debug(
                     "[Discovery Livedata] Successfully fetched livedata: %d devices, %d bytes",
                     len(data),

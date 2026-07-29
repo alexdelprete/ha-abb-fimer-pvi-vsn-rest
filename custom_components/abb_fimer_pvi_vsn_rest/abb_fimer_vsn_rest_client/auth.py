@@ -418,7 +418,7 @@ async def detect_vsn_model(
                 )
 
                 try:
-                    status_data = await response.json()
+                    status_data = await response.json(encoding="latin-1", content_type=None)
                     model = _detect_model_from_status(status_data)
                 except Exception as parse_err:
                     _LOGGER.error(

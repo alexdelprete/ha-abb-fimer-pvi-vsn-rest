@@ -169,7 +169,7 @@ class ABBFimerVSNRestClient:
                 )
 
                 if response.status == 200:
-                    data = await response.json()
+                    data = await response.json(encoding="latin-1", content_type=None)
                     # Count total points across all devices
                     total_points = sum(
                         len(device_data.get("points", [])) for device_data in data.values()
