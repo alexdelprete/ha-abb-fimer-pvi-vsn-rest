@@ -8,6 +8,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import aiohttp
 import pytest
 
+from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client import discovery as disc
 from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discovery import (
     DiscoveredDevice,
     DiscoveryResult,
@@ -869,3 +870,78 @@ class TestExtractLoggerInfoEdgeCases:
         assert info["logger_model"] == "WIFI LOGGER CARD"
         assert info["firmware_version"] == "1.9.2"
         assert info["hostname"] == "ABB-077909-3G82-3112.local"
+
+
+async def test_fetch_livedata_falls_back_to_feeds_on_disconnect() -> None:
+    """VSN300: a dead /v1/livedata must fall back to the feeds adapter."""
+    status_data = {
+        "keys": {
+            "device.invID": {"value": "010261-3G97-1021"},
+            "device.modelDesc": {"value": "PVI-3.6-OUTD"},
+            "device.ACType": {"value": "Single"},
+        }
+    }
+    feeds_shaped = {
+        "ser4:010261-3G97-1021": {
+            "device_type": "inverter",
+            "points": [{"name": "m101_1_W", "value": 1599.0}],
+        }
+    }
+
+    mock_ctx = MagicMock()
+    mock_ctx.__aenter__ = AsyncMock(
+        side_effect=aiohttp.ServerDisconnectedError("Server disconnected")
+    )
+    mock_ctx.__aexit__ = AsyncMock(return_value=False)
+    session = MagicMock()
+    session.get = MagicMock(return_value=mock_ctx)
+
+    with (
+        patch.object(disc, "check_socket_connection", new=AsyncMock()),
+        patch.object(disc, "get_vsn300_digest_header", new=AsyncMock(return_value="hdr")),
+        patch.object(
+            disc, "fetch_feeds_as_livedata", new=AsyncMock(return_value=feeds_shaped)
+        ) as mock_feeds,
+    ):
+        result = await disc._fetch_livedata(
+            session=session,
+            base_url="http://host",
+            vsn_model="VSN300",
+            username="guest",
+            password="pw",  # noqa: S106
+            timeout=10,
+            requires_auth=True,
+            status_data=status_data,
+        )
+
+    assert result == feeds_shaped
+    mock_feeds.assert_awaited_once()
+
+
+async def test_fetch_livedata_no_fallback_without_status_data() -> None:
+    """VSN300 without status_data must NOT fall back; it re-raises."""
+    mock_ctx = MagicMock()
+    mock_ctx.__aenter__ = AsyncMock(
+        side_effect=aiohttp.ServerDisconnectedError("x")
+    )
+    mock_ctx.__aexit__ = AsyncMock(return_value=False)
+    session = MagicMock()
+    session.get = MagicMock(return_value=mock_ctx)
+
+    with (
+        patch.object(disc, "check_socket_connection", new=AsyncMock()),
+        patch.object(disc, "get_vsn300_digest_header", new=AsyncMock(return_value="hdr")),
+        patch.object(disc, "fetch_feeds_as_livedata", new=AsyncMock()) as mock_feeds,
+        pytest.raises(VSNConnectionError),
+    ):
+        await disc._fetch_livedata(
+            session=session,
+            base_url="http://host",
+            vsn_model="VSN300",
+            username="guest",
+            password="pw",  # noqa: S106
+            timeout=10,
+            requires_auth=True,
+            status_data=None,
+        )
+    mock_feeds.assert_not_awaited()

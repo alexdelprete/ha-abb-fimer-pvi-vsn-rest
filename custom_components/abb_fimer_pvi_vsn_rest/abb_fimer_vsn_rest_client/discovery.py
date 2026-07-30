@@ -16,6 +16,7 @@ import aiohttp
 from .auth import detect_vsn_model, get_vsn300_digest_header, get_vsn700_basic_auth
 from .constants import ENDPOINT_LIVEDATA, ENDPOINT_STATUS
 from .exceptions import VSNConnectionError
+from .feeds import fetch_feeds_as_livedata
 from .utils import check_socket_connection
 
 _LOGGER = logging.getLogger(__name__)
@@ -107,9 +108,16 @@ async def discover_vsn_device(
         session, base_url, vsn_model, username, password, timeout, requires_auth
     )
 
-    # Step 3: Fetch livedata
+    # Step 3: Fetch livedata (pass status_data for the VSN300 /v1/feeds fallback)
     livedata = await _fetch_livedata(
-        session, base_url, vsn_model, username, password, timeout, requires_auth
+        session,
+        base_url,
+        vsn_model,
+        username,
+        password,
+        timeout,
+        requires_auth,
+        status_data,
     )
 
     # Step 4: Extract logger information from status
@@ -236,6 +244,7 @@ async def _fetch_livedata(
     password: str,
     timeout: int,
     requires_auth: bool = True,
+    status_data: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Fetch livedata endpoint.
 
@@ -247,6 +256,8 @@ async def _fetch_livedata(
         password: Authentication password
         timeout: Request timeout in seconds
         requires_auth: Whether authentication is required
+        status_data: Parsed /v1/status, used to enumerate devices for the
+            VSN300 /v1/feeds fallback when /v1/livedata is unavailable
 
     Returns:
         Livedata dictionary
@@ -318,6 +329,23 @@ async def _fetch_livedata(
             err,
             type(err).__name__,
         )
+        # VSN300 firmware (e.g. 2.0.0) drops the TCP connection on /v1/livedata.
+        # Fall back to /v1/feeds datastreams, which returns the same point keys.
+        if vsn_model == "VSN300" and status_data is not None:
+            _LOGGER.info(
+                "[Discovery Livedata] /v1/livedata unavailable (%s); "
+                "falling back to /v1/feeds",
+                type(err).__name__,
+            )
+            return await fetch_feeds_as_livedata(
+                session,
+                base_url,
+                status_data,
+                username,
+                password,
+                timeout,
+                requires_auth,
+            )
         raise VSNConnectionError(f"Failed to fetch livedata: {err}") from err
 
 
