@@ -8,8 +8,9 @@ from typing import Any
 import aiohttp
 
 from .auth import detect_vsn_model, get_vsn300_digest_header, get_vsn700_basic_auth
-from .constants import ENDPOINT_LIVEDATA
+from .constants import ENDPOINT_LIVEDATA, ENDPOINT_STATUS
 from .exceptions import VSNAuthenticationError, VSNConnectionError
+from .feeds import fetch_feeds_as_livedata
 from .normalizer import VSNDataNormalizer
 from .utils import check_socket_connection
 
@@ -55,6 +56,10 @@ class ABBFimerVSNRestClient:
         # Maps livedata device keys to device_type for injection before normalization.
         # Built lazily on first poll from _discovered_devices, invalidated on update.
         self._device_type_map: dict[str, str] | None = None
+        # VSN300 /v1/feeds fallback: sticky flag so a dead /v1/livedata is not
+        # re-probed every poll; cached /v1/status used to enumerate devices.
+        self._use_feeds = False
+        self._status_data: dict[str, Any] | None = None
 
     async def connect(self) -> str:
         """Connect and detect VSN model.
@@ -100,10 +105,55 @@ class ABBFimerVSNRestClient:
             len(devices),
         )
 
+    async def _fetch_status_data(self) -> dict[str, Any]:
+        """Fetch and cache /v1/status (used to enumerate devices for feeds fallback)."""
+        if self._status_data is not None:
+            return self._status_data
+        uri = ENDPOINT_STATUS
+        url = f"{self.base_url}{uri}"
+        headers: dict[str, str] = {}
+        if self.requires_auth and self.vsn_model == "VSN300":
+            digest_value = await get_vsn300_digest_header(
+                self.session,
+                self.base_url,
+                self.username,
+                self.password,
+                uri,
+                "GET",
+                self.timeout,
+            )
+            headers = {"Authorization": f"X-Digest {digest_value}"}
+        async with self.session.get(
+            url, headers=headers, timeout=aiohttp.ClientTimeout(total=self.timeout)
+        ) as response:
+            if response.status != 200:
+                raise VSNConnectionError(
+                    f"Status request failed: HTTP {response.status}"
+                )
+            self._status_data = await response.json(
+                encoding="latin-1", content_type=None
+            )
+        return self._status_data
+
+    async def _feeds_livedata(self) -> dict[str, Any]:
+        """Fetch livedata via the /v1/feeds fallback (VSN300 with dead /v1/livedata)."""
+        status_data = await self._fetch_status_data()
+        return await fetch_feeds_as_livedata(
+            self.session,
+            self.base_url,
+            status_data,
+            self.username,
+            self.password,
+            self.timeout,
+            self.requires_auth,
+        )
+
     async def get_livedata(self) -> dict[str, Any]:
         """Fetch livedata from VSN device.
 
-        Both VSN300 and VSN700 use /v1/livedata endpoint.
+        Both VSN300 and VSN700 use /v1/livedata endpoint. On VSN300 firmware
+        where /v1/livedata drops the connection, this transparently falls back
+        to the /v1/feeds datastreams adapter (sticky after the first failure).
 
         Returns:
             Raw livedata response from VSN
@@ -114,6 +164,10 @@ class ABBFimerVSNRestClient:
         """
         if not self.vsn_model:
             await self.connect()
+
+        # Sticky: once /v1/livedata proved dead, go straight to /v1/feeds.
+        if self._use_feeds:
+            return await self._feeds_livedata()
 
         # Check socket connection before HTTP request
         await check_socket_connection(self.base_url, timeout=5)
@@ -216,6 +270,15 @@ class ABBFimerVSNRestClient:
                 err,
                 type(err).__name__,
             )
+            # VSN300 firmware (e.g. 2.0.0) drops the TCP connection on /v1/livedata.
+            # Fall back to /v1/feeds and remember it so we skip the dead endpoint.
+            if self.vsn_model == "VSN300":
+                _LOGGER.info(
+                    "[Client] /v1/livedata unavailable (%s); using /v1/feeds fallback",
+                    type(err).__name__,
+                )
+                self._use_feeds = True
+                return await self._feeds_livedata()
             raise VSNConnectionError(f"Livedata request error: {err}") from err
 
     async def get_normalized_data(self) -> dict[str, Any]:

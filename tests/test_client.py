@@ -8,6 +8,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import aiohttp
 import pytest
 
+from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client import client as client_mod
 from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.client import (
     ABBFimerVSNRestClient,
 )
@@ -688,3 +689,75 @@ async def test_get_livedata_decodes_latin1_body() -> None:
     ):
         data = await client.get_livedata()
     assert data == payload
+
+
+async def test_get_livedata_falls_back_to_feeds_and_sticks() -> None:
+    """VSN300 client: dead livedata -> feeds fallback, and remembers it."""
+    feeds_shaped = {
+        "ser4:010261-3G97-1021": {
+            "device_type": "inverter",
+            "points": [{"name": "m101_1_W", "value": 1599.0}],
+        }
+    }
+
+    # livedata GET -> disconnect
+    live_ctx = MagicMock()
+    live_ctx.__aenter__ = AsyncMock(side_effect=aiohttp.ServerDisconnectedError("x"))
+    live_ctx.__aexit__ = AsyncMock(return_value=False)
+    session = MagicMock()
+    session.get = MagicMock(return_value=live_ctx)
+
+    client = ABBFimerVSNRestClient(
+        session=session,
+        base_url="http://host",
+        vsn_model="VSN300",
+        requires_auth=True,
+    )
+
+    with (
+        patch.object(client_mod, "check_socket_connection", new=AsyncMock()),
+        patch.object(client_mod, "get_vsn300_digest_header", new=AsyncMock(return_value="h")),
+        patch.object(
+            client, "_fetch_status_data", new=AsyncMock(return_value={"keys": {}})
+        ),
+        patch.object(
+            client_mod, "fetch_feeds_as_livedata", new=AsyncMock(return_value=feeds_shaped)
+        ) as mock_feeds,
+    ):
+        first = await client.get_livedata()
+        assert first == feeds_shaped
+        assert client._use_feeds is True
+        # Second call must go straight to feeds without another livedata GET.
+        session.get.reset_mock()
+        second = await client.get_livedata()
+        assert second == feeds_shaped
+        session.get.assert_not_called()  # sticky: /v1/livedata not re-probed
+
+    assert mock_feeds.await_count == 2
+
+
+async def test_get_livedata_vsn700_does_not_fall_back() -> None:
+    """VSN700 must NOT use the feeds fallback; a disconnect re-raises."""
+    live_ctx = MagicMock()
+    live_ctx.__aenter__ = AsyncMock(side_effect=aiohttp.ServerDisconnectedError("x"))
+    live_ctx.__aexit__ = AsyncMock(return_value=False)
+    session = MagicMock()
+    session.get = MagicMock(return_value=live_ctx)
+
+    client = ABBFimerVSNRestClient(
+        session=session,
+        base_url="http://host",
+        vsn_model="VSN700",
+        requires_auth=False,
+    )
+
+    with (
+        patch.object(client_mod, "check_socket_connection", new=AsyncMock()),
+        patch.object(
+            client_mod, "fetch_feeds_as_livedata", new=AsyncMock()
+        ) as mock_feeds,
+        pytest.raises(VSNConnectionError),
+    ):
+        await client.get_livedata()
+    assert client._use_feeds is False
+    mock_feeds.assert_not_awaited()
