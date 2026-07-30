@@ -103,3 +103,78 @@ def test_reshape_datastreams_megawatt_scale() -> None:
     assert points["big_WH"] == 2_500_000.0
     assert points["plain_W"] == 900.0  # already base unit, unchanged
     assert points["nounits"] == 42.0  # no units field -> passthrough
+
+
+async def test_fetch_feeds_as_livedata_merges_devices() -> None:
+    """End-to-end adapter: enumerate from status, fetch datastreams, reshape+scale."""
+    from unittest.mock import AsyncMock, MagicMock, patch
+
+    from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client import (
+        feeds as feeds_mod,
+    )
+
+    status = {
+        "keys": {
+            "device.invID": {"value": "010261-3G97-1021"},
+            "device.modelDesc": {"value": "PVI-3.6-OUTD"},
+            "device.ACType": {"value": "Single"},
+        }
+    }
+    datastreams_json = {
+        "feeds": {
+            "ser4:010261-3G97-1021": {
+                "datastreams": {
+                    "m101_1_W": {"data": [{"value": 1.599, "timestamp": "t"}], "units": "kW"},
+                }
+            }
+        }
+    }
+
+    mock_resp = MagicMock()
+    mock_resp.status = 200
+    mock_resp.json = AsyncMock(return_value=datastreams_json)
+    mock_ctx = MagicMock()
+    mock_ctx.__aenter__ = AsyncMock(return_value=mock_resp)
+    mock_ctx.__aexit__ = AsyncMock(return_value=False)
+    session = MagicMock()
+    session.get = MagicMock(return_value=mock_ctx)
+
+    with patch.object(
+        feeds_mod, "get_vsn300_digest_header", new=AsyncMock(return_value="hdr")
+    ):
+        result = await feeds_mod.fetch_feeds_as_livedata(
+            session=session,
+            base_url="http://host",
+            status_data=status,
+            username="guest",
+            password="pw",  # noqa: S106
+            timeout=10,
+            requires_auth=True,
+        )
+
+    assert "ser4:010261-3G97-1021" in result
+    pts = {p["name"]: p["value"] for p in result["ser4:010261-3G97-1021"]["points"]}
+    assert pts == {"m101_1_W": 1599.0}  # kW -> W scaling applied
+    assert result["ser4:010261-3G97-1021"]["device_type"] == "inverter"
+
+
+async def test_fetch_feeds_as_livedata_no_devices_returns_empty() -> None:
+    """No inverter in status -> empty dict, no HTTP calls."""
+    from unittest.mock import MagicMock
+
+    from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client import (
+        feeds as feeds_mod,
+    )
+
+    session = MagicMock()
+    result = await feeds_mod.fetch_feeds_as_livedata(
+        session=session,
+        base_url="http://host",
+        status_data={"keys": {}},
+        username="guest",
+        password="pw",  # noqa: S106
+        timeout=10,
+        requires_auth=True,
+    )
+    assert result == {}
+    session.get.assert_not_called()

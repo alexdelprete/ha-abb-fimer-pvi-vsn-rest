@@ -4,6 +4,9 @@
 ENDPOINT_STATUS = "/v1/status"
 ENDPOINT_LIVEDATA = "/v1/livedata"
 ENDPOINT_FEEDS = "/v1/feeds"
+# Per-device datastreams (VSN300 fallback when /v1/livedata is dead).
+# Format: /v1/feeds/ser4:<invID>/datastreams
+ENDPOINT_FEED_DATASTREAMS = "/v1/feeds/{feed_key}/datastreams"
 
 # Aurora protocol epoch offset (Jan 1, 2000 00:00:00 UTC)
 # The Aurora protocol uses a custom epoch instead of Unix epoch (Jan 1, 1970)

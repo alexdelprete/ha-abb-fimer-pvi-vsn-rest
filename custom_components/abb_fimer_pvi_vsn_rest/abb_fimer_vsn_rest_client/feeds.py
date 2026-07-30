@@ -14,6 +14,12 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+import aiohttp
+
+from .auth import get_vsn300_digest_header
+from .constants import ENDPOINT_FEED_DATASTREAMS
+from .exceptions import VSNConnectionError
+
 _LOGGER = logging.getLogger(__name__)
 
 FEED_KEY_PREFIX = "ser4:"
@@ -102,3 +108,78 @@ def reshape_datastreams(
             value = value * scale
         points.append({"name": point_name, "value": value})
     return {feed_key: {"device_type": device_type, "points": points}}
+
+
+async def fetch_feeds_as_livedata(
+    session: aiohttp.ClientSession,
+    base_url: str,
+    status_data: dict[str, Any],
+    username: str,
+    password: str,
+    timeout: int,
+    requires_auth: bool = True,
+) -> dict[str, Any]:
+    """Fetch per-device datastreams and return them in livedata shape.
+
+    Fallback for VSN300 firmware where /v1/livedata drops the connection.
+    Enumerates inverters from /v1/status (device.invID) and reads each one's
+    /v1/feeds/ser4:<invID>/datastreams, reshaping into the livedata-shaped dict
+    the normalizer consumes.
+
+    Args:
+        session: aiohttp client session.
+        base_url: Base URL of the VSN300.
+        status_data: The parsed /v1/status JSON (device enumeration source).
+        username: Digest username.
+        password: Digest password.
+        timeout: Per-request timeout in seconds.
+        requires_auth: Whether to send X-Digest auth (VSN300: True).
+
+    Returns:
+        ``{device_id: {device_type, points: [{name, value}, ...]}}`` merged
+        across all enumerated inverters. Empty dict when no devices found.
+
+    Raises:
+        VSNConnectionError: On non-200 response or transport error.
+
+    """
+    base_url = base_url.rstrip("/")
+    devices = parse_status_devices(status_data)
+    if not devices:
+        _LOGGER.warning("[Feeds Fallback] No inverter devices found in status data")
+        return {}
+
+    merged: dict[str, Any] = {}
+    for device in devices:
+        feed_key = device["feed_key"]
+        uri = ENDPOINT_FEED_DATASTREAMS.format(feed_key=feed_key)
+        url = f"{base_url}{uri}"
+
+        headers: dict[str, str] = {}
+        if requires_auth:
+            digest_value = await get_vsn300_digest_header(
+                session, base_url, username, password, uri, "GET", timeout
+            )
+            headers = {"Authorization": f"X-Digest {digest_value}"}
+
+        _LOGGER.debug("[Feeds Fallback] Fetching datastreams: url=%s", url)
+        try:
+            async with session.get(
+                url, headers=headers, timeout=aiohttp.ClientTimeout(total=timeout)
+            ) as response:
+                if response.status != 200:
+                    raise VSNConnectionError(
+                        f"Feeds datastreams request failed: HTTP {response.status}"
+                    )
+                data = await response.json(encoding="latin-1", content_type=None)
+        except aiohttp.ClientError as err:
+            raise VSNConnectionError(
+                f"Feeds datastreams request error: {err}"
+            ) from err
+
+        merged.update(reshape_datastreams(data, feed_key, "inverter"))
+
+    _LOGGER.info(
+        "[Feeds Fallback] Assembled %d device(s) from /v1/feeds", len(merged)
+    )
+    return merged
