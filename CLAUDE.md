@@ -250,13 +250,17 @@ Home Assistant DataUpdateCoordinator for managing polling.
 - `discovered_devices`: List of DiscoveredDevice
 - `_missing_devices`: Set of known device IDs not found during last discovery
 - `_reload_scheduled`: Flag to prevent multiple concurrent reloads
+- `entity_device_ids`: Device IDs that got at least one sensor entity; `None` until the sensor platform completes setup (set by `sensor.py`)
 
 **Re-discovery Flow (in `_async_update_data`):**
 
-After each successful data fetch, two checks run:
+After each successful data fetch, three checks run:
 
 1. **Missing known devices**: If `_missing_devices` is non-empty, call `discover_vsn_device()` to check if they're back. On full recovery, schedule `config_entry.async_reload()`.
 2. **Unknown devices in data**: Compare data device IDs against `known_devices` in `config_entry.data`. If unknown devices found, schedule reload for idempotent device creation.
+3. **Devices without entities**: Compare devices reporting points in data against `entity_device_ids`. If a device reports points but got no entities at setup, schedule reload to create them. Covers devices that are present in discovery but absent from livedata at setup — e.g. the VSN300 datalogger (synthesized from `/v1/status`, so never "missing" per Check 1, and already in `known_devices`, so never "unknown" per Check 2). Guards: skipped while `entity_device_ids` is `None` (first refresh runs before the sensor platform), and point-less device entries are ignored (a reload would create zero sensors for them and loop forever).
+
+**Note (found 2026-08-09):** the coordinator only polls while it has listeners. `__init__.py` registers a no-op listener after setup so polling — and these checks — keep running even when zero sensors were created (empty livedata at startup).
 
 #### 6. Config Flow (`config_flow.py`)
 

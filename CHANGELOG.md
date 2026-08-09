@@ -19,6 +19,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   integration stayed stuck until a manual reload. The integration now registers a no-op
   coordinator listener during setup so polling (and therefore re-discovery) continues even
   when no entities exist.
+- **Devices already known and discovered never got their entities back after their livedata
+  returned** — Companion gap to the fix above: a device that is present in discovery but
+  absent from livedata at setup (typical for the VSN300 datalogger, which is synthesized
+  from `/v1/status` and can stop self-reporting in `/v1/livedata` after a reboot with an
+  unsynced clock) got zero sensors, and no existing check could recover it: the
+  missing-device re-discovery only watches devices absent from *discovery*, and the
+  unknown-device check only reloads for devices not in `known_devices`. The coordinator now
+  runs a third check each poll: the sensor platform records which devices actually got
+  entities, and when a device starts reporting points without having any, a reload is
+  scheduled to create them. Guarded against reload loops (point-less device entries are
+  ignored; the check is skipped until the sensor platform has completed setup).
 
 ## [1.5.9] - 2026-07-08
 

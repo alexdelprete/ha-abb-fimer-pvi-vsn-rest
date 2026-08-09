@@ -170,6 +170,10 @@ async def async_setup_entry(
     # Wait for first successful data fetch
     if not coordinator.data:
         _LOGGER.warning("No data available from coordinator, skipping sensor setup")
+        # Mark platform setup as completed with zero entities so the
+        # coordinator's no-entities check can schedule a reload once
+        # devices start reporting data.
+        coordinator.entity_device_ids = set()
         return
 
     # Create sensors from normalized data
@@ -245,6 +249,13 @@ async def async_setup_entry(
         len(other_sensors),
     )
     async_add_entities(datalogger_sensors + other_sensors)
+
+    # Record which devices got entities (one sensor per point, so any device
+    # with points is covered). The coordinator's no-entities check compares
+    # future data against this set to reload when a device starts reporting.
+    coordinator.entity_device_ids = {
+        device_id for device_id, device_data in devices.items() if device_data.get("points")
+    }
 
 
 class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], RestoreSensor):

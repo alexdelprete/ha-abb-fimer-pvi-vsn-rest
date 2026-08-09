@@ -96,6 +96,12 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         # Partial discovery tracking
         self._missing_devices: set[str] = missing_devices or set()
         self._reload_scheduled = False
+
+        # Device IDs that got at least one sensor entity, set by the sensor
+        # platform once its setup completes (None until then). Used to detect
+        # devices that start reporting data after setup created no entities
+        # for them (e.g. datalogger absent from livedata at startup).
+        self.entity_device_ids: set[str] | None = None
         self._consecutive_failures = 0
         self._repair_issue_created = False
         self._failure_start_time: float | None = None
@@ -177,6 +183,33 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                         _LOGGER.info(
                             "Unknown devices detected in data: %s — scheduling reload",
                             ", ".join(sorted(unknown_devices)),
+                        )
+                        self._reload_scheduled = True
+                        self.hass.async_create_task(
+                            self.hass.config_entries.async_reload(self._entry_id)
+                        )
+
+                # Check 3: Detect devices that report data but got no entities.
+                # A device present in discovery but absent from livedata at setup
+                # (e.g. VSN300 datalogger after a reboot with a stale clock) is
+                # never "missing" (Check 1) and already in known_devices
+                # (Check 2), so neither check re-creates its sensors when its
+                # livedata returns. Guarded on entity_device_ids being set: the
+                # sensor platform hasn't run yet during the first refresh.
+                if (
+                    not self._reload_scheduled
+                    and self._entry_id
+                    and self.entity_device_ids is not None
+                ):
+                    devices_without_entities = {
+                        device_id
+                        for device_id, device_data in data.get("devices", {}).items()
+                        if device_data.get("points")
+                    } - self.entity_device_ids
+                    if devices_without_entities:
+                        _LOGGER.info(
+                            "Devices reporting data but without entities: %s — scheduling reload",
+                            ", ".join(sorted(devices_without_entities)),
                         )
                         self._reload_scheduled = True
                         self.hass.async_create_task(

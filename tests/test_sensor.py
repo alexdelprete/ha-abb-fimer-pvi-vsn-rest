@@ -1909,6 +1909,9 @@ class TestAsyncSetupEntry:
 
         # Should not add any entities when no data
         async_add_entities.assert_not_called()
+        # Must still mark platform setup as completed (with zero entities) so
+        # the coordinator's no-entities check can later schedule a reload
+        assert mock_coordinator.entity_device_ids == set()
 
     @pytest.mark.asyncio
     async def test_setup_entry_with_devices(
@@ -1960,6 +1963,9 @@ class TestAsyncSetupEntry:
         async_add_entities.assert_called_once()
         entities = async_add_entities.call_args[0][0]
         assert len(entities) == 2  # 2 points
+        # Devices that got entities are recorded for the coordinator's
+        # no-entities check
+        assert mock_coordinator.entity_device_ids == {TEST_LOGGER_SN}
 
     @pytest.mark.asyncio
     async def test_setup_entry_datalogger_first(

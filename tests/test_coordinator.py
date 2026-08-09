@@ -1240,3 +1240,128 @@ class TestIdempotencyCheck:
 
         assert coordinator_with_known._reload_scheduled is True
         coordinator_with_known.hass.async_create_task.assert_called()
+
+
+class TestNoEntitiesCheck:
+    """Tests for the devices-without-entities detection in _async_update_data.
+
+    Covers the case where a known device is present in discovery but absent
+    from livedata at setup (e.g. VSN300 datalogger after a reboot), so zero
+    sensors were created for it. When it starts reporting points again, the
+    coordinator must schedule a reload to create its entities — neither the
+    missing-device rediscovery nor the unknown-device check covers this.
+    """
+
+    @pytest.fixture
+    def coordinator_all_known(
+        self,
+        mock_hass: MagicMock,
+        mock_vsn_client: MagicMock,
+        mock_discovery_result: MockDiscoveryResult,
+    ) -> ABBFimerPVIVSNRestCoordinator:
+        """Create coordinator where all data devices are already known.
+
+        known_devices covers both devices so the unknown-device check
+        (Check 2) never fires and cannot mask the no-entities check.
+        """
+        entry = MagicMock()
+        entry.entry_id = "test_entry_id"
+        entry.options = {
+            CONF_ENABLE_REPAIR_NOTIFICATION: True,
+            CONF_FAILURES_THRESHOLD: DEFAULT_FAILURES_THRESHOLD,
+            CONF_RECOVERY_SCRIPT: "",
+        }
+        entry.data = {
+            CONF_KNOWN_DEVICES: [
+                {"device_id": TEST_LOGGER_SN, "device_type": "datalogger", "is_datalogger": True},
+                {
+                    "device_id": TEST_INVERTER_SN,
+                    "device_type": "inverter_3phases",
+                    "is_datalogger": False,
+                },
+            ],
+        }
+        return ABBFimerPVIVSNRestCoordinator(
+            hass=mock_hass,
+            client=mock_vsn_client,
+            update_interval=timedelta(seconds=TEST_SCAN_INTERVAL),
+            discovery_result=mock_discovery_result,
+            entry_id="test_entry_id",
+            host=TEST_HOST,
+            config_entry=entry,
+        )
+
+    @pytest.mark.asyncio
+    async def test_device_without_entities_triggers_reload(
+        self,
+        coordinator_all_known: ABBFimerPVIVSNRestCoordinator,
+        mock_normalized_data: dict,
+    ) -> None:
+        """Test reload is scheduled when a device reports points but has no entities."""
+        coordinator_all_known.client.get_normalized_data = AsyncMock(
+            return_value=mock_normalized_data
+        )
+        # Sensor platform completed setup but created no entities (empty
+        # livedata at startup)
+        coordinator_all_known.entity_device_ids = set()
+
+        await coordinator_all_known._async_update_data()
+
+        assert coordinator_all_known._reload_scheduled is True
+        coordinator_all_known.hass.async_create_task.assert_called()
+
+    @pytest.mark.asyncio
+    async def test_no_reload_when_devices_have_entities(
+        self,
+        coordinator_all_known: ABBFimerPVIVSNRestCoordinator,
+        mock_normalized_data: dict,
+    ) -> None:
+        """Test no reload when every reporting device already has entities."""
+        coordinator_all_known.client.get_normalized_data = AsyncMock(
+            return_value=mock_normalized_data
+        )
+        coordinator_all_known.entity_device_ids = set(mock_normalized_data["devices"])
+
+        await coordinator_all_known._async_update_data()
+
+        assert coordinator_all_known._reload_scheduled is False
+
+    @pytest.mark.asyncio
+    async def test_no_reload_before_sensor_platform_setup(
+        self,
+        coordinator_all_known: ABBFimerPVIVSNRestCoordinator,
+        mock_normalized_data: dict,
+    ) -> None:
+        """Test the check is skipped during the first refresh.
+
+        entity_device_ids is None until the sensor platform has run — the
+        first refresh happens before entities exist and must not reload.
+        """
+        coordinator_all_known.client.get_normalized_data = AsyncMock(
+            return_value=mock_normalized_data
+        )
+        assert coordinator_all_known.entity_device_ids is None
+
+        await coordinator_all_known._async_update_data()
+
+        assert coordinator_all_known._reload_scheduled is False
+
+    @pytest.mark.asyncio
+    async def test_no_reload_for_device_without_points(
+        self,
+        coordinator_all_known: ABBFimerPVIVSNRestCoordinator,
+    ) -> None:
+        """Test a point-less device entry never triggers a reload.
+
+        A device with an empty points dict (e.g. VSN700 datalogger) would
+        create zero sensors on reload too — reloading for it would loop
+        forever.
+        """
+        coordinator_all_known.client.get_normalized_data = AsyncMock(
+            return_value={"devices": {TEST_LOGGER_SN: {"points": {}}}}
+        )
+        coordinator_all_known.entity_device_ids = set()
+
+        await coordinator_all_known._async_update_data()
+
+        assert coordinator_all_known._reload_scheduled is False
