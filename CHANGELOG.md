@@ -9,7 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
-- _No changes yet._
+- **Automatic re-discovery never ran when setup created zero sensors** — If Home Assistant
+  (re)started while the datalogger returned an empty `/v1/livedata` response (typical when
+  HA boots before sunrise, or right after a datalogger reboot), sensor setup created 0
+  entities. Home Assistant's `DataUpdateCoordinator` only schedules refreshes while it has
+  listeners, and the integration's only listeners were the sensor entities — so with zero
+  sensors the coordinator never polled again after the first refresh, `_attempt_rediscovery()`
+  never ran, the "Incomplete device discovery" repair issue never cleared, and the
+  integration stayed stuck until a manual reload. The integration now registers a no-op
+  coordinator listener during setup so polling (and therefore re-discovery) continues even
+  when no entities exist.
 
 ## [1.5.9] - 2026-07-08
 

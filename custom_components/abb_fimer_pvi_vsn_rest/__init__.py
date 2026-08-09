@@ -203,6 +203,15 @@ async def async_setup_entry(
     # Store runtime data
     config_entry.runtime_data = RuntimeData(coordinator=coordinator)
 
+    # Keep the coordinator polling even when no entities were created.
+    # DataUpdateCoordinator only schedules refreshes while it has listeners,
+    # and the only other listeners are sensor entities. If setup happens while
+    # the datalogger returns empty livedata (e.g. HA start before sunrise),
+    # zero sensors are created and polling would stop after the first refresh,
+    # so _attempt_rediscovery() would never run and the integration would stay
+    # stuck until a manual reload.
+    config_entry.async_on_unload(coordinator.async_add_listener(lambda: None))
+
     # Note: No manual update listener needed - OptionsFlowWithReload handles reload automatically
 
     # Register datalogger device FIRST so child devices can reference it via via_device

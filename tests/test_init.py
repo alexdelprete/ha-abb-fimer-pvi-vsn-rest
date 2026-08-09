@@ -148,6 +148,55 @@ class TestAsyncSetupEntry:
         mock_hass.config_entries.async_forward_entry_setups.assert_called_once()
 
     @pytest.mark.asyncio
+    async def test_setup_entry_registers_keepalive_listener(
+        self,
+        mock_hass: MagicMock,
+        mock_config_entry: MagicMock,
+        mock_discovery_result: DiscoveryResult,
+    ) -> None:
+        """Test setup registers a no-op coordinator listener.
+
+        DataUpdateCoordinator only schedules refreshes while it has listeners.
+        When setup creates zero sensors (empty livedata at startup), the no-op
+        listener is the only thing keeping the poll loop — and therefore
+        re-discovery of missing devices — alive.
+        """
+        mock_coordinator = MagicMock()
+        mock_coordinator.async_config_entry_first_refresh = AsyncMock()
+        mock_coordinator.vsn_model = "VSN300"
+        mock_coordinator.discovery_result = mock_discovery_result
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.async_get_clientsession",
+                return_value=MagicMock(),
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.discover_vsn_device",
+                new_callable=AsyncMock,
+                return_value=mock_discovery_result,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.ABBFimerVSNRestClient",
+                return_value=MagicMock(),
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.ABBFimerPVIVSNRestCoordinator",
+                return_value=mock_coordinator,
+            ),
+            patch("custom_components.abb_fimer_pvi_vsn_rest.async_update_device_registry"),
+            patch("custom_components.abb_fimer_pvi_vsn_rest.delete_partial_discovery_issue"),
+        ):
+            result = await async_setup_entry(mock_hass, mock_config_entry)
+
+        assert result is True
+        mock_coordinator.async_add_listener.assert_called_once()
+        # The listener's unsubscribe callback must be released on unload
+        mock_config_entry.async_on_unload.assert_any_call(
+            mock_coordinator.async_add_listener.return_value
+        )
+
+    @pytest.mark.asyncio
     async def test_setup_entry_partial_discovery(
         self,
         mock_hass: MagicMock,
