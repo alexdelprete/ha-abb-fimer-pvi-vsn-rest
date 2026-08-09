@@ -1,0 +1,13 @@
+# Raw /v1/livedata attempt against 192.168.2.15
+# challenge nonce = 84446c6e9fad0dd6191d8f2f9103ccfb
+# --- request sent ---
+GET /v1/livedata HTTP/1.1\r\n
+Host: 192.168.2.15\r\n
+Authorization: X-Digest username="guest", realm="registered_user@power-one.com", nonce="84446c6e9fad0dd6191d8f2f9103ccfb", uri="/v1/livedata", qop=auth, nc=00000002, cnonce="ddf4bfcaf87acba9", response="dc0a96d0361a97155eccb7262047997b"\r\n
+X-Digest: X-Digest username="guest", realm="registered_user@power-one.com", nonce="84446c6e9fad0dd6191d8f2f9103ccfb", uri="/v1/livedata", qop=auth, nc=00000002, cnonce="ddf4bfcaf87acba9", response="dc0a96d0361a97155eccb7262047997b"\r\n
+Accept: */*\r\n
+Connection: close\r\n
+\r\n
+
+# --- server closed connection (0 bytes) ---
+# --- response received: 0 bytes ---
