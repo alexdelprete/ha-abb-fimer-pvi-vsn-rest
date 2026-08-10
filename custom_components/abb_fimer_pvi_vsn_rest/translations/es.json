@@ -31,7 +31,7 @@
       "timeout": "Tiempo de conexión agotado. El dispositivo no responde.\n\nCompruebe:\n• El dispositivo está encendido y arrancado\n• La conexión de red es estable\n• Ningún cortafuegos bloquea el acceso",
       "unknown": "Se produjo un error inesperado. Consulte los registros para más detalles.",
       "unsupported_device": "Este dispositivo no admite la API REST. Esta integración requiere un datalogger VSN300 o VSN700 con la API REST habilitada.\n\nEl dispositivo devolvió HTTP 404 (No encontrado) para el endpoint /v1/status.\n\nSi tiene un inversor ABB/FIMER/Power-One sin datalogger VSN, considere usar la integración Modbus.",
-      "unsupported_firmware": "Su datalogger VSN300 ejecuta el firmware 2.0.0, que tiene un error conocido que rompe la API de datos en vivo (/v1/livedata).\n\nEs un problema del firmware del fabricante, corregido en el firmware 2.0.1.\n\nActualice el datalogger al firmware 2.0.1 o posterior y vuelva a intentarlo. Si la actualización de firmware no está disponible, contacte con el soporte de FIMER."
+      "unsupported_firmware": "Su datalogger VSN300 ejecuta el firmware 2.0.0, que tiene un error conocido que rompe la API de datos en vivo (/v1/livedata).\n\nEs un problema del firmware del fabricante, corregido en el firmware 2.0.1. La actualización es autoservicio desde la interfaz web del datalogger:\n\n1. Abra la interfaz web del datalogger y vaya a la pestaña 'FW UPDATE'\n2. En 'Remote Update', pulse 'Check for FW update'\n3. Pulse 'Download & Update' y espere a que el logger se reinicie\n\nDespués vuelva a intentarlo. Si la actualización remota no está disponible, contacte con el soporte de FIMER."
     },
     "abort": {
       "already_configured": "Este dispositivo ya está configurado",
@@ -886,7 +886,7 @@
     },
     "unsupported_firmware": {
       "title": "Firmware del datalogger no compatible {firmware_version}",
-      "description": "Su datalogger VSN300 en {host} ejecuta el firmware {firmware_version}, que tiene un error conocido: la API de datos en vivo (/v1/livedata) corta todas las conexiones, por lo que esta integración no puede leer datos.\n\nEs un problema del firmware del fabricante, corregido en el firmware 2.0.1.\n\n**Para resolverlo:**\n1. Actualice el datalogger al firmware 2.0.1 o posterior\n2. Recargue la integración (Ajustes → Dispositivos y servicios → ABB FIMER PVI VSN REST → Recargar)\n\nSi la actualización de firmware no está disponible, contacte con el soporte de FIMER.\n\nEste aviso se eliminará automáticamente cuando la integración se inicie correctamente."
+      "description": "Su datalogger VSN300 en {host} ejecuta el firmware {firmware_version}, que tiene un error conocido: la API de datos en vivo (/v1/livedata) corta todas las conexiones, por lo que esta integración no puede leer datos.\n\nEs un problema del firmware del fabricante, corregido en el firmware 2.0.1. La actualización es autoservicio desde la interfaz web del datalogger:\n\n1. Abra la interfaz web del datalogger y vaya a la pestaña **FW UPDATE**\n2. En **Remote Update**, pulse **Check for FW update** — debería indicar que el firmware 2.0.1 (o posterior) está disponible\n3. Pulse **Download & Update** y espere a que el logger se actualice y reinicie\n4. Recargue la integración (Ajustes → Dispositivos y servicios → ABB FIMER PVI VSN REST → Recargar)\n\nSi la actualización remota no está disponible, contacte con el soporte de FIMER.\n\nEste aviso se eliminará automáticamente cuando la integración se inicie correctamente."
     }
   },
   "device_automation": {

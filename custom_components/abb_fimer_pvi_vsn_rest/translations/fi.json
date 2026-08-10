@@ -31,7 +31,7 @@
       "timeout": "Yhteys aikakatkaistiin. Laite ei vastaa.\n\nTarkista:\n• Laite on päällä ja käynnistynyt\n• Verkkoyhteys on vakaa\n• Palomuuri ei estä yhteyttä",
       "unknown": "Tapahtui odottamaton virhe. Katso lisätiedot lokeista.",
       "unsupported_device": "Tämä laite ei tue REST API:a. Tämä integraatio vaatii VSN300- tai VSN700-dataloggerin, jossa REST API on käytössä.\n\nLaite palautti HTTP 404 (ei löydy) /v1/status-päätepisteelle.\n\nJos sinulla on ABB/FIMER/Power-One-invertteri ilman VSN-dataloggeria, harkitse Modbus-integraation käyttöä.",
-      "unsupported_firmware": "VSN300-dataloggerisi käyttää laiteohjelmistoa 2.0.0, jossa on tunnettu vika, joka rikkoo reaaliaikaisen datan API:n (/v1/livedata).\n\nKyseessä on valmistajan laiteohjelmistovika, joka on korjattu versiossa 2.0.1.\n\nPäivitä datalogger laiteohjelmistoon 2.0.1 tai uudempaan ja yritä uudelleen. Jos laiteohjelmistopäivitys ei ole saatavilla, ota yhteyttä FIMERin tukeen."
+      "unsupported_firmware": "VSN300-dataloggerisi käyttää laiteohjelmistoa 2.0.0, jossa on tunnettu vika, joka rikkoo reaaliaikaisen datan API:n (/v1/livedata).\n\nKyseessä on valmistajan laiteohjelmistovika, joka on korjattu versiossa 2.0.1. Päivitys tehdään suoraan dataloggerin verkkokäyttöliittymästä:\n\n1. Avaa dataloggerin verkkokäyttöliittymä ja siirry 'FW UPDATE' -välilehdelle\n2. Napsauta 'Remote Update' -kohdassa 'Check for FW update'\n3. Napsauta 'Download & Update' ja odota, että logger käynnistyy uudelleen\n\nYritä sitten uudelleen. Jos etäpäivitys ei ole saatavilla, ota yhteyttä FIMERin tukeen."
     },
     "abort": {
       "already_configured": "Tämä laite on jo määritetty",
@@ -886,7 +886,7 @@
     },
     "unsupported_firmware": {
       "title": "Dataloggerin laiteohjelmistoa {firmware_version} ei tueta",
-      "description": "VSN300-dataloggerisi osoitteessa {host} käyttää laiteohjelmistoa {firmware_version}, jossa on tunnettu vika: reaaliaikaisen datan API (/v1/livedata) katkaisee jokaisen yhteyden, joten tämä integraatio ei voi lukea tietoja.\n\nKyseessä on valmistajan laiteohjelmistovika, joka on korjattu versiossa 2.0.1.\n\n**Ratkaisu:**\n1. Päivitä datalogger laiteohjelmistoon 2.0.1 tai uudempaan\n2. Lataa integraatio uudelleen (Asetukset → Laitteet ja palvelut → ABB FIMER PVI VSN REST → Lataa uudelleen)\n\nJos laiteohjelmistopäivitys ei ole saatavilla, ota yhteyttä FIMERin tukeen.\n\nTämä ilmoitus poistuu automaattisesti, kun integraatio käynnistyy onnistuneesti."
+      "description": "VSN300-dataloggerisi osoitteessa {host} käyttää laiteohjelmistoa {firmware_version}, jossa on tunnettu vika: reaaliaikaisen datan API (/v1/livedata) katkaisee jokaisen yhteyden, joten tämä integraatio ei voi lukea tietoja.\n\nKyseessä on valmistajan laiteohjelmistovika, joka on korjattu versiossa 2.0.1. Päivitys tehdään suoraan dataloggerin verkkokäyttöliittymästä:\n\n1. Avaa dataloggerin verkkokäyttöliittymä ja siirry **FW UPDATE** -välilehdelle\n2. Napsauta **Remote Update** -kohdassa **Check for FW update** — sen pitäisi ilmoittaa, että laiteohjelmisto 2.0.1 (tai uudempi) on saatavilla\n3. Napsauta **Download & Update** ja odota, että logger päivittyy ja käynnistyy uudelleen\n4. Lataa integraatio uudelleen (Asetukset → Laitteet ja palvelut → ABB FIMER PVI VSN REST → Lataa uudelleen)\n\nJos etäpäivitys ei ole saatavilla, ota yhteyttä FIMERin tukeen.\n\nTämä ilmoitus poistuu automaattisesti, kun integraatio käynnistyy onnistuneesti."
     }
   },
   "device_automation": {

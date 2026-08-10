@@ -31,7 +31,7 @@
       "timeout": "Ühenduse ajalõpp. Seade ei vasta.\n\nKontrollige:\n• Seade on sisse lülitatud ja käivitunud\n• Võrguühendus on stabiilne\n• Tulemüür ei blokeeri juurdepääsu",
       "unknown": "Ilmnes ootamatu viga. Täpsemad üksikasjad leiate logidest.",
       "unsupported_device": "See seade ei toeta REST API-t. See integratsioon nõuab VSN300 või VSN700 andmelogijat, millel on REST API lubatud.\n\nSeade tagastas HTTP 404 (ei leitud) /v1/status lõpp-punkti jaoks.\n\nKui teil on ABB/FIMER/Power-One inverter ilma VSN andmelogijata, kaaluge Modbus integratsiooni kasutamist.",
-      "unsupported_firmware": "Teie VSN300 andmelogija kasutab püsivara 2.0.0, millel on teadaolev viga, mis rikub reaalajas andmete API (/v1/livedata).\n\nSee on tootja püsivara viga, mis on parandatud püsivaras 2.0.1.\n\nUuendage andmelogija püsivarale 2.0.1 või uuemale ja proovige uuesti. Kui püsivara uuendus pole saadaval, võtke ühendust FIMERi toega."
+      "unsupported_firmware": "Teie VSN300 andmelogija kasutab püsivara 2.0.0, millel on teadaolev viga, mis rikub reaalajas andmete API (/v1/livedata).\n\nSee on tootja püsivara viga, mis on parandatud püsivaras 2.0.1. Uuendus toimub otse andmelogija veebiliidese kaudu:\n\n1. Avage andmelogija veebiliides ja minge vahekaardile 'FW UPDATE'\n2. Klõpsake jaotises 'Remote Update' nuppu 'Check for FW update'\n3. Klõpsake 'Download & Update' ja oodake, kuni logija taaskäivitub\n\nSeejärel proovige uuesti. Kui kauguuendus pole saadaval, võtke ühendust FIMERi toega."
     },
     "abort": {
       "already_configured": "See seade on juba seadistatud",
@@ -886,7 +886,7 @@
     },
     "unsupported_firmware": {
       "title": "Toetamata andmelogija püsivara {firmware_version}",
-      "description": "Teie VSN300 andmelogija aadressil {host} kasutab püsivara {firmware_version}, millel on teadaolev viga: reaalajas andmete API (/v1/livedata) katkestab kõik ühendused, mistõttu see sidumine ei saa andmeid lugeda.\n\nSee on tootja püsivara viga, mis on parandatud püsivaras 2.0.1.\n\n**Lahendamiseks:**\n1. Uuendage andmelogija püsivarale 2.0.1 või uuemale\n2. Laadige sidumine uuesti (Seaded → Seadmed ja teenused → ABB FIMER PVI VSN REST → Laadi uuesti)\n\nKui püsivara uuendus pole saadaval, võtke ühendust FIMERi toega.\n\nSee teade eemaldatakse automaatselt, kui sidumine edukalt käivitub."
+      "description": "Teie VSN300 andmelogija aadressil {host} kasutab püsivara {firmware_version}, millel on teadaolev viga: reaalajas andmete API (/v1/livedata) katkestab kõik ühendused, mistõttu see sidumine ei saa andmeid lugeda.\n\nSee on tootja püsivara viga, mis on parandatud püsivaras 2.0.1. Uuendus toimub otse andmelogija veebiliidese kaudu:\n\n1. Avage andmelogija veebiliides ja minge vahekaardile **FW UPDATE**\n2. Klõpsake jaotises **Remote Update** nuppu **Check for FW update** — see peaks teatama, et püsivara 2.0.1 (või uuem) on saadaval\n3. Klõpsake **Download & Update** ja oodake, kuni logija uueneb ja taaskäivitub\n4. Laadige sidumine uuesti (Seaded → Seadmed ja teenused → ABB FIMER PVI VSN REST → Laadi uuesti)\n\nKui kauguuendus pole saadaval, võtke ühendust FIMERi toega.\n\nSee teade eemaldatakse automaatselt, kui sidumine edukalt käivitub."
     }
   },
   "device_automation": {

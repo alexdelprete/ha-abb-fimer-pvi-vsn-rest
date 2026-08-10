@@ -41,10 +41,11 @@ SunSpec-compatible format for consistent Home Assistant entity creation.
 
 > **⚠️ VSN300 firmware 2.0.0 is not supported.** That firmware has a vendor bug that
 > breaks the live data API (`/v1/livedata` drops every connection), making monitoring
-> impossible. The bug is fixed in firmware **2.0.1** — upgrade the datalogger to 2.0.1 or
-> later. The integration detects firmware 2.0.0 and shows a clear error during setup (or
-> a repair issue on an existing installation) instead of generic connection failures.
-> Firmware 1.9.x and 2.0.1+ work fine.
+> impossible. The bug is fixed in firmware **2.0.1**, and the upgrade is self-service
+> from the datalogger's web UI: **FW UPDATE** tab → **Remote Update** → **Check for FW
+> update** → **Download & Update**. The integration detects firmware 2.0.0 and shows a
+> clear error during setup (or a repair issue on an existing installation) instead of
+> generic connection failures. Firmware 1.9.x and 2.0.1+ work fine.
 
 **Inverters:** (via datalogger)
 

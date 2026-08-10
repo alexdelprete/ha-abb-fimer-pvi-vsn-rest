@@ -31,7 +31,7 @@
       "timeout": "Tilkoblingen fikk tidsavbrudd. Enheten svarer ikke.\n\nSjekk:\n• Enheten er slått på og har startet opp\n• Nettverkstilkoblingen er stabil\n• Ingen brannmur blokkerer tilgangen",
       "unknown": "En uventet feil oppstod. Se loggene for flere detaljer.",
       "unsupported_device": "Denne enheten støtter ikke REST API. Denne integrasjonen krever en VSN300- eller VSN700-datalogger med REST API aktivert.\n\nEnheten returnerte HTTP 404 (Ikke funnet) for /v1/status-endepunktet.\n\nHvis du har en ABB/FIMER/Power-One-inverter uten VSN-datalogger, bør du vurdere å bruke Modbus-integrasjonen i stedet.",
-      "unsupported_firmware": "VSN300-dataloggeren din kjører fastvare 2.0.0, som har en kjent feil som ødelegger sanntidsdata-API-et (/v1/livedata).\n\nDette er en fastvarefeil fra produsenten, rettet i fastvare 2.0.1.\n\nOppgrader dataloggeren til fastvare 2.0.1 eller nyere, og prøv igjen. Hvis fastvareoppdateringen ikke er tilgjengelig, kontakt FIMER-support."
+      "unsupported_firmware": "VSN300-dataloggeren din kjører fastvare 2.0.0, som har en kjent feil som ødelegger sanntidsdata-API-et (/v1/livedata).\n\nDette er en fastvarefeil fra produsenten, rettet i fastvare 2.0.1. Oppdateringen gjøres direkte fra dataloggerens webgrensesnitt:\n\n1. Åpne dataloggerens webgrensesnitt og gå til fanen 'FW UPDATE'\n2. Under 'Remote Update', klikk 'Check for FW update'\n3. Klikk 'Download & Update' og vent til loggeren starter på nytt\n\nPrøv deretter igjen. Hvis fjernoppdateringen ikke er tilgjengelig, kontakt FIMER-support."
     },
     "abort": {
       "already_configured": "Denne enheten er allerede konfigurert",
@@ -886,7 +886,7 @@
     },
     "unsupported_firmware": {
       "title": "Datalogger-fastvare som ikke støttes {firmware_version}",
-      "description": "VSN300-dataloggeren din på {host} kjører fastvare {firmware_version}, som har en kjent feil: sanntidsdata-API-et (/v1/livedata) bryter hver tilkobling, så denne integrasjonen kan ikke lese data.\n\nDette er en fastvarefeil fra produsenten, rettet i fastvare 2.0.1.\n\n**Løsning:**\n1. Oppgrader dataloggeren til fastvare 2.0.1 eller nyere\n2. Last inn integrasjonen på nytt (Innstillinger → Enheter og tjenester → ABB FIMER PVI VSN REST → Last inn på nytt)\n\nHvis fastvareoppdateringen ikke er tilgjengelig, kontakt FIMER-support.\n\nDenne meldingen fjernes automatisk når integrasjonen starter vellykket."
+      "description": "VSN300-dataloggeren din på {host} kjører fastvare {firmware_version}, som har en kjent feil: sanntidsdata-API-et (/v1/livedata) bryter hver tilkobling, så denne integrasjonen kan ikke lese data.\n\nDette er en fastvarefeil fra produsenten, rettet i fastvare 2.0.1. Oppdateringen gjøres direkte fra dataloggerens webgrensesnitt:\n\n1. Åpne dataloggerens webgrensesnitt og gå til fanen **FW UPDATE**\n2. Under **Remote Update**, klikk **Check for FW update** — den skal melde at fastvare 2.0.1 (eller nyere) er tilgjengelig\n3. Klikk **Download & Update** og vent til loggeren oppdateres og starter på nytt\n4. Last inn integrasjonen på nytt (Innstillinger → Enheter og tjenester → ABB FIMER PVI VSN REST → Last inn på nytt)\n\nHvis fjernoppdateringen ikke er tilgjengelig, kontakt FIMER-support.\n\nDenne meldingen fjernes automatisk når integrasjonen starter vellykket."
     }
   },
   "device_automation": {
