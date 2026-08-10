@@ -10,6 +10,7 @@ import pytest
 from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.exceptions import (
     VSNAuthenticationError,
     VSNConnectionError,
+    VSNUnsupportedFirmwareError,
 )
 from custom_components.abb_fimer_pvi_vsn_rest.config_flow import ABBFimerPVIVSNRestOptionsFlow
 from custom_components.abb_fimer_pvi_vsn_rest.const import (
@@ -155,6 +156,34 @@ async def test_form_connection_error(
 
     assert result2["type"] is FlowResultType.FORM
     assert result2["errors"]["base"] == "cannot_connect"
+
+
+async def test_form_unsupported_firmware_error(
+    hass: HomeAssistant,
+    mock_check_socket_connection: AsyncMock,
+) -> None:
+    """VSN300 fw 2.0.0 shows the dedicated unsupported_firmware form error."""
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
+
+    with patch(
+        "custom_components.abb_fimer_pvi_vsn_rest.config_flow.discover_vsn_device",
+        side_effect=VSNUnsupportedFirmwareError(
+            "VSN300 firmware 2.0.0 has a known bug", firmware_version="2.0.0"
+        ),
+    ):
+        result2 = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            {
+                CONF_HOST: TEST_HOST,
+                CONF_USERNAME: TEST_USERNAME,
+                CONF_PASSWORD: TEST_PASSWORD,
+            },
+        )
+
+    assert result2["type"] is FlowResultType.FORM
+    assert result2["errors"]["base"] == "unsupported_firmware"
 
 
 async def test_form_timeout_error(

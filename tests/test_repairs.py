@@ -10,12 +10,15 @@ from custom_components.abb_fimer_pvi_vsn_rest.const import DOMAIN
 from custom_components.abb_fimer_pvi_vsn_rest.repairs import (
     ISSUE_CONNECTION_FAILED,
     ISSUE_PARTIAL_DISCOVERY,
+    ISSUE_UNSUPPORTED_FIRMWARE,
     NOTIFICATION_RECOVERY,
     create_connection_issue,
     create_partial_discovery_issue,
     create_recovery_notification,
+    create_unsupported_firmware_issue,
     delete_connection_issue,
     delete_partial_discovery_issue,
+    delete_unsupported_firmware_issue,
 )
 from homeassistant.core import HomeAssistant
 
@@ -205,4 +208,49 @@ class TestPartialDiscoveryIssue:
 
         mock_delete.assert_called_once_with(
             mock_hass, DOMAIN, f"{ISSUE_PARTIAL_DISCOVERY}_entry_123"
+        )
+
+
+class TestUnsupportedFirmwareIssue:
+    """Tests for the VSN300 fw 2.0.0 unsupported-firmware repair issue (issue #68)."""
+
+    @pytest.fixture
+    def mock_hass(self) -> MagicMock:
+        """Create mock HomeAssistant instance."""
+        return MagicMock(spec=HomeAssistant)
+
+    def test_create_unsupported_firmware_issue(self, mock_hass: MagicMock) -> None:
+        """Test creating an unsupported firmware issue."""
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.repairs.ir.async_create_issue"
+        ) as mock_create:
+            create_unsupported_firmware_issue(
+                mock_hass,
+                entry_id="entry_123",
+                host="192.168.1.100",
+                firmware_version="2.0.0",
+            )
+
+        mock_create.assert_called_once()
+        call_args = mock_create.call_args[0]
+        call_kwargs = mock_create.call_args[1]
+
+        assert call_args[0] == mock_hass
+        assert call_args[1] == DOMAIN
+        assert call_args[2] == f"{ISSUE_UNSUPPORTED_FIRMWARE}_entry_123"
+        assert call_kwargs["is_fixable"] is False
+        assert call_kwargs["is_persistent"] is True
+        assert call_kwargs["translation_key"] == ISSUE_UNSUPPORTED_FIRMWARE
+        assert call_kwargs["translation_placeholders"]["host"] == "192.168.1.100"
+        assert call_kwargs["translation_placeholders"]["firmware_version"] == "2.0.0"
+
+    def test_delete_unsupported_firmware_issue(self, mock_hass: MagicMock) -> None:
+        """Test deleting an unsupported firmware issue."""
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.repairs.ir.async_delete_issue"
+        ) as mock_delete:
+            delete_unsupported_firmware_issue(mock_hass, entry_id="entry_123")
+
+        mock_delete.assert_called_once_with(
+            mock_hass, DOMAIN, f"{ISSUE_UNSUPPORTED_FIRMWARE}_entry_123"
         )

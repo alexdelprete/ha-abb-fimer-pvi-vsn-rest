@@ -41,7 +41,7 @@ from custom_components.abb_fimer_pvi_vsn_rest.const import (
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.exceptions import ConfigEntryError, ConfigEntryNotReady
 
 
 class TestAsyncSetupEntry:
@@ -140,6 +140,7 @@ class TestAsyncSetupEntry:
             ),
             patch("custom_components.abb_fimer_pvi_vsn_rest.async_update_device_registry"),
             patch("custom_components.abb_fimer_pvi_vsn_rest.delete_partial_discovery_issue"),
+            patch("custom_components.abb_fimer_pvi_vsn_rest.delete_unsupported_firmware_issue"),
         ):
             result = await async_setup_entry(mock_hass, mock_config_entry)
 
@@ -186,6 +187,7 @@ class TestAsyncSetupEntry:
             ),
             patch("custom_components.abb_fimer_pvi_vsn_rest.async_update_device_registry"),
             patch("custom_components.abb_fimer_pvi_vsn_rest.delete_partial_discovery_issue"),
+            patch("custom_components.abb_fimer_pvi_vsn_rest.delete_unsupported_firmware_issue"),
         ):
             result = await async_setup_entry(mock_hass, mock_config_entry)
 
@@ -263,6 +265,7 @@ class TestAsyncSetupEntry:
             patch(
                 "custom_components.abb_fimer_pvi_vsn_rest.create_partial_discovery_issue",
             ) as mock_create_issue,
+            patch("custom_components.abb_fimer_pvi_vsn_rest.delete_unsupported_firmware_issue"),
         ):
             result = await async_setup_entry(mock_hass, mock_config_entry)
 
@@ -289,6 +292,44 @@ class TestAsyncSetupEntry:
             pytest.raises(ConfigEntryNotReady, match="Discovery failed"),
         ):
             await async_setup_entry(mock_hass, mock_config_entry)
+
+    @pytest.mark.asyncio
+    async def test_setup_entry_unsupported_firmware(
+        self,
+        mock_hass: MagicMock,
+        mock_config_entry: MagicMock,
+    ) -> None:
+        """VSN300 fw 2.0.0: setup creates a repair issue and raises ConfigEntryError.
+
+        The guard must not retry (the firmware won't fix itself) and must not be
+        wrapped into the generic ConfigEntryNotReady discovery handling.
+        """
+        from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.exceptions import (  # noqa: PLC0415
+            VSNUnsupportedFirmwareError,
+        )
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.async_get_clientsession",
+                return_value=MagicMock(),
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.discover_vsn_device",
+                new_callable=AsyncMock,
+                side_effect=VSNUnsupportedFirmwareError(
+                    "VSN300 firmware 2.0.0 has a known bug",
+                    firmware_version="2.0.0",
+                ),
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.create_unsupported_firmware_issue"
+            ) as mock_create_issue,
+            pytest.raises(ConfigEntryError, match=r"firmware 2\.0\.0"),
+        ):
+            await async_setup_entry(mock_hass, mock_config_entry)
+
+        mock_create_issue.assert_called_once()
+        assert mock_create_issue.call_args[0][3] == "2.0.0"
 
     @pytest.mark.asyncio
     async def test_setup_entry_first_refresh_failure(
@@ -322,6 +363,7 @@ class TestAsyncSetupEntry:
                 return_value=mock_coordinator,
             ),
             patch("custom_components.abb_fimer_pvi_vsn_rest.delete_partial_discovery_issue"),
+            patch("custom_components.abb_fimer_pvi_vsn_rest.delete_unsupported_firmware_issue"),
             pytest.raises(ConfigEntryNotReady, match="Failed to fetch data"),
         ):
             await async_setup_entry(mock_hass, mock_config_entry)
@@ -361,6 +403,7 @@ class TestAsyncSetupEntry:
             ),
             patch("custom_components.abb_fimer_pvi_vsn_rest.async_update_device_registry"),
             patch("custom_components.abb_fimer_pvi_vsn_rest.delete_partial_discovery_issue"),
+            patch("custom_components.abb_fimer_pvi_vsn_rest.delete_unsupported_firmware_issue"),
         ):
             result = await async_setup_entry(mock_hass, mock_config_entry)
 
@@ -399,6 +442,7 @@ class TestAsyncSetupEntry:
             ),
             patch("custom_components.abb_fimer_pvi_vsn_rest.async_update_device_registry"),
             patch("custom_components.abb_fimer_pvi_vsn_rest.delete_partial_discovery_issue"),
+            patch("custom_components.abb_fimer_pvi_vsn_rest.delete_unsupported_firmware_issue"),
         ):
             # First call - startup message should be logged
             await async_setup_entry(mock_hass, mock_config_entry)
