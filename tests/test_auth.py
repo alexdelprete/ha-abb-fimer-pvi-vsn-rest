@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import base64
+import json
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import aiohttp
@@ -452,12 +453,14 @@ class TestDetectVSNModel:
         mock_response = MagicMock()
         mock_response.status = 200
         mock_response.headers = {}
-        mock_response.json = AsyncMock(
-            return_value={
-                "keys": {
-                    "logger.board_model": {"value": "WIFI LOGGER CARD"},
+        mock_response.read = AsyncMock(
+            return_value=json.dumps(
+                {
+                    "keys": {
+                        "logger.board_model": {"value": "WIFI LOGGER CARD"},
+                    }
                 }
-            }
+            ).encode()
         )
         mock_response.__aenter__ = AsyncMock(return_value=mock_response)
         mock_response.__aexit__ = AsyncMock(return_value=None)
@@ -600,7 +603,9 @@ class TestDetectVSNModel:
         mock_response = MagicMock()
         mock_response.status = 200
         mock_response.headers = {}
-        mock_response.json = AsyncMock(side_effect=ValueError("Invalid JSON"))
+        # read_json_lenient reads raw bytes then json.loads(); invalid JSON bytes
+        # must surface as a parse error -> VSNDetectionError.
+        mock_response.read = AsyncMock(return_value=b"not valid json {{{")
         mock_response.__aenter__ = AsyncMock(return_value=mock_response)
         mock_response.__aexit__ = AsyncMock(return_value=None)
 
@@ -653,12 +658,14 @@ class TestDetectVSNModel:
         mock_response = MagicMock()
         mock_response.status = 200
         mock_response.headers = {}
-        mock_response.json = AsyncMock(
-            return_value={
-                "keys": {
-                    "logger.loggerId": {"value": "ac:1f:0f:b0:50:b5"},
+        mock_response.read = AsyncMock(
+            return_value=json.dumps(
+                {
+                    "keys": {
+                        "logger.loggerId": {"value": "ac:1f:0f:b0:50:b5"},
+                    }
                 }
-            }
+            ).encode()
         )
         mock_response.__aenter__ = AsyncMock(return_value=mock_response)
         mock_response.__aexit__ = AsyncMock(return_value=None)

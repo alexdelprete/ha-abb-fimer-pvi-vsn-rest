@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -325,7 +326,7 @@ class TestFetchStatus:
         mock_response = AsyncMock()
         mock_response.status = 200
         mock_response.headers = {}
-        mock_response.json = AsyncMock(return_value=status_data)
+        mock_response.read = AsyncMock(return_value=json.dumps(status_data).encode())
 
         mock_session.get = MagicMock(
             return_value=AsyncMock(
@@ -358,7 +359,7 @@ class TestFetchStatus:
         mock_response = AsyncMock()
         mock_response.status = 200
         mock_response.headers = {}
-        mock_response.json = AsyncMock(return_value=status_data)
+        mock_response.read = AsyncMock(return_value=json.dumps(status_data).encode())
 
         mock_session.get = MagicMock(
             return_value=AsyncMock(
@@ -390,7 +391,7 @@ class TestFetchStatus:
         mock_response = AsyncMock()
         mock_response.status = 200
         mock_response.headers = {}
-        mock_response.json = AsyncMock(return_value=status_data)
+        mock_response.read = AsyncMock(return_value=json.dumps(status_data).encode())
 
         mock_session.get = MagicMock(
             return_value=AsyncMock(
@@ -475,7 +476,7 @@ class TestFetchLivedata:
         mock_response = AsyncMock()
         mock_response.status = 200
         mock_response.headers = {}
-        mock_response.json = AsyncMock(return_value=livedata)
+        mock_response.read = AsyncMock(return_value=json.dumps(livedata).encode())
 
         mock_session.get = MagicMock(
             return_value=AsyncMock(
@@ -508,7 +509,7 @@ class TestFetchLivedata:
         mock_response = AsyncMock()
         mock_response.status = 200
         mock_response.headers = {}
-        mock_response.json = AsyncMock(return_value=livedata)
+        mock_response.read = AsyncMock(return_value=json.dumps(livedata).encode())
 
         mock_session.get = MagicMock(
             return_value=AsyncMock(
@@ -540,7 +541,7 @@ class TestFetchLivedata:
         mock_response = AsyncMock()
         mock_response.status = 200
         mock_response.headers = {}
-        mock_response.json = AsyncMock(return_value=livedata)
+        mock_response.read = AsyncMock(return_value=json.dumps(livedata).encode())
 
         mock_session.get = MagicMock(
             return_value=AsyncMock(

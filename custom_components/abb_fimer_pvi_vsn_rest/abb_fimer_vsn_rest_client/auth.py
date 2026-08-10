@@ -25,7 +25,7 @@ from .exceptions import (
     VSNDetectionError,
     VSNUnsupportedDeviceError,
 )
-from .utils import check_socket_connection
+from .utils import check_socket_connection, read_json_lenient
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -418,7 +418,7 @@ async def detect_vsn_model(
                 )
 
                 try:
-                    status_data = await response.json(encoding="latin-1", content_type=None)
+                    status_data = await read_json_lenient(response)
                     model = _detect_model_from_status(status_data)
                 except Exception as parse_err:
                     _LOGGER.error(

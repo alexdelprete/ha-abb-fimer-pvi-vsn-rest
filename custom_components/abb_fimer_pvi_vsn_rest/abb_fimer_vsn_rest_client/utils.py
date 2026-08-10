@@ -1,13 +1,40 @@
 """Utility functions for VSN REST client."""
 
 import asyncio
+import json
 import logging
 import socket
+from typing import Any
 from urllib.parse import urlparse
+
+import aiohttp
 
 from .exceptions import VSNConnectionError
 
 _LOGGER = logging.getLogger(__name__)
+
+
+async def read_json_lenient(response: aiohttp.ClientResponse) -> Any:
+    """Parse JSON tolerating the firmware's wrong/missing charset declarations.
+
+    VSN300 bodies may contain non-UTF-8 bytes (e.g. accented characters in
+    user-entered labels) while the Content-Type claims utf-8 or omits charset.
+    Try UTF-8 first (byte-identical for all ASCII payloads), fall back to
+    latin-1 (never fails) for legacy single-byte content. See issue #68.
+
+    Args:
+        response: The aiohttp response whose body to decode and parse.
+
+    Returns:
+        The parsed JSON value.
+
+    """
+    raw = await response.read()
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeDecodeError:
+        text = raw.decode("latin-1")
+    return json.loads(text)
 
 
 async def check_socket_connection(

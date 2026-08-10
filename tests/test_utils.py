@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
@@ -11,6 +11,7 @@ from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.exceptio
 )
 from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.utils import (
     check_socket_connection,
+    read_json_lenient,
 )
 
 
@@ -141,3 +142,42 @@ class TestCheckSocketConnection:
             # Socket create_connection signature: (address, timeout=...)
             # Check if timeout is in the call
             assert mock_create.call_args[0][1] == 10 or "timeout" in str(mock_create.call_args)
+
+
+class TestReadJsonLenient:
+    """Tests for read_json_lenient — UTF-8 first, latin-1 fallback (issue #68)."""
+
+    @pytest.mark.asyncio
+    async def test_falls_back_to_latin1_on_non_utf8_byte(self) -> None:
+        """A body with 0xB4 (Latin-1 acute accent) parses via the latin-1 fallback."""
+        # 0xB4 is a lone high byte that is invalid UTF-8; valid in Latin-1 (´).
+        raw = b'{"label": "caf\xb4"}'
+        response = MagicMock()
+        response.read = AsyncMock(return_value=raw)
+
+        result = await read_json_lenient(response)
+
+        assert result == {"label": "caf\xb4"}
+
+    @pytest.mark.asyncio
+    async def test_utf8_wins_for_multibyte_body(self) -> None:
+        """A genuine multibyte UTF-8 body decodes as UTF-8, not mojibake latin-1."""
+        # "café" with é as the two-byte UTF-8 sequence 0xC3 0xA9.
+        raw = '{"label": "café"}'.encode()
+        response = MagicMock()
+        response.read = AsyncMock(return_value=raw)
+
+        result = await read_json_lenient(response)
+
+        assert result == {"label": "café"}
+
+    @pytest.mark.asyncio
+    async def test_ascii_body_parses(self) -> None:
+        """A plain ASCII body (the common case) parses unchanged."""
+        raw = b'{"m101_1_W": 1737.9, "units": "kW"}'
+        response = MagicMock()
+        response.read = AsyncMock(return_value=raw)
+
+        result = await read_json_lenient(response)
+
+        assert result == {"m101_1_W": 1737.9, "units": "kW"}

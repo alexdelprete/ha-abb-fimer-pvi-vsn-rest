@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -171,7 +172,7 @@ class TestABBFimerVSNRestClientGetLivedata:
 
         mock_response = AsyncMock()
         mock_response.status = 200
-        mock_response.json = AsyncMock(return_value=sample_livedata)
+        mock_response.read = AsyncMock(return_value=json.dumps(sample_livedata).encode())
         mock_response.headers = {}
 
         mock_session.get = MagicMock(
@@ -206,7 +207,7 @@ class TestABBFimerVSNRestClientGetLivedata:
 
         mock_response = AsyncMock()
         mock_response.status = 200
-        mock_response.json = AsyncMock(return_value=sample_livedata)
+        mock_response.read = AsyncMock(return_value=json.dumps(sample_livedata).encode())
         mock_response.headers = {}
 
         mock_session.get = MagicMock(
@@ -235,7 +236,7 @@ class TestABBFimerVSNRestClientGetLivedata:
 
         mock_response = AsyncMock()
         mock_response.status = 200
-        mock_response.json = AsyncMock(return_value=sample_livedata)
+        mock_response.read = AsyncMock(return_value=json.dumps(sample_livedata).encode())
         mock_response.headers = {}
 
         mock_session.get = MagicMock(
@@ -342,7 +343,7 @@ class TestABBFimerVSNRestClientGetLivedata:
         sample_data: dict[str, Any] = {"device": {"points": []}}
         mock_response = AsyncMock()
         mock_response.status = 200
-        mock_response.json = AsyncMock(return_value=sample_data)
+        mock_response.read = AsyncMock(return_value=json.dumps(sample_data).encode())
         mock_response.headers = {}
 
         mock_session.get = MagicMock(
@@ -654,24 +655,20 @@ class TestDeviceTypeInjection:
         assert client._device_type_map == {}
 
 
-async def test_get_livedata_decodes_latin1_body() -> None:
-    """VSN serves ISO-8859-1 JSON with application/json; must not UnicodeDecodeError."""
-    from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.client import (
-        ABBFimerVSNRestClient,
-    )
+async def test_get_livedata_uses_lenient_json_decode() -> None:
+    """get_livedata decodes the body via read_json_lenient (issue #68).
 
-    # 0xB4 is the acute-accent byte that crashes utf-8 json()
-    payload = {"ser4:X": {"points": [{"name": "lbl", "value": "caf´"}]}}
+    The charset-tolerant parsing itself is covered by tests/test_utils.py
+    (TestReadJsonLenient); here we confirm get_livedata routes through it and
+    returns the parsed payload.
+    """
+    # Raw ISO-8859-1 body with a lone 0xB4 that crashes utf-8 json().
+    raw = b'{"ser4:X": {"points": [{"name": "lbl", "value": "caf\xb4"}]}}'
+    expected = {"ser4:X": {"points": [{"name": "lbl", "value": "caf\xb4"}]}}
 
     mock_resp = MagicMock()
     mock_resp.status = 200
-
-    async def _json(encoding=None, content_type=None):
-        assert encoding == "latin-1"
-        assert content_type is None
-        return payload
-
-    mock_resp.json = _json
+    mock_resp.read = AsyncMock(return_value=raw)
     mock_ctx = MagicMock()
     mock_ctx.__aenter__ = AsyncMock(return_value=mock_resp)
     mock_ctx.__aexit__ = AsyncMock(return_value=False)
@@ -687,4 +684,4 @@ async def test_get_livedata_decodes_latin1_body() -> None:
         new=AsyncMock(),
     ):
         data = await client.get_livedata()
-    assert data == payload
+    assert data == expected

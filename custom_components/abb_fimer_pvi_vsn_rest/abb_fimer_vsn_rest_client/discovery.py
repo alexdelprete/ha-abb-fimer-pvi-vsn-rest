@@ -16,7 +16,7 @@ import aiohttp
 from .auth import detect_vsn_model, get_vsn300_digest_header, get_vsn700_basic_auth
 from .constants import ENDPOINT_LIVEDATA, ENDPOINT_STATUS
 from .exceptions import VSNConnectionError
-from .utils import check_socket_connection
+from .utils import check_socket_connection, read_json_lenient
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -205,7 +205,7 @@ async def _fetch_status(
             )
 
             if response.status == 200:
-                data = await response.json(encoding="latin-1", content_type=None)
+                data = await read_json_lenient(response)
                 _LOGGER.debug(
                     "[Discovery Status] Successfully fetched status data (%d bytes)",
                     len(str(data)),
@@ -297,7 +297,7 @@ async def _fetch_livedata(
             )
 
             if response.status == 200:
-                data = await response.json(encoding="latin-1", content_type=None)
+                data = await read_json_lenient(response)
                 _LOGGER.debug(
                     "[Discovery Livedata] Successfully fetched livedata: %d devices, %d bytes",
                     len(data),
