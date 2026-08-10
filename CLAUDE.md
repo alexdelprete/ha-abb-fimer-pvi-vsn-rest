@@ -168,12 +168,22 @@ VSN-specific authentication schemes.
 
 **VSN300:**
 
-- Custom HTTP Digest with `X-Digest` header
-- Process:
-  1. Fetch challenge from `/v1/dgst`
-  1. Compute SHA-256 digest: `user:realm:password`
-  1. Compute final: `method:uri:digest`
-  1. Add header: `Authorization: X-Digest {final_digest}`
+- Custom HTTP Digest with `X-Digest` header (proprietary scheme, loosely based on RFC 2617)
+- Challenge (realm, nonce, qop) comes from the `WWW-Authenticate` header of a 401 response
+- Process (MD5 — not SHA-256):
+  1. HA1 = `MD5(username:realm:password)`
+  1. HA2 = `MD5(method:uri)`
+  1. With `qop` in the challenge: response = `MD5(HA1:nonce:nc:cnonce:qop:HA2)` using the
+     **fixed firmware constants** `nc="00000002"`, `cnonce="ddf4bfcaf87acba9"`
+  1. Without `qop`: response = `MD5(HA1:nonce:HA2)`
+  1. Add header: `Authorization: X-Digest username=..., response=..., nc=..., cnonce=...`
+
+> **Why fixed nc/cnonce (issue #68, PR #69):** VSN300 fw 2.0.x validates the digest
+> against a response precomputed with these exact constants — they are what the
+> firmware's own web UI (`auth-filter.js`) sends — instead of RFC-style validation with
+> client-supplied values. fw 1.9.2 validates RFC-style and accepts the constants too
+> (verified on real hardware for both). **Never revert to random cnonce** — it gets
+> HTTP 401 on every fw 2.0.x request.
 
 **VSN700:**
 
@@ -368,6 +378,70 @@ All HA device info fields populated from discovery:
 - `via_device`: Link to datalogger (for inverters/meters)
 
 ## Key Architectural Decisions
+
+### VSN300 Firmware 2.0.x Support & the fw 2.0.0 Guard (v1.5.10)
+
+**Background (issue #68):** VSN300 firmware behavior differs across versions, discovered
+through hardware testing on fw 1.9.2, 2.0.0, and 2.0.1 (reference captures in
+`docs/vsn-data/vsn300-data/gseguin_vsn300_fw20*`):
+
+| Firmware | X-Digest validation | `/v1/livedata` |
+| -------- | ------------------- | -------------- |
+| 1.9.2    | RFC-style (accepts any consistent nc/cnonce) | works |
+| 2.0.0    | fixed constants only | **dead** — drops every TCP connection |
+| 2.0.1    | fixed constants only | works (vendor fixed the regression) |
+
+The `Server: lighttpd/1.4.35` banner is identical on all firmwares — never use it as a
+version signal; `keys["fw.release_number"]` from `/v1/status` is the firmware version.
+
+**Decision 1 — digest constants (PR #69):** always send `nc=00000002` /
+`cnonce=ddf4bfcaf87acba9` in the qop branch. See the Authentication section above.
+
+**Decision 2 — charset-tolerant JSON decoding (PR #69):** the datalogger can serve
+ISO-8859-1 bodies (accented characters in user-entered labels) while `Content-Type`
+claims utf-8 or omits charset — the header can't be trusted in either direction. All
+JSON parsing goes through `read_json_lenient()` in `abb_fimer_vsn_rest_client/utils.py`:
+read raw bytes, try UTF-8 first (byte-identical for ASCII), fall back to latin-1 (never
+fails). Never call `response.json()` directly in client/discovery/auth code.
+
+**Decision 3 — fw 2.0.0 is NOT supported:** the dead `/v1/livedata` is a vendor
+regression with a vendor fix (2.0.1), so the integration carries no workaround (a
+`/v1/feeds`-based fallback was prototyped in PR #70 and deliberately closed). Instead, a
+guard detects the exact condition — VSN300 + livedata connection failure +
+`fw.release_number == "2.0.0"` (status succeeded moments earlier, so the network is
+proven healthy) — and guides the user to the upgrade:
+
+- `discovery.py` raises `VSNUnsupportedFirmwareError` (carries `firmware_version`)
+- Config flow (user + reconfigure): dedicated `unsupported_firmware` form error — a
+  first-time fw 2.0.0 user is told to upgrade before any config entry is created
+- Setup of an existing entry: `create_unsupported_firmware_issue()` repair issue +
+  non-retrying `ConfigEntryError`; the issue is deleted on the next successful setup
+
+**Key Files**: `exceptions.py` (`VSNUnsupportedFirmwareError`), `constants.py`
+(`UNSUPPORTED_VSN300_FIRMWARE`), `discovery.py` (guard), `__init__.py` (repair +
+`ConfigEntryError`), `config_flow.py` (`ERROR_UNSUPPORTED_FIRMWARE`), `repairs.py`,
+`translations/*.json` (`unsupported_firmware` strings, localized in all 10 languages).
+
+### Translation Files: Generated vs Hand-Maintained Sections
+
+Each `translations/{lang}.json` mixes two kinds of content:
+
+- **`entity.sensor`** — GENERATED: `en.json` entries by pipeline step 2
+  (`convert_to_json.py`, from `HA Display Name`), other languages by step 3
+  (`generate_translations.py`, from `translation_dictionaries/*.py`). Never hand-edit.
+  **Translated sensor names drive entity IDs** — changing them (including translating a
+  name that is currently English) changes entity IDs for users running HA in that
+  language: a breaking change requiring a migration (as in v1.4.1). Sensor names still
+  identical to English in some languages are a known dictionary gap — fix only via the
+  dictionaries, deliberately, as a breaking change.
+- **`config`, `options`, `exceptions`, `issues`, `device_automation`** — HAND-MAINTAINED:
+  the pipeline preserves these sections. When adding a new key (e.g. a repair issue),
+  add it to `en.json` AND localize it in all 9 other languages (de, es, et, fi, fr, it,
+  nb, pt, sv). HA falls back to English for missing keys, but the project keeps these
+  sections fully localized (consistency sweep done 2026-08-10).
+
+File format: `json.dumps(data, indent=2, ensure_ascii=False)` with **no trailing
+newline** — scripted edits round-trip byte-identical with those settings.
 
 ### Known Devices Persistence & Partial Discovery (v1.4.6)
 
