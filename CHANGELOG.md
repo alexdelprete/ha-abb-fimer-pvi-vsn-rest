@@ -7,7 +7,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.5.10] - Unreleased
 
+### Added
+
+- **Guard for unsupported VSN300 firmware 2.0.0** (Reported in #68) — VSN300 datalogger
+  firmware 2.0.0 has a vendor bug: the `/v1/livedata` endpoint drops every TCP connection,
+  making the integration inoperable. The vendor fixed it in firmware 2.0.1. Instead of
+  failing with generic connection errors, the integration now detects this exact condition
+  (VSN300 + livedata connection failure + `fw.release_number` 2.0.0): the config flow shows
+  a clear "unsupported firmware, upgrade to 2.0.1" error during setup, and an already
+  configured integration raises a repair issue with upgrade instructions. The repair issue
+  clears automatically once the integration starts successfully after the upgrade.
+- **VSN300 firmware 2.0.0/2.0.1 reference samples** — Raw API captures (status, config,
+  feeds, datastreams, livedata transcripts) from both firmware versions, contributed by
+  @gseguin, added to `docs/vsn-data/vsn300-data/`.
+
 ### Bug Fixes
+
+- **VSN300 firmware 2.0.x could not authenticate (HTTP 401 on every request)** (Reported
+  in #68, fixed by @gseguin in PR #69) — VSN300 firmware 2.0.x validates the X-Digest
+  authentication against the exact constants `nc=00000002` / `cnonce=ddf4bfcaf87acba9`
+  (the values its own web UI sends) instead of performing RFC-style validation. The
+  integration's `nc=00000001` + random cnonce was rejected on every request, so the config
+  flow could never complete. The digest now uses the firmware constants — verified against
+  fw 2.0.0 hardware and confirmed compatible with fw 1.9.2, which validates RFC-style and
+  accepts them too.
+- **Non-UTF-8 JSON responses crashed discovery** (Reported in #68, fixed by @gseguin in
+  PR #69) — The datalogger can serve ISO-8859-1 bodies (e.g. accented characters in
+  user-entered device/plant labels) while the `Content-Type` header claims UTF-8 or omits
+  the charset, crashing `response.json()` with `UnicodeDecodeError`. A new shared
+  `read_json_lenient()` helper reads the raw bytes, tries UTF-8 first (byte-identical for
+  all ASCII payloads), and falls back to latin-1 on decode error; all client/discovery/auth
+  call sites route through it.
 
 - **Automatic re-discovery never ran when setup created zero sensors** — If Home Assistant
   (re)started while the datalogger returned an empty `/v1/livedata` response (typical when
