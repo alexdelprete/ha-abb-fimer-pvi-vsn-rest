@@ -3,52 +3,53 @@
     "step": {
       "user": {
         "title": "ABB/FIMER PVI VSN REST",
-        "description": "Connect to your ABB/FIMER VSN300 or VSN700 datalogger.\n\nCredentials: Check your datalogger's web interface for configured users.",
+        "description": "Anslut till din ABB/FIMER VSN300- eller VSN700-datalogger.\n\nInloggningsuppgifter: kontrollera konfigurerade användare i dataloggerns webbgränssnitt.",
         "data": {
-          "host": "Host (IP or hostname)",
-          "username": "Username",
-          "password": "Password"
+          "host": "Värd (IP eller värdnamn)",
+          "username": "Användarnamn",
+          "password": "Lösenord"
         },
         "data_description": {
-          "host": "IP address or hostname of your VSN device (e.g., 192.168.1.100 or abb-vsn300.local)",
-          "username": "Authentication username configured on your datalogger.",
-          "password": "Authentication password configured on your datalogger."
+          "host": "IP-adress eller värdnamn för din VSN-enhet (t.ex. 192.168.1.100 eller abb-vsn300.local)",
+          "username": "Användarnamn konfigurerat på din datalogger.",
+          "password": "Lösenord konfigurerat på din datalogger."
         }
       },
       "reconfigure": {
-        "title": "Reconfigure ABB/FIMER PVI VSN REST",
-        "description": "Update the connection settings for your VSN device.\n\nCurrent host: {current_host}",
+        "title": "Konfigurera om ABB/FIMER PVI VSN REST",
+        "description": "Uppdatera anslutningsinställningarna för din VSN-enhet.\n\nAktuell värd: {current_host}",
         "data": {
-          "host": "Host (IP or hostname)",
-          "username": "Username",
-          "password": "Password"
+          "host": "Värd (IP eller värdnamn)",
+          "username": "Användarnamn",
+          "password": "Lösenord"
         }
       }
     },
     "error": {
-      "cannot_connect": "Failed to connect to the device. Please check:\n• Device is powered on\n• IP address or hostname is correct\n• Device is accessible on your network\n• Port 80 is not blocked by firewall",
-      "invalid_auth": "Authentication failed. Please check your username and password.\n\nVerify credentials in your datalogger's web interface.",
-      "timeout": "Connection timeout. The device is not responding.\n\nPlease check:\n• Device is powered on and booted\n• Network connection is stable\n• No firewall is blocking access",
-      "unknown": "Unexpected error occurred. Please check the logs for more details.",
-      "unsupported_device": "Denna enhet stöder inte REST API. Denna integration kräver en VSN300- eller VSN700-datalogger med REST API aktiverat.\n\nEnheten returnerade HTTP 404 (Hittades inte) för /v1/status-slutpunkten.\n\nOm du har en ABB/FIMER/Power-One-växelriktare utan VSN-datalogger, överväg att använda Modbus-integrationen istället."
+      "cannot_connect": "Kunde inte ansluta till enheten. Kontrollera:\n• Enheten är påslagen\n• IP-adressen eller värdnamnet är korrekt\n• Enheten är åtkomlig i ditt nätverk\n• Port 80 blockeras inte av en brandvägg",
+      "invalid_auth": "Autentiseringen misslyckades. Kontrollera användarnamn och lösenord.\n\nVerifiera uppgifterna i dataloggerns webbgränssnitt.",
+      "timeout": "Anslutningen tog för lång tid. Enheten svarar inte.\n\nKontrollera:\n• Enheten är påslagen och har startat\n• Nätverksanslutningen är stabil\n• Ingen brandvägg blockerar åtkomsten",
+      "unknown": "Ett oväntat fel inträffade. Se loggarna för mer information.",
+      "unsupported_device": "Denna enhet stöder inte REST API. Denna integration kräver en VSN300- eller VSN700-datalogger med REST API aktiverat.\n\nEnheten returnerade HTTP 404 (Hittades inte) för /v1/status-slutpunkten.\n\nOm du har en ABB/FIMER/Power-One-växelriktare utan VSN-datalogger, överväg att använda Modbus-integrationen istället.",
+      "unsupported_firmware": "Din VSN300-datalogger kör firmware 2.0.0, som har ett känt fel som gör realtidsdata-API:et (/v1/livedata) obrukbart.\n\nDetta är ett firmwarefel från tillverkaren, åtgärdat i firmware 2.0.1.\n\nUppgradera dataloggern till firmware 2.0.1 eller senare och försök igen. Om firmwareuppdateringen inte är tillgänglig, kontakta FIMER-supporten."
     },
     "abort": {
-      "already_configured": "This device is already configured",
-      "reconfigure_successful": "Reconfiguration successful! The integration will now reload.",
-      "reconfigure_failed": "Reconfiguration failed. Please try again or remove and re-add the integration."
+      "already_configured": "Denna enhet är redan konfigurerad",
+      "reconfigure_successful": "Omkonfigurering lyckades! Integrationen laddas nu om.",
+      "reconfigure_failed": "Omkonfigureringen misslyckades. Försök igen eller ta bort och lägg till integrationen igen."
     }
   },
   "options": {
     "step": {
       "init": {
         "title": "ABB/FIMER PVI VSN REST Alternativ",
-        "description": "For devices with multiple units, check the S/N under each field to match it to the correct physical device.",
+        "description": "För enheter med flera enheter, kontrollera serienumret under varje fält för att koppla det till rätt fysisk enhet.",
         "data": {
           "scan_interval": "Skanningsintervall (sekunder)",
-          "enable_repair_notification": "Enable runtime failure notifications",
-          "enable_startup_notification": "Enable startup failure notifications",
-          "failures_threshold": "Failures before notification",
-          "recovery_script": "Recovery script (optional)",
+          "enable_repair_notification": "Aktivera aviseringar om driftfel",
+          "enable_startup_notification": "Aktivera aviseringar om startfel",
+          "failures_threshold": "Fel före avisering",
+          "recovery_script": "Återställningsskript (valfritt)",
           "prefix_inverter": "Växelriktare enhetsnamn",
           "prefix_inverter_1": "Växelriktare 1 enhetsnamn",
           "prefix_inverter_2": "Växelriktare 2 enhetsnamn",
@@ -68,11 +69,11 @@
           "regenerate_entity_ids": "Återskapa entitets-IDer"
         },
         "data_description": {
-          "scan_interval": "Fetch interval: 30-600 seconds. Default: 60.",
-          "enable_repair_notification": "Notify when device becomes unreachable during operation.",
-          "enable_startup_notification": "Notify when device is unreachable at Home Assistant startup.",
-          "failures_threshold": "Consecutive failures before notification. Range: 1-10. Default: 3.",
-          "recovery_script": "Script to run on failure (e.g., 'script.restart_router'). Leave empty for none.",
+          "scan_interval": "Hämtningsintervall: 30-600 sekunder. Standard: 60.",
+          "enable_repair_notification": "Avisera när enheten blir oåtkomlig under drift.",
+          "enable_startup_notification": "Avisera när enheten är oåtkomlig när Home Assistant startar.",
+          "failures_threshold": "Antal fel i följd före avisering. Intervall: 1-10. Standard: 3.",
+          "recovery_script": "Skript som körs vid fel (t.ex. 'script.restart_router'). Lämna tomt för inget.",
           "prefix_inverter": "Custom inverter name. Lämna tomt för standardvärde.",
           "prefix_inverter_1": "Sets name for device with S/N: {inverter_1_sn}. Lämna tomt för standardvärde.",
           "prefix_inverter_2": "Sets name for device with S/N: {inverter_2_sn}. Lämna tomt för standardvärde.",
@@ -225,17 +226,11 @@
       "e0_last_week": {
         "name": "Energi AC - Producerad (Ström Week)"
       },
-      "e0_lifetime": {
-        "name": "Energi AC - Producerad (Sedan Omstart)"
-      },
       "e15_last_month": {
         "name": "Energi AC - Backup Utgång (Ström Month)"
       },
       "e15_last_week": {
         "name": "Energi AC - Backup Utgång (Ström Week)"
-      },
-      "e15_lifetime": {
-        "name": "Energi AC - Backup Utgång (Sedan Omstart)"
       },
       "e1_last_month": {
         "name": "Energi AC - Absorberad (Ström Month)"
@@ -243,17 +238,11 @@
       "e1_last_week": {
         "name": "Energi AC - Absorberad (Ström Week)"
       },
-      "e1_lifetime": {
-        "name": "Energi AC - Absorberad (Sedan Omstart)"
-      },
       "e2_last_month": {
         "name": "Energi AC - Skenbar (Ström Month)"
       },
       "e2_last_week": {
         "name": "Energi AC - Skenbar (Ström Week)"
-      },
-      "e2_lifetime": {
-        "name": "Energi AC Skenbar - (Sedan Omstart)"
       },
       "e3_last_month": {
         "name": "Energi AC - Nät Export (Ström Month)"
@@ -261,17 +250,11 @@
       "e3_last_week": {
         "name": "Energi AC - Nät Export (Ström Week)"
       },
-      "e3_lifetime": {
-        "name": "Energi AC - Nät Export (Sedan Omstart)"
-      },
       "e4_last_month": {
         "name": "Energi - Self-Consumed (Ström Month)"
       },
       "e4_last_week": {
         "name": "Energi - Self-Consumed (Ström Week)"
-      },
-      "e4_lifetime": {
-        "name": "Energi - Self-Consumed (Sedan Omstart)"
       },
       "e5_last_month": {
         "name": "Energi - Batteriladdning (Ström Month)"
@@ -279,17 +262,11 @@
       "e5_last_week": {
         "name": "Energi - Batteriladdning (Ström Week)"
       },
-      "e5_lifetime": {
-        "name": "Energi - Batteriladdning (Sedan Omstart)"
-      },
       "e6_last_month": {
         "name": "Energi - Hus från Växelriktare (Ström Month)"
       },
       "e6_last_week": {
         "name": "Energi - Hus från Växelriktare (Ström Week)"
-      },
-      "e6_lifetime": {
-        "name": "Energi - Hus från Växelriktare (Sedan Omstart)"
       },
       "e6_total": {
         "name": "Energi - Hus från Växelriktare Total"
@@ -300,9 +277,6 @@
       "e7_last_week": {
         "name": "Energi - Hus Förbrukning (Ström Week)"
       },
-      "e7_lifetime": {
-        "name": "Energi - Hus Förbrukning (Sedan Omstart)"
-      },
       "e7_total": {
         "name": "Energi - Hus Förbrukning Total"
       },
@@ -311,9 +285,6 @@
       },
       "e8_last_week": {
         "name": "Energi AC - Nät Import (Ström Week)"
-      },
-      "e8_lifetime": {
-        "name": "Energi AC - Nät Import (Sedan Omstart)"
       },
       "e_backup": {
         "name": "Energi AC - Backup Utgång Total"
@@ -327,9 +298,6 @@
       "e_charge_last_week": {
         "name": "Energi - Batteriladdning (Ström Week)"
       },
-      "e_charge_lifetime": {
-        "name": "Energi - Batteriladdning (Sedan Omstart)"
-      },
       "e_ct": {
         "name": "Energi - Ström Transformer (CT) Total"
       },
@@ -341,9 +309,6 @@
       },
       "e_discharge_last_week": {
         "name": "Energi - Batteriurladdning (Ström Week)"
-      },
-      "e_discharge_lifetime": {
-        "name": "Energi - Batteriurladdning (Sedan Omstart)"
       },
       "e_dt": {
         "name": "Energi - Direct Transducer (DT) Total"
@@ -363,9 +328,6 @@
       "e_tot_charge_last_week": {
         "name": "Energi - Batteriladdning Total (Ström Week)"
       },
-      "e_tot_charge_lifetime": {
-        "name": "Energi - Batteriladdning Total (Sedan Omstart)"
-      },
       "e_tot_discharge": {
         "name": "Energi - Batteriurladdning Total Total"
       },
@@ -374,9 +336,6 @@
       },
       "e_tot_discharge_last_week": {
         "name": "Energi - Batteriurladdning Total (Ström Week)"
-      },
-      "e_tot_discharge_lifetime": {
-        "name": "Energi - Batteriurladdning Total (Sedan Omstart)"
       },
       "e_total": {
         "name": "Energi AC - Producerad Total"
@@ -401,9 +360,6 @@
       },
       "ein_last_week": {
         "name": "Energi DC - PV (Ström Week)"
-      },
-      "ein_lifetime": {
-        "name": "Energi DC - PV (Sedan Omstart)"
       },
       "energy_policy": {
         "name": "Energipolicy"
@@ -903,15 +859,6 @@
       "ein3": {
         "name": "Energi DC - String 3 Total"
       },
-      "vgrid_r_s": {
-        "name": "Spänning AC - Fas A-B"
-      },
-      "vgrid_s_t": {
-        "name": "Spänning AC - Fas B-C"
-      },
-      "vgrid_t_r": {
-        "name": "Spänning AC - Fas C-A"
-      },
       "temp_int": {
         "name": "Temperatur - Internal"
       }
@@ -933,13 +880,13 @@
       "title": "Kan inte ansluta till {device_name}",
       "description": "Integrationen kan inte ansluta till din ABB/FIMER VSN-datalogger på {host}.\n\n**Möjliga orsaker:**\n- Enheten är avstängd eller inte ansluten till nätverket\n- IP-adressen har ändrats\n- En brandvägg blockerar anslutningen\n- REST API-porten (80) är inte tillgänglig\n\n**För att lösa:**\n1. Kontrollera att enheten är påslagen och ansluten till ditt nätverk\n2. Kontrollera IP-adressen i routerns DHCP-tabell\n3. Försök att komma åt enhetens webbgränssnitt direkt\n4. Om IP har ändrats, konfigurera om integrationen med den nya adressen"
     },
-    "recovery_success": {
-      "title": "{device_name} har återhämtat sig",
-      "description": "Din ABB/FIMER VSN-datalogger svarar igen.\n\n**Fel startade:** {started_at}\n**Återhämtningstid:** {ended_at}\n**Total nedtid:** {downtime}"
-    },
     "partial_discovery": {
-      "title": "Incomplete device discovery for {device_name}",
-      "description": "The following devices were previously discovered but are currently not responding:\n\n{missing_devices}\n\n**Possible causes:**\n- Inverter is off (nighttime/no solar production)\n- Device is temporarily disconnected\n\nThe integration will automatically re-discover devices as they come online. This notification will clear automatically when all devices are found.\n\nIf a device has been permanently removed, you can delete it manually from the device page in Settings."
+      "title": "Ofullständig enhetsidentifiering för {device_name}",
+      "description": "Följande enheter har tidigare identifierats men svarar inte för närvarande:\n\n{missing_devices}\n\n**Möjliga orsaker:**\n- Växelriktaren är avstängd (natt/ingen solproduktion)\n- Enheten är tillfälligt frånkopplad\n\nIntegrationen identifierar enheterna automatiskt igen när de är online. Denna avisering tas bort automatiskt när alla enheter har hittats.\n\nOm en enhet har tagits bort permanent kan du radera den manuellt från enhetssidan i Inställningar."
+    },
+    "unsupported_firmware": {
+      "title": "Datalogger-firmware som inte stöds {firmware_version}",
+      "description": "Din VSN300-datalogger på {host} kör firmware {firmware_version}, som har ett känt fel: realtidsdata-API:et (/v1/livedata) bryter varje anslutning, så denna integration kan inte läsa några data.\n\nDetta är ett firmwarefel från tillverkaren, åtgärdat i firmware 2.0.1.\n\n**Åtgärd:**\n1. Uppgradera dataloggern till firmware 2.0.1 eller senare\n2. Ladda om integrationen (Inställningar → Enheter och tjänster → ABB FIMER PVI VSN REST → Ladda om)\n\nOm firmwareuppdateringen inte är tillgänglig, kontakta FIMER-supporten.\n\nDetta meddelande tas bort automatiskt när integrationen startar korrekt."
     }
   },
   "device_automation": {

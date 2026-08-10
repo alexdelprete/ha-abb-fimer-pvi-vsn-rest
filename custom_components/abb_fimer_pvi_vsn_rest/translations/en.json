@@ -30,7 +30,8 @@
       "invalid_auth": "Authentication failed. Please check your username and password.\n\nVerify credentials in your datalogger's web interface.",
       "timeout": "Connection timeout. The device is not responding.\n\nPlease check:\n• Device is powered on and booted\n• Network connection is stable\n• No firewall is blocking access",
       "unknown": "Unexpected error occurred. Please check the logs for more details.",
-      "unsupported_device": "This device does not support the REST API. This integration requires a VSN300 or VSN700 datalogger with REST API enabled.\n\nThe device returned HTTP 404 (Not Found) for the /v1/status endpoint.\n\nIf you have an ABB/FIMER/Power-One inverter without a VSN datalogger, consider using the Modbus integration instead."
+      "unsupported_device": "This device does not support the REST API. This integration requires a VSN300 or VSN700 datalogger with REST API enabled.\n\nThe device returned HTTP 404 (Not Found) for the /v1/status endpoint.\n\nIf you have an ABB/FIMER/Power-One inverter without a VSN datalogger, consider using the Modbus integration instead.",
+      "unsupported_firmware": "Your VSN300 datalogger runs firmware 2.0.0, which has a known bug that breaks the live data API (/v1/livedata).\n\nThis is a vendor firmware issue, fixed in firmware 2.0.1.\n\nUpgrade the datalogger to firmware 2.0.1 or later, then try again. If the firmware update is not available to you, contact FIMER support."
     },
     "abort": {
       "already_configured": "This device is already configured",
@@ -882,6 +883,10 @@
     "partial_discovery": {
       "title": "Incomplete device discovery for {device_name}",
       "description": "The following devices were previously discovered but are currently not responding:\n\n{missing_devices}\n\n**Possible causes:**\n- Inverter is off (nighttime/no solar production)\n- Device is temporarily disconnected\n\nThe integration will automatically re-discover devices as they come online. This notification will clear automatically when all devices are found.\n\nIf a device has been permanently removed, you can delete it manually from the device page in Settings."
+    },
+    "unsupported_firmware": {
+      "title": "Unsupported datalogger firmware {firmware_version}",
+      "description": "Your VSN300 datalogger at {host} runs firmware {firmware_version}, which has a known bug: the live data API (/v1/livedata) drops every connection, so this integration cannot read any data.\n\nThis is a vendor firmware issue, fixed in firmware 2.0.1.\n\n**To resolve:**\n1. Upgrade the datalogger to firmware 2.0.1 or later\n2. Reload the integration (Settings → Devices & Services → ABB FIMER PVI VSN REST → Reload)\n\nIf the firmware update is not available to you, contact FIMER support.\n\nThis issue will clear automatically once the integration starts successfully."
     }
   },
   "device_automation": {

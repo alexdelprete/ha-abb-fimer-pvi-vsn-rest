@@ -30,7 +30,8 @@
       "invalid_auth": "Autenticazione fallita. Verificare nome utente e password.\n\nVerifica le credenziali nell'interfaccia web del tuo datalogger.",
       "timeout": "Timeout della connessione. Il dispositivo non risponde.\n\nVerificare:\n• Il dispositivo è acceso e avviato\n• La connessione di rete è stabile\n• Nessun firewall blocca l'accesso",
       "unknown": "Si è verificato un errore imprevisto. Controllare i log per maggiori dettagli.",
-      "unsupported_device": "Questo dispositivo non supporta l'API REST. Questa integrazione richiede un datalogger VSN300 o VSN700 con API REST abilitata.\n\nIl dispositivo ha restituito HTTP 404 (Non trovato) per l'endpoint /v1/status.\n\nSe hai un inverter ABB/FIMER/Power-One senza datalogger VSN, considera l'utilizzo dell'integrazione Modbus."
+      "unsupported_device": "Questo dispositivo non supporta l'API REST. Questa integrazione richiede un datalogger VSN300 o VSN700 con API REST abilitata.\n\nIl dispositivo ha restituito HTTP 404 (Non trovato) per l'endpoint /v1/status.\n\nSe hai un inverter ABB/FIMER/Power-One senza datalogger VSN, considera l'utilizzo dell'integrazione Modbus.",
+      "unsupported_firmware": "Il tuo datalogger VSN300 utilizza il firmware 2.0.0, che presenta un bug noto che rende inutilizzabile l'API dei dati in tempo reale (/v1/livedata).\n\nÈ un problema del firmware del produttore, corretto nel firmware 2.0.1.\n\nAggiorna il datalogger al firmware 2.0.1 o successivo e riprova. Se l'aggiornamento firmware non è disponibile, contatta il supporto FIMER."
     },
     "abort": {
       "already_configured": "Questo dispositivo è già configurato",
@@ -42,13 +43,13 @@
     "step": {
       "init": {
         "title": "Opzioni ABB/FIMER PVI VSN REST",
-        "description": "For devices with multiple units, check the S/N under each field to match it to the correct physical device.",
+        "description": "Per dispositivi con più unità, controlla il numero di serie sotto ogni campo per associarlo al dispositivo fisico corretto.",
         "data": {
           "scan_interval": "Intervallo di scansione (secondi)",
-          "enable_repair_notification": "Enable runtime failure notifications",
-          "enable_startup_notification": "Enable startup failure notifications",
-          "failures_threshold": "Failures before notification",
-          "recovery_script": "Recovery script (optional)",
+          "enable_repair_notification": "Abilita notifiche di guasto durante il funzionamento",
+          "enable_startup_notification": "Abilita notifiche di guasto all'avvio",
+          "failures_threshold": "Guasti prima della notifica",
+          "recovery_script": "Script di ripristino (opzionale)",
           "prefix_inverter": "Nome dispositivo inverter",
           "prefix_inverter_1": "Nome dispositivo inverter 1",
           "prefix_inverter_2": "Nome dispositivo inverter 2",
@@ -68,11 +69,11 @@
           "regenerate_entity_ids": "Rigenera gli ID entità"
         },
         "data_description": {
-          "scan_interval": "Fetch interval: 30-600 seconds. Default: 60.",
-          "enable_repair_notification": "Notify when device becomes unreachable during operation.",
-          "enable_startup_notification": "Notify when device is unreachable at Home Assistant startup.",
-          "failures_threshold": "Consecutive failures before notification. Range: 1-10. Default: 3.",
-          "recovery_script": "Script to run on failure (e.g., 'script.restart_router'). Leave empty for none.",
+          "scan_interval": "Intervallo di aggiornamento: 30-600 secondi. Predefinito: 60.",
+          "enable_repair_notification": "Notifica quando il dispositivo diventa irraggiungibile durante il funzionamento.",
+          "enable_startup_notification": "Notifica quando il dispositivo è irraggiungibile all'avvio di Home Assistant.",
+          "failures_threshold": "Guasti consecutivi prima della notifica. Intervallo: 1-10. Predefinito: 3.",
+          "recovery_script": "Script da eseguire in caso di guasto (es. 'script.restart_router'). Lascia vuoto per nessuno.",
           "prefix_inverter": "Custom inverter name. Lascia vuoto per il valore predefinito.",
           "prefix_inverter_1": "Sets name for device with S/N: {inverter_1_sn}. Lascia vuoto per il valore predefinito.",
           "prefix_inverter_2": "Sets name for device with S/N: {inverter_2_sn}. Lascia vuoto per il valore predefinito.",
@@ -225,17 +226,11 @@
       "e0_last_week": {
         "name": "Energia AC - Prodotta (Corrente Week)"
       },
-      "e0_lifetime": {
-        "name": "Energia AC - Prodotta (Dal Riavvio)"
-      },
       "e15_last_month": {
         "name": "Energia AC - Uscita Backup (Corrente Month)"
       },
       "e15_last_week": {
         "name": "Energia AC - Uscita Backup (Corrente Week)"
-      },
-      "e15_lifetime": {
-        "name": "Energia AC - Uscita Backup (Dal Riavvio)"
       },
       "e1_last_month": {
         "name": "Energia AC - Assorbita (Corrente Month)"
@@ -243,17 +238,11 @@
       "e1_last_week": {
         "name": "Energia AC - Assorbita (Corrente Week)"
       },
-      "e1_lifetime": {
-        "name": "Energia AC - Assorbita (Dal Riavvio)"
-      },
       "e2_last_month": {
         "name": "Energia AC - Apparente (Corrente Month)"
       },
       "e2_last_week": {
         "name": "Energia AC - Apparente (Corrente Week)"
-      },
-      "e2_lifetime": {
-        "name": "Energia AC Apparente - (Dal Riavvio)"
       },
       "e3_last_month": {
         "name": "Energia AC - Rete Esportazione (Corrente Month)"
@@ -261,17 +250,11 @@
       "e3_last_week": {
         "name": "Energia AC - Rete Esportazione (Corrente Week)"
       },
-      "e3_lifetime": {
-        "name": "Energia AC - Rete Esportazione (Dal Riavvio)"
-      },
       "e4_last_month": {
         "name": "Energia - Self-Consumed (Corrente Month)"
       },
       "e4_last_week": {
         "name": "Energia - Self-Consumed (Corrente Week)"
-      },
-      "e4_lifetime": {
-        "name": "Energia - Self-Consumed (Dal Riavvio)"
       },
       "e5_last_month": {
         "name": "Energia - Carica Batteria (Corrente Month)"
@@ -279,17 +262,11 @@
       "e5_last_week": {
         "name": "Energia - Carica Batteria (Corrente Week)"
       },
-      "e5_lifetime": {
-        "name": "Energia - Carica Batteria (Dal Riavvio)"
-      },
       "e6_last_month": {
         "name": "Energia - Casa da Inverter (Corrente Month)"
       },
       "e6_last_week": {
         "name": "Energia - Casa da Inverter (Corrente Week)"
-      },
-      "e6_lifetime": {
-        "name": "Energia - Casa da Inverter (Dal Riavvio)"
       },
       "e6_total": {
         "name": "Energia - Casa da Inverter Totale"
@@ -300,9 +277,6 @@
       "e7_last_week": {
         "name": "Energia - Casa Consumo (Corrente Week)"
       },
-      "e7_lifetime": {
-        "name": "Energia - Casa Consumo (Dal Riavvio)"
-      },
       "e7_total": {
         "name": "Energia - Casa Consumo Totale"
       },
@@ -311,9 +285,6 @@
       },
       "e8_last_week": {
         "name": "Energia AC - Rete Importazione (Corrente Week)"
-      },
-      "e8_lifetime": {
-        "name": "Energia AC - Rete Importazione (Dal Riavvio)"
       },
       "e_backup": {
         "name": "Energia AC - Uscita Backup Totale"
@@ -327,9 +298,6 @@
       "e_charge_last_week": {
         "name": "Energia - Carica Batteria (Corrente Week)"
       },
-      "e_charge_lifetime": {
-        "name": "Energia - Carica Batteria (Dal Riavvio)"
-      },
       "e_ct": {
         "name": "Energia - Corrente Transformer (CT) Totale"
       },
@@ -341,9 +309,6 @@
       },
       "e_discharge_last_week": {
         "name": "Energia - Scarica Batteria (Corrente Week)"
-      },
-      "e_discharge_lifetime": {
-        "name": "Energia - Scarica Batteria (Dal Riavvio)"
       },
       "e_dt": {
         "name": "Energia - Direct Transducer (DT) Totale"
@@ -363,9 +328,6 @@
       "e_tot_charge_last_week": {
         "name": "Energia - Carica Batteria Total (Corrente Week)"
       },
-      "e_tot_charge_lifetime": {
-        "name": "Energia - Carica Batteria Total (Dal Riavvio)"
-      },
       "e_tot_discharge": {
         "name": "Energia - Scarica Batteria Total Totale"
       },
@@ -374,9 +336,6 @@
       },
       "e_tot_discharge_last_week": {
         "name": "Energia - Scarica Batteria Total (Corrente Week)"
-      },
-      "e_tot_discharge_lifetime": {
-        "name": "Energia - Scarica Batteria Total (Dal Riavvio)"
       },
       "e_total": {
         "name": "Energia AC - Prodotta Totale"
@@ -401,9 +360,6 @@
       },
       "ein_last_week": {
         "name": "Energia DC - PV (Corrente Week)"
-      },
-      "ein_lifetime": {
-        "name": "Energia DC - PV (Dal Riavvio)"
       },
       "energy_policy": {
         "name": "Politica Energetica"
@@ -903,15 +859,6 @@
       "ein3": {
         "name": "Energia DC - String 3 Totale"
       },
-      "vgrid_r_s": {
-        "name": "Tensione AC - Fase A-B"
-      },
-      "vgrid_s_t": {
-        "name": "Tensione AC - Fase B-C"
-      },
-      "vgrid_t_r": {
-        "name": "Tensione AC - Fase C-A"
-      },
       "temp_int": {
         "name": "Temperatura - Internal"
       }
@@ -933,13 +880,13 @@
       "title": "Impossibile connettersi a {device_name}",
       "description": "L'integrazione non riesce a connettersi al datalogger ABB/FIMER VSN su {host}.\n\n**Possibili cause:**\n- Il dispositivo è spento o non connesso alla rete\n- L'indirizzo IP è cambiato\n- Un firewall sta bloccando la connessione\n- La porta dell'API REST (80) non è accessibile\n\n**Per risolvere:**\n1. Verificare che il dispositivo sia acceso e connesso alla rete\n2. Verificare l'indirizzo IP nella tabella DHCP del router\n3. Provare ad accedere direttamente all'interfaccia web del dispositivo\n4. Se l'IP è cambiato, riconfigurare l'integrazione con il nuovo indirizzo"
     },
-    "recovery_success": {
-      "title": "{device_name} si è ripreso",
-      "description": "Il datalogger ABB/FIMER VSN sta rispondendo di nuovo.\n\n**Inizio guasto:** {started_at}\n**Tempo di recupero:** {ended_at}\n**Tempo di inattività totale:** {downtime}"
-    },
     "partial_discovery": {
-      "title": "Incomplete device discovery for {device_name}",
-      "description": "The following devices were previously discovered but are currently not responding:\n\n{missing_devices}\n\n**Possible causes:**\n- Inverter is off (nighttime/no solar production)\n- Device is temporarily disconnected\n\nThe integration will automatically re-discover devices as they come online. This notification will clear automatically when all devices are found.\n\nIf a device has been permanently removed, you can delete it manually from the device page in Settings."
+      "title": "Rilevamento dispositivi incompleto per {device_name}",
+      "description": "I seguenti dispositivi erano stati rilevati in precedenza ma attualmente non rispondono:\n\n{missing_devices}\n\n**Possibili cause:**\n- L'inverter è spento (notte/nessuna produzione solare)\n- Il dispositivo è temporaneamente disconnesso\n\nL'integrazione rileverà nuovamente i dispositivi non appena torneranno online. Questo avviso verrà rimosso automaticamente quando tutti i dispositivi saranno stati trovati.\n\nSe un dispositivo è stato rimosso definitivamente, puoi eliminarlo manualmente dalla pagina del dispositivo nelle Impostazioni."
+    },
+    "unsupported_firmware": {
+      "title": "Firmware del datalogger non supportato {firmware_version}",
+      "description": "Il tuo datalogger VSN300 all'indirizzo {host} utilizza il firmware {firmware_version}, che presenta un bug noto: l'API dei dati in tempo reale (/v1/livedata) interrompe ogni connessione, quindi questa integrazione non può leggere alcun dato.\n\nÈ un problema del firmware del produttore, corretto nel firmware 2.0.1.\n\n**Per risolvere:**\n1. Aggiorna il datalogger al firmware 2.0.1 o successivo\n2. Ricarica l'integrazione (Impostazioni → Dispositivi e servizi → ABB FIMER PVI VSN REST → Ricarica)\n\nSe l'aggiornamento firmware non è disponibile, contatta il supporto FIMER.\n\nQuesto avviso verrà rimosso automaticamente quando l'integrazione si avvierà correttamente."
     }
   },
   "device_automation": {

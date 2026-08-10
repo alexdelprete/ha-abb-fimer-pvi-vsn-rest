@@ -3,52 +3,53 @@
     "step": {
       "user": {
         "title": "ABB/FIMER PVI VSN REST",
-        "description": "Connect to your ABB/FIMER VSN300 or VSN700 datalogger.\n\nCredentials: Check your datalogger's web interface for configured users.",
+        "description": "Yhdistä ABB/FIMER VSN300- tai VSN700-dataloggeriin.\n\nTunnukset: tarkista määritetyt käyttäjät dataloggerin verkkokäyttöliittymästä.",
         "data": {
-          "host": "Host (IP or hostname)",
-          "username": "Username",
-          "password": "Password"
+          "host": "Isäntä (IP-osoite tai isäntänimi)",
+          "username": "Käyttäjätunnus",
+          "password": "Salasana"
         },
         "data_description": {
-          "host": "IP address or hostname of your VSN device (e.g., 192.168.1.100 or abb-vsn300.local)",
-          "username": "Authentication username configured on your datalogger.",
-          "password": "Authentication password configured on your datalogger."
+          "host": "VSN-laitteesi IP-osoite tai isäntänimi (esim. 192.168.1.100 tai abb-vsn300.local)",
+          "username": "Dataloggeriin määritetty käyttäjätunnus.",
+          "password": "Dataloggeriin määritetty salasana."
         }
       },
       "reconfigure": {
-        "title": "Reconfigure ABB/FIMER PVI VSN REST",
-        "description": "Update the connection settings for your VSN device.\n\nCurrent host: {current_host}",
+        "title": "Määritä ABB/FIMER PVI VSN REST uudelleen",
+        "description": "Päivitä VSN-laitteen yhteysasetukset.\n\nNykyinen isäntä: {current_host}",
         "data": {
-          "host": "Host (IP or hostname)",
-          "username": "Username",
-          "password": "Password"
+          "host": "Isäntä (IP-osoite tai isäntänimi)",
+          "username": "Käyttäjätunnus",
+          "password": "Salasana"
         }
       }
     },
     "error": {
-      "cannot_connect": "Failed to connect to the device. Please check:\n• Device is powered on\n• IP address or hostname is correct\n• Device is accessible on your network\n• Port 80 is not blocked by firewall",
-      "invalid_auth": "Authentication failed. Please check your username and password.\n\nVerify credentials in your datalogger's web interface.",
-      "timeout": "Connection timeout. The device is not responding.\n\nPlease check:\n• Device is powered on and booted\n• Network connection is stable\n• No firewall is blocking access",
-      "unknown": "Unexpected error occurred. Please check the logs for more details.",
-      "unsupported_device": "Tämä laite ei tue REST API:a. Tämä integraatio vaatii VSN300- tai VSN700-dataloggerin, jossa REST API on käytössä.\n\nLaite palautti HTTP 404 (ei löydy) /v1/status-päätepisteelle.\n\nJos sinulla on ABB/FIMER/Power-One-invertteri ilman VSN-dataloggeria, harkitse Modbus-integraation käyttöä."
+      "cannot_connect": "Yhteys laitteeseen epäonnistui. Tarkista:\n• Laite on päällä\n• IP-osoite tai isäntänimi on oikein\n• Laite on tavoitettavissa verkossasi\n• Palomuuri ei estä porttia 80",
+      "invalid_auth": "Todennus epäonnistui. Tarkista käyttäjätunnus ja salasana.\n\nVarmista tunnukset dataloggerin verkkokäyttöliittymästä.",
+      "timeout": "Yhteys aikakatkaistiin. Laite ei vastaa.\n\nTarkista:\n• Laite on päällä ja käynnistynyt\n• Verkkoyhteys on vakaa\n• Palomuuri ei estä yhteyttä",
+      "unknown": "Tapahtui odottamaton virhe. Katso lisätiedot lokeista.",
+      "unsupported_device": "Tämä laite ei tue REST API:a. Tämä integraatio vaatii VSN300- tai VSN700-dataloggerin, jossa REST API on käytössä.\n\nLaite palautti HTTP 404 (ei löydy) /v1/status-päätepisteelle.\n\nJos sinulla on ABB/FIMER/Power-One-invertteri ilman VSN-dataloggeria, harkitse Modbus-integraation käyttöä.",
+      "unsupported_firmware": "VSN300-dataloggerisi käyttää laiteohjelmistoa 2.0.0, jossa on tunnettu vika, joka rikkoo reaaliaikaisen datan API:n (/v1/livedata).\n\nKyseessä on valmistajan laiteohjelmistovika, joka on korjattu versiossa 2.0.1.\n\nPäivitä datalogger laiteohjelmistoon 2.0.1 tai uudempaan ja yritä uudelleen. Jos laiteohjelmistopäivitys ei ole saatavilla, ota yhteyttä FIMERin tukeen."
     },
     "abort": {
-      "already_configured": "This device is already configured",
-      "reconfigure_successful": "Reconfiguration successful! The integration will now reload.",
-      "reconfigure_failed": "Reconfiguration failed. Please try again or remove and re-add the integration."
+      "already_configured": "Tämä laite on jo määritetty",
+      "reconfigure_successful": "Uudelleenmääritys onnistui! Integraatio ladataan nyt uudelleen.",
+      "reconfigure_failed": "Uudelleenmääritys epäonnistui. Yritä uudelleen tai poista integraatio ja lisää se uudelleen."
     }
   },
   "options": {
     "step": {
       "init": {
         "title": "ABB/FIMER PVI VSN REST Asetukset",
-        "description": "For devices with multiple units, check the S/N under each field to match it to the correct physical device.",
+        "description": "Jos laitteessa on useita yksiköitä, tarkista kunkin kentän alla oleva sarjanumero yhdistääksesi sen oikeaan fyysiseen laitteeseen.",
         "data": {
           "scan_interval": "Kyselyväli (sekuntia)",
-          "enable_repair_notification": "Enable runtime failure notifications",
-          "enable_startup_notification": "Enable startup failure notifications",
-          "failures_threshold": "Failures before notification",
-          "recovery_script": "Recovery script (optional)",
+          "enable_repair_notification": "Ota käyttöön ilmoitukset käytönaikaisista vioista",
+          "enable_startup_notification": "Ota käyttöön ilmoitukset käynnistysvioista",
+          "failures_threshold": "Viat ennen ilmoitusta",
+          "recovery_script": "Palautusskripti (valinnainen)",
           "prefix_inverter": "Invertteri laitteen nimi",
           "prefix_inverter_1": "Invertteri 1 laitteen nimi",
           "prefix_inverter_2": "Invertteri 2 laitteen nimi",
@@ -68,11 +69,11 @@
           "regenerate_entity_ids": "Luo entitetti-ID:t uudelleen"
         },
         "data_description": {
-          "scan_interval": "Fetch interval: 30-600 seconds. Default: 60.",
-          "enable_repair_notification": "Notify when device becomes unreachable during operation.",
-          "enable_startup_notification": "Notify when device is unreachable at Home Assistant startup.",
-          "failures_threshold": "Consecutive failures before notification. Range: 1-10. Default: 3.",
-          "recovery_script": "Script to run on failure (e.g., 'script.restart_router'). Leave empty for none.",
+          "scan_interval": "Hakuväli: 30-600 sekuntia. Oletus: 60.",
+          "enable_repair_notification": "Ilmoita, kun laite ei ole tavoitettavissa käytön aikana.",
+          "enable_startup_notification": "Ilmoita, kun laite ei ole tavoitettavissa Home Assistantin käynnistyessä.",
+          "failures_threshold": "Peräkkäiset viat ennen ilmoitusta. Alue: 1-10. Oletus: 3.",
+          "recovery_script": "Vian sattuessa suoritettava skripti (esim. 'script.restart_router'). Jätä tyhjäksi, jos et halua.",
           "prefix_inverter": "Custom inverter name. Jätä tyhjäksi oletusarvolle.",
           "prefix_inverter_1": "Sets name for device with S/N: {inverter_1_sn}. Jätä tyhjäksi oletusarvolle.",
           "prefix_inverter_2": "Sets name for device with S/N: {inverter_2_sn}. Jätä tyhjäksi oletusarvolle.",
@@ -225,17 +226,11 @@
       "e0_last_week": {
         "name": "Energia AC - Tuotettu (Virta Week)"
       },
-      "e0_lifetime": {
-        "name": "Energia AC - Tuotettu (Uudelleenkäynnistyksestä)"
-      },
       "e15_last_month": {
         "name": "Energia AC - Varmuuskopiointi Lähtö (Virta Month)"
       },
       "e15_last_week": {
         "name": "Energia AC - Varmuuskopiointi Lähtö (Virta Week)"
-      },
-      "e15_lifetime": {
-        "name": "Energia AC - Varmuuskopiointi Lähtö (Uudelleenkäynnistyksestä)"
       },
       "e1_last_month": {
         "name": "Energia AC - Absorboitu (Virta Month)"
@@ -243,17 +238,11 @@
       "e1_last_week": {
         "name": "Energia AC - Absorboitu (Virta Week)"
       },
-      "e1_lifetime": {
-        "name": "Energia AC - Absorboitu (Uudelleenkäynnistyksestä)"
-      },
       "e2_last_month": {
         "name": "Energia AC - Näennäinen (Virta Month)"
       },
       "e2_last_week": {
         "name": "Energia AC - Näennäinen (Virta Week)"
-      },
-      "e2_lifetime": {
-        "name": "Energia AC Näennäinen - (Uudelleenkäynnistyksestä)"
       },
       "e3_last_month": {
         "name": "Energia AC - Verkko Vienti (Virta Month)"
@@ -261,17 +250,11 @@
       "e3_last_week": {
         "name": "Energia AC - Verkko Vienti (Virta Week)"
       },
-      "e3_lifetime": {
-        "name": "Energia AC - Verkko Vienti (Uudelleenkäynnistyksestä)"
-      },
       "e4_last_month": {
         "name": "Energia - Self-Consumed (Virta Month)"
       },
       "e4_last_week": {
         "name": "Energia - Self-Consumed (Virta Week)"
-      },
-      "e4_lifetime": {
-        "name": "Energia - Self-Consumed (Uudelleenkäynnistyksestä)"
       },
       "e5_last_month": {
         "name": "Energia - Akun Lataus (Virta Month)"
@@ -279,17 +262,11 @@
       "e5_last_week": {
         "name": "Energia - Akun Lataus (Virta Week)"
       },
-      "e5_lifetime": {
-        "name": "Energia - Akun Lataus (Uudelleenkäynnistyksestä)"
-      },
       "e6_last_month": {
         "name": "Energia - Talo invertteristä Invertteri (Virta Month)"
       },
       "e6_last_week": {
         "name": "Energia - Talo invertteristä Invertteri (Virta Week)"
-      },
-      "e6_lifetime": {
-        "name": "Energia - Talo invertteristä Invertteri (Uudelleenkäynnistyksestä)"
       },
       "e6_total": {
         "name": "Energia - Talo invertteristä Invertteri Yhteensä"
@@ -300,9 +277,6 @@
       "e7_last_week": {
         "name": "Energia - Talo Kulutus (Virta Week)"
       },
-      "e7_lifetime": {
-        "name": "Energia - Talo Kulutus (Uudelleenkäynnistyksestä)"
-      },
       "e7_total": {
         "name": "Energia - Talo Kulutus Yhteensä"
       },
@@ -311,9 +285,6 @@
       },
       "e8_last_week": {
         "name": "Energia AC - Verkko Tuonti (Virta Week)"
-      },
-      "e8_lifetime": {
-        "name": "Energia AC - Verkko Tuonti (Uudelleenkäynnistyksestä)"
       },
       "e_backup": {
         "name": "Energia AC - Varmuuskopiointi Lähtö Yhteensä"
@@ -327,9 +298,6 @@
       "e_charge_last_week": {
         "name": "Energia - Akun Lataus (Virta Week)"
       },
-      "e_charge_lifetime": {
-        "name": "Energia - Akun Lataus (Uudelleenkäynnistyksestä)"
-      },
       "e_ct": {
         "name": "Energia - Virta Transformer (CT) Yhteensä"
       },
@@ -341,9 +309,6 @@
       },
       "e_discharge_last_week": {
         "name": "Energia - Akun Purkaus (Virta Week)"
-      },
-      "e_discharge_lifetime": {
-        "name": "Energia - Akun Purkaus (Uudelleenkäynnistyksestä)"
       },
       "e_dt": {
         "name": "Energia - Direct Transducer (DT) Yhteensä"
@@ -363,9 +328,6 @@
       "e_tot_charge_last_week": {
         "name": "Energia - Akun Lataus Total (Virta Week)"
       },
-      "e_tot_charge_lifetime": {
-        "name": "Energia - Akun Lataus Total (Uudelleenkäynnistyksestä)"
-      },
       "e_tot_discharge": {
         "name": "Energia - Akun Purkaus Total Yhteensä"
       },
@@ -374,9 +336,6 @@
       },
       "e_tot_discharge_last_week": {
         "name": "Energia - Akun Purkaus Total (Virta Week)"
-      },
-      "e_tot_discharge_lifetime": {
-        "name": "Energia - Akun Purkaus Total (Uudelleenkäynnistyksestä)"
       },
       "e_total": {
         "name": "Energia AC - Tuotettu Yhteensä"
@@ -401,9 +360,6 @@
       },
       "ein_last_week": {
         "name": "Energia DC - PV (Virta Week)"
-      },
-      "ein_lifetime": {
-        "name": "Energia DC - PV (Uudelleenkäynnistyksestä)"
       },
       "energy_policy": {
         "name": "Energiapolitiikka"
@@ -903,15 +859,6 @@
       "ein3": {
         "name": "Energia DC - String 3 Yhteensä"
       },
-      "vgrid_r_s": {
-        "name": "Jännite AC - Vaihe A-B"
-      },
-      "vgrid_s_t": {
-        "name": "Jännite AC - Vaihe B-C"
-      },
-      "vgrid_t_r": {
-        "name": "Jännite AC - Vaihe C-A"
-      },
       "temp_int": {
         "name": "Lämpötila - Internal"
       }
@@ -933,13 +880,13 @@
       "title": "Ei yhteyttä {device_name}",
       "description": "Integraatio ei saa yhteyttä ABB/FIMER VSN -dataloggeriisi osoitteessa {host}.\n\n**Mahdolliset syyt:**\n- Laite on sammutettu tai ei ole yhteydessä verkkoon\n- IP-osoite on muuttunut\n- Palomuuri estää yhteyden\n- REST API -portti (80) ei ole käytettävissä\n\n**Ratkaisemiseksi:**\n1. Tarkista, että laite on päällä ja yhteydessä verkkoosi\n2. Tarkista IP-osoite reitittimesi DHCP-taulukosta\n3. Yritä käyttää laitteen verkkokäyttöliittymää suoraan\n4. Jos IP on muuttunut, määritä integraatio uudelleen uudella osoitteella"
     },
-    "recovery_success": {
-      "title": "{device_name} on palautunut",
-      "description": "ABB/FIMER VSN -dataloggerisi vastaa jälleen.\n\n**Vika alkoi:** {started_at}\n**Palautumisaika:** {ended_at}\n**Kokonaiskatkosaika:** {downtime}"
-    },
     "partial_discovery": {
-      "title": "Incomplete device discovery for {device_name}",
-      "description": "The following devices were previously discovered but are currently not responding:\n\n{missing_devices}\n\n**Possible causes:**\n- Inverter is off (nighttime/no solar production)\n- Device is temporarily disconnected\n\nThe integration will automatically re-discover devices as they come online. This notification will clear automatically when all devices are found.\n\nIf a device has been permanently removed, you can delete it manually from the device page in Settings."
+      "title": "Laitteiden tunnistus epätäydellinen: {device_name}",
+      "description": "Seuraavat laitteet tunnistettiin aiemmin, mutta ne eivät vastaa tällä hetkellä:\n\n{missing_devices}\n\n**Mahdolliset syyt:**\n- Invertteri on pois päältä (yö/ei aurinkotuotantoa)\n- Laite on tilapäisesti irrotettu\n\nIntegraatio tunnistaa laitteet automaattisesti uudelleen, kun ne palaavat verkkoon. Tämä ilmoitus poistuu automaattisesti, kun kaikki laitteet on löydetty.\n\nJos laite on poistettu pysyvästi, voit poistaa sen manuaalisesti laitteen sivulta Asetuksista."
+    },
+    "unsupported_firmware": {
+      "title": "Dataloggerin laiteohjelmistoa {firmware_version} ei tueta",
+      "description": "VSN300-dataloggerisi osoitteessa {host} käyttää laiteohjelmistoa {firmware_version}, jossa on tunnettu vika: reaaliaikaisen datan API (/v1/livedata) katkaisee jokaisen yhteyden, joten tämä integraatio ei voi lukea tietoja.\n\nKyseessä on valmistajan laiteohjelmistovika, joka on korjattu versiossa 2.0.1.\n\n**Ratkaisu:**\n1. Päivitä datalogger laiteohjelmistoon 2.0.1 tai uudempaan\n2. Lataa integraatio uudelleen (Asetukset → Laitteet ja palvelut → ABB FIMER PVI VSN REST → Lataa uudelleen)\n\nJos laiteohjelmistopäivitys ei ole saatavilla, ota yhteyttä FIMERin tukeen.\n\nTämä ilmoitus poistuu automaattisesti, kun integraatio käynnistyy onnistuneesti."
     }
   },
   "device_automation": {
