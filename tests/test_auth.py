@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import base64
+import json
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import aiohttp
@@ -174,6 +175,23 @@ class TestBuildDigestHeader:
         )
 
         assert 'opaque="xyz789"' in result
+
+    def test_build_header_uses_vsn300_firmware_constants(self) -> None:
+        """VSN300 firmware only accepts the hardcoded nc/cnonce constants."""
+        challenge_params = {
+            "realm": "registered_user@power-one.com",
+            "nonce": "abc123",
+            "qop": "auth",
+        }
+        result = build_digest_header(
+            username="guest",
+            password="password",  # noqa: S106
+            challenge_params=challenge_params,
+            method="GET",
+            uri="/v1/status",
+        )
+        assert "nc=00000002" in result
+        assert 'cnonce="ddf4bfcaf87acba9"' in result
 
 
 class TestGetVSN700BasicAuth:
@@ -435,12 +453,14 @@ class TestDetectVSNModel:
         mock_response = MagicMock()
         mock_response.status = 200
         mock_response.headers = {}
-        mock_response.json = AsyncMock(
-            return_value={
-                "keys": {
-                    "logger.board_model": {"value": "WIFI LOGGER CARD"},
+        mock_response.read = AsyncMock(
+            return_value=json.dumps(
+                {
+                    "keys": {
+                        "logger.board_model": {"value": "WIFI LOGGER CARD"},
+                    }
                 }
-            }
+            ).encode()
         )
         mock_response.__aenter__ = AsyncMock(return_value=mock_response)
         mock_response.__aexit__ = AsyncMock(return_value=None)
@@ -583,7 +603,9 @@ class TestDetectVSNModel:
         mock_response = MagicMock()
         mock_response.status = 200
         mock_response.headers = {}
-        mock_response.json = AsyncMock(side_effect=ValueError("Invalid JSON"))
+        # read_json_lenient reads raw bytes then json.loads(); invalid JSON bytes
+        # must surface as a parse error -> VSNDetectionError.
+        mock_response.read = AsyncMock(return_value=b"not valid json {{{")
         mock_response.__aenter__ = AsyncMock(return_value=mock_response)
         mock_response.__aexit__ = AsyncMock(return_value=None)
 
@@ -636,12 +658,14 @@ class TestDetectVSNModel:
         mock_response = MagicMock()
         mock_response.status = 200
         mock_response.headers = {}
-        mock_response.json = AsyncMock(
-            return_value={
-                "keys": {
-                    "logger.loggerId": {"value": "ac:1f:0f:b0:50:b5"},
+        mock_response.read = AsyncMock(
+            return_value=json.dumps(
+                {
+                    "keys": {
+                        "logger.loggerId": {"value": "ac:1f:0f:b0:50:b5"},
+                    }
                 }
-            }
+            ).encode()
         )
         mock_response.__aenter__ = AsyncMock(return_value=mock_response)
         mock_response.__aexit__ = AsyncMock(return_value=None)

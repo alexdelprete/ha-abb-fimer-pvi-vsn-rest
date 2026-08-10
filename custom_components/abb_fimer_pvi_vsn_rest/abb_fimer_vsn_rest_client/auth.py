@@ -14,9 +14,7 @@ from __future__ import annotations
 import base64
 import hashlib
 import logging
-import os
 import re
-import time
 
 import aiohttp
 
@@ -27,7 +25,7 @@ from .exceptions import (
     VSNDetectionError,
     VSNUnsupportedDeviceError,
 )
-from .utils import check_socket_connection
+from .utils import check_socket_connection, read_json_lenient
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -127,11 +125,10 @@ def build_digest_header(
 
     # For VSN300, we typically don't use qop, but handle it if present
     if qop:
-        nc = "00000001"
-        # Generate cnonce like stdlib: H(nonce:time:random)
-
-        cnonce_input = f"{nonce}:{time.time()}:{os.urandom(8).hex()}"
-        cnonce = hashlib.md5(cnonce_input.encode()).hexdigest()[:16]  # noqa: S324
+        # VSN300 firmware (auth-filter.js) validates against these EXACT constants.
+        # Any other nc/cnonce -> HTTP 401. See issue #68.
+        nc = "00000002"
+        cnonce = "ddf4bfcaf87acba9"
         response = calculate_digest_response(
             username, password, realm, nonce, method, uri, qop, nc, cnonce
         )
@@ -421,7 +418,7 @@ async def detect_vsn_model(
                 )
 
                 try:
-                    status_data = await response.json()
+                    status_data = await read_json_lenient(response)
                     model = _detect_model_from_status(status_data)
                 except Exception as parse_err:
                     _LOGGER.error(

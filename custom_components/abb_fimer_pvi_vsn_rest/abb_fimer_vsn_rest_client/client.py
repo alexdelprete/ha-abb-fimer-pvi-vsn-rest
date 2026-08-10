@@ -11,7 +11,7 @@ from .auth import detect_vsn_model, get_vsn300_digest_header, get_vsn700_basic_a
 from .constants import ENDPOINT_LIVEDATA
 from .exceptions import VSNAuthenticationError, VSNConnectionError
 from .normalizer import VSNDataNormalizer
-from .utils import check_socket_connection
+from .utils import check_socket_connection, read_json_lenient
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -169,7 +169,7 @@ class ABBFimerVSNRestClient:
                 )
 
                 if response.status == 200:
-                    data = await response.json()
+                    data = await read_json_lenient(response)
                     # Count total points across all devices
                     total_points = sum(
                         len(device_data.get("points", [])) for device_data in data.values()
