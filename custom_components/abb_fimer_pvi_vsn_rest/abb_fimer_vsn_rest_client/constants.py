@@ -5,6 +5,10 @@ ENDPOINT_STATUS = "/v1/status"
 ENDPOINT_LIVEDATA = "/v1/livedata"
 ENDPOINT_FEEDS = "/v1/feeds"
 
+# VSN300 firmware with a known-broken /v1/livedata endpoint (drops the TCP
+# connection on every request). Vendor regression, fixed in 2.0.1. See #68.
+UNSUPPORTED_VSN300_FIRMWARE = "2.0.0"
+
 # Aurora protocol epoch offset (Jan 1, 2000 00:00:00 UTC)
 # The Aurora protocol uses a custom epoch instead of Unix epoch (Jan 1, 1970)
 # Reference: https://github.com/xreef/ABB_Aurora_Solar_Inverter_Library/blob/master/include/utils.h#L8

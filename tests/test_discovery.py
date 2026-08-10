@@ -20,6 +20,7 @@ from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discover
 )
 from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.exceptions import (
     VSNConnectionError,
+    VSNUnsupportedFirmwareError,
 )
 
 
@@ -870,3 +871,84 @@ class TestExtractLoggerInfoEdgeCases:
         assert info["logger_model"] == "WIFI LOGGER CARD"
         assert info["firmware_version"] == "1.9.2"
         assert info["hostname"] == "ABB-077909-3G82-3112.local"
+
+
+class TestUnsupportedFirmwareGuard:
+    """Tests for the VSN300 fw 2.0.0 unsupported-firmware guard (issue #68)."""
+
+    @staticmethod
+    def _status(firmware: str) -> dict[str, Any]:
+        return {
+            "keys": {
+                "logger.sn": {"value": "111033-3N16-1421"},
+                "fw.release_number": {"value": firmware},
+            }
+        }
+
+    async def test_vsn300_fw200_livedata_failure_raises_unsupported(self) -> None:
+        """VSN300 fw 2.0.0 + dead livedata -> VSNUnsupportedFirmwareError."""
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discovery.detect_vsn_model",
+                new_callable=AsyncMock,
+                return_value=("VSN300", True),
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discovery._fetch_status",
+                new_callable=AsyncMock,
+                return_value=self._status("2.0.0"),
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discovery._fetch_livedata",
+                new_callable=AsyncMock,
+                side_effect=VSNConnectionError("Server disconnected"),
+            ),
+            pytest.raises(VSNUnsupportedFirmwareError) as exc_info,
+        ):
+            await discover_vsn_device(MagicMock(), "http://192.168.1.100", "guest", "")
+
+        assert exc_info.value.firmware_version == "2.0.0"
+
+    async def test_vsn300_other_firmware_reraises_connection_error(self) -> None:
+        """VSN300 on non-2.0.0 firmware -> livedata failure stays a connection error."""
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discovery.detect_vsn_model",
+                new_callable=AsyncMock,
+                return_value=("VSN300", True),
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discovery._fetch_status",
+                new_callable=AsyncMock,
+                return_value=self._status("2.0.1"),
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discovery._fetch_livedata",
+                new_callable=AsyncMock,
+                side_effect=VSNConnectionError("Server disconnected"),
+            ),
+            pytest.raises(VSNConnectionError),
+        ):
+            await discover_vsn_device(MagicMock(), "http://192.168.1.100", "guest", "")
+
+    async def test_vsn700_fw200_reraises_connection_error(self) -> None:
+        """The guard is VSN300-only: VSN700 livedata failures pass through."""
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discovery.detect_vsn_model",
+                new_callable=AsyncMock,
+                return_value=("VSN700", True),
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discovery._fetch_status",
+                new_callable=AsyncMock,
+                return_value=self._status("2.0.0"),
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.discovery._fetch_livedata",
+                new_callable=AsyncMock,
+                side_effect=VSNConnectionError("Server disconnected"),
+            ),
+            pytest.raises(VSNConnectionError),
+        ):
+            await discover_vsn_device(MagicMock(), "http://192.168.1.100", "guest", "")

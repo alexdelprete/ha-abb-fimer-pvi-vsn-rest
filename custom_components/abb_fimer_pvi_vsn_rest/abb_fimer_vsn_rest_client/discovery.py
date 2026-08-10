@@ -14,8 +14,8 @@ from typing import Any
 import aiohttp
 
 from .auth import detect_vsn_model, get_vsn300_digest_header, get_vsn700_basic_auth
-from .constants import ENDPOINT_LIVEDATA, ENDPOINT_STATUS
-from .exceptions import VSNConnectionError
+from .constants import ENDPOINT_LIVEDATA, ENDPOINT_STATUS, UNSUPPORTED_VSN300_FIRMWARE
+from .exceptions import VSNConnectionError, VSNUnsupportedFirmwareError
 from .utils import check_socket_connection, read_json_lenient
 
 _LOGGER = logging.getLogger(__name__)
@@ -108,9 +108,22 @@ async def discover_vsn_device(
     )
 
     # Step 3: Fetch livedata
-    livedata = await _fetch_livedata(
-        session, base_url, vsn_model, username, password, timeout, requires_auth
-    )
+    try:
+        livedata = await _fetch_livedata(
+            session, base_url, vsn_model, username, password, timeout, requires_auth
+        )
+    except VSNConnectionError as err:
+        # VSN300 firmware 2.0.0 drops the TCP connection on every /v1/livedata
+        # request (vendor regression, fixed in 2.0.1 — see issue #68). Status
+        # just succeeded, so this is the firmware bug, not a network problem.
+        firmware = status_data.get("keys", {}).get("fw.release_number", {}).get("value")
+        if vsn_model == "VSN300" and firmware == UNSUPPORTED_VSN300_FIRMWARE:
+            raise VSNUnsupportedFirmwareError(
+                f"VSN300 firmware {firmware} has a known bug that breaks "
+                f"/v1/livedata; upgrade the datalogger to firmware 2.0.1 or later",
+                firmware_version=firmware,
+            ) from err
+        raise
 
     # Step 4: Extract logger information from status
     logger_info = _extract_logger_info(status_data, vsn_model)

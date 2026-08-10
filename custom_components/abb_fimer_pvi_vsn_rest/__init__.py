@@ -12,13 +12,14 @@ import logging
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME, Platform
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.exceptions import ConfigEntryError, ConfigEntryNotReady
 from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.util import slugify
 
 from .abb_fimer_vsn_rest_client.client import ABBFimerVSNRestClient
 from .abb_fimer_vsn_rest_client.discovery import DiscoveryResult, discover_vsn_device
+from .abb_fimer_vsn_rest_client.exceptions import VSNUnsupportedFirmwareError
 from .const import (
     CONF_ENABLE_REPAIR_NOTIFICATION,
     CONF_ENABLE_STARTUP_NOTIFICATION,
@@ -42,8 +43,10 @@ from .helpers import async_get_entity_translations, format_device_name
 from .repairs import (
     create_connection_issue,
     create_partial_discovery_issue,
+    create_unsupported_firmware_issue,
     delete_connection_issue,
     delete_partial_discovery_issue,
+    delete_unsupported_firmware_issue,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -138,6 +141,20 @@ async def async_setup_entry(
         # Clear startup failure tracking on success
         _clear_startup_failure(hass, config_entry.entry_id)
 
+        # Clear any unsupported-firmware issue (e.g. after a firmware upgrade)
+        delete_unsupported_firmware_issue(hass, config_entry.entry_id)
+
+    except VSNUnsupportedFirmwareError as err:
+        # VSN300 firmware 2.0.0: /v1/livedata is broken (vendor regression,
+        # fixed in 2.0.1 — see issue #68). Not retryable: raise ConfigEntryError
+        # and guide the user to the firmware upgrade via a repair issue.
+        create_unsupported_firmware_issue(
+            hass,
+            config_entry.entry_id,
+            host,
+            err.firmware_version or "2.0.0",
+        )
+        raise ConfigEntryError(str(err)) from err
     except Exception as err:
         # Track startup failures and create notification if threshold reached
         _handle_startup_failure(

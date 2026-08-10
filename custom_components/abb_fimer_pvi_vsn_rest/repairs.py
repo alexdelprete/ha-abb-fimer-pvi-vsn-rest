@@ -20,6 +20,7 @@ _LOGGER = logging.getLogger(__name__)
 # Issue IDs
 ISSUE_CONNECTION_FAILED = "connection_failed"
 ISSUE_PARTIAL_DISCOVERY = "partial_discovery"
+ISSUE_UNSUPPORTED_FIRMWARE = "unsupported_firmware"
 
 # Notification IDs
 NOTIFICATION_RECOVERY = "recovery"
@@ -184,3 +185,53 @@ def delete_partial_discovery_issue(hass: HomeAssistant, entry_id: str) -> None:
     """
     ir.async_delete_issue(hass, DOMAIN, f"{ISSUE_PARTIAL_DISCOVERY}_{entry_id}")
     _LOGGER.debug("Deleted partial discovery issue for entry: %s", entry_id)
+
+
+def create_unsupported_firmware_issue(
+    hass: HomeAssistant,
+    entry_id: str,
+    host: str,
+    firmware_version: str,
+) -> None:
+    """Create a repair issue for unsupported datalogger firmware.
+
+    VSN300 firmware 2.0.0 has a known bug that breaks /v1/livedata (vendor
+    regression, fixed in 2.0.1). See issue #68.
+
+    Args:
+        hass: HomeAssistant instance
+        entry_id: Config entry ID
+        host: Device host/IP
+        firmware_version: The unsupported firmware version
+
+    """
+    ir.async_create_issue(
+        hass,
+        DOMAIN,
+        f"{ISSUE_UNSUPPORTED_FIRMWARE}_{entry_id}",
+        is_fixable=False,
+        is_persistent=True,
+        severity=ir.IssueSeverity.ERROR,
+        translation_key=ISSUE_UNSUPPORTED_FIRMWARE,
+        translation_placeholders={
+            "host": host,
+            "firmware_version": firmware_version,
+        },
+    )
+    _LOGGER.debug(
+        "Created unsupported firmware issue for %s (firmware %s)",
+        host,
+        firmware_version,
+    )
+
+
+def delete_unsupported_firmware_issue(hass: HomeAssistant, entry_id: str) -> None:
+    """Delete the unsupported firmware repair issue.
+
+    Args:
+        hass: HomeAssistant instance
+        entry_id: Config entry ID
+
+    """
+    ir.async_delete_issue(hass, DOMAIN, f"{ISSUE_UNSUPPORTED_FIRMWARE}_{entry_id}")
+    _LOGGER.debug("Deleted unsupported firmware issue for entry: %s", entry_id)

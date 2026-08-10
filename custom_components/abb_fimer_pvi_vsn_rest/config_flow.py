@@ -36,6 +36,7 @@ from .abb_fimer_vsn_rest_client.exceptions import (
     VSNClientError,
     VSNConnectionError,
     VSNUnsupportedDeviceError,
+    VSNUnsupportedFirmwareError,
 )
 from .abb_fimer_vsn_rest_client.utils import check_socket_connection
 from .const import (
@@ -76,6 +77,7 @@ ERROR_INVALID_AUTH = "invalid_auth"
 ERROR_UNKNOWN = "unknown"
 ERROR_TIMEOUT = "timeout"
 ERROR_UNSUPPORTED_DEVICE = "unsupported_device"
+ERROR_UNSUPPORTED_FIRMWARE = "unsupported_firmware"
 
 
 async def validate_connection(
@@ -274,6 +276,8 @@ class ABBFimerPVIVSNRestConfigFlow(ConfigFlow, domain=DOMAIN):
                     errors["base"] = ERROR_CANNOT_CONNECT
             except VSNUnsupportedDeviceError:
                 errors["base"] = ERROR_UNSUPPORTED_DEVICE
+            except VSNUnsupportedFirmwareError:
+                errors["base"] = ERROR_UNSUPPORTED_FIRMWARE
             except VSNClientError:
                 errors["base"] = ERROR_UNKNOWN
             except Exception:  # pylint: disable=broad-except
@@ -339,6 +343,8 @@ class ABBFimerPVIVSNRestConfigFlow(ConfigFlow, domain=DOMAIN):
                     errors["base"] = ERROR_CANNOT_CONNECT
             except VSNUnsupportedDeviceError:
                 errors["base"] = ERROR_UNSUPPORTED_DEVICE
+            except VSNUnsupportedFirmwareError:
+                errors["base"] = ERROR_UNSUPPORTED_FIRMWARE
             except VSNClientError:
                 errors["base"] = ERROR_UNKNOWN
             except Exception:  # pylint: disable=broad-except
