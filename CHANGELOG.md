@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.11] - Unreleased
+
+### Changed
+
+- **Concrete self-service upgrade steps for VSN300 firmware 2.0.0 users** (Refs #68) —
+  The repair issue, config-flow error, and README now give the hardware-confirmed
+  upgrade procedure (datalogger web UI → FW UPDATE tab → Remote Update → Check for FW
+  update → Download & Update) instead of the generic "contact FIMER support" guidance.
+  Localized in all 10 languages. Procedure confirmed by @gseguin on real hardware.
+
+### Documentation
+
+- Corrected the v1.5.10 record after follow-up hardware testing by @gseguin (#68): the
+  digest nc/cnonce constants are a robustness/alignment fix — stock RFC-style values are
+  also accepted on all tested firmware, and the originally-reported 401s could not be
+  reproduced. Also verified on hardware that the firmware stores user-entered text as
+  genuine UTF-8, validating the UTF-8-first decode order of `read_json_lenient()`.
+
 ## [1.5.10] - 2026-08-10
 
 ### Added
@@ -23,14 +41,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
-- **VSN300 firmware 2.0.x could not authenticate (HTTP 401 on every request)** (Reported
-  in #68, fixed by @gseguin in PR #69) — VSN300 firmware 2.0.x validates the X-Digest
-  authentication against the exact constants `nc=00000002` / `cnonce=ddf4bfcaf87acba9`
-  (the values its own web UI sends) instead of performing RFC-style validation. The
-  integration's `nc=00000001` + random cnonce was rejected on every request, so the config
-  flow could never complete. The digest now uses the firmware constants — verified against
-  fw 2.0.0 hardware and confirmed compatible with fw 1.9.2, which validates RFC-style and
-  accepts them too.
+- **VSN300 X-Digest authentication aligned with the firmware's own web UI constants**
+  (Reported in #68, contributed by @gseguin in PR #69) — The digest now sends the exact
+  `nc=00000002` / `cnonce=ddf4bfcaf87acba9` values the VSN300 firmware's own web UI
+  uses; every firmware build must accept its own web UI's headers, so the constants are
+  the maximally compatible choice (verified on fw 1.9.2, 2.0.0, and 2.0.1 hardware).
+  Post-release correction (2026-08-10): follow-up testing could not reproduce the
+  originally-reported 401s with RFC-style values — the constants are kept as a
+  robustness/alignment fix, not a hard server requirement.
 - **Non-UTF-8 JSON responses crashed discovery** (Reported in #68, fixed by @gseguin in
   PR #69) — The datalogger can serve ISO-8859-1 bodies (e.g. accented characters in
   user-entered device/plant labels) while the `Content-Type` header claims UTF-8 or omits
