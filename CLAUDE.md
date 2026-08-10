@@ -178,12 +178,14 @@ VSN-specific authentication schemes.
   1. Without `qop`: response = `MD5(HA1:nonce:HA2)`
   1. Add header: `Authorization: X-Digest username=..., response=..., nc=..., cnonce=...`
 
-> **Why fixed nc/cnonce (issue #68, PR #69):** VSN300 fw 2.0.x validates the digest
-> against a response precomputed with these exact constants — they are what the
-> firmware's own web UI (`auth-filter.js`) sends — instead of RFC-style validation with
-> client-supplied values. fw 1.9.2 validates RFC-style and accepts the constants too
-> (verified on real hardware for both). **Never revert to random cnonce** — it gets
-> HTTP 401 on every fw 2.0.x request.
+> **Why fixed nc/cnonce (issue #68, PR #69):** the constants are what the firmware's own
+> web UI (`auth-filter.js`) sends, so every firmware build must accept them — a
+> structural compatibility guarantee. Follow-up hardware testing (2026-08-10) showed
+> RFC-style random values are *also* accepted on all firmware tested to date (1.9.2,
+> 2.0.0, 2.0.1) — the hard 401s originally reported in #68 could not be reproduced — but
+> random values are the only configuration ever reported failing in the field, and RFC
+> semantics buy nothing against a proprietary single-vendor scheme. **Keep the
+> constants** — a bug-compat/alignment choice, not a proven server requirement.
 
 **VSN700:**
 
@@ -387,9 +389,13 @@ through hardware testing on fw 1.9.2, 2.0.0, and 2.0.1 (reference captures in
 
 | Firmware | X-Digest validation | `/v1/livedata` |
 | -------- | ------------------- | -------------- |
-| 1.9.2    | RFC-style (accepts any consistent nc/cnonce) | works |
-| 2.0.0    | fixed constants only | **dead** — drops every TCP connection |
-| 2.0.1    | fixed constants only | works (vendor fixed the regression) |
+| 1.9.2    | accepts stock RFC-style AND web-UI constants | works |
+| 2.0.0    | accepts both (re-verified 2026-08-10) | **dead** — drops every TCP connection |
+| 2.0.1    | accepts both (re-verified 2026-08-10) | works (vendor fixed the regression) |
+
+> The hard nc/cnonce 401s originally reported in #68 (July 2026) could not be reproduced
+> in the 2026-08-10 re-test on the same hardware — cause unknown (possibly conflated with
+> another factor, or firmware drift). The response hash itself IS strictly validated.
 
 The `Server: lighttpd/1.4.35` banner is identical on all firmwares — never use it as a
 version signal; `keys["fw.release_number"]` from `/v1/status` is the firmware version.
@@ -397,12 +403,17 @@ version signal; `keys["fw.release_number"]` from `/v1/status` is the firmware ve
 **Decision 1 — digest constants (PR #69):** always send `nc=00000002` /
 `cnonce=ddf4bfcaf87acba9` in the qop branch. See the Authentication section above.
 
-**Decision 2 — charset-tolerant JSON decoding (PR #69):** the datalogger can serve
-ISO-8859-1 bodies (accented characters in user-entered labels) while `Content-Type`
-claims utf-8 or omits charset — the header can't be trusted in either direction. All
-JSON parsing goes through `read_json_lenient()` in `abb_fimer_vsn_rest_client/utils.py`:
-read raw bytes, try UTF-8 first (byte-identical for ASCII), fall back to latin-1 (never
-fails). Never call `response.json()` directly in client/discovery/auth code.
+**Decision 2 — charset-tolerant JSON decoding (PR #69):** the `Content-Type` charset
+can't be trusted in either direction (`/v1/feeds*`/`/v1/livedata` claim utf-8, `/v1/
+status`/`/v1/config` declare nothing). Hardware verification (2026-08-10, "Café Test"
+plant name) showed current firmware stores user-entered text as **genuine UTF-8**
+(`é` → `0xC3 0xA9`); the field-reported `0xB4` byte that crashed strict UTF-8 decoding
+(invalid UTF-8, valid latin-1) is likely legacy data written by an older tool. All JSON
+parsing therefore goes through `read_json_lenient()` in
+`abb_fimer_vsn_rest_client/utils.py`: read raw bytes, try UTF-8 first (correct for
+current firmware and byte-identical for ASCII), fall back to latin-1 (never fails —
+rescues legacy bytes). A forced latin-1 decode would mojibake real UTF-8. Never call
+`response.json()` directly in client/discovery/auth code.
 
 **Decision 3 — fw 2.0.0 is NOT supported:** the dead `/v1/livedata` is a vendor
 regression with a vendor fix (2.0.1), so the integration carries no workaround (a

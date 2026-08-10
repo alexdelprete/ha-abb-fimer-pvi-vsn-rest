@@ -125,8 +125,11 @@ def build_digest_header(
 
     # For VSN300, we typically don't use qop, but handle it if present
     if qop:
-        # VSN300 firmware (auth-filter.js) validates against these EXACT constants.
-        # Any other nc/cnonce -> HTTP 401. See issue #68.
+        # Use the exact nc/cnonce constants the VSN300 web UI (auth-filter.js) sends.
+        # Every firmware build must accept its own web UI's headers, so these are the
+        # maximally compatible choice (verified on fw 1.9.2/2.0.0/2.0.1). RFC-style
+        # random values are also accepted on all firmware tested to date, but were
+        # reported failing in the field and buy nothing here. See issue #68.
         nc = "00000002"
         cnonce = "ddf4bfcaf87acba9"
         response = calculate_digest_response(
