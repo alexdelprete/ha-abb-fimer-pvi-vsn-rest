@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.5.11] - Unreleased
 
+### Added
+
+- **Genuine-UTF-8 regression fixture for the charset-tolerant decoder** (Refs #68,
+  contributed by @gseguin in PR #73) — A real fw 2.0.1 `/v1/config` capture with an
+  accented plant name stored as two-byte UTF-8, plus a regression test pinning
+  `read_json_lenient()`'s UTF-8-first decode order against the real payload.
+
 ### Changed
 
 - **Concrete self-service upgrade steps for VSN300 firmware 2.0.0 users** (Refs #68) —
