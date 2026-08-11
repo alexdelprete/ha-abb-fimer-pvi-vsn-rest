@@ -21,6 +21,7 @@ _LOGGER = logging.getLogger(__name__)
 ISSUE_CONNECTION_FAILED = "connection_failed"
 ISSUE_PARTIAL_DISCOVERY = "partial_discovery"
 ISSUE_UNSUPPORTED_FIRMWARE = "unsupported_firmware"
+ISSUE_DATALOGGER_SILENT = "datalogger_silent"
 
 # Notification IDs
 NOTIFICATION_RECOVERY = "recovery"
@@ -185,6 +186,55 @@ def delete_partial_discovery_issue(hass: HomeAssistant, entry_id: str) -> None:
     """
     ir.async_delete_issue(hass, DOMAIN, f"{ISSUE_PARTIAL_DISCOVERY}_{entry_id}")
     _LOGGER.debug("Deleted partial discovery issue for entry: %s", entry_id)
+
+
+def create_datalogger_silent_issue(
+    hass: HomeAssistant,
+    entry_id: str,
+    device_name: str,
+    host: str,
+) -> None:
+    """Create a repair issue for a datalogger that stopped reporting its own data.
+
+    Raised when the datalogger keeps serving the REST API (polls succeed,
+    inverter data flows) but its own device section has been absent from
+    /v1/livedata for longer than DATALOGGER_SILENT_THRESHOLD. Known VSN300
+    fw 1.9.2 quirk: after a reboot with an unsynced clock (NTP unreachable),
+    the datalogger omits its own livedata section indefinitely.
+
+    Args:
+        hass: HomeAssistant instance
+        entry_id: Config entry ID
+        device_name: Name of the datalogger device
+        host: Device host/IP
+
+    """
+    ir.async_create_issue(
+        hass,
+        DOMAIN,
+        f"{ISSUE_DATALOGGER_SILENT}_{entry_id}",
+        is_fixable=False,
+        is_persistent=True,
+        severity=ir.IssueSeverity.WARNING,
+        translation_key=ISSUE_DATALOGGER_SILENT,
+        translation_placeholders={
+            "device_name": device_name,
+            "host": host,
+        },
+    )
+    _LOGGER.debug("Created datalogger silent issue for %s", device_name)
+
+
+def delete_datalogger_silent_issue(hass: HomeAssistant, entry_id: str) -> None:
+    """Delete the datalogger silent repair issue.
+
+    Args:
+        hass: HomeAssistant instance
+        entry_id: Config entry ID
+
+    """
+    ir.async_delete_issue(hass, DOMAIN, f"{ISSUE_DATALOGGER_SILENT}_{entry_id}")
+    _LOGGER.debug("Deleted datalogger silent issue for entry: %s", entry_id)
 
 
 def create_unsupported_firmware_issue(

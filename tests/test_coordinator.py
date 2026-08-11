@@ -18,6 +18,7 @@ from custom_components.abb_fimer_pvi_vsn_rest.const import (
     CONF_FAILURES_THRESHOLD,
     CONF_KNOWN_DEVICES,
     CONF_RECOVERY_SCRIPT,
+    DATALOGGER_SILENT_THRESHOLD,
     DEFAULT_ENABLE_REPAIR_NOTIFICATION,
     DEFAULT_FAILURES_THRESHOLD,
     DEFAULT_RECOVERY_SCRIPT,
@@ -1365,3 +1366,226 @@ class TestNoEntitiesCheck:
         await coordinator_all_known._async_update_data()
 
         assert coordinator_all_known._reload_scheduled is False
+
+
+class TestDataloggerSilent:
+    """Tests for the silent-datalogger repair check (Check 4).
+
+    The datalogger answers every poll, so a successful response without its
+    device section means it is publishing inverter data but not its own
+    (VSN300 fw quirk after a reboot without clock sync). Check 4 raises a
+    repair issue after DATALOGGER_SILENT_THRESHOLD seconds and clears it
+    automatically when the section returns.
+    """
+
+    @pytest.fixture
+    def coordinator_silent(
+        self,
+        mock_hass: MagicMock,
+        mock_vsn_client: MagicMock,
+        mock_discovery_result: MockDiscoveryResult,
+    ) -> ABBFimerPVIVSNRestCoordinator:
+        """Create a coordinator ready for silent-datalogger checks."""
+        entry = MagicMock()
+        entry.entry_id = "test_entry_id"
+        entry.options = {
+            CONF_ENABLE_REPAIR_NOTIFICATION: True,
+            CONF_FAILURES_THRESHOLD: DEFAULT_FAILURES_THRESHOLD,
+            CONF_RECOVERY_SCRIPT: "",
+        }
+        entry.data = {
+            CONF_KNOWN_DEVICES: [
+                {"device_id": TEST_LOGGER_SN, "device_type": "datalogger", "is_datalogger": True},
+                {
+                    "device_id": TEST_INVERTER_SN,
+                    "device_type": "inverter_3phases",
+                    "is_datalogger": False,
+                },
+            ],
+        }
+        coordinator = ABBFimerPVIVSNRestCoordinator(
+            hass=mock_hass,
+            client=mock_vsn_client,
+            update_interval=timedelta(seconds=TEST_SCAN_INTERVAL),
+            discovery_result=mock_discovery_result,
+            entry_id="test_entry_id",
+            host=TEST_HOST,
+            config_entry=entry,
+        )
+        coordinator.entity_device_ids = {TEST_LOGGER_SN, TEST_INVERTER_SN}
+        return coordinator
+
+    @pytest.fixture
+    def silent_data(self, mock_normalized_data: dict) -> dict:
+        """Normalized data without the datalogger device section."""
+        return {
+            "devices": {
+                device_id: device_data
+                for device_id, device_data in mock_normalized_data["devices"].items()
+                if device_id != TEST_LOGGER_SN
+            }
+        }
+
+    @pytest.mark.asyncio
+    async def test_skipped_before_sensor_platform(
+        self,
+        coordinator_silent: ABBFimerPVIVSNRestCoordinator,
+        silent_data: dict,
+    ) -> None:
+        """Test check does nothing before the sensor platform has run."""
+        coordinator_silent.entity_device_ids = None
+
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.coordinator.create_datalogger_silent_issue"
+        ) as mock_create:
+            coordinator_silent._check_datalogger_silent(silent_data)
+
+        mock_create.assert_not_called()
+        assert coordinator_silent._datalogger_silent_since is None
+
+    @pytest.mark.asyncio
+    async def test_healthy_clears_stale_issue_once(
+        self,
+        coordinator_silent: ABBFimerPVIVSNRestCoordinator,
+        mock_normalized_data: dict,
+    ) -> None:
+        """Test first healthy poll clears a stale issue from a previous run."""
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.coordinator.delete_datalogger_silent_issue"
+        ) as mock_delete:
+            coordinator_silent._check_datalogger_silent(mock_normalized_data)
+            coordinator_silent._check_datalogger_silent(mock_normalized_data)
+
+        mock_delete.assert_called_once()
+        assert coordinator_silent._datalogger_healthy_seen is True
+
+    @pytest.mark.asyncio
+    async def test_silent_starts_tracking_without_issue(
+        self,
+        coordinator_silent: ABBFimerPVIVSNRestCoordinator,
+        silent_data: dict,
+    ) -> None:
+        """Test a silent poll starts tracking but creates no issue yet."""
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.coordinator.create_datalogger_silent_issue"
+        ) as mock_create:
+            coordinator_silent._check_datalogger_silent(silent_data)
+            coordinator_silent._check_datalogger_silent(silent_data)
+
+        mock_create.assert_not_called()
+        assert coordinator_silent._datalogger_silent_since is not None
+        assert coordinator_silent._datalogger_silent_issue_created is False
+
+    @pytest.mark.asyncio
+    async def test_issue_created_after_threshold(
+        self,
+        coordinator_silent: ABBFimerPVIVSNRestCoordinator,
+        silent_data: dict,
+    ) -> None:
+        """Test issue is created once the silent threshold elapses."""
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.coordinator.create_datalogger_silent_issue"
+        ) as mock_create:
+            coordinator_silent._check_datalogger_silent(silent_data)
+            # Backdate the tracking start beyond the threshold
+            coordinator_silent._datalogger_silent_since = time.monotonic() - (
+                DATALOGGER_SILENT_THRESHOLD + 1
+            )
+            coordinator_silent._check_datalogger_silent(silent_data)
+            # Further silent polls must not create the issue again
+            coordinator_silent._check_datalogger_silent(silent_data)
+
+        mock_create.assert_called_once()
+        assert coordinator_silent._datalogger_silent_issue_created is True
+
+    @pytest.mark.asyncio
+    async def test_issue_respects_notifications_disabled(
+        self,
+        coordinator_silent: ABBFimerPVIVSNRestCoordinator,
+        silent_data: dict,
+    ) -> None:
+        """Test no issue is created when repair notifications are disabled."""
+        coordinator_silent._enable_repair_notification = False
+
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.coordinator.create_datalogger_silent_issue"
+        ) as mock_create:
+            coordinator_silent._check_datalogger_silent(silent_data)
+            coordinator_silent._datalogger_silent_since = time.monotonic() - (
+                DATALOGGER_SILENT_THRESHOLD + 1
+            )
+            coordinator_silent._check_datalogger_silent(silent_data)
+
+        mock_create.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_recovery_deletes_issue_and_resets(
+        self,
+        coordinator_silent: ABBFimerPVIVSNRestCoordinator,
+        mock_normalized_data: dict,
+        silent_data: dict,
+    ) -> None:
+        """Test the issue is deleted and tracking reset when data returns."""
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.coordinator.create_datalogger_silent_issue"
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.coordinator.delete_datalogger_silent_issue"
+            ) as mock_delete,
+        ):
+            # Healthy first so the stale-issue cleanup does not fire later
+            coordinator_silent._check_datalogger_silent(mock_normalized_data)
+            mock_delete.reset_mock()
+
+            # Go silent past the threshold -> issue created
+            coordinator_silent._check_datalogger_silent(silent_data)
+            coordinator_silent._datalogger_silent_since = time.monotonic() - (
+                DATALOGGER_SILENT_THRESHOLD + 1
+            )
+            coordinator_silent._check_datalogger_silent(silent_data)
+            assert coordinator_silent._datalogger_silent_issue_created is True
+
+            # Datalogger reports again -> issue deleted, tracking reset
+            coordinator_silent._check_datalogger_silent(mock_normalized_data)
+
+        mock_delete.assert_called_once()
+        assert coordinator_silent._datalogger_silent_issue_created is False
+        assert coordinator_silent._datalogger_silent_since is None
+
+    @pytest.mark.asyncio
+    async def test_no_datalogger_in_discovery(
+        self,
+        coordinator_silent: ABBFimerPVIVSNRestCoordinator,
+        silent_data: dict,
+    ) -> None:
+        """Test check does nothing when discovery has no datalogger."""
+        coordinator_silent.discovered_devices = [
+            d for d in coordinator_silent.discovered_devices if not d.is_datalogger
+        ]
+
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.coordinator.create_datalogger_silent_issue"
+        ) as mock_create:
+            coordinator_silent._check_datalogger_silent(silent_data)
+
+        mock_create.assert_not_called()
+        assert coordinator_silent._datalogger_silent_since is None
+
+    @pytest.mark.asyncio
+    async def test_check_runs_during_update(
+        self,
+        coordinator_silent: ABBFimerPVIVSNRestCoordinator,
+        mock_normalized_data: dict,
+    ) -> None:
+        """Test the check is wired into the update cycle."""
+        coordinator_silent.client.get_normalized_data = AsyncMock(return_value=mock_normalized_data)
+
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.coordinator.delete_datalogger_silent_issue"
+        ) as mock_delete:
+            await coordinator_silent._async_update_data()
+
+        # First healthy poll clears any stale issue from a previous run
+        mock_delete.assert_called_once()
+        assert coordinator_silent._datalogger_healthy_seen is True

@@ -32,6 +32,7 @@ from .const import (
     CONF_FAILURES_THRESHOLD,
     CONF_KNOWN_DEVICES,
     CONF_RECOVERY_SCRIPT,
+    DATALOGGER_SILENT_THRESHOLD,
     DEFAULT_ENABLE_REPAIR_NOTIFICATION,
     DEFAULT_FAILURES_THRESHOLD,
     DEFAULT_RECOVERY_SCRIPT,
@@ -39,9 +40,11 @@ from .const import (
 )
 from .repairs import (
     create_connection_issue,
+    create_datalogger_silent_issue,
     create_partial_discovery_issue,
     create_recovery_notification,
     delete_connection_issue,
+    delete_datalogger_silent_issue,
     delete_partial_discovery_issue,
 )
 
@@ -105,6 +108,15 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._consecutive_failures = 0
         self._repair_issue_created = False
         self._failure_start_time: float | None = None
+
+        # Silent datalogger tracking: the datalogger can serve the REST API
+        # (polls succeed) while omitting its own device section from livedata
+        # (VSN300 fw quirk after a reboot with an unsynced clock). None of the
+        # re-discovery checks cover this — discovery still sees it (status is
+        # healthy) and its entities exist — so it is tracked separately.
+        self._datalogger_silent_since: float | None = None
+        self._datalogger_silent_issue_created = False
+        self._datalogger_healthy_seen = False
         self._last_error_type: str | None = None
         self._recovery_script_executed = False
         self._script_executed_time: float | None = None
@@ -215,6 +227,13 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                         self.hass.async_create_task(
                             self.hass.config_entries.async_reload(self._entry_id)
                         )
+
+            # Check 4: Datalogger present in discovery but silent in livedata.
+            # Runs on every successful poll (independent of reload scheduling):
+            # it creates/clears a repair issue rather than reloading, because
+            # the datalogger's entities already exist and flip back to
+            # available by themselves once its livedata section returns.
+            self._check_datalogger_silent(data)
 
             return data  # noqa: TRY300
 
@@ -350,6 +369,83 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._last_error_type = None
         self._recovery_script_executed = False
         self._script_executed_time = None
+
+    def _check_datalogger_silent(self, data: dict[str, Any]) -> None:
+        """Track a datalogger that stopped reporting its own livedata section.
+
+        The datalogger answers every poll (it IS the REST server), so when a
+        successful response lacks its device section the device is publishing
+        inverter data but not its own — a wedged state that can persist for
+        hours (e.g. VSN300 fw 1.9.2 after a reboot without clock sync). Its
+        sensors correctly show unavailable, but without this check nothing
+        tells the user why. After DATALOGGER_SILENT_THRESHOLD seconds a
+        WARNING repair issue is created; it is deleted automatically on the
+        first poll where the section is back (entities recover on their own).
+
+        Only the datalogger is tracked: inverters and meters legitimately
+        drop out of livedata overnight.
+        """
+        if not self._entry_id:
+            return
+
+        datalogger_id = next(
+            (d.device_id for d in self.discovered_devices if d.is_datalogger),
+            None,
+        )
+        if datalogger_id is None:
+            return
+
+        # Only meaningful once the sensor platform created entities for it;
+        # before that, Check 3 handles the no-entities case via reload.
+        if not self.entity_device_ids or datalogger_id not in self.entity_device_ids:
+            return
+
+        device_data = data.get("devices", {}).get(datalogger_id)
+        if device_data and device_data.get("points"):
+            # Datalogger is reporting. Clear any open issue — also on the
+            # first healthy poll after a reload, when a previous run may have
+            # left a persistent issue behind that this run never created.
+            if self._datalogger_silent_issue_created or not self._datalogger_healthy_seen:
+                delete_datalogger_silent_issue(self.hass, self._entry_id)
+            if self._datalogger_silent_since is not None:
+                _LOGGER.info(
+                    "Datalogger %s livedata section is back after %.0f seconds",
+                    datalogger_id,
+                    time.monotonic() - self._datalogger_silent_since,
+                )
+            self._datalogger_healthy_seen = True
+            self._datalogger_silent_since = None
+            self._datalogger_silent_issue_created = False
+            return
+
+        now = time.monotonic()
+        if self._datalogger_silent_since is None:
+            self._datalogger_silent_since = now
+            _LOGGER.debug(
+                "Datalogger %s absent from livedata (poll succeeded) — tracking",
+                datalogger_id,
+            )
+            return
+
+        elapsed = now - self._datalogger_silent_since
+        if (
+            elapsed >= DATALOGGER_SILENT_THRESHOLD
+            and not self._datalogger_silent_issue_created
+            and self._enable_repair_notification
+        ):
+            _LOGGER.warning(
+                "Datalogger %s has not reported its own livedata section for "
+                "%.0f seconds while polls succeed — creating repair issue",
+                datalogger_id,
+                elapsed,
+            )
+            create_datalogger_silent_issue(
+                self.hass,
+                self._entry_id,
+                self._get_device_name(),
+                self._host or "",
+            )
+            self._datalogger_silent_issue_created = True
 
     async def _attempt_rediscovery(self) -> None:
         """Attempt to re-discover missing devices.

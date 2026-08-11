@@ -880,6 +880,10 @@
       "title": "Ei yhteyttä {device_name}",
       "description": "Integraatio ei saa yhteyttä ABB/FIMER VSN -dataloggeriisi osoitteessa {host}.\n\n**Mahdolliset syyt:**\n- Laite on sammutettu tai ei ole yhteydessä verkkoon\n- IP-osoite on muuttunut\n- Palomuuri estää yhteyden\n- REST API -portti (80) ei ole käytettävissä\n\n**Ratkaisemiseksi:**\n1. Tarkista, että laite on päällä ja yhteydessä verkkoosi\n2. Tarkista IP-osoite reitittimesi DHCP-taulukosta\n3. Yritä käyttää laitteen verkkokäyttöliittymää suoraan\n4. Jos IP on muuttunut, määritä integraatio uudelleen uudella osoitteella"
     },
+    "datalogger_silent": {
+      "title": "Dataloggeri {device_name} ei raportoi omia tietojaan",
+      "description": "Dataloggeri osoitteessa {host} on verkossa ja invertterin tiedot päivittyvät normaalisti, mutta sen omat valvontatiedot (käyntiaika, WiFi-tila, järjestelmätiedot) ovat puuttuneet REST-rajapinnasta pitkän aikaa. Sen anturit pysyvät poissa käytöstä, kunnes laite palautuu.\n\n**Todennäköisin syy:**\n- Uudelleenkäynnistyksen jälkeen dataloggeri ei voinut synkronoida kelloaan (NTP/internet ei tavoitettavissa) ja lakkasi julkaisemasta omia tietojaan — tunnettu VSN300-laiteohjelmiston vika\n\n**Mitä voit tehdä:**\n- Tarkista, että dataloggeri pääsee internetiin (DNS/NTP), esimerkiksi sen verkkokäyttöliittymästä osoitteessa http://{host}\n- Katkaise dataloggerin virta hetkeksi\n\nTämä ilmoitus poistuu automaattisesti heti, kun dataloggeri raportoi jälleen omat tietonsa."
+    },
     "partial_discovery": {
       "title": "Laitteiden tunnistus epätäydellinen: {device_name}",
       "description": "Seuraavat laitteet tunnistettiin aiemmin, mutta ne eivät vastaa tällä hetkellä:\n\n{missing_devices}\n\n**Mahdolliset syyt:**\n- Invertteri on pois päältä (yö/ei aurinkotuotantoa)\n- Laite on tilapäisesti irrotettu\n\nIntegraatio tunnistaa laitteet automaattisesti uudelleen, kun ne palaavat verkkoon. Tämä ilmoitus poistuu automaattisesti, kun kaikki laitteet on löydetty.\n\nJos laite on poistettu pysyvästi, voit poistaa sen manuaalisesti laitteen sivulta Asetuksista."

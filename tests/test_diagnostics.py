@@ -88,9 +88,14 @@ class TestAsyncGetConfigEntryDiagnostics:
         mock_coordinator.last_update_success = True
         mock_coordinator.update_interval = timedelta(seconds=60)
         mock_coordinator.data = {
-            "077909-3G82-3112": {
-                "watts": {"value": 5000},
-                "wh": {"value": 123456},
+            "devices": {
+                "077909-3G82-3112": {
+                    "device_type": "inverter_3phases",
+                    "points": {
+                        "watts": {"value": 5000},
+                        "wh": {"value": 123456},
+                    },
+                }
             }
         }
 
@@ -177,8 +182,34 @@ class TestAsyncGetConfigEntryDiagnostics:
         result = await async_get_config_entry_diagnostics(mock_hass, mock_config_entry)
 
         assert "sensor_summary" in result
-        # Should have summary with point counts, not actual values
-        assert len(result["sensor_summary"]) > 0
+        # Should have one entry per device with point counts, not actual values
+        assert result["sensor_summary"] == {
+            "device_077909-3...": {
+                "device_type": "inverter_3phases",
+                "point_count": 2,
+                "has_points": True,
+            }
+        }
+
+    @pytest.mark.asyncio
+    async def test_diagnostics_sensor_summary_pointless_device(
+        self, mock_hass: MagicMock, mock_config_entry: MagicMock
+    ) -> None:
+        """Test sensor summary flags a device present but without points."""
+        mock_config_entry.runtime_data.coordinator.data = {
+            "devices": {
+                "111033-3N16-1421": {
+                    "device_type": "datalogger",
+                    "points": {},
+                }
+            }
+        }
+
+        result = await async_get_config_entry_diagnostics(mock_hass, mock_config_entry)
+
+        summary = result["sensor_summary"]["device_111033-3..."]
+        assert summary["point_count"] == 0
+        assert summary["has_points"] is False
 
     @pytest.mark.asyncio
     async def test_diagnostics_no_discovery_result(

@@ -14,6 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   accented plant name stored as two-byte UTF-8, plus a regression test pinning
   `read_json_lenient()`'s UTF-8-first decode order against the real payload.
 
+- **Repair issue for a datalogger that stops reporting its own data** — The VSN300
+  datalogger can serve the REST API while omitting its own device section from
+  `/v1/livedata` (fw 1.9.2 quirk after a reboot without clock sync), leaving its
+  sensors unavailable with no explanation. A WARNING repair issue is now raised after
+  30 minutes and cleared automatically on recovery. Localized in all 10 languages.
+
 ### Changed
 
 - **Concrete self-service upgrade steps for VSN300 firmware 2.0.0 users** (Refs #68) —
@@ -21,6 +27,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   upgrade procedure (datalogger web UI → FW UPDATE tab → Remote Update → Check for FW
   update → Download & Update) instead of the generic "contact FIMER support" guidance.
   Localized in all 10 languages. Procedure confirmed by @gseguin on real hardware.
+
+### Fixed
+
+- **Diagnostics `sensor_summary` reported a single useless entry** — It iterated the
+  top-level coordinator data keys instead of the per-device map. It now lists one entry
+  per device with `device_type`, `point_count`, and `has_points`.
 
 ### Documentation
 

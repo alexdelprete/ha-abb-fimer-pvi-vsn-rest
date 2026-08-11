@@ -880,6 +880,10 @@
       "title": "Kan inte ansluta till {device_name}",
       "description": "Integrationen kan inte ansluta till din ABB/FIMER VSN-datalogger på {host}.\n\n**Möjliga orsaker:**\n- Enheten är avstängd eller inte ansluten till nätverket\n- IP-adressen har ändrats\n- En brandvägg blockerar anslutningen\n- REST API-porten (80) är inte tillgänglig\n\n**För att lösa:**\n1. Kontrollera att enheten är påslagen och ansluten till ditt nätverk\n2. Kontrollera IP-adressen i routerns DHCP-tabell\n3. Försök att komma åt enhetens webbgränssnitt direkt\n4. Om IP har ändrats, konfigurera om integrationen med den nya adressen"
     },
+    "datalogger_silent": {
+      "title": "Dataloggern {device_name} rapporterar inte sina egna data",
+      "description": "Dataloggern på {host} är online och växelriktardata uppdateras normalt, men dess egna övervakningsdata (drifttid, WiFi-status, systeminformation) har saknats i REST-API:et under en längre tid. Dess sensorer förblir otillgängliga tills den återhämtar sig.\n\n**Mest trolig orsak:**\n- Efter en omstart kunde dataloggern inte synkronisera sin klocka (NTP/internet onåbart) och slutade publicera sina egna data — ett känt fel i VSN300:s firmware\n\n**Vad du kan göra:**\n- Kontrollera att dataloggern når internet (DNS/NTP), till exempel via webbgränssnittet på http://{host}\n- Stäng av och slå på dataloggern igen\n\nDetta meddelande tas bort automatiskt så snart dataloggern rapporterar sina egna data igen."
+    },
     "partial_discovery": {
       "title": "Ofullständig enhetsidentifiering för {device_name}",
       "description": "Följande enheter har tidigare identifierats men svarar inte för närvarande:\n\n{missing_devices}\n\n**Möjliga orsaker:**\n- Växelriktaren är avstängd (natt/ingen solproduktion)\n- Enheten är tillfälligt frånkopplad\n\nIntegrationen identifierar enheterna automatiskt igen när de är online. Denna avisering tas bort automatiskt när alla enheter har hittats.\n\nOm en enhet har tagits bort permanent kan du radera den manuellt från enhetssidan i Inställningar."

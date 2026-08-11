@@ -880,6 +880,10 @@
       "title": "Kan ikke koble til {device_name}",
       "description": "Integrasjonen kan ikke koble til ABB/FIMER VSN-dataloggeren din på {host}.\n\n**Mulige årsaker:**\n- Enheten er slått av eller ikke koblet til nettverket\n- IP-adressen har endret seg\n- En brannmur blokkerer tilkoblingen\n- REST API-porten (80) er ikke tilgjengelig\n\n**For å løse:**\n1. Kontroller at enheten er slått på og koblet til nettverket\n2. Kontroller IP-adressen i ruterens DHCP-tabell\n3. Prøv å få tilgang til enhetens webgrensesnitt direkte\n4. Hvis IP-en har endret seg, rekonfigurer integrasjonen med den nye adressen"
     },
+    "datalogger_silent": {
+      "title": "Dataloggeren {device_name} rapporterer ikke sine egne data",
+      "description": "Dataloggeren på {host} er tilkoblet og inverterdataene oppdateres normalt, men dens egne overvåkingsdata (oppetid, WiFi-status, systeminformasjon) har manglet fra REST-API-et over lengre tid. Sensorene forblir utilgjengelige til den er gjenopprettet.\n\n**Mest sannsynlig årsak:**\n- Etter en omstart klarte ikke dataloggeren å synkronisere klokken (NTP/internett utilgjengelig) og sluttet å publisere sine egne data — en kjent feil i VSN300-fastvaren\n\n**Hva du kan gjøre:**\n- Sjekk at dataloggeren har tilgang til internett (DNS/NTP), for eksempel via webgrensesnittet på http://{host}\n- Slå dataloggeren av og på igjen\n\nDenne meldingen fjernes automatisk så snart dataloggeren rapporterer sine egne data igjen."
+    },
     "partial_discovery": {
       "title": "Ufullstendig enhetsoppdagelse for {device_name}",
       "description": "Følgende enheter ble tidligere oppdaget, men svarer ikke for øyeblikket:\n\n{missing_devices}\n\n**Mulige årsaker:**\n- Inverteren er av (natt/ingen solproduksjon)\n- Enheten er midlertidig frakoblet\n\nIntegrasjonen oppdager enhetene automatisk på nytt når de kommer tilbake på nett. Denne meldingen fjernes automatisk når alle enheter er funnet.\n\nHvis en enhet er permanent fjernet, kan du slette den manuelt fra enhetssiden i Innstillinger."

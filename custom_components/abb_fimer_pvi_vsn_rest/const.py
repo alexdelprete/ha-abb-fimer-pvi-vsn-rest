@@ -60,6 +60,13 @@ DEFAULT_RECOVERY_SCRIPT = ""  # Empty = no script
 MIN_FAILURES_THRESHOLD = 1
 MAX_FAILURES_THRESHOLD = 10
 
+# Seconds the datalogger may be absent from livedata (while polls succeed)
+# before a repair issue is raised. Time-based rather than poll-based so the
+# behavior is independent of scan_interval. Generous enough to cover the
+# normal post-boot window where the datalogger omits its own livedata
+# section until its clock syncs (VSN300 fw 1.9.2 quirk).
+DATALOGGER_SILENT_THRESHOLD = 1800
+
 # VSN Models
 VSN_MODEL_300 = "VSN300"
 VSN_MODEL_700 = "VSN700"

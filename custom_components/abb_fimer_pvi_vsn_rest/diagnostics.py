@@ -84,13 +84,18 @@ async def async_get_config_entry_diagnostics(
         ),
     }
 
-    # Gather sensor data summary (counts by device type, no actual values)
+    # Gather sensor data summary (per-device point counts, no actual values).
+    # A device present in discovery but missing here (or with has_points=False)
+    # is not reporting in livedata — its sensors are unavailable.
     sensor_summary = {}
     if coordinator.data:
-        for device_id, device_data in coordinator.data.items():
+        for device_id, device_data in coordinator.data.get("devices", {}).items():
             if isinstance(device_data, dict):
+                points = device_data.get("points") or {}
                 sensor_summary[f"device_{device_id[:8]}..."] = {
-                    "point_count": len(device_data),
+                    "device_type": device_data.get("device_type"),
+                    "point_count": len(points),
+                    "has_points": bool(points),
                 }
 
     return {
