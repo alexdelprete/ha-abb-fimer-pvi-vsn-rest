@@ -269,7 +269,7 @@
         "name": "Energia - Maja inverterist Inverter (Vool Week)"
       },
       "e6_total": {
-        "name": "Energia - Maja inverterist Inverter Kokku"
+        "name": "Energia - Maja inverterist Inverter (Kokku)"
       },
       "e7_last_month": {
         "name": "Energia - Maja Tarbimine (Vool Month)"
@@ -278,7 +278,7 @@
         "name": "Energia - Maja Tarbimine (Vool Week)"
       },
       "e7_total": {
-        "name": "Energia - Maja Tarbimine Kokku"
+        "name": "Energia - Maja Tarbimine (Kokku)"
       },
       "e8_last_month": {
         "name": "Energia AC - Võrk Import (Vool Month)"
@@ -287,10 +287,10 @@
         "name": "Energia AC - Võrk Import (Vool Week)"
       },
       "e_backup": {
-        "name": "Energia AC - Varundus Väljund Kokku"
+        "name": "Energia AC - Varundus Väljund (Kokku)"
       },
       "e_charge": {
-        "name": "Energia - Aku Laadimine Kokku"
+        "name": "Energia - Aku Laadimine (Kokku)"
       },
       "e_charge_last_month": {
         "name": "Energia - Aku Laadimine (Vool Month)"
@@ -299,10 +299,10 @@
         "name": "Energia - Aku Laadimine (Vool Week)"
       },
       "e_ct": {
-        "name": "Energia - Vool Transformer (CT) Kokku"
+        "name": "Energia - Vool Transformer (CT) (Kokku)"
       },
       "e_discharge": {
-        "name": "Energia - Aku Tühjendamine Kokku"
+        "name": "Energia - Aku Tühjendamine (Kokku)"
       },
       "e_discharge_last_month": {
         "name": "Energia - Aku Tühjendamine (Vool Month)"
@@ -311,16 +311,16 @@
         "name": "Energia - Aku Tühjendamine (Vool Week)"
       },
       "e_dt": {
-        "name": "Energia - Direct Transducer (DT) Kokku"
+        "name": "Energia - Direct Transducer (DT) (Kokku)"
       },
       "e_grid_export": {
-        "name": "Energia AC - Võrk Eksport Kokku"
+        "name": "Energia AC - Võrk Eksport (Kokku)"
       },
       "e_grid_import": {
-        "name": "Energia AC - Võrk Import Kokku"
+        "name": "Energia AC - Võrk Import (Kokku)"
       },
       "e_tot_charge": {
-        "name": "Energia - Aku Laadimine Total Kokku"
+        "name": "Energia - Aku Laadimine Total (Kokku)"
       },
       "e_tot_charge_last_month": {
         "name": "Energia - Aku Laadimine Total (Vool Month)"
@@ -329,7 +329,7 @@
         "name": "Energia - Aku Laadimine Total (Vool Week)"
       },
       "e_tot_discharge": {
-        "name": "Energia - Aku Tühjendamine Total Kokku"
+        "name": "Energia - Aku Tühjendamine Total (Kokku)"
       },
       "e_tot_discharge_last_month": {
         "name": "Energia - Aku Tühjendamine Total (Vool Month)"
@@ -338,22 +338,22 @@
         "name": "Energia - Aku Tühjendamine Total (Vool Week)"
       },
       "e_total": {
-        "name": "Energia AC - Toodetud Kokku"
+        "name": "Energia AC - Toodetud (Kokku)"
       },
       "e_total_absorbed": {
-        "name": "Energia AC - Neeldunud Kokku"
+        "name": "Energia AC - Neeldunud (Kokku)"
       },
       "e_total_apparent": {
-        "name": "Energia AC - Näiv Kokku"
+        "name": "Energia AC - Näiv (Kokku)"
       },
       "ein": {
-        "name": "Energia DC - PV Kokku"
+        "name": "Energia DC - PV (Kokku)"
       },
       "ein1": {
-        "name": "Energia DC - Ahel 1 Kokku"
+        "name": "Energia DC - Ahel 1 (Kokku)"
       },
       "ein2": {
-        "name": "Energia DC - Ahel 2 Kokku"
+        "name": "Energia DC - Ahel 2 (Kokku)"
       },
       "ein_last_month": {
         "name": "Energia DC - PV (Vool Month)"
@@ -632,7 +632,7 @@
         "name": "Product Number"
       },
       "power_peak_abs": {
-        "name": "Võimsus - Tipp Kokku"
+        "name": "Võimsus - Tipp (Kokku)"
       },
       "power_peak_today": {
         "name": "Võimsus - Tipp (Täna)"
@@ -740,7 +740,7 @@
         "name": "Olek - Hoiatuslipud"
       },
       "watthours": {
-        "name": "Energia AC - Toodetud Kokku"
+        "name": "Energia AC - Toodetud (Kokku)"
       },
       "watts": {
         "name": "Võimsus AC"
@@ -857,7 +857,7 @@
         "name": "Olek - DC Input 3"
       },
       "ein3": {
-        "name": "Energia DC - String 3 Kokku"
+        "name": "Energia DC - String 3 (Kokku)"
       },
       "temp_int": {
         "name": "Temperatuur - Internal"

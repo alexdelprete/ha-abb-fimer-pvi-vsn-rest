@@ -269,7 +269,7 @@
         "name": "Energi - Hus från Växelriktare (Ström Week)"
       },
       "e6_total": {
-        "name": "Energi - Hus från Växelriktare Total"
+        "name": "Energi - Hus från Växelriktare (Total)"
       },
       "e7_last_month": {
         "name": "Energi - Hus Förbrukning (Ström Month)"
@@ -278,7 +278,7 @@
         "name": "Energi - Hus Förbrukning (Ström Week)"
       },
       "e7_total": {
-        "name": "Energi - Hus Förbrukning Total"
+        "name": "Energi - Hus Förbrukning (Total)"
       },
       "e8_last_month": {
         "name": "Energi AC - Nät Import (Ström Month)"
@@ -287,10 +287,10 @@
         "name": "Energi AC - Nät Import (Ström Week)"
       },
       "e_backup": {
-        "name": "Energi AC - Backup Utgång Total"
+        "name": "Energi AC - Backup Utgång (Total)"
       },
       "e_charge": {
-        "name": "Energi - Batteriladdning Total"
+        "name": "Energi - Batteriladdning (Total)"
       },
       "e_charge_last_month": {
         "name": "Energi - Batteriladdning (Ström Month)"
@@ -299,10 +299,10 @@
         "name": "Energi - Batteriladdning (Ström Week)"
       },
       "e_ct": {
-        "name": "Energi - Ström Transformer (CT) Total"
+        "name": "Energi - Ström Transformer (CT) (Total)"
       },
       "e_discharge": {
-        "name": "Energi - Batteriurladdning Total"
+        "name": "Energi - Batteriurladdning (Total)"
       },
       "e_discharge_last_month": {
         "name": "Energi - Batteriurladdning (Ström Month)"
@@ -311,16 +311,16 @@
         "name": "Energi - Batteriurladdning (Ström Week)"
       },
       "e_dt": {
-        "name": "Energi - Direct Transducer (DT) Total"
+        "name": "Energi - Direct Transducer (DT) (Total)"
       },
       "e_grid_export": {
-        "name": "Energi AC - Nät Export Total"
+        "name": "Energi AC - Nät Export (Total)"
       },
       "e_grid_import": {
-        "name": "Energi AC - Nät Import Total"
+        "name": "Energi AC - Nät Import (Total)"
       },
       "e_tot_charge": {
-        "name": "Energi - Batteriladdning Total Total"
+        "name": "Energi - Batteriladdning Total (Total)"
       },
       "e_tot_charge_last_month": {
         "name": "Energi - Batteriladdning Total (Ström Month)"
@@ -329,7 +329,7 @@
         "name": "Energi - Batteriladdning Total (Ström Week)"
       },
       "e_tot_discharge": {
-        "name": "Energi - Batteriurladdning Total Total"
+        "name": "Energi - Batteriurladdning Total (Total)"
       },
       "e_tot_discharge_last_month": {
         "name": "Energi - Batteriurladdning Total (Ström Month)"
@@ -338,22 +338,22 @@
         "name": "Energi - Batteriurladdning Total (Ström Week)"
       },
       "e_total": {
-        "name": "Energi AC - Producerad Total"
+        "name": "Energi AC - Producerad (Total)"
       },
       "e_total_absorbed": {
-        "name": "Energi AC - Absorberad Total"
+        "name": "Energi AC - Absorberad (Total)"
       },
       "e_total_apparent": {
-        "name": "Energi AC - Skenbar Total"
+        "name": "Energi AC - Skenbar (Total)"
       },
       "ein": {
-        "name": "Energi DC - PV Total"
+        "name": "Energi DC - PV (Total)"
       },
       "ein1": {
-        "name": "Energi DC - Sträng 1 Total"
+        "name": "Energi DC - Sträng 1 (Total)"
       },
       "ein2": {
-        "name": "Energi DC - Sträng 2 Total"
+        "name": "Energi DC - Sträng 2 (Total)"
       },
       "ein_last_month": {
         "name": "Energi DC - PV (Ström Month)"
@@ -632,7 +632,7 @@
         "name": "Product Number"
       },
       "power_peak_abs": {
-        "name": "Effekt - Topp Total"
+        "name": "Effekt - Topp (Total)"
       },
       "power_peak_today": {
         "name": "Effekt - Topp (Idag)"
@@ -740,7 +740,7 @@
         "name": "Status - Varningsflaggor"
       },
       "watthours": {
-        "name": "Energi AC - Producerad Total"
+        "name": "Energi AC - Producerad (Total)"
       },
       "watts": {
         "name": "Effekt AC"
@@ -857,7 +857,7 @@
         "name": "Status - DC Input 3"
       },
       "ein3": {
-        "name": "Energi DC - String 3 Total"
+        "name": "Energi DC - String 3 (Total)"
       },
       "temp_int": {
         "name": "Temperatur - Internal"

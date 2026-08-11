@@ -269,7 +269,7 @@
         "name": "Energia - Casa da Inverter (Corrente Week)"
       },
       "e6_total": {
-        "name": "Energia - Casa da Inverter Totale"
+        "name": "Energia - Casa da Inverter (Totale)"
       },
       "e7_last_month": {
         "name": "Energia - Casa Consumo (Corrente Month)"
@@ -278,7 +278,7 @@
         "name": "Energia - Casa Consumo (Corrente Week)"
       },
       "e7_total": {
-        "name": "Energia - Casa Consumo Totale"
+        "name": "Energia - Casa Consumo (Totale)"
       },
       "e8_last_month": {
         "name": "Energia AC - Rete Importazione (Corrente Month)"
@@ -287,10 +287,10 @@
         "name": "Energia AC - Rete Importazione (Corrente Week)"
       },
       "e_backup": {
-        "name": "Energia AC - Uscita Backup Totale"
+        "name": "Energia AC - Uscita Backup (Totale)"
       },
       "e_charge": {
-        "name": "Energia - Carica Batteria Totale"
+        "name": "Energia - Carica Batteria (Totale)"
       },
       "e_charge_last_month": {
         "name": "Energia - Carica Batteria (Corrente Month)"
@@ -299,10 +299,10 @@
         "name": "Energia - Carica Batteria (Corrente Week)"
       },
       "e_ct": {
-        "name": "Energia - Corrente Transformer (CT) Totale"
+        "name": "Energia - Corrente Transformer (CT) (Totale)"
       },
       "e_discharge": {
-        "name": "Energia - Scarica Batteria Totale"
+        "name": "Energia - Scarica Batteria (Totale)"
       },
       "e_discharge_last_month": {
         "name": "Energia - Scarica Batteria (Corrente Month)"
@@ -311,16 +311,16 @@
         "name": "Energia - Scarica Batteria (Corrente Week)"
       },
       "e_dt": {
-        "name": "Energia - Direct Transducer (DT) Totale"
+        "name": "Energia - Direct Transducer (DT) (Totale)"
       },
       "e_grid_export": {
-        "name": "Energia AC - Rete Esportazione Totale"
+        "name": "Energia AC - Rete Esportazione (Totale)"
       },
       "e_grid_import": {
-        "name": "Energia AC - Rete Importazione Totale"
+        "name": "Energia AC - Rete Importazione (Totale)"
       },
       "e_tot_charge": {
-        "name": "Energia - Carica Batteria Total Totale"
+        "name": "Energia - Carica Batteria Total (Totale)"
       },
       "e_tot_charge_last_month": {
         "name": "Energia - Carica Batteria Total (Corrente Month)"
@@ -329,7 +329,7 @@
         "name": "Energia - Carica Batteria Total (Corrente Week)"
       },
       "e_tot_discharge": {
-        "name": "Energia - Scarica Batteria Total Totale"
+        "name": "Energia - Scarica Batteria Total (Totale)"
       },
       "e_tot_discharge_last_month": {
         "name": "Energia - Scarica Batteria Total (Corrente Month)"
@@ -338,22 +338,22 @@
         "name": "Energia - Scarica Batteria Total (Corrente Week)"
       },
       "e_total": {
-        "name": "Energia AC - Prodotta Totale"
+        "name": "Energia AC - Prodotta (Totale)"
       },
       "e_total_absorbed": {
-        "name": "Energia AC - Assorbita Totale"
+        "name": "Energia AC - Assorbita (Totale)"
       },
       "e_total_apparent": {
-        "name": "Energia AC - Apparente Totale"
+        "name": "Energia AC - Apparente (Totale)"
       },
       "ein": {
-        "name": "Energia DC - PV Totale"
+        "name": "Energia DC - PV (Totale)"
       },
       "ein1": {
-        "name": "Energia DC - Stringa 1 Totale"
+        "name": "Energia DC - Stringa 1 (Totale)"
       },
       "ein2": {
-        "name": "Energia DC - Stringa 2 Totale"
+        "name": "Energia DC - Stringa 2 (Totale)"
       },
       "ein_last_month": {
         "name": "Energia DC - PV (Corrente Month)"
@@ -632,7 +632,7 @@
         "name": "Product Number"
       },
       "power_peak_abs": {
-        "name": "Potenza - Picco Totale"
+        "name": "Potenza - Picco (Totale)"
       },
       "power_peak_today": {
         "name": "Potenza - Picco (Oggi)"
@@ -740,7 +740,7 @@
         "name": "Stato - Flag Avviso"
       },
       "watthours": {
-        "name": "Energia AC - Prodotta Totale"
+        "name": "Energia AC - Prodotta (Totale)"
       },
       "watts": {
         "name": "Potenza AC"
@@ -857,7 +857,7 @@
         "name": "Stato - DC Input 3"
       },
       "ein3": {
-        "name": "Energia DC - String 3 Totale"
+        "name": "Energia DC - String 3 (Totale)"
       },
       "temp_int": {
         "name": "Temperatura - Internal"

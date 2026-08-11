@@ -269,7 +269,7 @@
         "name": "Energia - Talo invertteristä Invertteri (Virta Week)"
       },
       "e6_total": {
-        "name": "Energia - Talo invertteristä Invertteri Yhteensä"
+        "name": "Energia - Talo invertteristä Invertteri (Yhteensä)"
       },
       "e7_last_month": {
         "name": "Energia - Talo Kulutus (Virta Month)"
@@ -278,7 +278,7 @@
         "name": "Energia - Talo Kulutus (Virta Week)"
       },
       "e7_total": {
-        "name": "Energia - Talo Kulutus Yhteensä"
+        "name": "Energia - Talo Kulutus (Yhteensä)"
       },
       "e8_last_month": {
         "name": "Energia AC - Verkko Tuonti (Virta Month)"
@@ -287,10 +287,10 @@
         "name": "Energia AC - Verkko Tuonti (Virta Week)"
       },
       "e_backup": {
-        "name": "Energia AC - Varmuuskopiointi Lähtö Yhteensä"
+        "name": "Energia AC - Varmuuskopiointi Lähtö (Yhteensä)"
       },
       "e_charge": {
-        "name": "Energia - Akun Lataus Yhteensä"
+        "name": "Energia - Akun Lataus (Yhteensä)"
       },
       "e_charge_last_month": {
         "name": "Energia - Akun Lataus (Virta Month)"
@@ -299,10 +299,10 @@
         "name": "Energia - Akun Lataus (Virta Week)"
       },
       "e_ct": {
-        "name": "Energia - Virta Transformer (CT) Yhteensä"
+        "name": "Energia - Virta Transformer (CT) (Yhteensä)"
       },
       "e_discharge": {
-        "name": "Energia - Akun Purkaus Yhteensä"
+        "name": "Energia - Akun Purkaus (Yhteensä)"
       },
       "e_discharge_last_month": {
         "name": "Energia - Akun Purkaus (Virta Month)"
@@ -311,16 +311,16 @@
         "name": "Energia - Akun Purkaus (Virta Week)"
       },
       "e_dt": {
-        "name": "Energia - Direct Transducer (DT) Yhteensä"
+        "name": "Energia - Direct Transducer (DT) (Yhteensä)"
       },
       "e_grid_export": {
-        "name": "Energia AC - Verkko Vienti Yhteensä"
+        "name": "Energia AC - Verkko Vienti (Yhteensä)"
       },
       "e_grid_import": {
-        "name": "Energia AC - Verkko Tuonti Yhteensä"
+        "name": "Energia AC - Verkko Tuonti (Yhteensä)"
       },
       "e_tot_charge": {
-        "name": "Energia - Akun Lataus Total Yhteensä"
+        "name": "Energia - Akun Lataus Total (Yhteensä)"
       },
       "e_tot_charge_last_month": {
         "name": "Energia - Akun Lataus Total (Virta Month)"
@@ -329,7 +329,7 @@
         "name": "Energia - Akun Lataus Total (Virta Week)"
       },
       "e_tot_discharge": {
-        "name": "Energia - Akun Purkaus Total Yhteensä"
+        "name": "Energia - Akun Purkaus Total (Yhteensä)"
       },
       "e_tot_discharge_last_month": {
         "name": "Energia - Akun Purkaus Total (Virta Month)"
@@ -338,22 +338,22 @@
         "name": "Energia - Akun Purkaus Total (Virta Week)"
       },
       "e_total": {
-        "name": "Energia AC - Tuotettu Yhteensä"
+        "name": "Energia AC - Tuotettu (Yhteensä)"
       },
       "e_total_absorbed": {
-        "name": "Energia AC - Absorboitu Yhteensä"
+        "name": "Energia AC - Absorboitu (Yhteensä)"
       },
       "e_total_apparent": {
-        "name": "Energia AC - Näennäinen Yhteensä"
+        "name": "Energia AC - Näennäinen (Yhteensä)"
       },
       "ein": {
-        "name": "Energia DC - PV Yhteensä"
+        "name": "Energia DC - PV (Yhteensä)"
       },
       "ein1": {
-        "name": "Energia DC - Ketju 1 Yhteensä"
+        "name": "Energia DC - Ketju 1 (Yhteensä)"
       },
       "ein2": {
-        "name": "Energia DC - Ketju 2 Yhteensä"
+        "name": "Energia DC - Ketju 2 (Yhteensä)"
       },
       "ein_last_month": {
         "name": "Energia DC - PV (Virta Month)"
@@ -632,7 +632,7 @@
         "name": "Product Number"
       },
       "power_peak_abs": {
-        "name": "Teho - Huippu Yhteensä"
+        "name": "Teho - Huippu (Yhteensä)"
       },
       "power_peak_today": {
         "name": "Teho - Huippu (Tänään)"
@@ -740,7 +740,7 @@
         "name": "Tila - Varoitusliput"
       },
       "watthours": {
-        "name": "Energia AC - Tuotettu Yhteensä"
+        "name": "Energia AC - Tuotettu (Yhteensä)"
       },
       "watts": {
         "name": "Teho AC"
@@ -857,7 +857,7 @@
         "name": "Tila - DC Input 3"
       },
       "ein3": {
-        "name": "Energia DC - String 3 Yhteensä"
+        "name": "Energia DC - String 3 (Yhteensä)"
       },
       "temp_int": {
         "name": "Lämpötila - Internal"

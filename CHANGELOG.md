@@ -34,6 +34,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Consistent time-qualifier naming: "Lifetime" now parenthesized** — 19 display names
+  like "Energy AC - Produced Lifetime" become "Energy AC - Produced (Lifetime)",
+  matching the existing "(Today)"/"(Current Month)"/"(Since Restart)" convention.
+  Cosmetic only: HA's slugify strips parentheses, so entity IDs are unchanged in all
+  10 languages (verified programmatically — zero slug changes).
+
 - **Concrete self-service upgrade steps for VSN300 firmware 2.0.0 users** (Refs #68) —
   The repair issue, config-flow error, and README now give the hardware-confirmed
   upgrade procedure (datalogger web UI → FW UPDATE tab → Remote Update → Check for FW
