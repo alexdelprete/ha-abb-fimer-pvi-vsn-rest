@@ -46,7 +46,10 @@ import time
 from typing import Any
 from urllib.parse import urlparse
 
-import aiohttp
+try:
+    import aiohttp
+except ImportError:
+    sys.exit("aiohttp is required to run this script. Install it with: pip install aiohttp")
 
 # Configure logging
 logging.basicConfig(
