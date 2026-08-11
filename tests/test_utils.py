@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -181,3 +182,33 @@ class TestReadJsonLenient:
         result = await read_json_lenient(response)
 
         assert result == {"m101_1_W": 1737.9, "units": "kW"}
+
+    @pytest.mark.asyncio
+    async def test_real_vsn300_fw201_utf8_config_decodes_correctly(self) -> None:
+        """Regression: real fw 2.0.1 /v1/config with an accented plant name.
+
+        Captured from VSN300 firmware 2.0.1 (gseguin_vsn300_fw201_config_utf8.json),
+        the accented character in a user-entered plant name comes back as genuine
+        two-byte UTF-8 (é -> 0xC3 0xA9), with Content-Type application/json and no
+        charset. read_json_lenient must decode it as UTF-8 ("Café Test") — a forced
+        latin-1 decode would mojibake it to "CafÃ© Test". See issue #68.
+        """
+        sample = (
+            Path(__file__).parent.parent
+            / "docs"
+            / "vsn-data"
+            / "vsn300-data"
+            / "gseguin_vsn300_fw201_config_utf8.json"
+        )
+        raw = sample.read_bytes()
+        # Sanity-check the fixture still carries the genuine two-byte UTF-8 é.
+        assert b"\xc3\xa9" in raw
+
+        response = MagicMock()
+        response.read = AsyncMock(return_value=raw)
+
+        result = await read_json_lenient(response)
+
+        assert result["keys"]["plant.name"]["value"] == "Café Test"
+        # Guard the failure mode explicitly: forced latin-1 would have mojibaked it.
+        assert result["keys"]["plant.name"]["value"] != "CafÃ© Test"
