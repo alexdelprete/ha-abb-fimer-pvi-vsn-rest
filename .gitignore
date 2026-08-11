@@ -87,8 +87,8 @@ settings.local.json
 uv.lock
 nul
 
-# Local datalogger settings snapshots (contain plant address, coordinates,
-# serials and WiFi SSID — personal data, never commit). Sanitized reference
-# captures for the repo live in docs/vsn-data/ instead.
-vsn300_config_backup*.json
-vsn700_config_backup*.json
+# Unsanitized settings snapshots pulled from a live datalogger, kept locally
+# as restore insurance (e.g. before a factory reset). They carry plant address,
+# coordinates, serials and WiFi SSID — personal data, never commit. Sanitized
+# reference captures belong in docs/vsn-data/vsn{300,700}-data/ instead.
+docs/vsn-data/device-backups/
