@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from typing import Any
+from typing import Any, ClassVar
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import aiohttp
@@ -685,3 +685,108 @@ async def test_get_livedata_uses_lenient_json_decode() -> None:
     ):
         data = await client.get_livedata()
     assert data == expected
+
+
+class TestStatusPointInjection:
+    """Tests for _inject_status_points (VSN300 status keys -> datalogger points)."""
+
+    STATUS: ClassVar[dict[str, Any]] = {
+        "keys": {
+            "wlan.0.status": {"value": "connected"},
+            "wlan.0.dhcpState": {"value": "acquired"},
+            "wlan.ap.status": {"value": "off"},
+        }
+    }
+
+    @staticmethod
+    def _raw_data() -> dict[str, Any]:
+        return {
+            "077909-3G82-3112": {
+                "points": [{"name": "C_SN", "value": "077909-3G82-3112"}],
+            },
+            "a4:06:e9:7f:42:49": {
+                "points": [{"name": "sn", "value": "111033-3N16-1421"}],
+            },
+        }
+
+    @pytest.mark.asyncio
+    async def test_injects_into_datalogger_section(self) -> None:
+        """All three status keys are appended to the datalogger section only."""
+        client = ABBFimerVSNRestClient(
+            session=MagicMock(), base_url="http://host", vsn_model="VSN300"
+        )
+        raw = self._raw_data()
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.client._fetch_status",
+            new=AsyncMock(return_value=self.STATUS),
+        ):
+            await client._inject_status_points(raw)
+
+        datalogger_points = {p["name"]: p["value"] for p in raw["a4:06:e9:7f:42:49"]["points"]}
+        assert datalogger_points["wlan_0_status"] == "connected"
+        assert datalogger_points["wlan_0_dhcpState"] == "acquired"
+        assert datalogger_points["wlan_ap_status"] == "off"
+        # Inverter section untouched
+        assert len(raw["077909-3G82-3112"]["points"]) == 1
+
+    @pytest.mark.asyncio
+    async def test_skips_vsn700(self) -> None:
+        """VSN700 has no such status keys - the fetch must not even be attempted."""
+        client = ABBFimerVSNRestClient(
+            session=MagicMock(), base_url="http://host", vsn_model="VSN700"
+        )
+        raw = self._raw_data()
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.client._fetch_status",
+            new=AsyncMock(return_value=self.STATUS),
+        ) as fetch:
+            await client._inject_status_points(raw)
+        fetch.assert_not_awaited()
+        assert len(raw["a4:06:e9:7f:42:49"]["points"]) == 1
+
+    @pytest.mark.asyncio
+    async def test_skips_when_datalogger_silent(self) -> None:
+        """No datalogger section in livedata (silent wedge) -> no fetch, no injection."""
+        client = ABBFimerVSNRestClient(
+            session=MagicMock(), base_url="http://host", vsn_model="VSN300"
+        )
+        raw = {"077909-3G82-3112": {"points": [{"name": "C_SN", "value": "x"}]}}
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.client._fetch_status",
+            new=AsyncMock(return_value=self.STATUS),
+        ) as fetch:
+            await client._inject_status_points(raw)
+        fetch.assert_not_awaited()
+        assert len(raw["077909-3G82-3112"]["points"]) == 1
+
+    @pytest.mark.asyncio
+    async def test_status_fetch_failure_is_non_fatal(self) -> None:
+        """A status fetch error leaves livedata unchanged and raises nothing."""
+        client = ABBFimerVSNRestClient(
+            session=MagicMock(), base_url="http://host", vsn_model="VSN300"
+        )
+        raw = self._raw_data()
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.client._fetch_status",
+            new=AsyncMock(side_effect=VSNConnectionError("boom")),
+        ):
+            await client._inject_status_points(raw)
+        assert len(raw["a4:06:e9:7f:42:49"]["points"]) == 1
+
+    @pytest.mark.asyncio
+    async def test_missing_keys_injected_partially(self) -> None:
+        """Only status keys actually present in the response become points."""
+        client = ABBFimerVSNRestClient(
+            session=MagicMock(), base_url="http://host", vsn_model="VSN300"
+        )
+        raw = self._raw_data()
+        partial = {"keys": {"wlan.0.status": {"value": "connected"}}}
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.client._fetch_status",
+            new=AsyncMock(return_value=partial),
+        ):
+            await client._inject_status_points(raw)
+        names = {p["name"] for p in raw["a4:06:e9:7f:42:49"]["points"]}
+        assert "wlan_0_status" in names
+        assert "wlan_0_dhcpState" not in names
+        assert "wlan_ap_status" not in names

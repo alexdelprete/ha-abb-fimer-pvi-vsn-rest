@@ -26,6 +26,16 @@ UA_TO_MA_POINTS = {
     "IleakDC",  # VSN700 - DC (DC-DC) leakage current
 }
 
+# WiFi link quality conversion: the VSN300 datalogger reports wlan0_link_quality on
+# the Linux wireless-extensions 0-70 scale (/proc/net/wireless "link quality"), not a
+# percentage. Hardware-verified 2026-08-11: a -38 dBm link reads exactly 70 — the wext
+# cap min(70, 110 + dBm) — while the mapping declares the sensor unit as %. Convert to
+# a true 0-100 percentage (x100/70, rounded; capped for safety).
+WEXT_QUALITY_POINTS = {
+    "wlan0_link_quality",  # VSN300 - datalogger WiFi link quality
+}
+WEXT_QUALITY_MAX = 70
+
 # Temperature correction registry: Points with incorrect scale factor
 # Some ABB/FIMER inverters report cabinet temperature with SF=-1 instead of SF=-2
 # Detected when temperature exceeds reasonable threshold (70°C)
@@ -190,6 +200,7 @@ class VSNDataNormalizer:
         Handles conversions for:
         - uA → mA (leakage current sensors)
         - A → mA (VSN700 leakage current)
+        - WiFi link quality: wext 0-70 scale → percentage
         - Temperature scale factor correction
         - String cleanup (strip dashes)
         - Case normalization (title case)
@@ -215,6 +226,11 @@ class VSNDataNormalizer:
         if point_name in UA_TO_MA_POINTS and isinstance(point_value, (int, float)):
             point_value = point_value / 1000
             _LOGGER.debug("Converted %s from uA to mA: %s", point_name, point_value)
+
+        # WiFi link quality: wext 0-70 scale -> true percentage
+        if point_name in WEXT_QUALITY_POINTS and isinstance(point_value, (int, float)):
+            point_value = min(100, round(point_value * 100 / WEXT_QUALITY_MAX))
+            _LOGGER.debug("Converted %s from wext scale to %%: %s", point_name, point_value)
 
         # Temperature scale factor correction (divide by 10)
         if (

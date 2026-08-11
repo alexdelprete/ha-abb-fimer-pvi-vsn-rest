@@ -162,6 +162,17 @@ a `_device_type_map` (dict of livedata key → device_type) built lazily from `_
 on first poll. This map is invalidated when `update_discovered_devices()` is called after
 re-discovery, ensuring the client stays in sync with the coordinator.
 
+**Status Point Injection (VSN300, v1.5.11):**
+
+Three WiFi state values exist only in `/v1/status`, never in livedata: `wlan.0.status`
+(connection), `wlan.0.dhcpState` (DHCP lease), `wlan.ap.status` (setup-AP broadcasting).
+The mapping has carried rows for them since v1.3.8 (`Model_Notes: "From /status endpoint"`)
+but nothing ever fed them data. `_inject_status_points()` fetches `/v1/status` on every
+poll and appends these keys (per `VSN300_STATUS_INJECTED_POINTS` in `constants.py`) as
+points to the datalogger's livedata section before normalization. Non-fatal by design:
+on status-fetch failure, absent keys, or a silent datalogger (no livedata section), the
+points are simply missing that cycle and their sensors go unavailable.
+
 #### 3. Authentication (`abb_fimer_vsn_rest_client/auth.py`)
 
 VSN-specific authentication schemes.

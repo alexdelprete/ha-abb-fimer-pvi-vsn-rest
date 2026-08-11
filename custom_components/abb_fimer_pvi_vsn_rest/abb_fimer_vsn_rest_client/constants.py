@@ -9,6 +9,17 @@ ENDPOINT_FEEDS = "/v1/feeds"
 # connection on every request). Vendor regression, fixed in 2.0.1. See #68.
 UNSUPPORTED_VSN300_FIRMWARE = "2.0.0"
 
+# /v1/status keys the client injects into the VSN300 datalogger's livedata
+# section as points on every poll (status key -> livedata point name). The
+# mapping has carried rows for these point names since v1.3.8 ("From /status
+# endpoint" in Model_Notes) but nothing ever fed them data: sensors are built
+# exclusively from livedata, and these keys exist only in /v1/status.
+VSN300_STATUS_INJECTED_POINTS = {
+    "wlan.0.status": "wlan_0_status",  # WiFi connection status ("connected")
+    "wlan.0.dhcpState": "wlan_0_dhcpState",  # DHCP lease state ("acquired")
+    "wlan.ap.status": "wlan_ap_status",  # setup access point broadcasting ("on"/"off")
+}
+
 # Aurora protocol epoch offset (Jan 1, 2000 00:00:00 UTC)
 # The Aurora protocol uses a custom epoch instead of Unix epoch (Jan 1, 1970)
 # Reference: https://github.com/xreef/ABB_Aurora_Solar_Inverter_Library/blob/master/include/utils.h#L8

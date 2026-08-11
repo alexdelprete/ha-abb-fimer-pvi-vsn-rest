@@ -1827,12 +1827,18 @@ SUNSPEC_TO_HA_METADATA = {
     "Fan1rpm": {"device_class": None, "state_class": "measurement", "unit": "RPM"},
     "Fan2rpm": {"device_class": None, "state_class": "measurement", "unit": "RPM"},
     # Network Monitoring (%, measurement)
-    # Note: WiFi link quality is a percentage (0-100%), not signal strength in dB/dBm
+    # Note: the device reports wlan0_link_quality on the Linux wireless-extensions
+    # 0-70 scale (/proc/net/wireless "link quality"), NOT a percentage — verified on
+    # hardware 2026-08-11: a -38 dBm link reads exactly 70, the wext cap
+    # min(70, 110 + dBm). normalizer.py converts it to a true 0-100 % value; this
+    # entry describes the converted value. Integer precision: the source scale has
+    # only 71 steps, so decimals are noise.
     "wlan0_link_quality": {
         "device_class": None,
         "state_class": "measurement",
         "unit": "%",
         "icon": "mdi:wifi-cog",
+        "precision": 0,
     },
     "wlan0_ipaddr_local": {"icon": "mdi:wifi-cog"},
     "wlan0_mode": {"icon": "mdi:wifi-cog"},

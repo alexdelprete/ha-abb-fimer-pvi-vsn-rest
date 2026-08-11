@@ -173,6 +173,20 @@ class TestValueTransformations:
         normalizer = VSNDataNormalizer("VSN700")
         assert normalizer._apply_value_transformations("IleakInv", 0) == 0
 
+    def test_wext_link_quality_to_percent(self) -> None:
+        """wlan0_link_quality converts from the wext 0-70 scale to a true percentage.
+
+        The VSN300 datalogger reports the Linux /proc/net/wireless "link quality"
+        (0-70, capped at 70 = min(70, 110 + dBm)); the sensor unit is %.
+        Hardware-verified 2026-08-11: a -38 dBm link reads exactly 70.
+        """
+        normalizer = VSNDataNormalizer("VSN300")
+        assert normalizer._apply_value_transformations("wlan0_link_quality", 70) == 100
+        assert normalizer._apply_value_transformations("wlan0_link_quality", 40) == 57
+        assert normalizer._apply_value_transformations("wlan0_link_quality", 0) == 0
+        # Defensive cap if firmware ever reports above the wext maximum
+        assert normalizer._apply_value_transformations("wlan0_link_quality", 80) == 100
+
     def test_state_points_float_cast_to_int(self) -> None:
         """VSN700 state/flag codes arrive as floats (6.0) and are cast to int.
 

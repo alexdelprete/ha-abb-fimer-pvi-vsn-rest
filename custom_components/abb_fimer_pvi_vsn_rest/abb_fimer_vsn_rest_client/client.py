@@ -8,8 +8,9 @@ from typing import Any
 import aiohttp
 
 from .auth import detect_vsn_model, get_vsn300_digest_header, get_vsn700_basic_auth
-from .constants import ENDPOINT_LIVEDATA
-from .exceptions import VSNAuthenticationError, VSNConnectionError
+from .constants import ENDPOINT_LIVEDATA, VSN300_STATUS_INJECTED_POINTS
+from .discovery import _fetch_status
+from .exceptions import VSNAuthenticationError, VSNClientError, VSNConnectionError
 from .normalizer import VSNDataNormalizer
 from .utils import check_socket_connection, read_json_lenient
 
@@ -243,6 +244,9 @@ class ABBFimerVSNRestClient:
         self._ensure_device_type_map()
         self._inject_device_types(raw_data)
 
+        # Inject selected /v1/status keys as datalogger points (VSN300 only).
+        await self._inject_status_points(raw_data)
+
         normalized_data = self._normalizer.normalize(raw_data)
 
         # Log normalization statistics
@@ -267,6 +271,62 @@ class ABBFimerVSNRestClient:
                 )
 
         return normalized_data
+
+    async def _inject_status_points(self, raw_data: dict[str, Any]) -> None:
+        """Inject selected /v1/status keys into the datalogger's livedata section.
+
+        The VSN300 status endpoint carries WiFi state (connection status, DHCP
+        lease, setup-AP on/off) that never appears in livedata, but the mapping
+        has carried rows for these point names since v1.3.8 ("From /status
+        endpoint"). Fetch status once per poll and append the keys as points so
+        the normalizer resolves them like any other datalogger point.
+
+        VSN300 only, and non-fatal by design: on any failure — status fetch
+        error, key absent, or the datalogger section missing from livedata (the
+        "silent datalogger" wedge) — the points are simply absent this cycle
+        and their sensors go unavailable, same as any livedata gap.
+        """
+        if self.vsn_model != "VSN300":
+            return
+
+        # The VSN300 datalogger is the livedata section carrying an "sn" point
+        # (same signal discovery uses for device identification).
+        datalogger = next(
+            (
+                device_data
+                for device_data in raw_data.values()
+                if any(p.get("name") == "sn" for p in device_data.get("points", []))
+            ),
+            None,
+        )
+        if datalogger is None:
+            return
+
+        try:
+            status = await _fetch_status(
+                self.session,
+                self.base_url,
+                self.vsn_model,
+                self.username,
+                self.password,
+                self.timeout,
+                self.requires_auth,
+            )
+        except VSNClientError as err:
+            _LOGGER.debug("[Client] Status fetch for injected points failed: %s", err)
+            return
+
+        keys = status.get("keys", {})
+        for status_key, point_name in VSN300_STATUS_INJECTED_POINTS.items():
+            value = keys.get(status_key, {}).get("value")
+            if value is not None:
+                datalogger["points"].append({"name": point_name, "value": value})
+                _LOGGER.debug(
+                    "[Client] Injected status key %s as point %s = %s",
+                    status_key,
+                    point_name,
+                    value,
+                )
 
     def _ensure_device_type_map(self) -> None:
         """Build the device_type injection map if not already cached.

@@ -26,6 +26,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   UI code (`wifi-ap-svc.js`: 1 = station, 0 = AP); unknown codes render as
   "Unknown (N)".
 
+- **Three new VSN300 datalogger WiFi sensors** — "WiFi Status" (`connected`), "WiFi -
+  DHCP State" (`acquired`), and "WiFi - AP Status" (`on`/`off`, whether the setup
+  access point is still broadcasting). These values exist only in `/v1/status`; the
+  client now fetches status each poll and injects them as datalogger points. The
+  mapping rows and translations existed since v1.3.8 but were never fed data.
+
 ### Changed
 
 - **Concrete self-service upgrade steps for VSN300 firmware 2.0.0 users** (Refs #68) —
@@ -39,6 +45,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Diagnostics `sensor_summary` reported a single useless entry** — It iterated the
   top-level coordinator data keys instead of the per-device map. It now lists one entry
   per device with `device_type`, `point_count`, and `has_points`.
+
+- **WiFi - Link Quality showed the raw wext value as a percentage** — The datalogger
+  reports link quality on the Linux wireless-extensions 0-70 scale (hardware-verified:
+  a -38 dBm link reads exactly 70), but the sensor declared unit `%` and showed e.g.
+  "70.0%" for a full-strength link. The normalizer now converts to a true percentage
+  (70 → 100%) and the display precision is 0 (the source scale has only 71 steps).
 
 ### Documentation
 
