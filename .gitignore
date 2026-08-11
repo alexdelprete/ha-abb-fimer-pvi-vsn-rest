@@ -86,3 +86,9 @@ Thumbs.db
 settings.local.json
 uv.lock
 nul
+
+# Local datalogger settings snapshots (contain plant address, coordinates,
+# serials and WiFi SSID — personal data, never commit). Sanitized reference
+# captures for the repo live in docs/vsn-data/ instead.
+vsn300_config_backup*.json
+vsn700_config_backup*.json
