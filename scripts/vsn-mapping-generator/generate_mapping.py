@@ -3614,6 +3614,8 @@ def _get_suggested_precision(sunspec_name, device_class, units, state_class, ent
         "DC1State",
         "DC2State",
         "DC3State",
+        # VSN300 datalogger points with state maps (v1.5.11)
+        "wlan0_mode",  # WiFi operating mode -> "Station (Client)" / "Access Point"
     }
     if sunspec_name in state_sensors:
         return None  # No precision field - these are text-based sensors
