@@ -653,8 +653,10 @@ class TestVSNSensorNativeValue:
     ) -> None:
         """VSN300 datalogger wlan0_mode code 1 decodes to Station (Client).
 
-        Only value 1 is hardware-verified (fw 1.9.2 and 2.0.1 captures); any
-        other value must fall back to the standard "Unknown (N)" rendering.
+        Values come from the firmware's own web UI code (wifi-ap-svc.js:
+        1 = station, 0 = AP); value 1 additionally hardware-verified in
+        livedata captures. Unmapped values must fall back to the standard
+        "Unknown (N)" rendering.
         """
         point_data = {
             "value": 1,

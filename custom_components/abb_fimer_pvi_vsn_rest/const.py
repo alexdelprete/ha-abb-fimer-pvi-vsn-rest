@@ -72,12 +72,14 @@ VSN_MODEL_300 = "VSN300"
 VSN_MODEL_700 = "VSN700"
 
 # VSN300 datalogger WiFi operating mode (wlan0_mode livedata point).
-# Only value 1 (station/client) is hardware-verified — captured on fw 1.9.2
-# and 2.0.1 loggers connected as WiFi clients (status wlan.ap.status: "off").
-# The AP-mode value is undocumented and unobservable in practice: a logger in
-# AP mode is not on the LAN to be polled, so any other value renders as
-# "Unknown (N)" via the standard state-map fallback.
+# Values verified against the firmware's own web UI code (wifi-ap-svc.js,
+# fetched from a live fw 2.0.1 logger): getMode() treats 1 as station and
+# anything else as AP; setMode() writes '1' for station, '0' for AP (config
+# key wlan.0.connect). Value 1 additionally hardware-verified in livedata
+# captures (fw 1.9.2 and 2.0.1, logger connected as WiFi client). SunSpec has
+# no WLAN model, so no register-map enumeration exists for this point.
 WLAN_MODE_STATE_MAP = {
+    0: "Access Point",
     1: "Station (Client)",
 }
 

@@ -21,8 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   30 minutes and cleared automatically on recovery. Localized in all 10 languages.
 
 - **Human-readable WiFi mode on the datalogger** — The "WiFi - Mode" sensor now shows
-  "Station (Client)" instead of the raw code `1`, via the same state-map pattern as the
-  Aurora status sensors. Unverified codes render as "Unknown (N)".
+  "Station (Client)" or "Access Point" instead of the raw code, via the same state-map
+  pattern as the Aurora status sensors. Values verified against the firmware's own web
+  UI code (`wifi-ap-svc.js`: 1 = station, 0 = AP); unknown codes render as
+  "Unknown (N)".
 
 ### Changed
 
