@@ -385,13 +385,24 @@ All HA device info fields populated from discovery:
 
 **Background (issue #68):** VSN300 firmware behavior differs across versions, discovered
 through hardware testing on fw 1.9.2, 2.0.0, and 2.0.1 (reference captures in
-`docs/vsn-data/vsn300-data/gseguin_vsn300_fw20*`):
+`docs/vsn-data/vsn300-data/gseguin_vsn300_fw20*` — 1-phase PVI — and
+`docs/vsn-data/vsn300-data/alexdelprete_vsn300_fw201_*` — 3-phase PVI-10.0-OUTD):
 
 | Firmware | X-Digest validation | `/v1/livedata` |
 | -------- | ------------------- | -------------- |
 | 1.9.2    | accepts stock RFC-style AND web-UI constants | works |
 | 2.0.0    | accepts both (re-verified 2026-08-10) | **dead** — drops every TCP connection |
 | 2.0.1    | accepts both (re-verified 2026-08-10) | works (vendor fixed the regression) |
+
+> **fw 2.0.1 verified on 3-phase hardware (2026-08-11):** the maintainer upgraded his
+> VSN300 (WIFI LOGGER CARD + PVI-10.0-OUTD 3-phase) from 1.9.2 to 2.0.1 with captures
+> taken before and after. Result: **perfect parity** — `/v1/status` 34 keys,
+> inverter 52 points, datalogger 13 points, `/v1/feeds` 42 datastreams; zero
+> added/removed on every endpoint, X-Digest web-UI constants accepted throughout.
+> Upgrade UX caveat: the first "Download & Update" attempt was a silent no-op (the page
+> claimed "no FW update available" while still on 1.9.2); retrying until the progress
+> bar actually appears is the fix — remember this when users report the upgrade
+> "not working".
 
 > The hard nc/cnonce 401s originally reported in #68 (July 2026) could not be reproduced
 > in the 2026-08-10 re-test on the same hardware — cause unknown (possibly conflated with

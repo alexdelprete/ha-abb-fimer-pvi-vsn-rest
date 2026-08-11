@@ -42,6 +42,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   reproduced. Also verified on hardware that the firmware stores user-entered text as
   genuine UTF-8, validating the UTF-8-first decode order of `read_json_lenient()`.
 
+- Verified fw 2.0.1 on 3-phase hardware (Refs #68): the maintainer upgraded his VSN300
+  (PVI-10.0-OUTD 3-phase) from 1.9.2 to 2.0.1 with before/after captures — perfect
+  parity on all endpoints (status 34 keys, inverter 52 points, datalogger 13 points,
+  feeds 42 datastreams; zero added/removed). Sanitized reference captures added as
+  `docs/vsn-data/vsn300-data/alexdelprete_vsn300_fw201_*`.
+
 ## [1.5.10] - 2026-08-10
 
 ### Added

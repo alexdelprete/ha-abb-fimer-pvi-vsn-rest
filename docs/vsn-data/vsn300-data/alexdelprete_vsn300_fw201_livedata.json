@@ -1,0 +1,275 @@
+{
+  "YYYYYY-3G82-XXXX": {
+    "device_id": "YYYYYY-3G82-XXXX",
+    "device_type": "inverter_3phases",
+    "timestamp": "2026-08-11T13:06:56+0200",
+    "points": [
+      {
+        "name": "C_Mn",
+        "value": "Power-One"
+      },
+      {
+        "name": "C_Md",
+        "value": "-3G82-"
+      },
+      {
+        "name": "C_Opt",
+        "value": "X"
+      },
+      {
+        "name": "C_SN",
+        "value": "YYYYYY-3G82-XXXX"
+      },
+      {
+        "name": "C_Vr",
+        "value": "C008"
+      },
+      {
+        "name": "C_DA",
+        "value": 2
+      },
+      {
+        "name": "CountryStd",
+        "value": 106
+      },
+      {
+        "name": "m160_1_DCA_1",
+        "value": 5.82550048828125
+      },
+      {
+        "name": "m160_1_DCV_1",
+        "value": 301.7368469238281
+      },
+      {
+        "name": "m160_1_DCW_1",
+        "value": 1767.1153564453125
+      },
+      {
+        "name": "m160_1_DCA_2",
+        "value": 5.68450927734375
+      },
+      {
+        "name": "m160_1_DCV_2",
+        "value": 270.8384704589844
+      },
+      {
+        "name": "m160_1_DCW_2",
+        "value": 1527.383056640625
+      },
+      {
+        "name": "m103_1_DCW",
+        "value": 3294.49853515625
+      },
+      {
+        "name": "m103_1_A",
+        "value": 3.9758546352386475
+      },
+      {
+        "name": "m103_1_AphA",
+        "value": 3.968485116958618
+      },
+      {
+        "name": "m103_1_AphB",
+        "value": 4.33512020111084
+      },
+      {
+        "name": "m103_1_AphC",
+        "value": 4.558928489685059
+      },
+      {
+        "name": "m103_1_W",
+        "value": 3194.01611328125
+      },
+      {
+        "name": "m103_1_PhVphA",
+        "value": 246.34457397460938
+      },
+      {
+        "name": "m103_1_PhVphB",
+        "value": 238.0366668701172
+      },
+      {
+        "name": "m103_1_PhVphC",
+        "value": 247.69708251953125
+      },
+      {
+        "name": "m103_1_PhVphAB",
+        "value": 423.7060241699219
+      },
+      {
+        "name": "m103_1_PhVphBC",
+        "value": 424.8916015625
+      },
+      {
+        "name": "m103_1_PhVphCA",
+        "value": 428.2882995605469
+      },
+      {
+        "name": "m103_1_Hz",
+        "value": 49.979007720947266
+      },
+      {
+        "name": "m103_1_HzA",
+        "value": 49.979007720947266
+      },
+      {
+        "name": "m103_1_HzB",
+        "value": 49.979007720947266
+      },
+      {
+        "name": "m103_1_HzC",
+        "value": 49.979007720947266
+      },
+      {
+        "name": "m103_1_PowerPeakToday",
+        "value": 3307.8076171875
+      },
+      {
+        "name": "m103_1_PowerPeakAbs",
+        "value": 7548.298828125
+      },
+      {
+        "name": "m103_1_PF",
+        "value": 1.0
+      },
+      {
+        "name": "m103_1_TmpCab",
+        "value": 247.43930053710938
+      },
+      {
+        "name": "m64061_1_Booster_Tmp",
+        "value": 54.3199577331543
+      },
+      {
+        "name": "m103_1_TmpOt",
+        "value": 50.56000518798828
+      },
+      {
+        "name": "m64061_1_VGnd",
+        "value": 7.735736846923828
+      },
+      {
+        "name": "m64061_1_VBulk",
+        "value": 633.3714599609375
+      },
+      {
+        "name": "m64061_1_VBulkMid",
+        "value": 321.518310546875
+      },
+      {
+        "name": "m64061_1_Isolation_Ohm1",
+        "value": 20.0
+      },
+      {
+        "name": "m64061_1_ILeakDcAc",
+        "value": 0.0
+      },
+      {
+        "name": "m64061_1_ILeakDcDc",
+        "value": 0.0
+      },
+      {
+        "name": "m64061_1_SysTime",
+        "value": 839768821
+      },
+      {
+        "name": "m64061_1_DayWH",
+        "value": 15471.0
+      },
+      {
+        "name": "m64061_1_WeekWH",
+        "value": 67591.0
+      },
+      {
+        "name": "m64061_1_MonthWH",
+        "value": 285310.0
+      },
+      {
+        "name": "m64061_1_YearWH",
+        "value": 4918793.0
+      },
+      {
+        "name": "m103_1_WH",
+        "value": 114285600.0
+      },
+      {
+        "name": "m64061_1_GlobalSt",
+        "value": 6
+      },
+      {
+        "name": "m64061_1_AlarmSt",
+        "value": 0
+      },
+      {
+        "name": "m64061_1_DcSt1",
+        "value": 2
+      },
+      {
+        "name": "m64061_1_DcSt2",
+        "value": 2
+      },
+      {
+        "name": "m64061_1_InverterSt",
+        "value": 2
+      }
+    ]
+  },
+  "00:00:00:00:00:02": {
+    "device_id": "00:00:00:00:00:02",
+    "timestamp": "2026-08-11T13:06:54+0200",
+    "points": [
+      {
+        "name": "type",
+        "value": "WIFI LOGGER CARD"
+      },
+      {
+        "name": "sn",
+        "value": "LLLLLL-3N16-BBBB"
+      },
+      {
+        "name": "pn",
+        "value": "-3N16-"
+      },
+      {
+        "name": "fw_ver",
+        "value": "2.0.1"
+      },
+      {
+        "name": "uptime",
+        "value": 129.0
+      },
+      {
+        "name": "sys_load",
+        "value": 0.1298828125
+      },
+      {
+        "name": "free_ram",
+        "value": 5107712.0
+      },
+      {
+        "name": "flash_free",
+        "value": 3288268800.0
+      },
+      {
+        "name": "store_size",
+        "value": 14621696.0
+      },
+      {
+        "name": "wlan0_mode",
+        "value": 1
+      },
+      {
+        "name": "wlan0_ipaddr_local",
+        "value": "192.168.1.100"
+      },
+      {
+        "name": "wlan0_essid",
+        "value": "REDACTED-SSID"
+      },
+      {
+        "name": "wlan0_link_quality",
+        "value": 70
+      }
+    ]
+  }
+}
