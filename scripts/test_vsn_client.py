@@ -39,6 +39,9 @@ from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.client i
 from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.exceptions import (
     VSNClientError,
 )
+from custom_components.abb_fimer_pvi_vsn_rest.abb_fimer_vsn_rest_client.utils import (
+    read_json_lenient,
+)
 
 # Configure logging
 logging.basicConfig(
@@ -96,7 +99,8 @@ async def test_endpoint(
         timeout=aiohttp.ClientTimeout(total=timeout),
     ) as response:
         if response.status == 200:
-            return await response.json()
+            # Charset-tolerant decode (issue #68) — same helper the client uses
+            return await read_json_lenient(response)
         raise VSNClientError(f"Request failed: HTTP {response.status}")
 
 

@@ -37,12 +37,10 @@ from dataclasses import dataclass, field
 import hashlib
 import json
 import logging
-import os
 from pathlib import Path
 import re
 import socket
 import sys
-import time
 from typing import Any
 from urllib.parse import urlparse
 
@@ -467,9 +465,13 @@ def build_digest_header(
     opaque = challenge_params.get("opaque")
 
     if qop:
-        nc = "00000001"
-        cnonce_input = f"{nonce}:{time.time()}:{os.urandom(8).hex()}"
-        cnonce = hashlib.md5(cnonce_input.encode()).hexdigest()[:16]  # noqa: S324
+        # Fixed values matching the firmware web UI's auth-filter.js (issue #68,
+        # PR #69). The UI hardcodes these, so every firmware build must accept
+        # them — RFC-style random values are the only configuration ever
+        # reported failing in the field. Keep in sync with the integration's
+        # abb_fimer_vsn_rest_client/auth.py.
+        nc = "00000002"
+        cnonce = "ddf4bfcaf87acba9"
         response = calculate_digest_response(
             username, password, realm, nonce, method, uri, qop, nc, cnonce
         )
@@ -601,7 +603,7 @@ async def detect_vsn_model(
 
             if response.status == 200:
                 _LOGGER.info("No authentication required (HTTP 200)")
-                status_data = await response.json()
+                status_data = await read_json_lenient(response)
                 model = _detect_model_from_status(status_data)
                 return (model, False)
 
@@ -652,6 +654,25 @@ def _detect_model_from_status(status_data: dict) -> str:
 # ── Authenticated Fetch ──────────────────────────────────────────────
 
 
+async def read_json_lenient(response: aiohttp.ClientResponse) -> Any:
+    """Parse JSON tolerating the firmware's wrong/missing charset declarations.
+
+    VSN300 bodies may contain non-UTF-8 bytes (e.g. accented characters in
+    user-entered labels) while the Content-Type claims utf-8 or omits charset.
+    Try UTF-8 first (byte-identical for all ASCII payloads), fall back to
+    latin-1 (never fails) for legacy single-byte content. See issue #68.
+
+    Local copy for this standalone script — the source of truth is
+    abb_fimer_vsn_rest_client/utils.py in the integration.
+    """
+    raw = await response.read()
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeDecodeError:
+        text = raw.decode("latin-1")
+    return json.loads(text)
+
+
 async def fetch_endpoint(
     session: aiohttp.ClientSession,
     base_url: str,
@@ -685,7 +706,7 @@ async def fetch_endpoint(
             url, headers=headers, timeout=aiohttp.ClientTimeout(total=timeout)
         ) as response:
             if response.status == 200:
-                return await response.json()
+                return await read_json_lenient(response)
 
             if response.status == 401:
                 raise VSNAuthenticationError(f"Authentication failed for {endpoint}: HTTP 401")
