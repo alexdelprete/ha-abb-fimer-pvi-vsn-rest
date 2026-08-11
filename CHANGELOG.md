@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   sensors unavailable with no explanation. A WARNING repair issue is now raised after
   30 minutes and cleared automatically on recovery. Localized in all 10 languages.
 
+- **Human-readable WiFi mode on the datalogger** — The "WiFi - Mode" sensor now shows
+  "Station (Client)" instead of the raw code `1`, via the same state-map pattern as the
+  Aurora status sensors. Unverified codes render as "Unknown (N)".
+
 ### Changed
 
 - **Concrete self-service upgrade steps for VSN300 firmware 2.0.0 users** (Refs #68) —

@@ -645,6 +645,39 @@ class TestVSNSensorNativeValue:
 
         assert sensor.native_value == "Unknown (999)"
 
+    def test_native_value_wlan_mode_translation(
+        self,
+        sample_device: MockDiscoveredDevice,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """VSN300 datalogger wlan0_mode code 1 decodes to Station (Client).
+
+        Only value 1 is hardware-verified (fw 1.9.2 and 2.0.1 captures); any
+        other value must fall back to the standard "Unknown (N)" rendering.
+        """
+        point_data = {
+            "value": 1,
+            "ha_display_name": "WiFi - Mode",
+            "sunspec_name": "wlan0_mode",
+        }
+        mock_coordinator.data = {
+            "devices": {
+                TEST_INVERTER_SN: {
+                    "points": {"wlan0_mode": {"value": 1, "sunspec_name": "wlan0_mode"}}
+                }
+            }
+        }
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=sample_device.device_id,
+            device_type=sample_device.device_type,
+            point_name="wlan0_mode",
+            point_data=point_data,
+        )
+        assert sensor.native_value == "Station (Client)"
+
     def test_native_value_system_load_rounded(
         self,
         sample_device: MockDiscoveredDevice,

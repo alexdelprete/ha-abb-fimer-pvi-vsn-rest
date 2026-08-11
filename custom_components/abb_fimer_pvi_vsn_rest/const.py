@@ -71,6 +71,16 @@ DATALOGGER_SILENT_THRESHOLD = 1800
 VSN_MODEL_300 = "VSN300"
 VSN_MODEL_700 = "VSN700"
 
+# VSN300 datalogger WiFi operating mode (wlan0_mode livedata point).
+# Only value 1 (station/client) is hardware-verified — captured on fw 1.9.2
+# and 2.0.1 loggers connected as WiFi clients (status wlan.ap.status: "off").
+# The AP-mode value is undocumented and unobservable in practice: a logger in
+# AP mode is not on the LAN to be polled, so any other value renders as
+# "Unknown (N)" via the standard state-map fallback.
+WLAN_MODE_STATE_MAP = {
+    1: "Station (Client)",
+}
+
 # Integration-level mapping: SunSpec entity names → Aurora state maps
 # This is HA-specific glue that connects normalized SunSpec point names
 # to Aurora protocol state translations for display in Home Assistant.
@@ -91,6 +101,8 @@ STATE_ENTITY_MAPPINGS = {
     "DC2State": DCDC_STATE_MAP,  # VSN700
     "DC3State": DCDC_STATE_MAP,  # VSN700 (TRIO-TM 3rd MPPT)
     "AlarmState": ALARM_STATE_MAP,  # shared VSN700/VSN300 name
+    # VSN300 datalogger points (not Aurora protocol states)
+    "wlan0_mode": WLAN_MODE_STATE_MAP,  # WiFi operating mode
 }
 
 STARTUP_MESSAGE = f"""
