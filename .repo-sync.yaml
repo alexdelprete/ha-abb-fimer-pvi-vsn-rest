@@ -55,7 +55,13 @@ vars:
 
   # -- Extras --
   requirements_extra_deps: ["aiohttp>=3.13.3", "urllib3>=2.6.3"]
-  gitignore_extra: []
+  gitignore_extra:
+    - ""
+    - "# Unsanitized settings snapshots pulled from a live datalogger, kept locally"
+    - "# as restore insurance (e.g. before a factory reset). They carry plant address,"
+    - "# coordinates, serials and WiFi SSID — personal data, never commit. Sanitized"
+    - "# reference captures belong in docs/vsn-data/vsn{300,700}-data/ instead."
+    - "docs/vsn-data/device-backups/"
   bug_extra_fields: []
   config_extra_links: []
 
