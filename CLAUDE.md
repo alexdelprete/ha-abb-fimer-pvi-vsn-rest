@@ -1682,7 +1682,7 @@ The project includes `.markdownlint.json` configuration:
 Run linting: `npx markdownlint-cli2 *.md docs/*.md`
 
 <!-- BEGIN SHARED:repo-sync -->
-<!-- Synced by repo-sync on 2026-06-27 -->
+<!-- Synced by repo-sync on 2026-08-20 -->
 
 <!--
 ==============================================================================
@@ -2033,6 +2033,9 @@ in manifest.json and const.py.
 
 1. `custom_components/abb_fimer_pvi_vsn_rest/manifest.json` → `"version": "X.Y.Z"`
 1. `custom_components/abb_fimer_pvi_vsn_rest/const.py` → `VERSION = "X.Y.Z"`
+
+> const.py must declare the version as plain `VERSION = "X.Y.Z"` — no `Final`
+> annotation — because the release workflow and repo-sync validate that exact form.
 
 ### Complete Release Workflow
 
