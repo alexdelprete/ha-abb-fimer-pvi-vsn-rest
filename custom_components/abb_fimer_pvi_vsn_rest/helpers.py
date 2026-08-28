@@ -112,6 +112,27 @@ def compact_serial_number(serial: str) -> str:
     return serial.replace("-", "").replace(":", "").replace("_", "").lower()
 
 
+def namespace_meter_device_id(logger_sn: str, device_id: str) -> str:
+    """Build the registry device identifier for a meter, namespaced by logger serial.
+
+    Third-party meters (e.g. Eastron SDM230) report a placeholder device ID
+    ("000000-Eastron 1PH-0000") that is identical on every VSN logger, so the
+    meter device ID alone is not globally unique across config entries
+    (issue #74). Prefixing with the logger serial (compacted, so the value is
+    identical whether built from discovery's logger_sn or the lowercased
+    config entry unique_id) restores uniqueness.
+
+    Args:
+        logger_sn: Logger serial number (any case/formatting)
+        device_id: Raw meter device ID as reported by the VSN API
+
+    Returns:
+        Namespaced identifier (e.g., "1111113g961234_000000-Eastron 1PH-0000")
+
+    """
+    return f"{compact_serial_number(logger_sn)}_{device_id}"
+
+
 def format_device_name(
     manufacturer: str,
     device_type_simple: str,

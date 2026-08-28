@@ -7,7 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.5.12] - Unreleased
 
-- (nothing yet)
+### Fixed
+
+- **Duplicate meter unique IDs across multiple VSN config entries** (Reported in #74) —
+  Third-party meters (e.g. Eastron SDM230) report a placeholder device ID
+  (`000000-Eastron_1PH-0000`) identical on every logger, so with two config entries the
+  second meter's entities were rejected as duplicates and both meters merged into one
+  device. Meter unique IDs and device registry identifiers are now namespaced with the
+  logger serial number. A one-time config entry migration (v8→v9) rewrites existing
+  meter entities and devices in place — entity IDs, history, and statistics are
+  preserved.
 
 ## [1.5.11] - 2026-08-11
 

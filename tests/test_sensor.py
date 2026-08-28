@@ -395,6 +395,51 @@ class TestVSNSensorInit:
 
         assert sensor._attr_suggested_display_precision == 1
 
+    def test_inverter_unique_id_not_namespaced(
+        self,
+        sample_point_data: dict,
+        sample_device: MockDiscoveredDevice,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test inverter unique_ids keep the historical format (no logger prefix)."""
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=sample_device.device_id,
+            device_type=sample_device.device_type,
+            point_name="watts",
+            point_data=sample_point_data,
+        )
+
+        inverter_compact = compact_serial_number(TEST_INVERTER_SN)
+        assert sensor.unique_id == f"{DOMAIN}_inverter_{inverter_compact}_watts"
+
+    def test_meter_unique_id_namespaced_by_logger(
+        self,
+        sample_point_data: dict,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test meter unique_ids embed the logger serial (issue #74).
+
+        Third-party meters report a placeholder device ID identical on every
+        logger, so the meter serial alone collides across config entries.
+        """
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id="000000-Eastron_1PH-0000",
+            device_type="meter",
+            point_name="power_ac_meter_total",
+            point_data=sample_point_data,
+        )
+
+        logger_compact = compact_serial_number(TEST_LOGGER_SN)
+        assert sensor.unique_id == (
+            f"{DOMAIN}_meter_{logger_compact}_000000eastron1ph0000_power_ac_meter_total"
+        )
+
 
 class TestVSNSensorDeviceInfo:
     """Tests for VSNSensor device_info property."""
@@ -464,6 +509,48 @@ class TestVSNSensorDeviceInfo:
         device_info = sensor.device_info
         assert "via_device" in device_info
         assert device_info["via_device"] == (DOMAIN, TEST_LOGGER_SN)
+
+    def test_device_info_inverter_identifier_not_namespaced(
+        self,
+        sample_point_data: dict,
+        sample_device: MockDiscoveredDevice,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test inverter registry identifiers keep the raw device_id."""
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=sample_device.device_id,
+            device_type=sample_device.device_type,
+            point_name="watts",
+            point_data=sample_point_data,
+        )
+
+        device_info = sensor.device_info
+        assert device_info["identifiers"] == {(DOMAIN, TEST_INVERTER_SN)}
+
+    def test_device_info_meter_identifier_namespaced(
+        self,
+        sample_point_data: dict,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test meter registry identifiers embed the logger serial (issue #74)."""
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id="000000-Eastron_1PH-0000",
+            device_type="meter",
+            point_name="power_ac_meter_total",
+            point_data=sample_point_data,
+        )
+
+        logger_compact = compact_serial_number(TEST_LOGGER_SN)
+        device_info = sensor.device_info
+        assert device_info["identifiers"] == {(DOMAIN, f"{logger_compact}_000000-Eastron_1PH-0000")}
+        # serial_number stays the raw device ID as reported by the API
+        assert device_info["serial_number"] == "000000-Eastron_1PH-0000"
 
 
 class TestVSNSensorNativeValue:

@@ -504,6 +504,38 @@ newline** — scripted edits round-trip byte-identical with those settings.
 - `repairs.py`: `create_partial_discovery_issue()`, `delete_partial_discovery_issue()`
 - `const.py`: `CONF_KNOWN_DEVICES`
 
+### Meter Identifier Namespacing (v1.5.12, issue #74)
+
+**Decision**: Namespace **meter** unique_ids and device registry identifiers with the
+logger serial number; all other device types keep the historical, un-namespaced format.
+
+**Problem**: Third-party meters (e.g. Eastron SDM230) report a placeholder device ID
+(`000000-Eastron_1PH-0000`) that is identical on every VSN logger. With two config
+entries the meter identifiers collided: the second meter's entities were rejected as
+duplicate unique_ids and both meters merged into one HA device. Inverters and
+dataloggers have real serials/MACs, so only meters are affected.
+
+**Implementation**:
+
+- Unique ID (meters): `{DOMAIN}_meter_{logger_sn_compact}_{meter_sn_compact}_{point_name}`
+- Registry identifier (meters): `(DOMAIN, f"{logger_sn_compact}_{device_id}")` via
+  `helpers.namespace_meter_device_id()`
+- The compacted logger serial is identical whether built from discovery's `logger_sn`
+  (runtime, original case) or `config_entry.unique_id` (migration, lowercased) —
+  `compact_serial_number()` lowercases both. This is what lets migration v9 rebuild
+  the exact runtime values without discovery.
+- Migration v8→v9 (`_async_namespace_meter_identifiers_v9`): rewrites this entry's
+  meter entity unique_ids in place (entity IDs/history/statistics preserved) and swaps
+  the device registry identifier tuple. Only entities owned by the entry are touched —
+  in a collided setup the merged device holds only the first entry's entities; the
+  second entry's meter is created fresh at next setup.
+- `async_remove_config_entry_device()` strips the logger prefix before matching
+  `known_devices` (which stores raw device_ids).
+- Data-plane lookups (coordinator data, `available`, `known_devices`) still use the
+  raw `device_id`; the namespace exists only in registry-facing identifiers.
+- Multiple identical meters on ONE logger cannot be represented: `/v1/livedata` keys
+  devices by device ID, so duplicates collapse in the API itself — not our problem.
+
 ### Energy Sensor State Class & Accumulation Mode (v1.5.1)
 
 **Decision**: Introduce `accumulation_mode` attribute to drive `state_class` derivation, separate from `sensor_scope` which drives the stale-value guard.

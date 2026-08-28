@@ -39,7 +39,7 @@ from .const import (
     STARTUP_MESSAGE,
 )
 from .coordinator import ABBFimerPVIVSNRestCoordinator
-from .helpers import async_get_entity_translations, format_device_name
+from .helpers import async_get_entity_translations, compact_serial_number, format_device_name
 from .repairs import (
     create_connection_issue,
     create_partial_discovery_issue,
@@ -345,6 +345,11 @@ async def async_remove_config_entry_device(
     )
 
     if device_id:
+        # Meter identifiers are namespaced with the logger serial (migration v9);
+        # strip that prefix to recover the raw device_id stored in known_devices.
+        if config_entry.unique_id:
+            logger_prefix = f"{compact_serial_number(config_entry.unique_id)}_"
+            device_id = device_id.removeprefix(logger_prefix)
         # Remove from known_devices so we don't flag it as "missing"
         known_devices = list(config_entry.data.get(CONF_KNOWN_DEVICES, []))
         updated = [d for d in known_devices if d["device_id"] != device_id]
@@ -473,10 +478,11 @@ async def async_migrate_entry(
     Version 5 → 6: Clear stale object_id_base so HA rename preview uses original_name.
     Version 6 → 7: Fix object_id_base — set to original_name (None loses entity name).
     Version 7 → 8: Populate known_devices list from device registry.
+    Version 8 → 9: Namespace meter identifiers with the logger serial.
     """
-    if config_entry.version > 8:
+    if config_entry.version > 9:
         _LOGGER.error(
-            "Cannot downgrade config entry from version %s to 8",
+            "Cannot downgrade config entry from version %s to 9",
             config_entry.version,
         )
         return False
@@ -534,6 +540,15 @@ async def async_migrate_entry(
         _async_populate_known_devices_v8(hass, config_entry)
         hass.config_entries.async_update_entry(config_entry, version=8)
         _LOGGER.info("Config entry migration to version 8 complete")
+
+    if config_entry.version < 9:
+        _LOGGER.info(
+            "Migrating config entry from version %s to 9",
+            config_entry.version,
+        )
+        _async_namespace_meter_identifiers_v9(hass, config_entry)
+        hass.config_entries.async_update_entry(config_entry, version=9)
+        _LOGGER.info("Config entry migration to version 9 complete")
 
     return True
 
@@ -878,6 +893,84 @@ def _async_populate_known_devices_v8(
     _LOGGER.info(
         "Populated known_devices with %d devices from registry",
         len(known_devices),
+    )
+
+
+@callback
+def _async_namespace_meter_identifiers_v9(
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+) -> None:
+    """Namespace meter unique_ids and device identifiers with the logger serial.
+
+    Third-party meters (e.g. Eastron SDM230) report a placeholder device ID
+    ("000000-Eastron 1PH-0000") identical on every logger, so meter identifiers
+    built from the meter device ID alone collide across config entries
+    (issue #74). Meter entity unique_ids and device registry identifiers now
+    embed the compacted logger serial, which equals the compacted config entry
+    unique_id — so this migration rebuilds the exact values the sensor platform
+    produces at runtime, without needing discovery.
+
+    Only entities owned by THIS entry are rewritten (and only devices those
+    entities point at). In a collided setup the merged meter device holds only
+    the first entry's entities; the second entry's meter never got any, so its
+    device is left alone and is created fresh at next setup.
+    """
+    if not config_entry.unique_id:
+        _LOGGER.warning("Meter namespace migration v9 skipped: config entry has no unique_id")
+        return
+
+    logger_compact = compact_serial_number(config_entry.unique_id)
+    old_prefix = f"{DOMAIN}_meter_"
+    new_prefix = f"{DOMAIN}_meter_{logger_compact}_"
+
+    entity_registry = er.async_get(hass)
+    device_registry = dr.async_get(hass)
+    migrated_entities = 0
+    meter_registry_ids: set[str] = set()
+
+    for entity_entry in er.async_entries_for_config_entry(entity_registry, config_entry.entry_id):
+        unique_id = entity_entry.unique_id
+        if not unique_id.startswith(old_prefix) or unique_id.startswith(new_prefix):
+            continue
+
+        new_unique_id = new_prefix + unique_id.removeprefix(old_prefix)
+        if entity_registry.async_get_entity_id("sensor", DOMAIN, new_unique_id):
+            _LOGGER.debug(
+                "v9 skip %s: target unique_id %s already exists",
+                entity_entry.entity_id,
+                new_unique_id,
+            )
+            continue
+
+        entity_registry.async_update_entity(entity_entry.entity_id, new_unique_id=new_unique_id)
+        migrated_entities += 1
+        if entity_entry.device_id:
+            meter_registry_ids.add(entity_entry.device_id)
+
+    migrated_devices = 0
+    for registry_id in meter_registry_ids:
+        device_entry = device_registry.async_get(registry_id)
+        if not device_entry:
+            continue
+
+        new_identifiers = set()
+        changed = False
+        for domain_key, value in device_entry.identifiers:
+            if domain_key == DOMAIN and not value.startswith(f"{logger_compact}_"):
+                new_identifiers.add((DOMAIN, f"{logger_compact}_{value}"))
+                changed = True
+            else:
+                new_identifiers.add((domain_key, value))
+
+        if changed:
+            device_registry.async_update_device(registry_id, new_identifiers=new_identifiers)
+            migrated_devices += 1
+
+    _LOGGER.info(
+        "Meter namespace migration v9: updated %d entities and %d devices",
+        migrated_entities,
+        migrated_devices,
     )
 
 

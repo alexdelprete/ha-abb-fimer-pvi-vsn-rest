@@ -14,7 +14,28 @@ from custom_components.abb_fimer_pvi_vsn_rest.helpers import (
     log_error,
     log_info,
     log_warning,
+    namespace_meter_device_id,
 )
+
+
+class TestNamespaceMeterDeviceId:
+    """Tests for namespace_meter_device_id function."""
+
+    def test_prefixes_with_compacted_logger_serial(self) -> None:
+        """Test the meter device ID is prefixed with the compacted logger serial."""
+        result = namespace_meter_device_id("111033-3N16-1421", "000000-Eastron_1PH-0000")
+        assert result == "1110333n161421_000000-Eastron_1PH-0000"
+
+    def test_case_insensitive_logger_serial(self) -> None:
+        """Test discovery logger_sn and lowercased entry unique_id give the same result.
+
+        Migration v9 rebuilds identifiers from config_entry.unique_id (lowercased),
+        while the sensor platform uses discovery's logger_sn (original case) — both
+        must produce identical values.
+        """
+        from_discovery = namespace_meter_device_id("111033-3N16-1421", "000000-Eastron_1PH-0000")
+        from_unique_id = namespace_meter_device_id("111033-3n16-1421", "000000-Eastron_1PH-0000")
+        assert from_discovery == from_unique_id
 
 
 class TestLogDebug:

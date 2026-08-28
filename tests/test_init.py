@@ -15,6 +15,7 @@ from custom_components.abb_fimer_pvi_vsn_rest import (
     _async_fix_original_names_v4,
     _async_migrate_entity_ids_v2,
     _async_migrate_options,
+    _async_namespace_meter_identifiers_v9,
     _async_populate_known_devices_v8,
     _clear_startup_failure,
     _detect_missing_devices,
@@ -663,6 +664,7 @@ class TestAsyncRemoveConfigEntryDevice:
     def mock_config_entry(self) -> MagicMock:
         """Create mock config entry with known devices."""
         entry = MagicMock(spec=ConfigEntry)
+        entry.unique_id = "111033-3n16-1421"
         entry.data = {
             "known_devices": [
                 {
@@ -673,6 +675,11 @@ class TestAsyncRemoveConfigEntryDevice:
                 {
                     "device_id": "077909-3G82-3112",
                     "device_type": "inverter_3phases",
+                    "is_datalogger": False,
+                },
+                {
+                    "device_id": "000000-Eastron_1PH-0000",
+                    "device_type": "meter",
                     "is_datalogger": False,
                 },
             ],
@@ -711,8 +718,34 @@ class TestAsyncRemoveConfigEntryDevice:
         call_args = mock_hass.config_entries.async_update_entry.call_args
         new_data = call_args.kwargs.get("data", call_args[1].get("data", {}))
         known = new_data.get("known_devices", [])
-        assert len(known) == 1
+        assert len(known) == 2
         assert known[0]["device_id"] == "111033-3N16-1421"
+        assert known[1]["device_id"] == "000000-Eastron_1PH-0000"
+
+    @pytest.mark.asyncio
+    async def test_remove_namespaced_meter_syncs_known_devices(
+        self,
+        mock_hass: MagicMock,
+        mock_config_entry: MagicMock,
+    ) -> None:
+        """Test removing a meter with a logger-namespaced identifier (v9) works.
+
+        Meter registry identifiers carry a logger-serial prefix, but
+        known_devices stores the raw device_id — the prefix must be stripped
+        before matching.
+        """
+        mock_device = MagicMock()
+        mock_device.identifiers = {(DOMAIN, "1110333n161421_000000-Eastron_1PH-0000")}
+
+        result = await async_remove_config_entry_device(mock_hass, mock_config_entry, mock_device)
+
+        assert result is True
+        mock_hass.config_entries.async_update_entry.assert_called_once()
+        call_args = mock_hass.config_entries.async_update_entry.call_args
+        new_data = call_args.kwargs.get("data", call_args[1].get("data", {}))
+        known = new_data.get("known_devices", [])
+        assert len(known) == 2
+        assert all(d["device_id"] != "000000-Eastron_1PH-0000" for d in known)
 
     @pytest.mark.asyncio
     async def test_remove_device_other_domain(
@@ -995,6 +1028,200 @@ class TestPopulateKnownDevicesV8:
         assert known[0]["is_datalogger"] is True
         assert known[1]["device_id"] == "0779093g823112"
         assert known[1]["is_datalogger"] is False
+
+
+class TestNamespaceMeterIdentifiersV9:
+    """Tests for _async_namespace_meter_identifiers_v9 migration function."""
+
+    OLD_METER_UNIQUE_ID = f"{DOMAIN}_meter_000000eastron1ph0000_power_ac_meter_total"
+    NEW_METER_UNIQUE_ID = f"{DOMAIN}_meter_1110333n161421_000000eastron1ph0000_power_ac_meter_total"
+
+    @pytest.fixture
+    def mock_hass(self) -> MagicMock:
+        """Create mock Home Assistant instance."""
+        return MagicMock(spec=HomeAssistant)
+
+    @pytest.fixture
+    def mock_config_entry(self) -> MagicMock:
+        """Create mock config entry with logger serial as unique_id."""
+        entry = MagicMock(spec=ConfigEntry)
+        entry.entry_id = "test_entry_id"
+        entry.unique_id = "111033-3n16-1421"
+        return entry
+
+    @staticmethod
+    def _make_entity(unique_id: str, entity_id: str, device_id: str | None) -> MagicMock:
+        entity = MagicMock()
+        entity.unique_id = unique_id
+        entity.entity_id = entity_id
+        entity.device_id = device_id
+        return entity
+
+    def test_migrates_meter_entities_and_device(
+        self,
+        mock_hass: MagicMock,
+        mock_config_entry: MagicMock,
+    ) -> None:
+        """Test meter entities and device identifiers get the logger prefix."""
+        meter_entity = self._make_entity(
+            self.OLD_METER_UNIQUE_ID,
+            "sensor.meter_power_ac_meter_total",
+            "device_reg_id_1",
+        )
+        inverter_entity = self._make_entity(
+            f"{DOMAIN}_inverter_0779093g823112_watts",
+            "sensor.inverter_power_ac",
+            "device_reg_id_2",
+        )
+
+        entity_registry = MagicMock()
+        entity_registry.async_get_entity_id.return_value = None
+        device_registry = MagicMock()
+        meter_device = MagicMock()
+        meter_device.identifiers = {(DOMAIN, "000000-Eastron_1PH-0000")}
+        device_registry.async_get.return_value = meter_device
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.er.async_get",
+                return_value=entity_registry,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.er.async_entries_for_config_entry",
+                return_value=[meter_entity, inverter_entity],
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.dr.async_get",
+                return_value=device_registry,
+            ),
+        ):
+            _async_namespace_meter_identifiers_v9(mock_hass, mock_config_entry)
+
+        entity_registry.async_update_entity.assert_called_once_with(
+            "sensor.meter_power_ac_meter_total",
+            new_unique_id=self.NEW_METER_UNIQUE_ID,
+        )
+        device_registry.async_update_device.assert_called_once_with(
+            "device_reg_id_1",
+            new_identifiers={(DOMAIN, "1110333n161421_000000-Eastron_1PH-0000")},
+        )
+
+    def test_skips_when_no_unique_id(
+        self,
+        mock_hass: MagicMock,
+        mock_config_entry: MagicMock,
+    ) -> None:
+        """Test migration is skipped when the config entry has no unique_id."""
+        mock_config_entry.unique_id = None
+
+        with patch(
+            "custom_components.abb_fimer_pvi_vsn_rest.er.async_get",
+        ) as mock_er_get:
+            _async_namespace_meter_identifiers_v9(mock_hass, mock_config_entry)
+
+        mock_er_get.assert_not_called()
+
+    def test_skips_already_namespaced_entities(
+        self,
+        mock_hass: MagicMock,
+        mock_config_entry: MagicMock,
+    ) -> None:
+        """Test entities already carrying the logger prefix are left alone."""
+        entity = self._make_entity(
+            self.NEW_METER_UNIQUE_ID,
+            "sensor.meter_power_ac_meter_total",
+            "device_reg_id_1",
+        )
+        entity_registry = MagicMock()
+        device_registry = MagicMock()
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.er.async_get",
+                return_value=entity_registry,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.er.async_entries_for_config_entry",
+                return_value=[entity],
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.dr.async_get",
+                return_value=device_registry,
+            ),
+        ):
+            _async_namespace_meter_identifiers_v9(mock_hass, mock_config_entry)
+
+        entity_registry.async_update_entity.assert_not_called()
+        device_registry.async_update_device.assert_not_called()
+
+    def test_skips_when_target_unique_id_exists(
+        self,
+        mock_hass: MagicMock,
+        mock_config_entry: MagicMock,
+    ) -> None:
+        """Test entity is skipped when the namespaced unique_id is already taken."""
+        entity = self._make_entity(
+            self.OLD_METER_UNIQUE_ID,
+            "sensor.meter_power_ac_meter_total",
+            "device_reg_id_1",
+        )
+        entity_registry = MagicMock()
+        entity_registry.async_get_entity_id.return_value = "sensor.existing"
+        device_registry = MagicMock()
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.er.async_get",
+                return_value=entity_registry,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.er.async_entries_for_config_entry",
+                return_value=[entity],
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.dr.async_get",
+                return_value=device_registry,
+            ),
+        ):
+            _async_namespace_meter_identifiers_v9(mock_hass, mock_config_entry)
+
+        entity_registry.async_update_entity.assert_not_called()
+        device_registry.async_update_device.assert_not_called()
+
+    def test_handles_missing_device_entry(
+        self,
+        mock_hass: MagicMock,
+        mock_config_entry: MagicMock,
+    ) -> None:
+        """Test a stale device reference doesn't crash the migration."""
+        entity = self._make_entity(
+            self.OLD_METER_UNIQUE_ID,
+            "sensor.meter_power_ac_meter_total",
+            "device_reg_id_gone",
+        )
+        entity_registry = MagicMock()
+        entity_registry.async_get_entity_id.return_value = None
+        device_registry = MagicMock()
+        device_registry.async_get.return_value = None
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.er.async_get",
+                return_value=entity_registry,
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.er.async_entries_for_config_entry",
+                return_value=[entity],
+            ),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.dr.async_get",
+                return_value=device_registry,
+            ),
+        ):
+            _async_namespace_meter_identifiers_v9(mock_hass, mock_config_entry)
+
+        entity_registry.async_update_entity.assert_called_once()
+        device_registry.async_update_device.assert_not_called()
 
 
 class TestHandleStartupFailure:
@@ -1897,8 +2124,8 @@ class TestAsyncMigrateEntry:
         return hass
 
     @pytest.mark.asyncio
-    async def test_migrate_version_1_to_8(self, mock_hass: MagicMock) -> None:
-        """Test config entry migration from version 1 to 8 (runs all migrations)."""
+    async def test_migrate_version_1_to_9(self, mock_hass: MagicMock) -> None:
+        """Test config entry migration from version 1 to 9 (runs all migrations)."""
         entry = MagicMock(spec=ConfigEntry)
         entry.version = 1
         entry.entry_id = "test_entry_id"
@@ -1924,6 +2151,9 @@ class TestAsyncMigrateEntry:
             patch(
                 "custom_components.abb_fimer_pvi_vsn_rest._async_populate_known_devices_v8",
             ) as mock_v8,
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest._async_namespace_meter_identifiers_v9",
+            ) as mock_v9,
         ):
             result = await async_migrate_entry(mock_hass, entry)
 
@@ -1934,10 +2164,11 @@ class TestAsyncMigrateEntry:
         mock_v6.assert_called_once()
         mock_v7.assert_called_once()
         mock_v8.assert_called_once()
+        mock_v9.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_migrate_version_7_to_8(self, mock_hass: MagicMock) -> None:
-        """Test config entry migration from version 7 to 8 (only v8 migration)."""
+    async def test_migrate_version_7_to_9(self, mock_hass: MagicMock) -> None:
+        """Test config entry migration from version 7 to 9 (only v8 + v9 migrations)."""
         entry = MagicMock(spec=ConfigEntry)
         entry.version = 7
         entry.entry_id = "test_entry_id"
@@ -1963,6 +2194,9 @@ class TestAsyncMigrateEntry:
             patch(
                 "custom_components.abb_fimer_pvi_vsn_rest._async_populate_known_devices_v8",
             ) as mock_v8,
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest._async_namespace_meter_identifiers_v9",
+            ) as mock_v9,
         ):
             result = await async_migrate_entry(mock_hass, entry)
 
@@ -1973,12 +2207,34 @@ class TestAsyncMigrateEntry:
         mock_v6.assert_not_called()
         mock_v7.assert_not_called()
         mock_v8.assert_called_once()
+        mock_v9.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_migrate_version_8_noop(self, mock_hass: MagicMock) -> None:
-        """Test no migration needed when already at version 8."""
+    async def test_migrate_version_8_to_9(self, mock_hass: MagicMock) -> None:
+        """Test config entry migration from version 8 to 9 (only v9 migration)."""
         entry = MagicMock(spec=ConfigEntry)
         entry.version = 8
+        entry.entry_id = "test_entry_id"
+
+        with (
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest._async_populate_known_devices_v8",
+            ) as mock_v8,
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest._async_namespace_meter_identifiers_v9",
+            ) as mock_v9,
+        ):
+            result = await async_migrate_entry(mock_hass, entry)
+
+        assert result is True
+        mock_v8.assert_not_called()
+        mock_v9.assert_called_once()
+
+    @pytest.mark.asyncio
+    async def test_migrate_version_9_noop(self, mock_hass: MagicMock) -> None:
+        """Test no migration needed when already at version 9."""
+        entry = MagicMock(spec=ConfigEntry)
+        entry.version = 9
 
         result = await async_migrate_entry(mock_hass, entry)
 
@@ -1989,7 +2245,7 @@ class TestAsyncMigrateEntry:
     async def test_migrate_future_version_fails(self, mock_hass: MagicMock) -> None:
         """Test downgrade from future version fails."""
         entry = MagicMock(spec=ConfigEntry)
-        entry.version = 9
+        entry.version = 10
 
         result = await async_migrate_entry(mock_hass, entry)
 

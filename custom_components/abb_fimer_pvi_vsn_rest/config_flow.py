@@ -214,7 +214,7 @@ async def validate_connection(
 class ABBFimerPVIVSNRestConfigFlow(ConfigFlow, domain=DOMAIN):
     """Handle a config flow for ABB FIMER PVI VSN REST."""
 
-    VERSION = 8
+    VERSION = 9
     CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_POLL
 
     @staticmethod

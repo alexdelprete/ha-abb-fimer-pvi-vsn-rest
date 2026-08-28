@@ -20,6 +20,7 @@ from .helpers import (
     compact_serial_number,
     format_device_name,
     get_device_type_simple,
+    namespace_meter_device_id,
     simplify_device_type,
 )
 
@@ -318,7 +319,27 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], RestoreSensor)
 
         # Build device identifier using domain from manifest.json
         # This ensures namespace isolation and prevents conflicts with other integrations
-        device_identifier = f"{DOMAIN}_{device_type_simple}_{device_sn_compact}"
+        #
+        # Meters are additionally namespaced by the logger serial: third-party
+        # meters (e.g. Eastron SDM230) report a placeholder device ID
+        # ("000000-Eastron 1PH-0000") identical on every logger, so the meter
+        # ID alone collides across config entries (issue #74). The logger
+        # serial equals the config entry unique_id (lowercased), so migration
+        # v9 can rebuild the same values without discovery.
+        logger_sn = (
+            coordinator.discovery_result.logger_sn
+            if coordinator.discovery_result
+            else config_entry.unique_id
+        ) or ""
+        if device_type_simple == "meter" and logger_sn:
+            logger_sn_compact = compact_serial_number(logger_sn)
+            device_identifier = (
+                f"{DOMAIN}_{device_type_simple}_{logger_sn_compact}_{device_sn_compact}"
+            )
+            self._registry_device_id = namespace_meter_device_id(logger_sn, device_id)
+        else:
+            device_identifier = f"{DOMAIN}_{device_type_simple}_{device_sn_compact}"
+            self._registry_device_id = device_id
 
         # Build unique_id: device_identifier + point_name
         # Format: {domain}_{device_type}_{serial_compact}_{point_name}
@@ -880,7 +901,7 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], RestoreSensor)
 
         # Build device info dictionary with all available fields
         device_info_dict = {
-            "identifiers": {(DOMAIN, self._device_id)},
+            "identifiers": {(DOMAIN, self._registry_device_id)},
             "name": device_name,
             "manufacturer": manufacturer,
             "model": device_model or self._device_type,
