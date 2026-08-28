@@ -261,6 +261,7 @@ def mock_sensor_config_entry() -> MagicMock:
     entry = MagicMock(spec=ConfigEntry)
     entry.entry_id = "test_entry_id"
     entry.domain = DOMAIN
+    entry.unique_id = TEST_LOGGER_SN.lower()
     entry.data = {}
     entry.options = {}
     return entry
