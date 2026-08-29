@@ -12,7 +12,7 @@ vars:
   component_dir: abb_fimer_pvi_vsn_rest
   domain: abb_fimer_pvi_vsn_rest
   default_branch: main
-  dev_alias: abb-rest                      # devbox: <alias>.code / <alias>.hass hostnames
+  dev_alias: abbrest                      # devbox: <alias>.code / <alias>.hass hostnames
 
   # -- 4noks workaround --
   needs_symlink: false
