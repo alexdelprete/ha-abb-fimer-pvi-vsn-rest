@@ -1,0 +1,28 @@
+# Shared dev-instance configuration (see scripts/develop).
+# Runtime state (.storage, db, logs) is gitignored; only this file is versioned.
+# Explicit component list instead of default_config: go2rtc (bundled there)
+# needs a binary absent from the devcontainer and fails the whole meta-setup.
+frontend:
+config:
+api:
+history:
+logbook:
+energy:
+system_health:
+
+logger:
+  default: info
+  logs:
+    custom_components.abb_fimer_pvi_vsn_rest: debug
+    # Reverse-proxy healthcheck probes may carry an empty X-Forwarded-For;
+    # silence the per-probe ERROR
+    homeassistant.components.http.forwarded: fatal
+
+debugpy:
+
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 10.0.0.0/8
+    - 172.16.0.0/12
+    - 192.168.0.0/16
