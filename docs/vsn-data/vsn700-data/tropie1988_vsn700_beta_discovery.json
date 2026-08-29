@@ -1,0 +1,47 @@
+{
+  "vsn_model": "VSN700",
+  "requires_auth": true,
+  "logger_sn": "BB:BB:BB:BB:BB:B2",
+  "logger_model": null,
+  "firmware_version": null,
+  "hostname": null,
+  "device_count": 4,
+  "devices": [
+    {
+      "device_id": "bbbbbbbbbbb2",
+      "raw_device_id": "BB:BB:BB:BB:BB:B2",
+      "device_type": "datalogger",
+      "device_model": "VSN700",
+      "manufacturer": "FIMER",
+      "firmware_version": null,
+      "is_datalogger": true
+    },
+    {
+      "device_id": "000002-3P00-0002",
+      "raw_device_id": "000002-3P00-0002",
+      "device_type": "inverter_1phase",
+      "device_model": "UNO-DM-6.0-TL-PLUS",
+      "manufacturer": null,
+      "firmware_version": null,
+      "is_datalogger": false
+    },
+    {
+      "device_id": "bbbbbbbbbbb2",
+      "raw_device_id": "BB:BB:BB:BB:BB:B2",
+      "device_type": "datalogger",
+      "device_model": "VSN700",
+      "manufacturer": null,
+      "firmware_version": null,
+      "is_datalogger": true
+    },
+    {
+      "device_id": "000000EASTRON-1PH0000",
+      "raw_device_id": "000000EASTRON-1PH0000",
+      "device_type": "meter",
+      "device_model": null,
+      "manufacturer": null,
+      "firmware_version": null,
+      "is_datalogger": false
+    }
+  ]
+}

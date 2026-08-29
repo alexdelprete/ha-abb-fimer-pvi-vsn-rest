@@ -1,0 +1,217 @@
+{
+  "home_assistant": {
+    "arch": "x86_64",
+    "dev": false,
+    "docker": true,
+    "hassio": true,
+    "installation_type": "Home Assistant OS",
+    "os_name": "Linux",
+    "os_version": "6.18.39-haos",
+    "python_version": "3.14.6",
+    "timezone": "Europe/Rome",
+    "version": "2026.8.3",
+    "virtualenv": false,
+    "container_arch": "amd64",
+    "supervisor": "2026.08.0",
+    "host_os": "Home Assistant OS 18.2",
+    "docker_version": "29.6.2",
+    "chassis": "vm",
+    "run_as_root": true
+  },
+  "custom_components": {
+    "silla_prism": {
+      "documentation": "https://github.com/persuader72/silla-prism-integration/blob/main/README.md",
+      "version": "0.7.3",
+      "requirements": []
+    },
+    "blueconnect": {
+      "documentation": null,
+      "version": "2.1.0",
+      "requirements": []
+    },
+    "bambu_lab": {
+      "documentation": "https://github.com/greghesp/ha-bambulab",
+      "version": "2.2.25",
+      "requirements": [
+        "beautifulsoup4"
+      ]
+    },
+    "sonoff": {
+      "documentation": "https://github.com/AlexxIT/SonoffLAN",
+      "version": "3.12.2",
+      "requirements": []
+    },
+    "hacs": {
+      "documentation": "https://hacs.xyz/docs/use/",
+      "version": "2.0.5",
+      "requirements": [
+        "aiogithubapi>=22.10.1"
+      ]
+    },
+    "abb_fimer_pvi_vsn_rest": {
+      "documentation": "https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest",
+      "version": "1.5.12-beta.1",
+      "requirements": [
+        "aiohttp>=3.13.3"
+      ]
+    },
+    "daikin_onecta": {
+      "documentation": "https://github.com/jwillemsen/daikin_onecta",
+      "version": "4.6.18",
+      "requirements": []
+    },
+    "meross_lan": {
+      "documentation": "https://github.com/krahabb/meross_lan",
+      "version": "5.8.0",
+      "requirements": []
+    }
+  },
+  "integration_manifest": {
+    "domain": "abb_fimer_pvi_vsn_rest",
+    "name": "ABB/FIMER PVI VSN REST",
+    "codeowners": [
+      "alexdelprete"
+    ],
+    "config_flow": true,
+    "documentation": "https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest",
+    "integration_type": "hub",
+    "iot_class": "local_polling",
+    "issue_tracker": "https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest/issues",
+    "loggers": [
+      "custom_components.abb_fimer_pvi_vsn_rest"
+    ],
+    "requirements": [
+      "aiohttp>=3.13.3"
+    ],
+    "single_config_entry": false,
+    "version": "1.5.12-beta.1",
+    "is_built_in": false,
+    "overwrites_built_in": false
+  },
+  "setup_times": {
+    "null": {
+      "setup": 3.691698657348752e-05
+    },
+    "CONFIG_ENTRY_ALPHA": {
+      "wait_import_platforms": -3.8285892250132747,
+      "config_entry_setup": 5.318914837029297
+    },
+    "CONFIG_ENTRY_BETA": {
+      "wait_import_platforms": -2.0637782519916072,
+      "config_entry_setup": 5.687625109974761
+    }
+  },
+  "data": {
+    "config": {
+      "entry_id": "CONFIG_ENTRY_BETA",
+      "version": 9,
+      "domain": "abb_fimer_pvi_vsn_rest",
+      "integration_version": "1.5.12-beta.1",
+      "data": {
+        "host": "**REDACTED**",
+        "known_devices": [
+          {
+            "device_id": "LOGGER_BETA",
+            "device_type": "datalogger",
+            "is_datalogger": true
+          },
+          {
+            "device_id": "INVERTER_BETA",
+            "device_type": "inverter_1phase",
+            "is_datalogger": false
+          },
+          {
+            "device_id": "000000EASTRON-1PH0000",
+            "device_type": "meter",
+            "is_datalogger": false
+          }
+        ],
+        "password": "**REDACTED**",
+        "requires_auth": true,
+        "username": "**REDACTED**",
+        "vsn_model": "VSN700"
+      },
+      "options": {
+        "enable_repair_notification": false,
+        "enable_startup_notification": false,
+        "failures_threshold": 3.0,
+        "prefix_inverter": "UNO-6-BETA",
+        "prefix_meter": "EASTRON-SDM230-BETA",
+        "recovery_script": "",
+        "scan_interval": 30.0
+      }
+    },
+    "discovery": {
+      "vsn_model": "VSN700",
+      "logger_sn": "**REDACTED**",
+      "logger_model": null,
+      "firmware_version": null,
+      "hostname": "**REDACTED**",
+      "device_count": 3,
+      "devices": [
+        {
+          "device_id": "**REDACTED**",
+          "device_type": "datalogger",
+          "device_model": "VSN700",
+          "manufacturer": "FIMER",
+          "firmware_version": null,
+          "is_datalogger": true
+        },
+        {
+          "device_id": "**REDACTED**",
+          "device_type": "inverter_1phase",
+          "device_model": "UNO-DM-6.0-TL-PLUS",
+          "manufacturer": null,
+          "firmware_version": null,
+          "is_datalogger": false
+        },
+        {
+          "device_id": "**REDACTED**",
+          "device_type": "meter",
+          "device_model": null,
+          "manufacturer": null,
+          "firmware_version": null,
+          "is_datalogger": false
+        }
+      ]
+    },
+    "coordinator": {
+      "last_update_success": true,
+      "update_interval_seconds": 30.0,
+      "vsn_model": "VSN700",
+      "scan_interval": 30.0
+    },
+    "sensor_summary": {
+      "device_124058-3...": {
+        "device_type": "inverter_1phase",
+        "point_count": 69,
+        "has_points": true
+      },
+      "device_000000EA...": {
+        "device_type": "meter",
+        "point_count": 36,
+        "has_points": true
+      }
+    }
+  },
+  "issues": [
+    {
+      "created": "2026-07-25T13:13:54.282135+00:00",
+      "dismissed_version": "2026.6.4",
+      "domain": "abb_fimer_pvi_vsn_rest",
+      "is_persistent": true,
+      "issue_id": "partial_discovery_ISSUE_ID_REDACTED",
+      "breaks_in_ha_version": null,
+      "data": null,
+      "is_fixable": false,
+      "issue_domain": null,
+      "learn_more_url": null,
+      "severity": "warning",
+      "translation_key": "partial_discovery",
+      "translation_placeholders": {
+        "device_name": "VSN700 (MAC_ALPHA)",
+        "missing_devices": "OLD_INVERTER_ID"
+      }
+    }
+  ]
+}
