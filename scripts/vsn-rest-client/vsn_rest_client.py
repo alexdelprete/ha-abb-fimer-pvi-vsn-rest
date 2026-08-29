@@ -86,14 +86,20 @@ DEFAULT_USERNAME = "guest"
 DEFAULT_PASSWORD = ""
 DEFAULT_PORT = 80
 DEFAULT_TIMEOUT = 10
+# /v1/feeds can take far longer than the other endpoints on some VSN700 units
+# (>10s observed in the field, issue #74 testing); use a higher floor for it.
+FEEDS_TIMEOUT_MIN = 60
 
 ENDPOINT_STATUS = "/v1/status"
 ENDPOINT_LIVEDATA = "/v1/livedata"
 ENDPOINT_FEEDS = "/v1/feeds"
 
+# Runtime mapping shipped inside the integration (the docs/ copy no longer exists,
+# and the repo's default branch is "main").
 MAPPING_URL = (
     "https://raw.githubusercontent.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest"
-    "/master/docs/vsn-sunspec-point-mapping.json"
+    "/main/custom_components/abb_fimer_pvi_vsn_rest/abb_fimer_vsn_rest_client"
+    "/data/vsn-sunspec-point-mapping.json"
 )
 
 # Aurora protocol epoch offset (Jan 1, 2000 00:00:00 UTC)
@@ -712,6 +718,11 @@ async def fetch_endpoint(
                 raise VSNAuthenticationError(f"Authentication failed for {endpoint}: HTTP 401")
 
             raise VSNConnectionError(f"Request to {endpoint} failed: HTTP {response.status}")
+    except TimeoutError as err:
+        # aiohttp total-timeouts raise asyncio.TimeoutError, which is NOT a
+        # ClientError — without this clause a slow endpoint (e.g. /v1/feeds,
+        # issue #74) crashes the script instead of degrading gracefully.
+        raise VSNConnectionError(f"Request to {endpoint} timed out after {timeout}s") from err
     except aiohttp.ClientError as err:
         raise VSNConnectionError(f"Request to {endpoint} error: {err}") from err
 
@@ -825,25 +836,22 @@ def _extract_devices(
     # Process livedata devices
     for raw_device_id, device_data in livedata.items():
         is_datalogger = ":" in raw_device_id
-        device_id = raw_device_id
 
+        # Skip datalogger entries from livedata — already added synthetically from
+        # status above; keeping both listed the same datalogger twice (issue #74
+        # testing). Mirrors the integration's discovery.py behavior.
         if is_datalogger:
-            sn_found = False
-            for point in device_data.get("points", []):
-                if point.get("name") == "sn":
-                    device_id = point["value"]
-                    sn_found = True
-                    break
-            if not sn_found:
-                device_id = raw_device_id.replace(":", "")
+            _LOGGER.debug(
+                "Skipping datalogger entry '%s' from livedata (already created from status)",
+                raw_device_id,
+            )
+            continue
 
+        device_id = raw_device_id
         device_type = device_data.get("device_type", "unknown")
         device_model = None
 
-        if is_datalogger:
-            device_model = vsn_model
-            device_type = "datalogger"
-        elif vsn_model == "VSN700":
+        if vsn_model == "VSN700":
             device_model = device_data.get("device_model")
         elif vsn_model == "VSN300":
             device_model = keys.get("device.modelDesc", {}).get("value")
@@ -1282,7 +1290,7 @@ async def main(args: argparse.Namespace) -> int:
                 discovery.vsn_model,
                 args.username,
                 args.password,
-                args.timeout,
+                max(args.timeout, FEEDS_TIMEOUT_MIN),
                 discovery.requires_auth,
             )
             save_json(feeds, f"{discovery.vsn_model.lower()}_feeds.json")
