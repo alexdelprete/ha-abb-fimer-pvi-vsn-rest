@@ -5,9 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.5.12-beta.2] - Unreleased
+## [1.5.12] - 2026-08-29
 
-- (nothing yet)
+All changes since v1.5.11. Previously published as v1.5.12-beta.1 (field-confirmed
+on the reporter's dual-VSN700 / dual-Eastron setup).
+
+### Fixed
+
+- **Duplicate meter unique IDs across multiple VSN config entries** (Reported in #74) —
+  Third-party meters (e.g. Eastron SDM230) report a placeholder device ID
+  (`000000EASTRON-1PH0000`) identical on every logger, so with two config entries the
+  second meter's entities were rejected as duplicates and both meters merged into one
+  device. Meter unique IDs and device registry identifiers are now namespaced with the
+  logger serial number. A one-time config entry migration (v8→v9) rewrites existing
+  meter entities and devices in place — entity IDs, history, and statistics are
+  preserved.
+- **Standalone VSN REST client fixes** (found during #74 testing) — mapping download
+  URL updated (was 404: wrong branch and stale path), `/v1/feeds` now uses a 60s
+  timeout floor (field units can exceed the 10s default), timeouts degrade gracefully
+  instead of crashing, and the datalogger is no longer listed twice in discovery
+  output.
+
+### Added
+
+- **Reference captures for the dual-VSN700 / Eastron SDM230 topology** (thanks
+  @Tropie1988) — raw discovery/status/livedata/feeds captures from both loggers plus
+  HA diagnostics, in `docs/vsn-data/vsn700-data/`. First samples of a third-party
+  placeholder-ID meter and of the Eastron point set (`DynamicFeedInCtrl`,
+  `MeterPgrid_*`, `EGridImport/Export`, ...).
 
 ## [1.5.12-beta.1] - 2026-08-28
 
