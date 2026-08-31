@@ -33,7 +33,7 @@ dev = [
     "pytest>=9.0.0",
     "pytest-asyncio>=1.3.0",
     "pytest-cov",
-    "pytest-homeassistant-custom-component==0.13.358",
+    "pytest-homeassistant-custom-component==0.13.356",
     "pytest-timeout",
 ]
 
@@ -51,7 +51,7 @@ pytest = [
     "pytest>=9.0.0",
     "pytest-asyncio>=1.3.0",
     "pytest-cov",
-    "pytest-homeassistant-custom-component==0.13.358",
+    "pytest-homeassistant-custom-component==0.13.356",
     "pytest-timeout",
 ]
 dev = [
