@@ -291,7 +291,7 @@ def async_update_device_registry(
 
     # Register the main device (datalogger)
     # Use cleaned device_id as identifier for consistency with sensor.py via_device
-    device_registry.async_get_or_create(
+    device = device_registry.async_get_or_create(
         config_entry_id=config_entry.entry_id,
         identifiers={(DOMAIN, device_identifier)},
         manufacturer=manufacturer,
@@ -305,10 +305,8 @@ def async_update_device_registry(
     )
 
     # Store device_id in coordinator for device triggers
-    device = device_registry.async_get_device(identifiers={(DOMAIN, device_identifier)})
-    if device:
-        coordinator.device_id = device.id
-        _LOGGER.debug("Device ID stored in coordinator: %s", device.id)
+    coordinator.device_id = device.id
+    _LOGGER.debug("Device ID stored in coordinator: %s", device.id)
 
 
 async def async_unload_entry(

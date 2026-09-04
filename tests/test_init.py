@@ -6,6 +6,7 @@ from typing import ClassVar
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.abb_fimer_pvi_vsn_rest import (
     STARTUP_FAILURES_KEY,
@@ -43,6 +44,7 @@ from custom_components.abb_fimer_pvi_vsn_rest.const import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryError, ConfigEntryNotReady
+from homeassistant.helpers import device_registry as dr
 
 
 class TestAsyncSetupEntry:
@@ -566,7 +568,7 @@ class TestAsyncUpdateDeviceRegistry:
         mock_device_registry = MagicMock()
         mock_device = MagicMock()
         mock_device.id = "device_123"
-        mock_device_registry.async_get_device.return_value = mock_device
+        mock_device_registry.async_get_or_create.return_value = mock_device
 
         with patch(
             "custom_components.abb_fimer_pvi_vsn_rest.dr.async_get",
@@ -594,7 +596,7 @@ class TestAsyncUpdateDeviceRegistry:
         mock_device_registry = MagicMock()
         mock_device = MagicMock()
         mock_device.id = "device_456"
-        mock_device_registry.async_get_device.return_value = mock_device
+        mock_device_registry.async_get_or_create.return_value = mock_device
 
         with patch(
             "custom_components.abb_fimer_pvi_vsn_rest.dr.async_get",
@@ -637,7 +639,7 @@ class TestAsyncUpdateDeviceRegistry:
         mock_device_registry = MagicMock()
         mock_device = MagicMock()
         mock_device.id = "device_789"
-        mock_device_registry.async_get_device.return_value = mock_device
+        mock_device_registry.async_get_or_create.return_value = mock_device
 
         with patch(
             "custom_components.abb_fimer_pvi_vsn_rest.dr.async_get",
@@ -650,6 +652,56 @@ class TestAsyncUpdateDeviceRegistry:
         call_kwargs = mock_device_registry.async_get_or_create.call_args
         # sw_version should be None when discovery_result is None
         assert call_kwargs.kwargs["sw_version"] is None
+
+    async def test_update_device_registry_real_registry(
+        self,
+        hass: HomeAssistant,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
+        """Register the datalogger against the real device registry.
+
+        Guards the migration off the deprecated async_get_device lookup: the
+        device id stored in the coordinator must come from async_get_or_create's
+        return value, and no async_get_device deprecation warning may be logged.
+        """
+        entry = MockConfigEntry(
+            domain=DOMAIN,
+            data={"host": "192.168.1.100"},
+            options={},
+            unique_id="111033-3n16-1421",
+        )
+        entry.add_to_hass(hass)
+
+        datalogger_device = DiscoveredDevice(
+            device_id="111033-3N16-1421",
+            raw_device_id="111033-3N16-1421",
+            device_type="datalogger",
+            device_model="VSN300",
+            manufacturer="ABB",
+            firmware_version="1.9.2",
+            hardware_version=None,
+            is_datalogger=True,
+        )
+        mock_coordinator = MagicMock()
+        mock_coordinator.discovered_devices = [datalogger_device]
+        mock_coordinator.vsn_model = "VSN300"
+        mock_coordinator.discovery_result = MagicMock(firmware_version="1.9.2")
+        mock_coordinator.device_id = None
+        runtime_data = MagicMock()
+        runtime_data.coordinator = mock_coordinator
+        entry.runtime_data = runtime_data
+
+        async_update_device_registry(hass, entry)
+
+        device_registry = dr.async_get(hass)
+        device = device_registry.async_get_device_by_identifier(
+            (DOMAIN, "111033-3N16-1421"), entry.entry_id
+        )
+        assert device is not None
+        assert mock_coordinator.device_id == device.id
+        assert device.manufacturer == "ABB"
+        assert device.sw_version == "1.9.2"
+        assert "device_registry.async_get_device" not in caplog.text
 
 
 class TestAsyncRemoveConfigEntryDevice:
