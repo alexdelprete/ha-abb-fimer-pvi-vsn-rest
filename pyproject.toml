@@ -22,7 +22,7 @@ dev = [
     "aiohttp>=3.13.3",
     "urllib3>=2.6.3",
     "colorlog>=6.10.0",
-    "homeassistant>=2026.3.0",
+    "homeassistant>=2026.8.0",
     "homeassistant-stubs",
     "mdformat",
     "mdformat-gfm",
@@ -58,7 +58,7 @@ dev = [
     "aiohttp>=3.13.3",
     "urllib3>=2.6.3",
     "colorlog>=6.10.0",
-    "homeassistant>=2026.3.0",
+    "homeassistant>=2026.8.0",
     { include-group = "lint" },
     { include-group = "pytest" },
 ]

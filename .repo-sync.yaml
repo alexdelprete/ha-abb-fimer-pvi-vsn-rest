@@ -19,7 +19,7 @@ vars:
   python_import_name: ""
 
   # -- HA/HACS --
-  ha_min_version: "2026.3.0"
+  ha_min_version: "2026.8.0"
   hide_default_branch: false
   ignore_brands: false
 
@@ -54,7 +54,6 @@ vars:
   ruff_tests_extra_ignores: ["INP001"]
 
   # -- Extras --
-  requirements_extra_deps: ["aiohttp>=3.13.3", "urllib3>=2.6.3"]
   gitignore_extra:
     - ""
     - "# Unsanitized settings snapshots pulled from a live datalogger, kept locally"
@@ -88,9 +87,9 @@ template_files:
   - .pre-commit-config.yaml
   - hacs.json
   - .gitignore
-  - requirements-dev.txt
   - .devcontainer.json
   - docs/releases/README.md
+  - CONTRIBUTING.md
   - scripts/develop
   - config/configuration.yaml
 
