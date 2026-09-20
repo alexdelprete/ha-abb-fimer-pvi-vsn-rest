@@ -179,7 +179,7 @@ async def async_setup_entry(
 
     # Create sensors from normalized data
     # IMPORTANT: Create datalogger sensors first, then inverter sensors
-    # This ensures datalogger device exists before inverter devices reference it via via_device
+    # This ensures datalogger device exists before inverter devices reference it via via_device_id
     datalogger_sensors: list[VSNSensor] = []
     other_sensors: list[VSNSensor] = []
 
@@ -916,16 +916,17 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], RestoreSensor)
         if configuration_url:
             device_info_dict["configuration_url"] = configuration_url
 
-        # For non-datalogger devices, set via_device to the datalogger
-        if not is_datalogger and self.coordinator.discovery_result:
-            # Find the datalogger device ID
-            for discovered_device in self.coordinator.discovered_devices:
-                if discovered_device.is_datalogger:
-                    device_info_dict["via_device"] = (
-                        DOMAIN,
-                        discovered_device.device_id,
-                    )
-                    break
+        # Link non-datalogger devices to the datalogger. HA 2026.9 deprecated the
+        # via_device identifier tuple: it only warns when the frame is this
+        # integration (setup), but raises RuntimeError when an entity is re-added
+        # from HA's core `config` component (e.g. after a UI rename), leaving the
+        # entity without state until restart. via_device_id takes the parent's
+        # registry id instead, which async_update_device_registry() stores in the
+        # coordinator before the platforms are forwarded. A stale id would make HA
+        # reject the device info, so async_remove_config_entry_device() clears it
+        # when the datalogger device is deleted.
+        if not is_datalogger and self.coordinator.device_id:
+            device_info_dict["via_device_id"] = self.coordinator.device_id
 
         return device_info_dict
 

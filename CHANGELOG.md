@@ -7,7 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.5.13] - Unreleased
 
-- (nothing yet)
+### Fixed
+
+- **Entity rename failed with `RuntimeError` on HA 2026.9** — inverter/meter devices were
+  linked to the datalogger with the deprecated `via_device` identifier tuple. At setup HA
+  only warns (frame is the custom integration), but when a renamed entity is re-added from
+  HA's core `config` component the same deprecation is fatal, so the entity never got a
+  state again until restart. Devices now link with `via_device_id` (the datalogger's
+  registry id, available before the sensor platform loads); the id is cleared when the
+  datalogger device is deleted from the UI so a stale reference can never be passed.
+  `via_device` is removed in HA 2027.8. Same defect class as FaserF/ha-openwrt#148.
 
 ## [1.5.12] - 2026-08-29
 

@@ -468,13 +468,19 @@ class TestVSNSensorDeviceInfo:
         assert "name" in device_info
         assert "manufacturer" in device_info
 
-    def test_device_info_has_via_device_for_inverter(
+    def test_device_info_has_via_device_id_for_inverter(
         self,
         sample_point_data: dict,
         mock_coordinator: MagicMock,
         mock_sensor_config_entry: MagicMock,
     ) -> None:
-        """Test inverter has via_device linking to datalogger."""
+        """Test inverter links to the datalogger through its registry id.
+
+        HA 2026.9 deprecated the ``via_device`` identifier tuple (fatal when an
+        entity is re-added from the core ``config`` component after a rename);
+        the link must be the datalogger registry id stored in the coordinator.
+        """
+        mock_coordinator.device_id = "datalogger_registry_id"
         # Add a datalogger device to discovered_devices
         datalogger = MockDiscoveredDevice(
             device_id=TEST_LOGGER_SN,
@@ -508,8 +514,70 @@ class TestVSNSensorDeviceInfo:
         )
 
         device_info = sensor.device_info
-        assert "via_device" in device_info
-        assert device_info["via_device"] == (DOMAIN, TEST_LOGGER_SN)
+        assert device_info["via_device_id"] == "datalogger_registry_id"
+        assert "via_device" not in device_info
+
+    def test_device_info_no_via_device_id_when_datalogger_unregistered(
+        self,
+        sample_point_data: dict,
+        sample_device: MockDiscoveredDevice,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test inverter omits the link when no datalogger registry id is known.
+
+        HA rejects device info whose via_device_id is not a registered device,
+        so no link at all is the only safe output when the id is unset (datalogger
+        not registered at setup, or deleted from the UI).
+        """
+        mock_coordinator.device_id = None
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=sample_device.device_id,
+            device_type=sample_device.device_type,
+            point_name="watts",
+            point_data=sample_point_data,
+        )
+
+        device_info = sensor.device_info
+        assert "via_device_id" not in device_info
+        assert "via_device" not in device_info
+
+    def test_device_info_datalogger_has_no_via_device_id(
+        self,
+        sample_point_data: dict,
+        mock_coordinator: MagicMock,
+        mock_sensor_config_entry: MagicMock,
+    ) -> None:
+        """Test the datalogger never links to itself."""
+        mock_coordinator.device_id = "datalogger_registry_id"
+        datalogger = MockDiscoveredDevice(
+            device_id=TEST_LOGGER_SN,
+            raw_device_id=TEST_LOGGER_SN,
+            device_type="datalogger",
+            device_model="VSN300",
+            manufacturer="ABB",
+            firmware_version="1.9.2",
+            hardware_version=None,
+            is_datalogger=True,
+        )
+        mock_coordinator.discovered_devices = [datalogger]
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=mock_sensor_config_entry,
+            device_id=TEST_LOGGER_SN,
+            device_type="datalogger",
+            point_name="fw_ver",
+            point_data=sample_point_data,
+        )
+
+        device_info = sensor.device_info
+        assert device_info["identifiers"] == {(DOMAIN, TEST_LOGGER_SN)}
+        assert "via_device_id" not in device_info
+        assert "via_device" not in device_info
 
     def test_device_info_inverter_identifier_not_namespaced(
         self,
@@ -1923,12 +1991,13 @@ class TestVSNSensorDeviceInfoEdgeCases:
         device_info = sensor.device_info
         assert device_info["configuration_url"] == "http://abb-vsn300.local"
 
-    def test_device_info_inverter_via_device(
+    def test_device_info_inverter_via_device_id(
         self,
         mock_coordinator: MagicMock,
         mock_sensor_config_entry: MagicMock,
     ) -> None:
-        """Test device info for inverter includes via_device."""
+        """Test device info for inverter includes via_device_id."""
+        mock_coordinator.device_id = "datalogger_registry_id"
         # Create datalogger and inverter
         datalogger = MockDiscoveredDevice(
             device_id=TEST_LOGGER_SN,
@@ -1977,9 +2046,9 @@ class TestVSNSensorDeviceInfoEdgeCases:
         )
 
         device_info = sensor.device_info
-        # Inverter should have via_device pointing to datalogger
-        assert "via_device" in device_info
-        assert device_info["via_device"] == (DOMAIN, TEST_LOGGER_SN)
+        # Inverter should link to the datalogger by registry id only
+        assert device_info["via_device_id"] == "datalogger_registry_id"
+        assert "via_device" not in device_info
 
     def test_device_info_no_discovered_device(
         self,

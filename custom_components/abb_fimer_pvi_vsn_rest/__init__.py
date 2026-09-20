@@ -266,11 +266,11 @@ def async_update_device_registry(
         return
 
     # Use the cleaned device_id from discovery as the device identifier.
-    # This MUST match what sensor.py uses for via_device references.
+    # This MUST match the identifier sensor.py builds for the datalogger's own sensors.
     # For VSN300: serial number (e.g., "111033-3N16-1421") — no change needed.
     # For VSN700: MAC without colons (e.g., "0c1c57fdc62c") — colons stripped in discovery.
     # Previously used discovery_result.logger_sn which kept colons for VSN700 MACs,
-    # causing a mismatch with sensor.py's via_device reference.
+    # causing a mismatch with sensor.py's identifier.
     device_identifier = datalogger_device.device_id
 
     # Extract metadata from discovered device (with fallbacks)
@@ -290,7 +290,7 @@ def async_update_device_registry(
     )
 
     # Register the main device (datalogger)
-    # Use cleaned device_id as identifier for consistency with sensor.py via_device
+    # Use cleaned device_id as identifier for consistency with sensor.py
     device = device_registry.async_get_or_create(
         config_entry_id=config_entry.entry_id,
         identifiers={(DOMAIN, device_identifier)},
@@ -304,7 +304,8 @@ def async_update_device_registry(
         configuration_url=f"http://{config_entry.data.get(CONF_HOST)}",
     )
 
-    # Store device_id in coordinator for device triggers
+    # Store the registry id in the coordinator: device triggers fire events on it,
+    # and sensor.py links child devices to it through via_device_id.
     coordinator.device_id = device.id
     _LOGGER.debug("Device ID stored in coordinator: %s", device.id)
 
@@ -359,6 +360,18 @@ async def async_remove_config_entry_device(
                 "Removed device '%s' from known_devices list",
                 device_id,
             )
+
+    # If the datalogger device itself is deleted, forget its registry id: child
+    # devices pass it as via_device_id, and HA rejects device info that references
+    # an unregistered id (the entity would not be re-added after a rename). The
+    # next reload re-registers the datalogger and re-links the children.
+    runtime_data = getattr(config_entry, "runtime_data", None)
+    coordinator = getattr(runtime_data, "coordinator", None)
+    if coordinator is not None and coordinator.device_id == device_entry.id:
+        coordinator.device_id = None
+        _LOGGER.debug(
+            "Datalogger device %s deleted, cleared coordinator device_id", device_entry.id
+        )
 
     # Always allow deletion — if device still physically exists,
     # next discovery will find it and re-add it naturally

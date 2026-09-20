@@ -41,6 +41,7 @@ from custom_components.abb_fimer_pvi_vsn_rest.const import (
     CONF_SCAN_INTERVAL,
     DOMAIN,
 )
+from custom_components.abb_fimer_pvi_vsn_rest.sensor import VSNSensor
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryError, ConfigEntryNotReady
@@ -703,6 +704,86 @@ class TestAsyncUpdateDeviceRegistry:
         assert device.sw_version == "1.9.2"
         assert "device_registry.async_get_device" not in caplog.text
 
+    async def test_child_device_links_via_device_id_real_registry(
+        self,
+        hass: HomeAssistant,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
+        """Register an inverter from sensor device_info against the real registry.
+
+        Regression for the HA 2026.9 ``via_device`` deprecation: the same
+        ``async_get_or_create(**device_info)`` call entity_platform makes must
+        link the inverter to the datalogger through ``via_device_id`` and must
+        not trigger the deprecation report (fatal when the entity is re-added
+        from the core ``config`` component after a UI rename).
+        """
+        entry = MockConfigEntry(
+            domain=DOMAIN,
+            data={"host": "192.168.1.100"},
+            options={},
+            unique_id="111033-3n16-1421",
+        )
+        entry.add_to_hass(hass)
+
+        datalogger_device = DiscoveredDevice(
+            device_id="111033-3N16-1421",
+            raw_device_id="111033-3N16-1421",
+            device_type="datalogger",
+            device_model="VSN300",
+            manufacturer="ABB",
+            firmware_version="1.9.2",
+            hardware_version=None,
+            is_datalogger=True,
+        )
+        inverter_device = DiscoveredDevice(
+            device_id="077909-3G82-3112",
+            raw_device_id="077909-3G82-3112",
+            device_type="inverter_3phases",
+            device_model="PVI-10.0-OUTD",
+            manufacturer="Power-One",
+            firmware_version="C008",
+            hardware_version=None,
+            is_datalogger=False,
+        )
+        mock_coordinator = MagicMock()
+        mock_coordinator.discovered_devices = [datalogger_device, inverter_device]
+        mock_coordinator.vsn_model = "VSN300"
+        mock_coordinator.discovery_result = MagicMock(
+            firmware_version="1.9.2", logger_sn="111033-3N16-1421", hostname=None
+        )
+        mock_coordinator.device_id = None
+        runtime_data = MagicMock()
+        runtime_data.coordinator = mock_coordinator
+        entry.runtime_data = runtime_data
+
+        # Same order as async_setup_entry: datalogger first, then platforms
+        async_update_device_registry(hass, entry)
+        assert mock_coordinator.device_id is not None
+
+        sensor = VSNSensor(
+            coordinator=mock_coordinator,
+            config_entry=entry,
+            device_id="077909-3G82-3112",
+            device_type="inverter_3phases",
+            point_name="watts",
+            point_data={"value": 5000, "ha_display_name": "Power AC"},
+        )
+        device_info = sensor.device_info
+        assert "via_device" not in device_info
+
+        device_registry = dr.async_get(hass)
+        inverter = device_registry.async_get_or_create(
+            config_entry_id=entry.entry_id, **device_info
+        )
+
+        datalogger = device_registry.async_get_device_by_identifier(
+            (DOMAIN, "111033-3N16-1421"), entry.entry_id
+        )
+        assert datalogger is not None
+        assert inverter.via_device_id == datalogger.id
+        assert "via_device" not in caplog.text
+        assert "Detected that" not in caplog.text
+
 
 class TestAsyncRemoveConfigEntryDevice:
     """Tests for async_remove_config_entry_device function."""
@@ -826,6 +907,63 @@ class TestAsyncRemoveConfigEntryDevice:
         mock_device.identifiers = set()
 
         result = await async_remove_config_entry_device(mock_hass, mock_config_entry, mock_device)
+
+        assert result is True
+
+    @pytest.mark.asyncio
+    async def test_remove_datalogger_clears_coordinator_device_id(
+        self,
+        mock_hass: MagicMock,
+        mock_config_entry: MagicMock,
+    ) -> None:
+        """Deleting the datalogger device forgets its registry id.
+
+        Child devices pass coordinator.device_id as via_device_id; HA rejects
+        device info that references an unregistered id, so a stale id would
+        stop renamed entities from being re-added until reload.
+        """
+        mock_config_entry.runtime_data.coordinator.device_id = "datalogger_registry_id"
+        mock_device = MagicMock()
+        mock_device.id = "datalogger_registry_id"
+        mock_device.identifiers = {(DOMAIN, "111033-3N16-1421")}
+
+        result = await async_remove_config_entry_device(mock_hass, mock_config_entry, mock_device)
+
+        assert result is True
+        assert mock_config_entry.runtime_data.coordinator.device_id is None
+
+    @pytest.mark.asyncio
+    async def test_remove_child_device_keeps_coordinator_device_id(
+        self,
+        mock_hass: MagicMock,
+        mock_config_entry: MagicMock,
+    ) -> None:
+        """Deleting an inverter leaves the datalogger registry id untouched."""
+        mock_config_entry.runtime_data.coordinator.device_id = "datalogger_registry_id"
+        mock_device = MagicMock()
+        mock_device.id = "inverter_registry_id"
+        mock_device.identifiers = {(DOMAIN, "077909-3G82-3112")}
+
+        result = await async_remove_config_entry_device(mock_hass, mock_config_entry, mock_device)
+
+        assert result is True
+        assert mock_config_entry.runtime_data.coordinator.device_id == "datalogger_registry_id"
+
+    @pytest.mark.asyncio
+    async def test_remove_device_without_runtime_data(
+        self,
+        mock_hass: MagicMock,
+    ) -> None:
+        """Removal on an entry that never loaded (no runtime_data) still succeeds."""
+        entry = MagicMock(spec=ConfigEntry)
+        entry.unique_id = "111033-3n16-1421"
+        entry.data = {"known_devices": []}
+        del entry.runtime_data
+        mock_device = MagicMock()
+        mock_device.id = "datalogger_registry_id"
+        mock_device.identifiers = {(DOMAIN, "111033-3N16-1421")}
+
+        result = await async_remove_config_entry_device(mock_hass, entry, mock_device)
 
         assert result is True
 

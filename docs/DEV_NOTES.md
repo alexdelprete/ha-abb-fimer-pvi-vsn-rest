@@ -388,7 +388,7 @@ class DiscoveryResult:
 
 - Complete device_info implementation with all HA fields
 - Dynamic device naming from discovery metadata
-- Proper device hierarchy with `via_device`
+- Proper device hierarchy with `via_device_id` (originally `via_device`; switched in v1.5.13 after HA 2026.9 deprecated the identifier tuple)
 
 #### 3. Device Info Fields
 
@@ -404,7 +404,7 @@ All standard Home Assistant device fields now populated:
 | `sw_version` | **Firmware version** | `"C008"` (inverter), `"1.9.2"` (datalogger) |
 | `hw_version` | Hardware version | (if available) |
 | `configuration_url` | Datalogger web UI | `"http://ABB-076543-3F71-2345.local"` |
-| `via_device` | Device hierarchy | Links inverters to datalogger |
+| `via_device_id` | Device hierarchy | Links inverters to datalogger (datalogger registry id from `coordinator.device_id`) |
 
 **Key Fix:** Changed `sw_version` from VSN model (`"VSN300"`) to actual firmware version (`"C008"`, `"1.9.2"`)
 
@@ -417,11 +417,11 @@ VSN300 Datalogger (110033-3A16-1234)
   ├─ configuration_url: http://abb-vsn300.local
   └─ Contains:
       ├─ PVI-10.0-OUTD Inverter (076543-3F71-2345)
-      │   └─ via_device: VSN300
+      │   └─ via_device_id: VSN300 registry id
       ├─ Energy Meter (if present)
-      │   └─ via_device: VSN300
+      │   └─ via_device_id: VSN300 registry id
       └─ Battery Storage (if present)
-          └─ via_device: VSN300
+          └─ via_device_id: VSN300 registry id
 ```text
 
 ### Files Modified (Discovery)
@@ -447,7 +447,7 @@ VSN300 Datalogger (110033-3A16-1234)
 - `custom_components/abb_fimer_pvi_vsn_rest/sensor.py`
   - Complete device_info implementation
   - All HA device fields populated
-  - Device hierarchy with via_device
+  - Device hierarchy with via_device_id
 
 **Documentation:**
 
@@ -470,7 +470,7 @@ VSN300 Datalogger (110033-3A16-1234)
 
 - ✅ All device_info fields populated
 - ✅ Proper device naming (Model + Serial)
-- ✅ Device hierarchy (via_device)
+- ✅ Device hierarchy (via_device_id)
 - ✅ Configuration URL (datalogger only)
 - ✅ Firmware version (not VSN model)
 

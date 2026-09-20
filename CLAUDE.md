@@ -388,7 +388,10 @@ All HA device info fields populated from discovery:
 - `sw_version`: Firmware version from `C_Vr` or `fw_ver`
 - `hw_version`: Hardware version (if available)
 - `configuration_url`: Datalogger hostname (datalogger only)
-- `via_device`: Link to datalogger (for inverters/meters)
+- `via_device_id`: Link to datalogger (for inverters/meters) — the datalogger's registry id, taken from
+  `coordinator.device_id` (set by `async_update_device_registry()` before platforms load). The
+  `via_device` identifier tuple is deprecated since HA 2026.9 (removed 2027.8) and must not be used:
+  it raises `RuntimeError` when HA re-adds an entity from its core `config` component (UI rename).
 
 ## Key Architectural Decisions
 
@@ -1611,7 +1614,7 @@ In addition to the shared Do's:
 
 - Use discovery module for device information
 - Include firmware version in device_info (not VSN model!)
-- Link devices with `via_device` to create hierarchy
+- Link devices with `via_device_id` (registry id from `coordinator.device_id`) to create hierarchy — never the deprecated `via_device` tuple
 - Use logger serial number for stable unique IDs
 - Strip colons from MAC addresses (no underscores)
 - Extract model from correct location (VSN300: status, VSN700: livedata)
