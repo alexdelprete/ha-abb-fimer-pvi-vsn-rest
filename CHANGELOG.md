@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   state again until restart. Devices now link with `via_device_id` (the datalogger's
   registry id, available before the sensor platform loads); the id is cleared when the
   datalogger device is deleted from the UI so a stale reference can never be passed.
-  `via_device` is removed in HA 2027.8. Same defect class as FaserF/ha-openwrt#148.
+  `via_device` is removed in HA 2027.8.
 
 ### Changed
 
