@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.5.13] - Unreleased
+## [1.5.13] - 2026-09-20
 
 ### Fixed
 
@@ -17,6 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   registry id, available before the sensor platform loads); the id is cleared when the
   datalogger device is deleted from the UI so a stale reference can never be passed.
   `via_device` is removed in HA 2027.8. Same defect class as FaserF/ha-openwrt#148.
+
+### Changed
+
+- **CI/pre-commit tooling pinned** (synced from ha-integration-template) — pymarkdownlnt
+  0.9.39, ruff 0.16.8, ty 0.0.82 and yamllint 1.38.0 now run at the same release in CI,
+  the pre-commit hooks and the dev extras. pymarkdownlnt 0.9.40 (2026-09-13) had turned
+  the Lint workflow red on months-old markdown; pinning keeps CI and local checks in step.
 
 ## [1.5.12] - 2026-08-29
 
