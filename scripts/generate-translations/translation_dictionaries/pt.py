@@ -277,4 +277,15 @@ TRANSLATIONS = {
     "⚠️ WARNING:": "⚠️ AVISO:",
     "Update all entity IDs to match new device names.": "Atualizar todos os IDs de entidades para corresponder aos novos nomes de dispositivos.",
     "This WILL BREAK existing automations, scripts, and dashboards that reference these entities!": "Isso VAI QUEBRAR as automações, scripts e painéis existentes que fazem referência a essas entidades!",
+    # Expected outage handling options (issue #79)
+    "Expected outage handling": "Gestão de interrupções esperadas",
+    "Expected outage window start": "Início da janela de interrupção esperada",
+    "Expected outage window end": "Fim da janela de interrupção esperada",
+    "How connection failures are treated when the plant is expected to be off. Auto-detect: an outage that begins after the inverter stopped producing, with the sun low, is not reported; the sun elevation at power-down and power-up is learned over time. Fixed window: failures inside the window below are not reported.": "Como tratar falhas de ligação quando se espera que a instalação esteja desligada. Deteção automática: uma interrupção que começa depois de o inversor deixar de produzir, com o sol baixo, não é comunicada; a elevação do sol ao desligar e ao ligar é aprendida ao longo do tempo. Janela fixa: as falhas dentro da janela indicada abaixo não são comunicadas.",
+    "Start of the daily window in which connection failures are expected (fixed window mode only).": "Início da janela diária em que se esperam falhas de ligação (apenas no modo de janela fixa).",
+    "End of the daily window in which connection failures are expected (fixed window mode only).": "Fim da janela diária em que se esperam falhas de ligação (apenas no modo de janela fixa).",
+    "Window start and end must be different times.": "O início e o fim da janela têm de ser horas diferentes.",
+    "Off - always report failures": "Desativado – comunicar sempre as falhas",
+    "Auto-detect - sun position and production": "Deteção automática – posição do sol e produção",
+    "Fixed time window": "Janela horária fixa",
 }

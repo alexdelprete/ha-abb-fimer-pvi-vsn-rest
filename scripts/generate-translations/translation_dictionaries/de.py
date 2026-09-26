@@ -277,4 +277,15 @@ TRANSLATIONS = {
     "⚠️ WARNING:": "⚠️ WARNUNG:",
     "Update all entity IDs to match new device names.": "Alle Entitäts-IDs aktualisieren, um den neuen Gerätenamen zu entsprechen.",
     "This WILL BREAK existing automations, scripts, and dashboards that reference these entities!": "Dies WIRD bestehende Automatisierungen, Skripte und Dashboards UNTERBRECHEN, die auf diese Entitäten verweisen!",
+    # Expected outage handling options (issue #79)
+    "Expected outage handling": "Behandlung erwarteter Ausfälle",
+    "Expected outage window start": "Beginn des erwarteten Ausfallzeitfensters",
+    "Expected outage window end": "Ende des erwarteten Ausfallzeitfensters",
+    "How connection failures are treated when the plant is expected to be off. Auto-detect: an outage that begins after the inverter stopped producing, with the sun low, is not reported; the sun elevation at power-down and power-up is learned over time. Fixed window: failures inside the window below are not reported.": "Wie Verbindungsfehler behandelt werden, wenn die Anlage voraussichtlich aus ist. Automatisch: ein Ausfall, der beginnt, nachdem der Wechselrichter die Produktion eingestellt hat und die Sonne tief steht, wird nicht gemeldet; der Sonnenstand beim Ab- und Einschalten wird mit der Zeit gelernt. Festes Zeitfenster: Fehler innerhalb des unten angegebenen Zeitfensters werden nicht gemeldet.",
+    "Start of the daily window in which connection failures are expected (fixed window mode only).": "Beginn des täglichen Zeitfensters, in dem Verbindungsfehler erwartet werden (nur im Modus „Festes Zeitfenster“).",
+    "End of the daily window in which connection failures are expected (fixed window mode only).": "Ende des täglichen Zeitfensters, in dem Verbindungsfehler erwartet werden (nur im Modus „Festes Zeitfenster“).",
+    "Window start and end must be different times.": "Beginn und Ende des Zeitfensters müssen unterschiedliche Uhrzeiten sein.",
+    "Off - always report failures": "Aus – Fehler immer melden",
+    "Auto-detect - sun position and production": "Automatisch – Sonnenstand und Produktion",
+    "Fixed time window": "Festes Zeitfenster",
 }

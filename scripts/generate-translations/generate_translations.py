@@ -88,6 +88,24 @@ def translate_options_section(options_data: dict, translations_dict: dict[str, s
         init_step["data_description"][key] = translate(value, translations_dict)
         count += 1
 
+    # Translate form errors (options.error)
+    for key, value in options_data.get("error", {}).items():
+        options_data["error"][key] = translate(value, translations_dict)
+        count += 1
+
+    return count
+
+
+def translate_selector_section(selector_data: dict, translations_dict: dict[str, str]) -> int:
+    """Translate SelectSelector option labels (top-level "selector") in-place.
+
+    Returns count of translated strings.
+    """
+    count = 0
+    for selector in selector_data.values():
+        for key, value in selector.get("options", {}).items():
+            selector["options"][key] = translate(value, translations_dict)
+            count += 1
     return count
 
 
@@ -135,6 +153,11 @@ def generate_translations(lang_code: str, lang_name: str) -> bool:
     if "options" in en_data:
         lang_data["options"] = copy.deepcopy(en_data["options"])
         options_count = translate_options_section(lang_data["options"], translations_dict)
+
+    # Copy and translate SelectSelector labels from English
+    if "selector" in en_data:
+        lang_data["selector"] = copy.deepcopy(en_data["selector"])
+        options_count += translate_selector_section(lang_data["selector"], translations_dict)
 
     # Save updated translations
     with open(lang_file, "w", encoding="utf-8") as f:

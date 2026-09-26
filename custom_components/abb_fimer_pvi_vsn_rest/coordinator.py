@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
-from datetime import timedelta
+from datetime import time as dt_time, timedelta
 import logging
 import time
 from typing import TYPE_CHECKING, Any
+
+from astral.sun import elevation as astral_sun_elevation
 
 from homeassistant.exceptions import HomeAssistantError
 
@@ -13,6 +15,7 @@ if TYPE_CHECKING:
     from homeassistant.config_entries import ConfigEntry
 
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.sun import get_astral_observer
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.util import dt as dt_util
 
@@ -31,12 +34,29 @@ from .const import (
     CONF_ENABLE_REPAIR_NOTIFICATION,
     CONF_FAILURES_THRESHOLD,
     CONF_KNOWN_DEVICES,
+    CONF_OUTAGE_CALIBRATION,
+    CONF_OUTAGE_MODE,
+    CONF_OUTAGE_WINDOW_END,
+    CONF_OUTAGE_WINDOW_START,
     CONF_RECOVERY_SCRIPT,
     DATALOGGER_SILENT_THRESHOLD,
     DEFAULT_ENABLE_REPAIR_NOTIFICATION,
     DEFAULT_FAILURES_THRESHOLD,
+    DEFAULT_OUTAGE_MODE,
+    DEFAULT_OUTAGE_WINDOW_END,
+    DEFAULT_OUTAGE_WINDOW_START,
     DEFAULT_RECOVERY_SCRIPT,
     DOMAIN,
+    OUTAGE_CALIBRATION_MARGIN,
+    OUTAGE_CALIBRATION_MAX_SAMPLES,
+    OUTAGE_CALIBRATION_MIN_DURATION,
+    OUTAGE_CALIBRATION_MIN_SAMPLES,
+    OUTAGE_DEFAULT_DAYTIME_ELEVATION,
+    OUTAGE_MAX_DAYTIME_ELEVATION,
+    OUTAGE_MIN_DAYTIME_ELEVATION,
+    OUTAGE_MODE_AUTO,
+    OUTAGE_MODE_WINDOW,
+    OUTAGE_PRODUCING_WATTS,
 )
 from .repairs import (
     create_connection_issue,
@@ -124,6 +144,19 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         # Device trigger tracking
         self.device_id: str | None = None
 
+        # Expected outage tracking (issue #79). An outage that begins while the
+        # plant had already stopped producing (auto mode) or inside the user's
+        # time window is not a fault: no repair issue, trigger or recovery
+        # script, and the failure counter only starts once the outage stops
+        # being expected (sun above the daytime threshold / window over).
+        self._last_poll_producing: bool | None = None
+        self._last_success_elevation: float | None = None
+        self._expected_outage_active = False
+        self._expected_outage_since: float | None = None
+        self._expected_outage_start_elevation: float | None = None
+        self._calibration_power_up: list[float] = []
+        self._calibration_power_down: list[float] = []
+
         # Repair notification options from config entry
         if config_entry:
             self._enable_repair_notification = config_entry.options.get(
@@ -135,16 +168,38 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             self._recovery_script = config_entry.options.get(
                 CONF_RECOVERY_SCRIPT, DEFAULT_RECOVERY_SCRIPT
             )
+            self._outage_mode = config_entry.options.get(CONF_OUTAGE_MODE, DEFAULT_OUTAGE_MODE)
+            self._outage_window_start = config_entry.options.get(
+                CONF_OUTAGE_WINDOW_START, DEFAULT_OUTAGE_WINDOW_START
+            )
+            self._outage_window_end = config_entry.options.get(
+                CONF_OUTAGE_WINDOW_END, DEFAULT_OUTAGE_WINDOW_END
+            )
+            calibration = config_entry.data.get(CONF_OUTAGE_CALIBRATION) or {}
+            self._calibration_power_up = [
+                float(v) for v in calibration.get("power_up", []) if isinstance(v, (int, float))
+            ]
+            self._calibration_power_down = [
+                float(v) for v in calibration.get("power_down", []) if isinstance(v, (int, float))
+            ]
         else:
             self._enable_repair_notification = DEFAULT_ENABLE_REPAIR_NOTIFICATION
             self._failures_threshold = DEFAULT_FAILURES_THRESHOLD
             self._recovery_script = DEFAULT_RECOVERY_SCRIPT
+            self._outage_mode = DEFAULT_OUTAGE_MODE
+            self._outage_window_start = DEFAULT_OUTAGE_WINDOW_START
+            self._outage_window_end = DEFAULT_OUTAGE_WINDOW_END
 
         _LOGGER.debug(
-            "Repair notification options: enabled=%s, threshold=%s, script=%s",
+            "Repair notification options: enabled=%s, threshold=%s, script=%s, "
+            "outage_mode=%s, window=%s-%s, daytime_elevation_threshold=%.1f",
             self._enable_repair_notification,
             self._failures_threshold,
             self._recovery_script,
+            self._outage_mode,
+            self._outage_window_start,
+            self._outage_window_end,
+            self.daytime_elevation_threshold,
         )
 
     async def _async_update_data(self) -> dict[str, Any]:
@@ -171,12 +226,21 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 len(data.get("devices", {})),
             )
 
+            # Expected outage bookkeeping (issue #79). Must run before
+            # _handle_recovery(): calibration is only recorded for outages
+            # that never escalated into a repair issue.
+            elevation = self._sun_elevation() if self._outage_mode == OUTAGE_MODE_AUTO else None
+            if self._expected_outage_active:
+                self._end_expected_outage(elevation)
+
             # Handle recovery after repair issue was created
             if self._repair_issue_created:
                 await self._handle_recovery()
 
             # Reset failure counter on success
             self._consecutive_failures = 0
+            self._last_poll_producing = self._plant_producing(data)
+            self._last_success_elevation = elevation
 
             # --- Re-discovery and idempotency checks ---
             if not self._reload_scheduled:
@@ -261,8 +325,19 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             error: The exception that occurred
 
         """
-        self._consecutive_failures += 1
         self._last_error_type = error_type
+
+        # Expected outage (issue #79): swallow the failure and keep the counter
+        # at zero so counting starts only when the outage stops being expected.
+        if self._outage_is_expected():
+            self._begin_expected_outage()
+            self._consecutive_failures = 0
+            _LOGGER.debug(
+                "Update error during expected outage (mode=%s): %s", self._outage_mode, error
+            )
+            return
+
+        self._consecutive_failures += 1
 
         _LOGGER.debug(
             "Update error (failure %d/%d): %s",
@@ -369,6 +444,164 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._last_error_type = None
         self._recovery_script_executed = False
         self._script_executed_time = None
+
+    # ------------------------------------------------------------------
+    # Expected outage handling (issue #79)
+    # ------------------------------------------------------------------
+
+    def _sun_elevation(self) -> float | None:
+        """Return the current solar elevation in degrees, or None if unknown."""
+        try:
+            observer = get_astral_observer(self.hass)
+            return float(astral_sun_elevation(observer, dt_util.utcnow()))
+        except (TypeError, ValueError, AttributeError, OverflowError) as err:
+            _LOGGER.debug("Solar elevation unavailable (is the HA location set?): %s", err)
+            return None
+
+    @staticmethod
+    def _plant_producing(data: dict[str, Any]) -> bool:
+        """Return True when at least one inverter reports AC power above zero."""
+        for device_data in data.get("devices", {}).values():
+            if not isinstance(device_data, dict):
+                continue
+            if not str(device_data.get("device_type", "")).startswith("inverter"):
+                continue
+            watts = (device_data.get("points") or {}).get("watts") or {}
+            value = watts.get("value") if isinstance(watts, dict) else None
+            if isinstance(value, (int, float)) and value > OUTAGE_PRODUCING_WATTS:
+                return True
+        return False
+
+    @property
+    def daytime_elevation_threshold(self) -> float:
+        """Solar elevation (degrees) above which the plant is expected to be up.
+
+        Learned from recorded power-down/power-up elevations: the highest sample
+        seen plus a margin. Falls back to a conservative default until enough
+        samples exist.
+        """
+        samples = self._calibration_power_up + self._calibration_power_down
+        if len(samples) < OUTAGE_CALIBRATION_MIN_SAMPLES:
+            return OUTAGE_DEFAULT_DAYTIME_ELEVATION
+        learned = max(samples) + OUTAGE_CALIBRATION_MARGIN
+        return max(OUTAGE_MIN_DAYTIME_ELEVATION, min(learned, OUTAGE_MAX_DAYTIME_ELEVATION))
+
+    def _in_outage_window(self, now: dt_time) -> bool:
+        """Return True if the local time falls inside the configured window."""
+        start = dt_util.parse_time(self._outage_window_start)
+        end = dt_util.parse_time(self._outage_window_end)
+        if start is None or end is None or start == end:
+            return False
+        if start < end:
+            return start <= now < end
+        # Window crosses midnight (e.g. 21:00 -> 07:00)
+        return now >= start or now < end
+
+    def _outage_is_expected(self) -> bool:
+        """Decide whether the current failure belongs to an expected outage."""
+        if self._outage_mode == OUTAGE_MODE_WINDOW:
+            return self._in_outage_window(dt_util.now().time())
+        if self._outage_mode != OUTAGE_MODE_AUTO:
+            return False
+        elevation = self._sun_elevation()
+        if elevation is None or elevation >= self.daytime_elevation_threshold:
+            return False
+        if self._expected_outage_active:
+            return True
+        # A new outage is expected only if the plant had already stopped
+        # producing before contact was lost (or nothing was ever received).
+        return not self._last_poll_producing
+
+    def _begin_expected_outage(self) -> None:
+        """Mark the start of an expected outage (once per outage)."""
+        if self._expected_outage_active:
+            return
+        self._expected_outage_active = True
+        self._expected_outage_since = time.time()
+        self._expected_outage_start_elevation = self._last_success_elevation
+        _LOGGER.info(
+            "Datalogger unreachable during an expected outage "
+            "(mode=%s, sun elevation at last contact=%s, plant producing=%s); "
+            "failure notifications deferred",
+            self._outage_mode,
+            f"{self._last_success_elevation:.1f}°"
+            if self._last_success_elevation is not None
+            else "unknown",
+            self._last_poll_producing,
+        )
+
+    def _end_expected_outage(self, elevation: float | None) -> None:
+        """Close an expected outage after the first successful poll."""
+        duration = (
+            int(time.time() - self._expected_outage_since) if self._expected_outage_since else 0
+        )
+        start_elevation = self._expected_outage_start_elevation
+        recorded = False
+        if (
+            self._outage_mode == OUTAGE_MODE_AUTO
+            and not self._repair_issue_created
+            and elevation is not None
+            and start_elevation is not None
+            and duration >= OUTAGE_CALIBRATION_MIN_DURATION
+        ):
+            self._record_calibration(power_down=start_elevation, power_up=elevation)
+            recorded = True
+
+        _LOGGER.info(
+            "Datalogger back online after an expected outage of %s "
+            "(power-down at %s, power-up at %s, calibration %s, daytime threshold %.1f°)",
+            self._format_downtime(duration),
+            f"{start_elevation:.1f}°" if start_elevation is not None else "unknown",
+            f"{elevation:.1f}°" if elevation is not None else "unknown",
+            "recorded" if recorded else "not recorded",
+            self.daytime_elevation_threshold,
+        )
+        self._expected_outage_active = False
+        self._expected_outage_since = None
+        self._expected_outage_start_elevation = None
+
+    def _record_calibration(self, power_down: float, power_up: float) -> None:
+        """Store one power-down/power-up elevation pair and persist the series."""
+        self._calibration_power_down = [*self._calibration_power_down, round(power_down, 1)][
+            -OUTAGE_CALIBRATION_MAX_SAMPLES:
+        ]
+        self._calibration_power_up = [*self._calibration_power_up, round(power_up, 1)][
+            -OUTAGE_CALIBRATION_MAX_SAMPLES:
+        ]
+        if self._config_entry:
+            self.hass.config_entries.async_update_entry(
+                self._config_entry,
+                data={
+                    **self._config_entry.data,
+                    CONF_OUTAGE_CALIBRATION: {
+                        "power_up": list(self._calibration_power_up),
+                        "power_down": list(self._calibration_power_down),
+                    },
+                },
+            )
+
+    @property
+    def outage_status(self) -> dict[str, Any]:
+        """Expected-outage state for diagnostics."""
+        samples = len(self._calibration_power_up) + len(self._calibration_power_down)
+        return {
+            "mode": self._outage_mode,
+            "window_start": self._outage_window_start,
+            "window_end": self._outage_window_end,
+            "expected_outage_active": self._expected_outage_active,
+            "expected_outage_since": dt_util.utc_from_timestamp(
+                self._expected_outage_since
+            ).isoformat()
+            if self._expected_outage_since
+            else None,
+            "last_poll_producing": self._last_poll_producing,
+            "last_success_elevation": self._last_success_elevation,
+            "daytime_elevation_threshold": self.daytime_elevation_threshold,
+            "calibration_samples": samples,
+            "calibrated": samples >= OUTAGE_CALIBRATION_MIN_SAMPLES,
+            "calibration_power_up": list(self._calibration_power_up),
+            "calibration_power_down": list(self._calibration_power_down),
+        }
 
     def _check_datalogger_silent(self, data: dict[str, Any]) -> None:
         """Track a datalogger that stopped reporting its own livedata section.

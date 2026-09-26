@@ -7,7 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.5.14] - Unreleased
 
-- (nothing yet)
+### Added
+
+- **Expected outage handling** (Reported in #79, thanks @piejanssens) — new option in the
+  integration settings that stops the nightly "Cannot connect" repair issue on
+  inverter-powered dataloggers (VSN300). `Auto-detect`: an outage that begins after the
+  inverter stopped producing, with the sun below the daytime threshold, raises no repair
+  issue, device trigger or recovery script; failure counting starts only once the sun is
+  above the threshold, so a plant still dark in daylight is reported as before. The
+  threshold is learned from the plant's own power-down/power-up sun elevations (last 14
+  overnight outages, highest value + 2°, 10° until 3 samples exist) and shown in
+  diagnostics. `Fixed time window`: failures inside a daily start/end window are expected.
+  Default is `Off` (unchanged behaviour). Options and select labels localized in all
+  10 languages; `generate_translations.py` now also translates `options.error` and
+  `selector` sections.
 
 ## [1.5.13] - 2026-09-20
 

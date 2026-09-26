@@ -50,6 +50,9 @@
           "enable_startup_notification": "Abilita notifiche di guasto all'avvio",
           "failures_threshold": "Guasti prima della notifica",
           "recovery_script": "Script di ripristino (opzionale)",
+          "outage_mode": "Gestione interruzioni previste",
+          "outage_window_start": "Inizio finestra interruzione prevista",
+          "outage_window_end": "Fine finestra interruzione prevista",
           "prefix_inverter": "Nome dispositivo inverter",
           "prefix_inverter_1": "Nome dispositivo inverter 1",
           "prefix_inverter_2": "Nome dispositivo inverter 2",
@@ -74,6 +77,9 @@
           "enable_startup_notification": "Notifica quando il dispositivo è irraggiungibile all'avvio di Home Assistant.",
           "failures_threshold": "Guasti consecutivi prima della notifica. Intervallo: 1-10. Predefinito: 3.",
           "recovery_script": "Script da eseguire in caso di guasto (es. 'script.restart_router'). Lascia vuoto per nessuno.",
+          "outage_mode": "Come trattare gli errori di connessione quando l'impianto dovrebbe essere spento. Rilevamento automatico: un'interruzione che inizia dopo che l'inverter ha smesso di produrre, con il sole basso, non viene segnalata; l'elevazione del sole allo spegnimento e all'accensione viene appresa nel tempo. Finestra fissa: gli errori all'interno della finestra indicata sotto non vengono segnalati.",
+          "outage_window_start": "Inizio della finestra giornaliera in cui sono previsti errori di connessione (solo in modalità finestra fissa).",
+          "outage_window_end": "Fine della finestra giornaliera in cui sono previsti errori di connessione (solo in modalità finestra fissa).",
           "prefix_inverter": "Custom inverter name. Lascia vuoto per il valore predefinito.",
           "prefix_inverter_1": "Sets name for device with S/N: {inverter_1_sn}. Lascia vuoto per il valore predefinito.",
           "prefix_inverter_2": "Sets name for device with S/N: {inverter_2_sn}. Lascia vuoto per il valore predefinito.",
@@ -93,6 +99,9 @@
           "regenerate_entity_ids": ""
         }
       }
+    },
+    "error": {
+      "outage_window_invalid": "L'inizio e la fine della finestra devono essere orari diversi."
     }
   },
   "entity": {
@@ -898,6 +907,15 @@
       "device_unreachable": "{device_name} non raggiungibile (problema di rete)",
       "device_not_responding": "{device_name} non risponde (errore API REST)",
       "device_recovered": "{device_name} recuperato"
+    }
+  },
+  "selector": {
+    "outage_mode": {
+      "options": {
+        "off": "Disattivato – segnala sempre gli errori",
+        "auto": "Rilevamento automatico – posizione del sole e produzione",
+        "window": "Finestra oraria fissa"
+      }
     }
   }
 }

@@ -50,6 +50,9 @@
           "enable_startup_notification": "Ativar notificações de falhas no arranque",
           "failures_threshold": "Falhas antes da notificação",
           "recovery_script": "Script de recuperação (opcional)",
+          "outage_mode": "Gestão de interrupções esperadas",
+          "outage_window_start": "Início da janela de interrupção esperada",
+          "outage_window_end": "Fim da janela de interrupção esperada",
           "prefix_inverter": "Nome do dispositivo inversor",
           "prefix_inverter_1": "Nome do dispositivo inversor 1",
           "prefix_inverter_2": "Nome do dispositivo inversor 2",
@@ -74,6 +77,9 @@
           "enable_startup_notification": "Notificar quando o dispositivo estiver inacessível no arranque do Home Assistant.",
           "failures_threshold": "Falhas consecutivas antes da notificação. Intervalo: 1-10. Predefinição: 3.",
           "recovery_script": "Script a executar em caso de falha (ex.: 'script.restart_router'). Deixe vazio para nenhum.",
+          "outage_mode": "Como tratar falhas de ligação quando se espera que a instalação esteja desligada. Deteção automática: uma interrupção que começa depois de o inversor deixar de produzir, com o sol baixo, não é comunicada; a elevação do sol ao desligar e ao ligar é aprendida ao longo do tempo. Janela fixa: as falhas dentro da janela indicada abaixo não são comunicadas.",
+          "outage_window_start": "Início da janela diária em que se esperam falhas de ligação (apenas no modo de janela fixa).",
+          "outage_window_end": "Fim da janela diária em que se esperam falhas de ligação (apenas no modo de janela fixa).",
           "prefix_inverter": "Custom inverter name. Deixe vazio para o valor padrão.",
           "prefix_inverter_1": "Sets name for device with S/N: {inverter_1_sn}. Deixe vazio para o valor padrão.",
           "prefix_inverter_2": "Sets name for device with S/N: {inverter_2_sn}. Deixe vazio para o valor padrão.",
@@ -93,6 +99,9 @@
           "regenerate_entity_ids": ""
         }
       }
+    },
+    "error": {
+      "outage_window_invalid": "O início e o fim da janela têm de ser horas diferentes."
     }
   },
   "entity": {
@@ -898,6 +907,15 @@
       "device_unreachable": "{device_name} está inacessível (problema de rede)",
       "device_not_responding": "{device_name} não está respondendo (erro da API REST)",
       "device_recovered": "{device_name} recuperado"
+    }
+  },
+  "selector": {
+    "outage_mode": {
+      "options": {
+        "off": "Desativado – comunicar sempre as falhas",
+        "auto": "Deteção automática – posição do sol e produção",
+        "window": "Janela horária fixa"
+      }
     }
   }
 }

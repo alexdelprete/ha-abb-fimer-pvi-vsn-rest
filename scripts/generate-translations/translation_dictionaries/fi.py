@@ -277,4 +277,15 @@ TRANSLATIONS = {
     "⚠️ WARNING:": "⚠️ VAROITUS:",
     "Update all entity IDs to match new device names.": "Päivitä kaikki entitetti-ID:t vastaamaan uusia laitenimiä.",
     "This WILL BREAK existing automations, scripts, and dashboards that reference these entities!": "Tämä RIKKOO olemassa olevat automaatiot, skriptit ja kojelaudat, jotka viittaavat näihin entiteetteihin!",
+    # Expected outage handling options (issue #79)
+    "Expected outage handling": "Odotettujen katkosten käsittely",
+    "Expected outage window start": "Odotetun katkoksen aikaikkunan alku",
+    "Expected outage window end": "Odotetun katkoksen aikaikkunan loppu",
+    "How connection failures are treated when the plant is expected to be off. Auto-detect: an outage that begins after the inverter stopped producing, with the sun low, is not reported; the sun elevation at power-down and power-up is learned over time. Fixed window: failures inside the window below are not reported.": "Miten yhteysvirheitä käsitellään, kun laitoksen odotetaan olevan pois päältä. Automaattinen tunnistus: katkosta, joka alkaa invertterin tuotannon loputtua auringon ollessa matalalla, ei ilmoiteta; auringon korkeus sammumis- ja käynnistymishetkellä opitaan ajan myötä. Kiinteä aikaikkuna: alla määritetyn aikaikkunan sisällä tapahtuvia virheitä ei ilmoiteta.",
+    "Start of the daily window in which connection failures are expected (fixed window mode only).": "Päivittäisen aikaikkunan alku, jolloin yhteysvirheitä odotetaan (vain kiinteän aikaikkunan tilassa).",
+    "End of the daily window in which connection failures are expected (fixed window mode only).": "Päivittäisen aikaikkunan loppu, jolloin yhteysvirheitä odotetaan (vain kiinteän aikaikkunan tilassa).",
+    "Window start and end must be different times.": "Aikaikkunan alun ja lopun on oltava eri kellonaikoja.",
+    "Off - always report failures": "Pois – ilmoita virheistä aina",
+    "Auto-detect - sun position and production": "Automaattinen tunnistus – auringon asema ja tuotanto",
+    "Fixed time window": "Kiinteä aikaikkuna",
 }

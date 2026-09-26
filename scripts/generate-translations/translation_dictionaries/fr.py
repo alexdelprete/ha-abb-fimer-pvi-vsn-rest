@@ -277,4 +277,15 @@ TRANSLATIONS = {
     "⚠️ WARNING:": "⚠️ AVERTISSEMENT:",
     "Update all entity IDs to match new device names.": "Mettre à jour tous les IDs d'entités pour correspondre aux nouveaux noms d'appareils.",
     "This WILL BREAK existing automations, scripts, and dashboards that reference these entities!": "Cela VA CASSER les automatisations, scripts et tableaux de bord existants qui font référence à ces entités!",
+    # Expected outage handling options (issue #79)
+    "Expected outage handling": "Gestion des coupures attendues",
+    "Expected outage window start": "Début de la plage de coupure attendue",
+    "Expected outage window end": "Fin de la plage de coupure attendue",
+    "How connection failures are treated when the plant is expected to be off. Auto-detect: an outage that begins after the inverter stopped producing, with the sun low, is not reported; the sun elevation at power-down and power-up is learned over time. Fixed window: failures inside the window below are not reported.": "Comment traiter les échecs de connexion lorsque l'installation est censée être éteinte. Détection automatique : une coupure qui commence après l'arrêt de la production de l'onduleur, soleil bas, n'est pas signalée ; la hauteur du soleil à l'extinction et au démarrage est apprise au fil du temps. Plage fixe : les échecs dans la plage ci-dessous ne sont pas signalés.",
+    "Start of the daily window in which connection failures are expected (fixed window mode only).": "Début de la plage quotidienne pendant laquelle des échecs de connexion sont attendus (mode plage fixe uniquement).",
+    "End of the daily window in which connection failures are expected (fixed window mode only).": "Fin de la plage quotidienne pendant laquelle des échecs de connexion sont attendus (mode plage fixe uniquement).",
+    "Window start and end must be different times.": "Le début et la fin de la plage doivent être des heures différentes.",
+    "Off - always report failures": "Désactivé – toujours signaler les échecs",
+    "Auto-detect - sun position and production": "Détection automatique – position du soleil et production",
+    "Fixed time window": "Plage horaire fixe",
 }

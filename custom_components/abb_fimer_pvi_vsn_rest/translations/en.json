@@ -50,6 +50,9 @@
           "enable_startup_notification": "Enable startup failure notifications",
           "failures_threshold": "Failures before notification",
           "recovery_script": "Recovery script (optional)",
+          "outage_mode": "Expected outage handling",
+          "outage_window_start": "Expected outage window start",
+          "outage_window_end": "Expected outage window end",
           "prefix_inverter": "Inverter device name",
           "prefix_inverter_1": "Inverter 1 device name",
           "prefix_inverter_2": "Inverter 2 device name",
@@ -74,6 +77,9 @@
           "enable_startup_notification": "Notify when device is unreachable at Home Assistant startup.",
           "failures_threshold": "Consecutive failures before notification. Range: 1-10. Default: 3.",
           "recovery_script": "Script to run on failure (e.g., 'script.restart_router'). Leave empty for none.",
+          "outage_mode": "How connection failures are treated when the plant is expected to be off. Auto-detect: an outage that begins after the inverter stopped producing, with the sun low, is not reported; the sun elevation at power-down and power-up is learned over time. Fixed window: failures inside the window below are not reported.",
+          "outage_window_start": "Start of the daily window in which connection failures are expected (fixed window mode only).",
+          "outage_window_end": "End of the daily window in which connection failures are expected (fixed window mode only).",
           "prefix_inverter": "Custom inverter name. Leave empty for default.",
           "prefix_inverter_1": "Sets name for device with S/N: {inverter_1_sn}. Leave empty for default.",
           "prefix_inverter_2": "Sets name for device with S/N: {inverter_2_sn}. Leave empty for default.",
@@ -93,6 +99,9 @@
           "regenerate_entity_ids": ""
         }
       }
+    },
+    "error": {
+      "outage_window_invalid": "Window start and end must be different times."
     }
   },
   "entity": {
@@ -898,6 +907,15 @@
       "device_unreachable": "{device_name} is unreachable (network issue)",
       "device_not_responding": "{device_name} is not responding (REST API error)",
       "device_recovered": "{device_name} recovered"
+    }
+  },
+  "selector": {
+    "outage_mode": {
+      "options": {
+        "off": "Off - always report failures",
+        "auto": "Auto-detect - sun position and production",
+        "window": "Fixed time window"
+      }
     }
   }
 }

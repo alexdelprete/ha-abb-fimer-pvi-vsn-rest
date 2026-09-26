@@ -50,6 +50,9 @@
           "enable_startup_notification": "Benachrichtigungen bei Startfehlern aktivieren",
           "failures_threshold": "Fehler bis zur Benachrichtigung",
           "recovery_script": "Wiederherstellungsskript (optional)",
+          "outage_mode": "Behandlung erwarteter Ausfälle",
+          "outage_window_start": "Beginn des erwarteten Ausfallzeitfensters",
+          "outage_window_end": "Ende des erwarteten Ausfallzeitfensters",
           "prefix_inverter": "Wechselrichter Gerätename",
           "prefix_inverter_1": "Wechselrichter 1 Gerätename",
           "prefix_inverter_2": "Wechselrichter 2 Gerätename",
@@ -74,6 +77,9 @@
           "enable_startup_notification": "Benachrichtigen, wenn das Gerät beim Start von Home Assistant nicht erreichbar ist.",
           "failures_threshold": "Aufeinanderfolgende Fehler bis zur Benachrichtigung. Bereich: 1-10. Standard: 3.",
           "recovery_script": "Skript, das bei einem Fehler ausgeführt wird (z. B. 'script.restart_router'). Leer lassen für keines.",
+          "outage_mode": "Wie Verbindungsfehler behandelt werden, wenn die Anlage voraussichtlich aus ist. Automatisch: ein Ausfall, der beginnt, nachdem der Wechselrichter die Produktion eingestellt hat und die Sonne tief steht, wird nicht gemeldet; der Sonnenstand beim Ab- und Einschalten wird mit der Zeit gelernt. Festes Zeitfenster: Fehler innerhalb des unten angegebenen Zeitfensters werden nicht gemeldet.",
+          "outage_window_start": "Beginn des täglichen Zeitfensters, in dem Verbindungsfehler erwartet werden (nur im Modus „Festes Zeitfenster“).",
+          "outage_window_end": "Ende des täglichen Zeitfensters, in dem Verbindungsfehler erwartet werden (nur im Modus „Festes Zeitfenster“).",
           "prefix_inverter": "Custom inverter name. Leer lassen für Standard.",
           "prefix_inverter_1": "Sets name for device with S/N: {inverter_1_sn}. Leer lassen für Standard.",
           "prefix_inverter_2": "Sets name for device with S/N: {inverter_2_sn}. Leer lassen für Standard.",
@@ -93,6 +99,9 @@
           "regenerate_entity_ids": ""
         }
       }
+    },
+    "error": {
+      "outage_window_invalid": "Beginn und Ende des Zeitfensters müssen unterschiedliche Uhrzeiten sein."
     }
   },
   "entity": {
@@ -898,6 +907,15 @@
       "device_unreachable": "{device_name} ist nicht erreichbar (Netzwerkproblem)",
       "device_not_responding": "{device_name} antwortet nicht (REST-API-Fehler)",
       "device_recovered": "{device_name} wiederhergestellt"
+    }
+  },
+  "selector": {
+    "outage_mode": {
+      "options": {
+        "off": "Aus – Fehler immer melden",
+        "auto": "Automatisch – Sonnenstand und Produktion",
+        "window": "Festes Zeitfenster"
+      }
     }
   }
 }

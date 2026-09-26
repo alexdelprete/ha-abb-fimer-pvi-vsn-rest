@@ -507,6 +507,44 @@ newline** — scripted edits round-trip byte-identical with those settings.
 - `repairs.py`: `create_partial_discovery_issue()`, `delete_partial_discovery_issue()`
 - `const.py`: `CONF_KNOWN_DEVICES`
 
+### Expected Outage Handling (v1.5.14, issue #79)
+
+**Decision**: Make the coordinator distinguish an *expected* outage (inverter-powered datalogger
+going dark at night) from a real one, without ever needing to know the plant's exact power-off
+sun elevation.
+
+**Problem**: A VSN300 is powered by the inverter, so every evening polls fail, the threshold is
+reached and the `connection_failed` repair issue (severity ERROR) appears; every morning it clears
+and a recovery notification is posted. The only escape was disabling runtime notifications.
+
+**Design** (`coordinator.py`, options in `config_flow.py`, constants `OUTAGE_*` in `const.py`):
+
+- `CONF_OUTAGE_MODE`: `off` (default, unchanged), `auto`, `window`.
+- **Auto**: `_outage_is_expected()` is evaluated on every failed poll. A *new* outage is expected
+  iff the last successful poll showed no inverter producing (`_plant_producing()`: any
+  `inverter*` device with `watts > 0`) **and** the current solar elevation is below
+  `daytime_elevation_threshold`. An outage already marked expected stays expected until the sun
+  clears the threshold. While expected, `_handle_failure()` keeps `_consecutive_failures` at 0
+  and returns (no issue/trigger/script), so counting starts only when the outage stops being
+  expected — a plant still dark in daylight alerts after the normal threshold.
+- **Learned threshold**: on the first successful poll after an expected outage that lasted at
+  least 4 h and never escalated, `_end_expected_outage()` records the elevation at the last
+  good poll before the outage (power-down) and the current one (power-up). Series are capped
+  at 14 samples each and persisted in `config_entry.data["outage_calibration"]`. Threshold =
+  `max(samples) + 2°`, clamped to 1–60°, or 10° until 3 samples exist. Exposed via
+  `coordinator.outage_status` in diagnostics.
+- **Sun position**: `helpers.sun.get_astral_observer()` + `astral.sun.elevation()`; no `sun.sun`
+  entity dependency. `get_astral_location()` is deprecated (removed HA 2027.7) — do not use it.
+  If elevation cannot be computed (location unset) auto mode never suppresses.
+- **Window**: `_in_outage_window()` on local time; crosses midnight when start > end; equal
+  times are rejected by the options flow (`outage_window_invalid`).
+- No recovery notification is posted after an expected outage (the repair issue was never
+  created, so `_handle_recovery()` does not run).
+
+**Translations**: options labels/descriptions, `options.error` and the `selector.outage_mode`
+labels live in `en.json` and the dictionaries; `generate_translations.py` copies and translates
+`options` (incl. `error`) and `selector` for the 9 other languages.
+
 ### Meter Identifier Namespacing (v1.5.12, issue #74)
 
 **Decision**: Namespace **meter** unique_ids and device registry identifiers with the

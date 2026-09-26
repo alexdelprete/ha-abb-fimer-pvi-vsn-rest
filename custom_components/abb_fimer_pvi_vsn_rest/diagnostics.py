@@ -82,6 +82,9 @@ async def async_get_config_entry_diagnostics(
         "scan_interval": config_entry.options.get(
             CONF_SCAN_INTERVAL, config_entry.data.get(CONF_SCAN_INTERVAL)
         ),
+        "expected_outage": coordinator.outage_status
+        if isinstance(getattr(coordinator, "outage_status", None), dict)
+        else None,
     }
 
     # Gather sensor data summary (per-device point counts, no actual values).

@@ -276,4 +276,15 @@ TRANSLATIONS = {
     "⚠️ WARNING:": "⚠️ ATTENZIONE:",
     "Update all entity IDs to match new device names.": "Aggiorna tutti gli ID entità per corrispondere ai nuovi nomi dispositivo.",
     "This WILL BREAK existing automations, scripts, and dashboards that reference these entities!": "Questo ROMPERÀ le automazioni, gli script e le dashboard esistenti che fanno riferimento a queste entità!",
+    # Expected outage handling options (issue #79)
+    "Expected outage handling": "Gestione interruzioni previste",
+    "Expected outage window start": "Inizio finestra interruzione prevista",
+    "Expected outage window end": "Fine finestra interruzione prevista",
+    "How connection failures are treated when the plant is expected to be off. Auto-detect: an outage that begins after the inverter stopped producing, with the sun low, is not reported; the sun elevation at power-down and power-up is learned over time. Fixed window: failures inside the window below are not reported.": "Come trattare gli errori di connessione quando l'impianto dovrebbe essere spento. Rilevamento automatico: un'interruzione che inizia dopo che l'inverter ha smesso di produrre, con il sole basso, non viene segnalata; l'elevazione del sole allo spegnimento e all'accensione viene appresa nel tempo. Finestra fissa: gli errori all'interno della finestra indicata sotto non vengono segnalati.",
+    "Start of the daily window in which connection failures are expected (fixed window mode only).": "Inizio della finestra giornaliera in cui sono previsti errori di connessione (solo in modalità finestra fissa).",
+    "End of the daily window in which connection failures are expected (fixed window mode only).": "Fine della finestra giornaliera in cui sono previsti errori di connessione (solo in modalità finestra fissa).",
+    "Window start and end must be different times.": "L'inizio e la fine della finestra devono essere orari diversi.",
+    "Off - always report failures": "Disattivato – segnala sempre gli errori",
+    "Auto-detect - sun position and production": "Rilevamento automatico – posizione del sole e produzione",
+    "Fixed time window": "Finestra oraria fissa",
 }

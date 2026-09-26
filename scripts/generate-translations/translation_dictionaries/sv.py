@@ -277,4 +277,15 @@ TRANSLATIONS = {
     "⚠️ WARNING:": "⚠️ VARNING:",
     "Update all entity IDs to match new device names.": "Uppdatera alla entitets-IDer för att matcha nya enhetsnamn.",
     "This WILL BREAK existing automations, scripts, and dashboards that reference these entities!": "Detta KOMMER ATT FÖRSTÖRA befintliga automatiseringar, skript och instrumentpaneler som refererar till dessa entiteter!",
+    # Expected outage handling options (issue #79)
+    "Expected outage handling": "Hantering av förväntade avbrott",
+    "Expected outage window start": "Start för förväntat avbrottsfönster",
+    "Expected outage window end": "Slut för förväntat avbrottsfönster",
+    "How connection failures are treated when the plant is expected to be off. Auto-detect: an outage that begins after the inverter stopped producing, with the sun low, is not reported; the sun elevation at power-down and power-up is learned over time. Fixed window: failures inside the window below are not reported.": "Hur anslutningsfel hanteras när anläggningen förväntas vara avstängd. Automatisk: ett avbrott som börjar efter att växelriktaren slutat producera, med låg sol, rapporteras inte; solhöjden vid av- och påslag lärs in över tid. Fast tidsfönster: fel inom fönstret nedan rapporteras inte.",
+    "Start of the daily window in which connection failures are expected (fixed window mode only).": "Start för det dagliga tidsfönstret då anslutningsfel förväntas (endast i läget fast tidsfönster).",
+    "End of the daily window in which connection failures are expected (fixed window mode only).": "Slut för det dagliga tidsfönstret då anslutningsfel förväntas (endast i läget fast tidsfönster).",
+    "Window start and end must be different times.": "Tidsfönstrets start och slut måste vara olika klockslag.",
+    "Off - always report failures": "Av – rapportera alltid fel",
+    "Auto-detect - sun position and production": "Automatisk – solens position och produktion",
+    "Fixed time window": "Fast tidsfönster",
 }

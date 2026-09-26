@@ -50,6 +50,9 @@
           "enable_startup_notification": "Ota käyttöön ilmoitukset käynnistysvioista",
           "failures_threshold": "Viat ennen ilmoitusta",
           "recovery_script": "Palautusskripti (valinnainen)",
+          "outage_mode": "Odotettujen katkosten käsittely",
+          "outage_window_start": "Odotetun katkoksen aikaikkunan alku",
+          "outage_window_end": "Odotetun katkoksen aikaikkunan loppu",
           "prefix_inverter": "Invertteri laitteen nimi",
           "prefix_inverter_1": "Invertteri 1 laitteen nimi",
           "prefix_inverter_2": "Invertteri 2 laitteen nimi",
@@ -74,6 +77,9 @@
           "enable_startup_notification": "Ilmoita, kun laite ei ole tavoitettavissa Home Assistantin käynnistyessä.",
           "failures_threshold": "Peräkkäiset viat ennen ilmoitusta. Alue: 1-10. Oletus: 3.",
           "recovery_script": "Vian sattuessa suoritettava skripti (esim. 'script.restart_router'). Jätä tyhjäksi, jos et halua.",
+          "outage_mode": "Miten yhteysvirheitä käsitellään, kun laitoksen odotetaan olevan pois päältä. Automaattinen tunnistus: katkosta, joka alkaa invertterin tuotannon loputtua auringon ollessa matalalla, ei ilmoiteta; auringon korkeus sammumis- ja käynnistymishetkellä opitaan ajan myötä. Kiinteä aikaikkuna: alla määritetyn aikaikkunan sisällä tapahtuvia virheitä ei ilmoiteta.",
+          "outage_window_start": "Päivittäisen aikaikkunan alku, jolloin yhteysvirheitä odotetaan (vain kiinteän aikaikkunan tilassa).",
+          "outage_window_end": "Päivittäisen aikaikkunan loppu, jolloin yhteysvirheitä odotetaan (vain kiinteän aikaikkunan tilassa).",
           "prefix_inverter": "Custom inverter name. Jätä tyhjäksi oletusarvolle.",
           "prefix_inverter_1": "Sets name for device with S/N: {inverter_1_sn}. Jätä tyhjäksi oletusarvolle.",
           "prefix_inverter_2": "Sets name for device with S/N: {inverter_2_sn}. Jätä tyhjäksi oletusarvolle.",
@@ -93,6 +99,9 @@
           "regenerate_entity_ids": ""
         }
       }
+    },
+    "error": {
+      "outage_window_invalid": "Aikaikkunan alun ja lopun on oltava eri kellonaikoja."
     }
   },
   "entity": {
@@ -898,6 +907,15 @@
       "device_unreachable": "{device_name} ei tavoitettavissa (verkko-ongelma)",
       "device_not_responding": "{device_name} ei vastaa (REST API -virhe)",
       "device_recovered": "{device_name} palautunut"
+    }
+  },
+  "selector": {
+    "outage_mode": {
+      "options": {
+        "off": "Pois – ilmoita virheistä aina",
+        "auto": "Automaattinen tunnistus – auringon asema ja tuotanto",
+        "window": "Kiinteä aikaikkuna"
+      }
     }
   }
 }

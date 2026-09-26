@@ -60,6 +60,31 @@ DEFAULT_RECOVERY_SCRIPT = ""  # Empty = no script
 MIN_FAILURES_THRESHOLD = 1
 MAX_FAILURES_THRESHOLD = 10
 
+# Expected outage handling (issue #79). Inverter-powered dataloggers (VSN300)
+# go dark every night; these options keep that from raising the connection
+# failure repair issue / trigger / recovery script.
+CONF_OUTAGE_MODE = "outage_mode"
+CONF_OUTAGE_WINDOW_START = "outage_window_start"
+CONF_OUTAGE_WINDOW_END = "outage_window_end"
+CONF_OUTAGE_CALIBRATION = "outage_calibration"  # config_entry.data, auto-managed
+OUTAGE_MODE_OFF = "off"
+OUTAGE_MODE_AUTO = "auto"
+OUTAGE_MODE_WINDOW = "window"
+OUTAGE_MODES = (OUTAGE_MODE_OFF, OUTAGE_MODE_AUTO, OUTAGE_MODE_WINDOW)
+DEFAULT_OUTAGE_MODE = OUTAGE_MODE_OFF
+DEFAULT_OUTAGE_WINDOW_START = "21:00:00"
+DEFAULT_OUTAGE_WINDOW_END = "07:00:00"
+# Auto mode: an outage is expected while the sun is below this elevation
+# (degrees) until enough power-down/power-up samples have been learned.
+OUTAGE_DEFAULT_DAYTIME_ELEVATION = 10.0
+OUTAGE_MIN_DAYTIME_ELEVATION = 1.0
+OUTAGE_MAX_DAYTIME_ELEVATION = 60.0
+OUTAGE_CALIBRATION_MARGIN = 2.0  # degrees added to the highest learned sample
+OUTAGE_CALIBRATION_MIN_SAMPLES = 3  # samples needed before the learned value is used
+OUTAGE_CALIBRATION_MAX_SAMPLES = 14  # rolling window per series (about two weeks)
+OUTAGE_CALIBRATION_MIN_DURATION = 4 * 3600  # seconds; shorter outages are not a night
+OUTAGE_PRODUCING_WATTS = 0.0  # an inverter is "producing" above this AC power
+
 # Seconds the datalogger may be absent from livedata (while polls succeed)
 # before a repair issue is raised. Time-based rather than poll-based so the
 # behavior is independent of scan_interval. Generous enough to cover the

@@ -277,4 +277,15 @@ TRANSLATIONS = {
     "⚠️ WARNING:": "⚠️ ADVERTENCIA:",
     "Update all entity IDs to match new device names.": "Actualizar todos los IDs de entidades para coincidir con los nuevos nombres de dispositivos.",
     "This WILL BREAK existing automations, scripts, and dashboards that reference these entities!": "¡Esto ROMPERÁ las automatizaciones, scripts y paneles existentes que hacen referencia a estas entidades!",
+    # Expected outage handling options (issue #79)
+    "Expected outage handling": "Gestión de cortes esperados",
+    "Expected outage window start": "Inicio de la ventana de corte esperado",
+    "Expected outage window end": "Fin de la ventana de corte esperado",
+    "How connection failures are treated when the plant is expected to be off. Auto-detect: an outage that begins after the inverter stopped producing, with the sun low, is not reported; the sun elevation at power-down and power-up is learned over time. Fixed window: failures inside the window below are not reported.": "Cómo se tratan los fallos de conexión cuando se espera que la planta esté apagada. Detección automática: un corte que comienza después de que el inversor deje de producir, con el sol bajo, no se notifica; la elevación solar al apagarse y encenderse se aprende con el tiempo. Ventana fija: los fallos dentro de la ventana indicada abajo no se notifican.",
+    "Start of the daily window in which connection failures are expected (fixed window mode only).": "Inicio de la ventana diaria en la que se esperan fallos de conexión (solo en modo de ventana fija).",
+    "End of the daily window in which connection failures are expected (fixed window mode only).": "Fin de la ventana diaria en la que se esperan fallos de conexión (solo en modo de ventana fija).",
+    "Window start and end must be different times.": "El inicio y el fin de la ventana deben ser horas diferentes.",
+    "Off - always report failures": "Desactivado – notificar siempre los fallos",
+    "Auto-detect - sun position and production": "Detección automática – posición solar y producción",
+    "Fixed time window": "Ventana horaria fija",
 }

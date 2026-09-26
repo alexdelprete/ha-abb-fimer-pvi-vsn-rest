@@ -50,6 +50,9 @@
           "enable_startup_notification": "Luba käivitustõrgete teavitused",
           "failures_threshold": "Tõrgete arv enne teavitust",
           "recovery_script": "Taasteskript (valikuline)",
+          "outage_mode": "Eeldatava katkestuse käsitlemine",
+          "outage_window_start": "Eeldatava katkestuse ajavahemiku algus",
+          "outage_window_end": "Eeldatava katkestuse ajavahemiku lõpp",
           "prefix_inverter": "Inverter seadme nimi",
           "prefix_inverter_1": "Inverter 1 seadme nimi",
           "prefix_inverter_2": "Inverter 2 seadme nimi",
@@ -74,6 +77,9 @@
           "enable_startup_notification": "Teavita, kui seade pole Home Assistanti käivitumisel kättesaadav.",
           "failures_threshold": "Järjestikused tõrked enne teavitust. Vahemik: 1-10. Vaikimisi: 3.",
           "recovery_script": "Tõrke korral käivitatav skript (nt 'script.restart_router'). Jätke tühjaks, kui ei soovi.",
+          "outage_mode": "Kuidas käsitletakse ühenduse tõrkeid, kui jaam on eeldatavasti välja lülitatud. Automaatne tuvastus: katkestust, mis algab pärast inverteri tootmise lõppu madala päikese korral, ei teavitata; päikese kõrgus välja- ja sisselülitumisel õpitakse aja jooksul. Fikseeritud ajavahemik: allpool määratud ajavahemiku sees olevaid tõrkeid ei teavitata.",
+          "outage_window_start": "Igapäevase ajavahemiku algus, mil ühenduse tõrkeid oodatakse (ainult fikseeritud ajavahemiku režiimis).",
+          "outage_window_end": "Igapäevase ajavahemiku lõpp, mil ühenduse tõrkeid oodatakse (ainult fikseeritud ajavahemiku režiimis).",
           "prefix_inverter": "Custom inverter name. Jäta tühjaks vaikeväärtuse jaoks.",
           "prefix_inverter_1": "Sets name for device with S/N: {inverter_1_sn}. Jäta tühjaks vaikeväärtuse jaoks.",
           "prefix_inverter_2": "Sets name for device with S/N: {inverter_2_sn}. Jäta tühjaks vaikeväärtuse jaoks.",
@@ -93,6 +99,9 @@
           "regenerate_entity_ids": ""
         }
       }
+    },
+    "error": {
+      "outage_window_invalid": "Ajavahemiku algus ja lõpp peavad olema erinevad kellaajad."
     }
   },
   "entity": {
@@ -898,6 +907,15 @@
       "device_unreachable": "{device_name} pole kättesaadav (võrguprobleem)",
       "device_not_responding": "{device_name} ei vasta (REST API viga)",
       "device_recovered": "{device_name} taastunud"
+    }
+  },
+  "selector": {
+    "outage_mode": {
+      "options": {
+        "off": "Väljas – teavita tõrgetest alati",
+        "auto": "Automaatne tuvastus – päikese asend ja tootmine",
+        "window": "Fikseeritud ajavahemik"
+      }
     }
   }
 }

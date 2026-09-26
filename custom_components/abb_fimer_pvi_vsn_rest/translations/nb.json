@@ -50,6 +50,9 @@
           "enable_startup_notification": "Aktiver varsler om oppstartsfeil",
           "failures_threshold": "Feil før varsling",
           "recovery_script": "Gjenopprettingsskript (valgfritt)",
+          "outage_mode": "Håndtering av forventede avbrudd",
+          "outage_window_start": "Start på forventet avbruddsvindu",
+          "outage_window_end": "Slutt på forventet avbruddsvindu",
           "prefix_inverter": "Vekselretter enhetsnavn",
           "prefix_inverter_1": "Vekselretter 1 enhetsnavn",
           "prefix_inverter_2": "Vekselretter 2 enhetsnavn",
@@ -74,6 +77,9 @@
           "enable_startup_notification": "Varsle når enheten er utilgjengelig ved oppstart av Home Assistant.",
           "failures_threshold": "Påfølgende feil før varsling. Område: 1-10. Standard: 3.",
           "recovery_script": "Skript som kjøres ved feil (f.eks. 'script.restart_router'). La stå tomt for ingen.",
+          "outage_mode": "Hvordan tilkoblingsfeil håndteres når anlegget forventes å være av. Automatisk: et avbrudd som starter etter at inverteren har sluttet å produsere, med lav sol, rapporteres ikke; solhøyden ved av- og påslag læres over tid. Fast tidsvindu: feil innenfor vinduet nedenfor rapporteres ikke.",
+          "outage_window_start": "Start på det daglige tidsvinduet der tilkoblingsfeil forventes (kun i modus for fast tidsvindu).",
+          "outage_window_end": "Slutt på det daglige tidsvinduet der tilkoblingsfeil forventes (kun i modus for fast tidsvindu).",
           "prefix_inverter": "Custom inverter name. La stå tom for standardverdi.",
           "prefix_inverter_1": "Sets name for device with S/N: {inverter_1_sn}. La stå tom for standardverdi.",
           "prefix_inverter_2": "Sets name for device with S/N: {inverter_2_sn}. La stå tom for standardverdi.",
@@ -93,6 +99,9 @@
           "regenerate_entity_ids": ""
         }
       }
+    },
+    "error": {
+      "outage_window_invalid": "Start og slutt på tidsvinduet må være forskjellige klokkeslett."
     }
   },
   "entity": {
@@ -898,6 +907,15 @@
       "device_unreachable": "{device_name} er utilgjengelig (nettverksproblem)",
       "device_not_responding": "{device_name} svarer ikke (REST API-feil)",
       "device_recovered": "{device_name} gjenopprettet"
+    }
+  },
+  "selector": {
+    "outage_mode": {
+      "options": {
+        "off": "Av – rapporter alltid feil",
+        "auto": "Automatisk – solposisjon og produksjon",
+        "window": "Fast tidsvindu"
+      }
     }
   }
 }

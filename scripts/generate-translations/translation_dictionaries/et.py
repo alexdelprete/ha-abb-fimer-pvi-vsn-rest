@@ -277,4 +277,15 @@ TRANSLATIONS = {
     "⚠️ WARNING:": "⚠️ HOIATUS:",
     "Update all entity IDs to match new device names.": "Värskenda kõik olemi ID-d, et need vastaksid uutele seadmenimedele.",
     "This WILL BREAK existing automations, scripts, and dashboards that reference these entities!": "See RIKUB olemasolevad automatiseerimised, skriptid ja juhtpaneelid, mis viitavad nendele olemitele!",
+    # Expected outage handling options (issue #79)
+    "Expected outage handling": "Eeldatava katkestuse käsitlemine",
+    "Expected outage window start": "Eeldatava katkestuse ajavahemiku algus",
+    "Expected outage window end": "Eeldatava katkestuse ajavahemiku lõpp",
+    "How connection failures are treated when the plant is expected to be off. Auto-detect: an outage that begins after the inverter stopped producing, with the sun low, is not reported; the sun elevation at power-down and power-up is learned over time. Fixed window: failures inside the window below are not reported.": "Kuidas käsitletakse ühenduse tõrkeid, kui jaam on eeldatavasti välja lülitatud. Automaatne tuvastus: katkestust, mis algab pärast inverteri tootmise lõppu madala päikese korral, ei teavitata; päikese kõrgus välja- ja sisselülitumisel õpitakse aja jooksul. Fikseeritud ajavahemik: allpool määratud ajavahemiku sees olevaid tõrkeid ei teavitata.",
+    "Start of the daily window in which connection failures are expected (fixed window mode only).": "Igapäevase ajavahemiku algus, mil ühenduse tõrkeid oodatakse (ainult fikseeritud ajavahemiku režiimis).",
+    "End of the daily window in which connection failures are expected (fixed window mode only).": "Igapäevase ajavahemiku lõpp, mil ühenduse tõrkeid oodatakse (ainult fikseeritud ajavahemiku režiimis).",
+    "Window start and end must be different times.": "Ajavahemiku algus ja lõpp peavad olema erinevad kellaajad.",
+    "Off - always report failures": "Väljas – teavita tõrgetest alati",
+    "Auto-detect - sun position and production": "Automaatne tuvastus – päikese asend ja tootmine",
+    "Fixed time window": "Fikseeritud ajavahemik",
 }

@@ -50,6 +50,9 @@
           "enable_startup_notification": "Aktivera aviseringar om startfel",
           "failures_threshold": "Fel före avisering",
           "recovery_script": "Återställningsskript (valfritt)",
+          "outage_mode": "Hantering av förväntade avbrott",
+          "outage_window_start": "Start för förväntat avbrottsfönster",
+          "outage_window_end": "Slut för förväntat avbrottsfönster",
           "prefix_inverter": "Växelriktare enhetsnamn",
           "prefix_inverter_1": "Växelriktare 1 enhetsnamn",
           "prefix_inverter_2": "Växelriktare 2 enhetsnamn",
@@ -74,6 +77,9 @@
           "enable_startup_notification": "Avisera när enheten är oåtkomlig när Home Assistant startar.",
           "failures_threshold": "Antal fel i följd före avisering. Intervall: 1-10. Standard: 3.",
           "recovery_script": "Skript som körs vid fel (t.ex. 'script.restart_router'). Lämna tomt för inget.",
+          "outage_mode": "Hur anslutningsfel hanteras när anläggningen förväntas vara avstängd. Automatisk: ett avbrott som börjar efter att växelriktaren slutat producera, med låg sol, rapporteras inte; solhöjden vid av- och påslag lärs in över tid. Fast tidsfönster: fel inom fönstret nedan rapporteras inte.",
+          "outage_window_start": "Start för det dagliga tidsfönstret då anslutningsfel förväntas (endast i läget fast tidsfönster).",
+          "outage_window_end": "Slut för det dagliga tidsfönstret då anslutningsfel förväntas (endast i läget fast tidsfönster).",
           "prefix_inverter": "Custom inverter name. Lämna tomt för standardvärde.",
           "prefix_inverter_1": "Sets name for device with S/N: {inverter_1_sn}. Lämna tomt för standardvärde.",
           "prefix_inverter_2": "Sets name for device with S/N: {inverter_2_sn}. Lämna tomt för standardvärde.",
@@ -93,6 +99,9 @@
           "regenerate_entity_ids": ""
         }
       }
+    },
+    "error": {
+      "outage_window_invalid": "Tidsfönstrets start och slut måste vara olika klockslag."
     }
   },
   "entity": {
@@ -898,6 +907,15 @@
       "device_unreachable": "{device_name} är onåbar (nätverksproblem)",
       "device_not_responding": "{device_name} svarar inte (REST API-fel)",
       "device_recovered": "{device_name} återhämtad"
+    }
+  },
+  "selector": {
+    "outage_mode": {
+      "options": {
+        "off": "Av – rapportera alltid fel",
+        "auto": "Automatisk – solens position och produktion",
+        "window": "Fast tidsfönster"
+      }
     }
   }
 }

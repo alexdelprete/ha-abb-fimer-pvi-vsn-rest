@@ -24,9 +24,13 @@ from homeassistant.helpers.selector import (
     NumberSelector,
     NumberSelectorConfig,
     NumberSelectorMode,
+    SelectSelector,
+    SelectSelectorConfig,
+    SelectSelectorMode,
     TextSelector,
     TextSelectorConfig,
     TextSelectorType,
+    TimeSelector,
 )
 from homeassistant.util import slugify
 
@@ -43,6 +47,9 @@ from .const import (
     CONF_ENABLE_REPAIR_NOTIFICATION,
     CONF_ENABLE_STARTUP_NOTIFICATION,
     CONF_FAILURES_THRESHOLD,
+    CONF_OUTAGE_MODE,
+    CONF_OUTAGE_WINDOW_END,
+    CONF_OUTAGE_WINDOW_START,
     CONF_RECOVERY_SCRIPT,
     CONF_REGENERATE_ENTITY_IDS,
     CONF_REQUIRES_AUTH,
@@ -51,6 +58,9 @@ from .const import (
     DEFAULT_ENABLE_REPAIR_NOTIFICATION,
     DEFAULT_ENABLE_STARTUP_NOTIFICATION,
     DEFAULT_FAILURES_THRESHOLD,
+    DEFAULT_OUTAGE_MODE,
+    DEFAULT_OUTAGE_WINDOW_END,
+    DEFAULT_OUTAGE_WINDOW_START,
     DEFAULT_RECOVERY_SCRIPT,
     DEFAULT_SCAN_INTERVAL,
     DEFAULT_USERNAME,
@@ -59,6 +69,8 @@ from .const import (
     MAX_SCAN_INTERVAL,
     MIN_FAILURES_THRESHOLD,
     MIN_SCAN_INTERVAL,
+    OUTAGE_MODE_WINDOW,
+    OUTAGE_MODES,
     TYPE_TO_CONF_PREFIX,
 )
 from .helpers import (
@@ -376,18 +388,27 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Manage the options."""
+        errors: dict[str, str] = {}
         if user_input is not None:
-            # Check if entity ID regeneration was requested (one-time action)
-            regenerate = user_input.pop(CONF_REGENERATE_ENTITY_IDS, False)
+            # A fixed outage window needs two different times
+            if user_input.get(CONF_OUTAGE_MODE) == OUTAGE_MODE_WINDOW and user_input.get(
+                CONF_OUTAGE_WINDOW_START
+            ) == user_input.get(CONF_OUTAGE_WINDOW_END):
+                errors[CONF_OUTAGE_WINDOW_END] = "outage_window_invalid"
 
-            if regenerate:
-                await self._regenerate_entity_ids(user_input)
+            if not errors:
+                # Check if entity ID regeneration was requested (one-time action)
+                regenerate = user_input.pop(CONF_REGENERATE_ENTITY_IDS, False)
 
-            _LOGGER.debug(
-                "Options updated: scan_interval=%s",
-                user_input.get(CONF_SCAN_INTERVAL),
-            )
-            return self.async_create_entry(data=user_input)
+                if regenerate:
+                    await self._regenerate_entity_ids(user_input)
+
+                _LOGGER.debug(
+                    "Options updated: scan_interval=%s, outage_mode=%s",
+                    user_input.get(CONF_SCAN_INTERVAL),
+                    user_input.get(CONF_OUTAGE_MODE),
+                )
+                return self.async_create_entry(data=user_input)
 
         # Access discovered devices from coordinator (if available)
         discovered_devices = []
@@ -474,6 +495,33 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
             )
         )
 
+        # Expected outage handling (issue #79): off / auto-detect / fixed window.
+        # The window times are always shown; they only apply in window mode.
+        schema_dict[
+            vol.Required(
+                CONF_OUTAGE_MODE,
+                default=current_options.get(CONF_OUTAGE_MODE, DEFAULT_OUTAGE_MODE),
+            )
+        ] = SelectSelector(
+            SelectSelectorConfig(
+                options=list(OUTAGE_MODES),
+                mode=SelectSelectorMode.DROPDOWN,
+                translation_key="outage_mode",
+            )
+        )
+        schema_dict[
+            vol.Optional(
+                CONF_OUTAGE_WINDOW_START,
+                default=current_options.get(CONF_OUTAGE_WINDOW_START, DEFAULT_OUTAGE_WINDOW_START),
+            )
+        ] = TimeSelector()
+        schema_dict[
+            vol.Optional(
+                CONF_OUTAGE_WINDOW_END,
+                default=current_options.get(CONF_OUTAGE_WINDOW_END, DEFAULT_OUTAGE_WINDOW_END),
+            )
+        ] = TimeSelector()
+
         # Add per-device prefix fields
         # Single device of a type → base key (e.g., "prefix_battery") for backward compat
         # Multiple devices of same type → indexed keys (e.g., "prefix_battery_1", "prefix_battery_2")
@@ -527,6 +575,7 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
         return self.async_show_form(
             step_id="init",
             data_schema=vol.Schema(schema_dict),
+            errors=errors or None,
             description_placeholders=description_placeholders or None,
         )
 

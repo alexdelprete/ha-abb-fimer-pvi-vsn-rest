@@ -125,6 +125,8 @@ described below:
 | **Enable startup failure notifications** | Off | Notify when device is unreachable at Home Assistant startup |
 | **Failures before notification** | 3 (1-10) | Consecutive failures before creating a notification |
 | **Recovery script** | (none) | Script to execute when failures threshold is reached (e.g., `script.restart_router`) |
+| **Expected outage handling** | Off | `Off`, `Auto-detect` or `Fixed time window` (see below) |
+| **Expected outage window** | 21:00–07:00 | Daily start/end used by `Fixed time window` mode (may cross midnight) |
 
 **Runtime vs Startup Notifications:**
 
@@ -133,6 +135,27 @@ described below:
 
 **Tip for solar-only systems**: If your inverter is offline at night and you restart HA at night,
 disable "Enable startup failure notifications" to avoid unnecessary alerts.
+
+#### Expected Outages (Night-Time Shutdown)
+
+A VSN300 is a WiFi card powered by the inverter, so the whole datalogger goes dark every evening
+and the "Cannot connect" repair issue would otherwise appear every night and clear every morning.
+The **Expected outage handling** option prevents that:
+
+- **Auto-detect** (recommended for inverter-powered loggers): an outage is *expected* when it begins
+  after the inverter had already stopped producing (last poll reported no AC power) and the sun is
+  below the *daytime threshold*. Expected outages raise no repair issue, no device trigger and no
+  recovery script, and no recovery notification follows. If the datalogger is still unreachable once
+  the sun climbs above the threshold, the normal failure counting starts and you are notified after
+  the usual number of failures. The integration learns your plant's own power-down and power-up sun
+  elevations (last 14 overnight outages); the threshold is the highest learned value plus 2° and
+  starts at a conservative 10° until 3 samples exist. Learned values are visible in the integration
+  diagnostics under `expected_outage`. Requires the Home Assistant location to be set.
+- **Fixed time window**: failures between the start and end times are expected. Choose this if you
+  prefer a deterministic window or your logger is powered independently of the sun.
+
+A datalogger with its own power supply (VSN700, battery systems) stays reachable overnight, so a
+night-time failure there is real: leave the option **Off** or use a window that fits your case.
 
 #### Device Name Customization
 

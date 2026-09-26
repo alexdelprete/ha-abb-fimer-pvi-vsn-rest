@@ -50,6 +50,9 @@
           "enable_startup_notification": "Activer les notifications de panne au démarrage",
           "failures_threshold": "Échecs avant notification",
           "recovery_script": "Script de récupération (facultatif)",
+          "outage_mode": "Gestion des coupures attendues",
+          "outage_window_start": "Début de la plage de coupure attendue",
+          "outage_window_end": "Fin de la plage de coupure attendue",
           "prefix_inverter": "Nom de l'appareil onduleur",
           "prefix_inverter_1": "Nom de l'appareil onduleur 1",
           "prefix_inverter_2": "Nom de l'appareil onduleur 2",
@@ -74,6 +77,9 @@
           "enable_startup_notification": "Notifier lorsque l'appareil est injoignable au démarrage de Home Assistant.",
           "failures_threshold": "Échecs consécutifs avant notification. Plage : 1-10. Par défaut : 3.",
           "recovery_script": "Script à exécuter en cas de panne (ex. : 'script.restart_router'). Laisser vide pour aucun.",
+          "outage_mode": "Comment traiter les échecs de connexion lorsque l'installation est censée être éteinte. Détection automatique : une coupure qui commence après l'arrêt de la production de l'onduleur, soleil bas, n'est pas signalée ; la hauteur du soleil à l'extinction et au démarrage est apprise au fil du temps. Plage fixe : les échecs dans la plage ci-dessous ne sont pas signalés.",
+          "outage_window_start": "Début de la plage quotidienne pendant laquelle des échecs de connexion sont attendus (mode plage fixe uniquement).",
+          "outage_window_end": "Fin de la plage quotidienne pendant laquelle des échecs de connexion sont attendus (mode plage fixe uniquement).",
           "prefix_inverter": "Custom inverter name. Laisser vide pour la valeur par défaut.",
           "prefix_inverter_1": "Sets name for device with S/N: {inverter_1_sn}. Laisser vide pour la valeur par défaut.",
           "prefix_inverter_2": "Sets name for device with S/N: {inverter_2_sn}. Laisser vide pour la valeur par défaut.",
@@ -93,6 +99,9 @@
           "regenerate_entity_ids": ""
         }
       }
+    },
+    "error": {
+      "outage_window_invalid": "Le début et la fin de la plage doivent être des heures différentes."
     }
   },
   "entity": {
@@ -898,6 +907,15 @@
       "device_unreachable": "{device_name} est injoignable (problème réseau)",
       "device_not_responding": "{device_name} ne répond pas (erreur API REST)",
       "device_recovered": "{device_name} rétabli"
+    }
+  },
+  "selector": {
+    "outage_mode": {
+      "options": {
+        "off": "Désactivé – toujours signaler les échecs",
+        "auto": "Détection automatique – position du soleil et production",
+        "window": "Plage horaire fixe"
+      }
     }
   }
 }
