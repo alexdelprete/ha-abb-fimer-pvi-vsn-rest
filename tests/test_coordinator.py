@@ -2063,10 +2063,13 @@ class TestOutageAutoMode:
         assert status["calibrated"] is False
         assert status["daytime_elevation_threshold"] == OUTAGE_DEFAULT_DAYTIME_ELEVATION
 
-    def test_sun_elevation_without_location(
-        self, auto_coordinator: ABBFimerPVIVSNRestCoordinator
+    def test_sun_elevation_invalid_location(
+        self, auto_coordinator: ABBFimerPVIVSNRestCoordinator, mock_hass: MagicMock
     ) -> None:
-        """A MagicMock hass has no usable coordinates -> None, no exception."""
+        """Unusable coordinates -> None, no exception (auto mode then never suppresses)."""
+        mock_hass.config.latitude = "north"
+        mock_hass.config.longitude = 12.5
+        mock_hass.config.elevation = 0
         assert auto_coordinator._sun_elevation() is None
 
     def test_sun_elevation_with_location(
