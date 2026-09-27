@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.5.14] - Unreleased
 
+- (nothing yet — collects the 1.5.14 betas)
+
+## [1.5.14-beta.1] - 2026-09-27
+
 ### Added
 
 - **Expected outage handling** (Reported in #79, thanks @piejanssens) — new option in the
