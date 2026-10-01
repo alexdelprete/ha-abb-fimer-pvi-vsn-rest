@@ -77,7 +77,7 @@
           "enable_startup_notification": "Notificar quando o dispositivo estiver inacessível no arranque do Home Assistant.",
           "failures_threshold": "Falhas consecutivas antes da notificação. Intervalo: 1-10. Predefinição: 3.",
           "recovery_script": "Script a executar em caso de falha (ex.: 'script.restart_router'). Deixe vazio para nenhum.",
-          "outage_mode": "Como tratar falhas de ligação quando se espera que a instalação esteja desligada. Deteção automática: uma interrupção que começa depois de o inversor deixar de produzir, com o sol baixo, não é comunicada; a elevação do sol ao desligar e ao ligar é aprendida ao longo do tempo. Janela fixa: as falhas dentro da janela indicada abaixo não são comunicadas.",
+          "outage_mode": "Como tratar falhas de ligação quando se espera que a instalação esteja desligada. Deteção automática: uma interrupção com o sol baixo e o inversor a produzir pouco não é comunicada; nas primeiras noites é usada uma regra integrada enquanto a integração aprende quando o seu datalogger se desliga e liga, e depois são usados os valores aprendidos. Janela fixa: as falhas dentro da janela indicada abaixo não são comunicadas.",
           "outage_window_start": "Início da janela diária em que se esperam falhas de ligação (apenas no modo de janela fixa).",
           "outage_window_end": "Fim da janela diária em que se esperam falhas de ligação (apenas no modo de janela fixa).",
           "prefix_inverter": "Custom inverter name. Deixe vazio para o valor padrão.",

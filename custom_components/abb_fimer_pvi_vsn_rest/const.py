@@ -11,7 +11,7 @@ from .abb_fimer_vsn_rest_client import (  # noqa: F401
 )
 
 DOMAIN = "abb_fimer_pvi_vsn_rest"
-VERSION = "1.5.14-beta.1"
+VERSION = "1.5.14-beta.2"
 
 # Configuration
 CONF_HOST = "host"
@@ -66,7 +66,9 @@ MAX_FAILURES_THRESHOLD = 10
 CONF_OUTAGE_MODE = "outage_mode"
 CONF_OUTAGE_WINDOW_START = "outage_window_start"
 CONF_OUTAGE_WINDOW_END = "outage_window_end"
-CONF_OUTAGE_CALIBRATION = "outage_calibration"  # config_entry.data, auto-managed
+CONF_OUTAGE_LEARNING = "outage_learning"  # config_entry.data, auto-managed
+# v1.5.14-beta.1 stored elevation pairs here; superseded by CONF_OUTAGE_LEARNING
+CONF_OUTAGE_CALIBRATION_LEGACY = "outage_calibration"
 OUTAGE_MODE_OFF = "off"
 OUTAGE_MODE_AUTO = "auto"
 OUTAGE_MODE_WINDOW = "window"
@@ -74,16 +76,22 @@ OUTAGE_MODES = (OUTAGE_MODE_OFF, OUTAGE_MODE_AUTO, OUTAGE_MODE_WINDOW)
 DEFAULT_OUTAGE_MODE = OUTAGE_MODE_OFF
 DEFAULT_OUTAGE_WINDOW_START = "21:00:00"
 DEFAULT_OUTAGE_WINDOW_END = "07:00:00"
-# Auto mode: an outage is expected while the sun is below this elevation
-# (degrees) until enough power-down/power-up samples have been learned.
-OUTAGE_DEFAULT_DAYTIME_ELEVATION = 10.0
-OUTAGE_MIN_DAYTIME_ELEVATION = 1.0
-OUTAGE_MAX_DAYTIME_ELEVATION = 60.0
-OUTAGE_CALIBRATION_MARGIN = 2.0  # degrees added to the highest learned sample
-OUTAGE_CALIBRATION_MIN_SAMPLES = 3  # samples needed before the learned value is used
-OUTAGE_CALIBRATION_MAX_SAMPLES = 14  # rolling window per series (about two weeks)
-OUTAGE_CALIBRATION_MIN_DURATION = 4 * 3600  # seconds; shorter outages are not a night
-OUTAGE_PRODUCING_WATTS = 0.0  # an inverter is "producing" above this AC power
+# Auto mode. Every overnight outage is recorded as a night: sun elevation and
+# plant AC power at the last good poll (power-down) and sun elevation at the
+# first good poll the next morning (power-up). Until OUTAGE_LEARNING_NIGHTS
+# nights exist a conservative starter rule applies; afterwards the bounds are
+# learned from the plant (see coordinator.outage_thresholds).
+OUTAGE_LEARNING_NIGHTS = 5  # nights needed before the learned rule replaces the starter
+OUTAGE_LEARNING_MAX_NIGHTS = 14  # rolling window of remembered nights
+OUTAGE_NIGHT_MIN_DURATION = 4 * 3600  # seconds; a shorter outage is not a night
+OUTAGE_MAX_ELEVATION = 10.0  # night ends must be below this; learned bounds never exceed it
+OUTAGE_STARTER_ENTRY_ELEVATION = 0.0  # starter: dropout expected with the sun below this
+OUTAGE_STARTER_ENTRY_POWER = 60.0  # starter: ...and plant AC power below this (W)
+OUTAGE_STARTER_EXIT_ELEVATION = 10.0  # starter: counting resumes above this sun elevation
+OUTAGE_ELEVATION_MARGIN = 2.0  # degrees added to the highest learned elevation
+OUTAGE_POWER_FACTOR = 1.5  # learned power bound = highest learned power * factor + margin
+OUTAGE_POWER_MARGIN = 10.0  # W
+OUTAGE_OUTLIER_ELEVATION = 5.0  # nights this far above the median elevation are ignored
 
 # Seconds the datalogger may be absent from livedata (while polls succeed)
 # before a repair issue is raised. Time-based rather than poll-based so the

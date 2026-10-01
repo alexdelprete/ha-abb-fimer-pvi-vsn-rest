@@ -77,7 +77,7 @@
           "enable_startup_notification": "Notifica quando il dispositivo è irraggiungibile all'avvio di Home Assistant.",
           "failures_threshold": "Guasti consecutivi prima della notifica. Intervallo: 1-10. Predefinito: 3.",
           "recovery_script": "Script da eseguire in caso di guasto (es. 'script.restart_router'). Lascia vuoto per nessuno.",
-          "outage_mode": "Come trattare gli errori di connessione quando l'impianto dovrebbe essere spento. Rilevamento automatico: un'interruzione che inizia dopo che l'inverter ha smesso di produrre, con il sole basso, non viene segnalata; l'elevazione del sole allo spegnimento e all'accensione viene appresa nel tempo. Finestra fissa: gli errori all'interno della finestra indicata sotto non vengono segnalati.",
+          "outage_mode": "Come trattare gli errori di connessione quando l'impianto dovrebbe essere spento. Rilevamento automatico: un'interruzione con il sole basso e l'inverter che produce poco non viene segnalata; nelle prime notti si usa una regola predefinita mentre l'integrazione impara quando il datalogger si spegne e si riaccende, poi subentrano i valori appresi. Finestra fissa: gli errori all'interno della finestra indicata sotto non vengono segnalati.",
           "outage_window_start": "Inizio della finestra giornaliera in cui sono previsti errori di connessione (solo in modalità finestra fissa).",
           "outage_window_end": "Fine della finestra giornaliera in cui sono previsti errori di connessione (solo in modalità finestra fissa).",
           "prefix_inverter": "Custom inverter name. Lascia vuoto per il valore predefinito.",

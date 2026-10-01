@@ -77,7 +77,7 @@
           "enable_startup_notification": "Notify when device is unreachable at Home Assistant startup.",
           "failures_threshold": "Consecutive failures before notification. Range: 1-10. Default: 3.",
           "recovery_script": "Script to run on failure (e.g., 'script.restart_router'). Leave empty for none.",
-          "outage_mode": "How connection failures are treated when the plant is expected to be off. Auto-detect: an outage that begins after the inverter stopped producing, with the sun low, is not reported; the sun elevation at power-down and power-up is learned over time. Fixed window: failures inside the window below are not reported.",
+          "outage_mode": "How connection failures are treated when the plant is expected to be off. Auto-detect: a dropout with the sun low and the inverter producing little is not reported; a built-in rule is used for the first nights while the integration learns when your logger switches off and on, then the learned values take over. Fixed window: failures inside the window below are not reported.",
           "outage_window_start": "Start of the daily window in which connection failures are expected (fixed window mode only).",
           "outage_window_end": "End of the daily window in which connection failures are expected (fixed window mode only).",
           "prefix_inverter": "Custom inverter name. Leave empty for default.",

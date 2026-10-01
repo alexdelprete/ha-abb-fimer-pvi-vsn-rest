@@ -142,15 +142,20 @@ A VSN300 is a WiFi card powered by the inverter, so the whole datalogger goes da
 and the "Cannot connect" repair issue would otherwise appear every night and clear every morning.
 The **Expected outage handling** option prevents that:
 
-- **Auto-detect** (recommended for inverter-powered loggers): an outage is *expected* when it begins
-  after the inverter had already stopped producing (last poll reported no AC power) and the sun is
-  below the *daytime threshold*. Expected outages raise no repair issue, no device trigger and no
-  recovery script, and no recovery notification follows. If the datalogger is still unreachable once
-  the sun climbs above the threshold, the normal failure counting starts and you are notified after
-  the usual number of failures. The integration learns your plant's own power-down and power-up sun
-  elevations (last 14 overnight outages); the threshold is the highest learned value plus 2° and
-  starts at a conservative 10° until 3 samples exist. Learned values are visible in the integration
-  diagnostics under `expected_outage`. Requires the Home Assistant location to be set.
+- **Auto-detect** (recommended for inverter-powered loggers): when contact is lost, the
+  integration looks at the last good poll. If the sun was low and the plant was producing little,
+  the outage is *expected*: no repair issue, no device trigger, no recovery script and no recovery
+  notification. If the datalogger is still unreachable once the sun is above the plant's start-up
+  elevation, normal failure counting starts and you are notified as usual. A dropout while the
+  plant is still producing well, or with the sun high, is reported normally.
+  - **Learning**: every overnight outage is recorded as a night (sun elevation and power when the
+    logger switched off, sun elevation when it came back). For the first 5 nights a built-in
+    starter rule applies: sun below 0° and power below 60 W, start-up by 10°. From then on the
+    learned bounds are used: highest learned switch-off elevation + 2°, highest learned switch-off
+    power × 1.5 + 10 W, highest learned start-up elevation + 2°. The last 14 nights are kept, so
+    the bounds follow the seasons; nights far off the usual pattern are ignored.
+  - The integration diagnostics show the current rule, the learned nights and today's resulting
+    window in clock time under `coordinator.expected_outage`. Requires the Home Assistant location.
 - **Fixed time window**: failures between the start and end times are expected. Choose this if you
   prefer a deterministic window or your logger is powered independently of the sun.
 

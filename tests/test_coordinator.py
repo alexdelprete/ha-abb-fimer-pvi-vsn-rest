@@ -17,7 +17,8 @@ from custom_components.abb_fimer_pvi_vsn_rest.const import (
     CONF_ENABLE_REPAIR_NOTIFICATION,
     CONF_FAILURES_THRESHOLD,
     CONF_KNOWN_DEVICES,
-    CONF_OUTAGE_CALIBRATION,
+    CONF_OUTAGE_CALIBRATION_LEGACY,
+    CONF_OUTAGE_LEARNING,
     CONF_OUTAGE_MODE,
     CONF_OUTAGE_WINDOW_END,
     CONF_OUTAGE_WINDOW_START,
@@ -27,14 +28,19 @@ from custom_components.abb_fimer_pvi_vsn_rest.const import (
     DEFAULT_FAILURES_THRESHOLD,
     DEFAULT_RECOVERY_SCRIPT,
     DOMAIN,
-    OUTAGE_CALIBRATION_MARGIN,
-    OUTAGE_CALIBRATION_MAX_SAMPLES,
-    OUTAGE_CALIBRATION_MIN_DURATION,
-    OUTAGE_DEFAULT_DAYTIME_ELEVATION,
-    OUTAGE_MAX_DAYTIME_ELEVATION,
+    OUTAGE_ELEVATION_MARGIN,
+    OUTAGE_LEARNING_MAX_NIGHTS,
+    OUTAGE_LEARNING_NIGHTS,
+    OUTAGE_MAX_ELEVATION,
     OUTAGE_MODE_AUTO,
     OUTAGE_MODE_OFF,
     OUTAGE_MODE_WINDOW,
+    OUTAGE_NIGHT_MIN_DURATION,
+    OUTAGE_POWER_FACTOR,
+    OUTAGE_POWER_MARGIN,
+    OUTAGE_STARTER_ENTRY_ELEVATION,
+    OUTAGE_STARTER_ENTRY_POWER,
+    OUTAGE_STARTER_EXIT_ELEVATION,
 )
 from custom_components.abb_fimer_pvi_vsn_rest.coordinator import ABBFimerPVIVSNRestCoordinator
 from homeassistant.exceptions import HomeAssistantError
@@ -1610,16 +1616,11 @@ class TestDataloggerSilent:
 CREATE_ISSUE = "custom_components.abb_fimer_pvi_vsn_rest.coordinator.create_connection_issue"
 SUN_ELEVATION = "_sun_elevation"
 
-PRODUCING_DATA = {
-    "devices": {
-        TEST_INVERTER_SN: {"device_type": "inverter_3phases", "points": {"watts": {"value": 3000}}}
-    }
-}
-IDLE_DATA = {
-    "devices": {
-        TEST_INVERTER_SN: {"device_type": "inverter_3phases", "points": {"watts": {"value": 0}}}
-    }
-}
+
+def _power_data(watts: float | None) -> dict:
+    """Normalized data with one inverter reporting the given AC power."""
+    points = {} if watts is None else {"watts": {"value": watts}}
+    return {"devices": {TEST_INVERTER_SN: {"device_type": "inverter_3phases", "points": points}}}
 
 
 def _outage_entry(mode: str, **extra: str) -> MagicMock:
@@ -1661,32 +1662,36 @@ async def _fail_once(coordinator: ABBFimerPVIVSNRestCoordinator) -> None:
         await coordinator._async_update_data()
 
 
-class TestPlantProducing:
-    """Tests for _plant_producing()."""
+def _nights(count: int, e_off: float = -3.5, p_off: float = 30.0, e_on: float = 0.5) -> list:
+    return [{"e_off": e_off, "p_off": p_off, "e_on": e_on} for _ in range(count)]
 
-    def test_inverter_with_power(self) -> None:
-        assert ABBFimerPVIVSNRestCoordinator._plant_producing(PRODUCING_DATA) is True
 
-    def test_inverter_without_power(self) -> None:
-        assert ABBFimerPVIVSNRestCoordinator._plant_producing(IDLE_DATA) is False
+class TestPlantPower:
+    """Tests for _plant_power()."""
 
-    def test_no_inverter_in_data(self) -> None:
+    def test_single_inverter(self) -> None:
+        assert ABBFimerPVIVSNRestCoordinator._plant_power(_power_data(42.5)) == 42.5
+
+    def test_inverters_are_summed(self) -> None:
         data = {
             "devices": {
-                TEST_LOGGER_SN: {"device_type": "datalogger", "points": {"watts": {"value": 5}}}
+                "a": {"device_type": "inverter_3phases", "points": {"watts": {"value": 10}}},
+                "b": {"device_type": "inverter_1phase", "points": {"watts": {"value": 5.5}}},
             }
         }
-        assert ABBFimerPVIVSNRestCoordinator._plant_producing(data) is False
+        assert ABBFimerPVIVSNRestCoordinator._plant_power(data) == 15.5
 
-    def test_missing_or_invalid_watts(self) -> None:
+    def test_no_inverter_or_no_value_is_none(self) -> None:
         data = {
             "devices": {
+                TEST_LOGGER_SN: {"device_type": "datalogger", "points": {"watts": {"value": 5}}},
                 "a": {"device_type": "inverter_1phase", "points": {}},
                 "b": {"device_type": "inverter_1phase", "points": {"watts": {"value": "n/a"}}},
-                "c": "garbage",
+                "c": {"device_type": "inverter_1phase", "points": {"watts": {"value": True}}},
+                "d": "garbage",
             }
         }
-        assert ABBFimerPVIVSNRestCoordinator._plant_producing(data) is False
+        assert ABBFimerPVIVSNRestCoordinator._plant_power(data) is None
 
 
 class TestOutageWindow:
@@ -1769,10 +1774,11 @@ class TestOutageWindow:
                 await _fail_once(coordinator)
             mock_create.assert_called_once()
             assert coordinator._repair_issue_created is True
+            assert coordinator._expected_outage_active is False
 
 
 class TestOutageAutoMode:
-    """Tests for the auto-detect mode (sun position + production)."""
+    """Auto mode: classify the dropout, defer until start-up, learn every night."""
 
     @pytest.fixture
     def auto_coordinator(
@@ -1785,116 +1791,153 @@ class TestOutageAutoMode:
             mock_hass, mock_vsn_client, mock_discovery_result, _outage_entry(OUTAGE_MODE_AUTO)
         )
 
-    async def test_night_outage_after_ramp_down_is_expected(
+    async def _last_contact(
+        self,
+        coordinator: ABBFimerPVIVSNRestCoordinator,
+        client: MagicMock,
+        mock_elev: MagicMock,
+        elevation: float,
+        watts: float | None,
+    ) -> None:
+        """One successful poll at the given sun elevation and plant power."""
+        mock_elev.return_value = elevation
+        client.get_normalized_data.side_effect = None
+        client.get_normalized_data.return_value = _power_data(watts)
+        await coordinator._async_update_data()
+
+    async def test_starter_rule_defers_dusk_dropout(
         self,
         auto_coordinator: ABBFimerPVIVSNRestCoordinator,
         mock_vsn_client: MagicMock,
     ) -> None:
+        """Sun below 0° and power below 60 W at last contact: the issue-#79 evening."""
         coordinator = auto_coordinator
         with (
             patch(CREATE_ISSUE) as mock_create,
             patch.object(ABBFimerPVIVSNRestCoordinator, SUN_ELEVATION) as mock_elev,
         ):
-            mock_elev.return_value = 3.0
-            mock_vsn_client.get_normalized_data.return_value = IDLE_DATA
-            await coordinator._async_update_data()
-            assert coordinator._last_poll_producing is False
-            assert coordinator._last_success_elevation == 3.0
-
+            await self._last_contact(coordinator, mock_vsn_client, mock_elev, -2.9, 40.8)
             mock_elev.return_value = -15.0
             mock_vsn_client.get_normalized_data.side_effect = VSNConnectionError("down")
             for _ in range(DEFAULT_FAILURES_THRESHOLD * 3):
                 await _fail_once(coordinator)
 
-            mock_create.assert_not_called()
-            assert coordinator._consecutive_failures == 0
-            assert coordinator._expected_outage_active is True
-            assert coordinator._expected_outage_start_elevation == 3.0
-            assert coordinator._repair_issue_created is False
+        mock_create.assert_not_called()
+        assert coordinator._consecutive_failures == 0
+        assert coordinator._expected_outage_active is True
+        assert coordinator._outage_start_elevation == -2.9
+        assert coordinator._outage_start_power == 40.8
 
-    async def test_expected_outage_escalates_above_threshold(
+    @pytest.mark.parametrize(
+        ("elevation", "watts"),
+        [
+            (OUTAGE_STARTER_ENTRY_ELEVATION + 1.0, 10.0),  # sun still too high
+            (-2.0, OUTAGE_STARTER_ENTRY_POWER + 40.0),  # plant still producing a lot
+        ],
+    )
+    async def test_starter_rule_reports_other_dropouts(
         self,
         auto_coordinator: ABBFimerPVIVSNRestCoordinator,
         mock_vsn_client: MagicMock,
+        elevation: float,
+        watts: float,
     ) -> None:
-        """Still dark once the sun is above the daytime threshold -> normal alert."""
         coordinator = auto_coordinator
         with (
             patch(CREATE_ISSUE) as mock_create,
             patch.object(ABBFimerPVIVSNRestCoordinator, SUN_ELEVATION) as mock_elev,
         ):
-            mock_elev.return_value = 1.0
-            mock_vsn_client.get_normalized_data.return_value = IDLE_DATA
-            await coordinator._async_update_data()
+            await self._last_contact(coordinator, mock_vsn_client, mock_elev, elevation, watts)
+            mock_vsn_client.get_normalized_data.side_effect = VSNConnectionError("down")
+            for _ in range(DEFAULT_FAILURES_THRESHOLD):
+                await _fail_once(coordinator)
+        mock_create.assert_called_once()
+        assert coordinator._expected_outage_active is False
+
+    async def test_unknown_power_counts_as_not_producing(
+        self,
+        auto_coordinator: ABBFimerPVIVSNRestCoordinator,
+        mock_vsn_client: MagicMock,
+    ) -> None:
+        """Inverter already missing from livedata at last contact (e.g. VSN700)."""
+        coordinator = auto_coordinator
+        with (
+            patch(CREATE_ISSUE) as mock_create,
+            patch.object(ABBFimerPVIVSNRestCoordinator, SUN_ELEVATION) as mock_elev,
+        ):
+            await self._last_contact(coordinator, mock_vsn_client, mock_elev, -3.0, None)
+            assert coordinator._last_poll_power is None
+            mock_vsn_client.get_normalized_data.side_effect = VSNConnectionError("down")
+            for _ in range(DEFAULT_FAILURES_THRESHOLD):
+                await _fail_once(coordinator)
+        mock_create.assert_not_called()
+
+    async def test_classification_falls_back_to_current_elevation(
+        self,
+        auto_coordinator: ABBFimerPVIVSNRestCoordinator,
+        mock_vsn_client: MagicMock,
+    ) -> None:
+        """No elevation at last contact: the current sun position decides."""
+        coordinator = auto_coordinator
+        with (
+            patch(CREATE_ISSUE) as mock_create,
+            patch.object(ABBFimerPVIVSNRestCoordinator, SUN_ELEVATION, return_value=-6.0),
+        ):
+            mock_vsn_client.get_normalized_data.side_effect = VSNConnectionError("down")
+            for _ in range(DEFAULT_FAILURES_THRESHOLD):
+                await _fail_once(coordinator)
+        mock_create.assert_not_called()
+        assert coordinator._expected_outage_active is True
+
+    async def test_expected_outage_escalates_after_start_up_elevation(
+        self,
+        auto_coordinator: ABBFimerPVIVSNRestCoordinator,
+        mock_vsn_client: MagicMock,
+    ) -> None:
+        """Still dark once the sun passes the start-up bound: reported normally."""
+        coordinator = auto_coordinator
+        with (
+            patch(CREATE_ISSUE) as mock_create,
+            patch.object(ABBFimerPVIVSNRestCoordinator, SUN_ELEVATION) as mock_elev,
+        ):
+            await self._last_contact(coordinator, mock_vsn_client, mock_elev, -3.0, 20.0)
             mock_elev.return_value = -10.0
             mock_vsn_client.get_normalized_data.side_effect = VSNConnectionError("down")
             for _ in range(5):
                 await _fail_once(coordinator)
             mock_create.assert_not_called()
 
-            mock_elev.return_value = OUTAGE_DEFAULT_DAYTIME_ELEVATION + 1
+            mock_elev.return_value = OUTAGE_STARTER_EXIT_ELEVATION + 1
             for _ in range(DEFAULT_FAILURES_THRESHOLD - 1):
                 await _fail_once(coordinator)
             mock_create.assert_not_called()
             await _fail_once(coordinator)
             mock_create.assert_called_once()
-            assert coordinator._repair_issue_created is True
-
-    async def test_daytime_outage_while_producing_alerts(
-        self,
-        auto_coordinator: ABBFimerPVIVSNRestCoordinator,
-        mock_vsn_client: MagicMock,
-    ) -> None:
-        coordinator = auto_coordinator
-        with (
-            patch(CREATE_ISSUE) as mock_create,
-            patch.object(ABBFimerPVIVSNRestCoordinator, SUN_ELEVATION, return_value=40.0),
-        ):
-            mock_vsn_client.get_normalized_data.return_value = PRODUCING_DATA
-            await coordinator._async_update_data()
-            assert coordinator._last_poll_producing is True
-            mock_vsn_client.get_normalized_data.side_effect = VSNConnectionError("down")
-            for _ in range(DEFAULT_FAILURES_THRESHOLD):
-                await _fail_once(coordinator)
-            mock_create.assert_called_once()
             assert coordinator._expected_outage_active is False
 
-    async def test_low_sun_outage_while_producing_alerts(
+            # Once escalated it stays escalated, even if the elevation dips again
+            mock_elev.return_value = -10.0
+            await _fail_once(coordinator)
+            assert coordinator._consecutive_failures == DEFAULT_FAILURES_THRESHOLD + 1
+
+    async def test_unknown_elevation_during_outage_escalates(
         self,
         auto_coordinator: ABBFimerPVIVSNRestCoordinator,
         mock_vsn_client: MagicMock,
     ) -> None:
-        """Sun low but the plant was producing at last contact -> not expected."""
         coordinator = auto_coordinator
         with (
             patch(CREATE_ISSUE) as mock_create,
-            patch.object(ABBFimerPVIVSNRestCoordinator, SUN_ELEVATION, return_value=2.0),
+            patch.object(ABBFimerPVIVSNRestCoordinator, SUN_ELEVATION) as mock_elev,
         ):
-            mock_vsn_client.get_normalized_data.return_value = PRODUCING_DATA
-            await coordinator._async_update_data()
+            await self._last_contact(coordinator, mock_vsn_client, mock_elev, -3.0, 20.0)
             mock_vsn_client.get_normalized_data.side_effect = VSNConnectionError("down")
+            mock_elev.return_value = None
             for _ in range(DEFAULT_FAILURES_THRESHOLD):
                 await _fail_once(coordinator)
-            mock_create.assert_called_once()
+        mock_create.assert_called_once()
 
-    async def test_first_poll_failure_at_night_is_expected(
-        self,
-        auto_coordinator: ABBFimerPVIVSNRestCoordinator,
-        mock_vsn_client: MagicMock,
-    ) -> None:
-        """Nothing ever received (HA started at night) counts as not producing."""
-        coordinator = auto_coordinator
-        with (
-            patch(CREATE_ISSUE) as mock_create,
-            patch.object(ABBFimerPVIVSNRestCoordinator, SUN_ELEVATION, return_value=-5.0),
-        ):
-            mock_vsn_client.get_normalized_data.side_effect = VSNConnectionError("down")
-            for _ in range(DEFAULT_FAILURES_THRESHOLD):
-                await _fail_once(coordinator)
-            mock_create.assert_not_called()
-            assert coordinator._expected_outage_active is True
-
-    async def test_no_elevation_means_no_suppression(
+    async def test_no_location_means_no_suppression(
         self,
         auto_coordinator: ABBFimerPVIVSNRestCoordinator,
         mock_vsn_client: MagicMock,
@@ -1907,9 +1950,9 @@ class TestOutageAutoMode:
             mock_vsn_client.get_normalized_data.side_effect = VSNConnectionError("down")
             for _ in range(DEFAULT_FAILURES_THRESHOLD):
                 await _fail_once(coordinator)
-            mock_create.assert_called_once()
+        mock_create.assert_called_once()
 
-    async def test_off_mode_ignores_sun_and_production(
+    async def test_off_mode_ignores_sun_and_power(
         self,
         mock_hass: MagicMock,
         mock_vsn_client: MagicMock,
@@ -1922,146 +1965,241 @@ class TestOutageAutoMode:
             patch(CREATE_ISSUE) as mock_create,
             patch.object(ABBFimerPVIVSNRestCoordinator, SUN_ELEVATION, return_value=-20.0),
         ):
-            mock_vsn_client.get_normalized_data.return_value = IDLE_DATA
+            mock_vsn_client.get_normalized_data.return_value = _power_data(0)
             await coordinator._async_update_data()
             assert coordinator._last_success_elevation is None  # not computed in off mode
             mock_vsn_client.get_normalized_data.side_effect = VSNConnectionError("down")
             for _ in range(DEFAULT_FAILURES_THRESHOLD):
                 await _fail_once(coordinator)
             mock_create.assert_called_once()
+            # Recovery closes the outage without learning anything
+            mock_vsn_client.get_normalized_data.side_effect = None
+            with (
+                patch(
+                    "custom_components.abb_fimer_pvi_vsn_rest.coordinator.delete_connection_issue"
+                ),
+                patch(
+                    "custom_components.abb_fimer_pvi_vsn_rest.coordinator.create_recovery_notification"
+                ),
+            ):
+                await coordinator._async_update_data()
+        assert coordinator._outage_since is None
+        assert coordinator._learned_nights == []
 
-    async def test_overnight_recovery_records_calibration(
+    async def test_night_is_recorded_and_persisted(
         self,
         auto_coordinator: ABBFimerPVIVSNRestCoordinator,
         mock_vsn_client: MagicMock,
         mock_hass: MagicMock,
     ) -> None:
-        """Power-down/power-up elevations persisted; no issue, no recovery notification."""
+        """A full night is learned; the beta.1 calibration key is dropped."""
         coordinator = auto_coordinator
+        coordinator._config_entry.data = {CONF_OUTAGE_CALIBRATION_LEGACY: {"power_up": [1.0]}}
         with (
-            patch(CREATE_ISSUE) as mock_create,
+            patch(CREATE_ISSUE),
             patch.object(ABBFimerPVIVSNRestCoordinator, SUN_ELEVATION) as mock_elev,
         ):
-            mock_elev.return_value = 2.5
-            mock_vsn_client.get_normalized_data.return_value = IDLE_DATA
-            await coordinator._async_update_data()
-
+            await self._last_contact(coordinator, mock_vsn_client, mock_elev, -3.1, 40.8)
             mock_elev.return_value = -20.0
             mock_vsn_client.get_normalized_data.side_effect = VSNConnectionError("down")
             await _fail_once(coordinator)
-            assert coordinator._expected_outage_active is True
-            # Pretend the outage lasted all night
-            coordinator._expected_outage_since -= OUTAGE_CALIBRATION_MIN_DURATION + 60
+            coordinator._outage_since -= OUTAGE_NIGHT_MIN_DURATION + 60
+            await self._last_contact(coordinator, mock_vsn_client, mock_elev, 0.6, 0.0)
 
-            mock_elev.return_value = 6.5
-            mock_vsn_client.get_normalized_data.side_effect = None
-            mock_vsn_client.get_normalized_data.return_value = PRODUCING_DATA
-            await coordinator._async_update_data()
-
+        assert coordinator._learned_nights == [{"e_off": -3.1, "p_off": 40.8, "e_on": 0.6}]
+        assert coordinator._outage_since is None
         assert coordinator._expected_outage_active is False
-        assert coordinator._expected_outage_since is None
-        assert coordinator._calibration_power_down == [2.5]
-        assert coordinator._calibration_power_up == [6.5]
-        mock_hass.config_entries.async_update_entry.assert_called_once()
         saved = mock_hass.config_entries.async_update_entry.call_args.kwargs["data"]
-        assert saved[CONF_OUTAGE_CALIBRATION] == {"power_up": [6.5], "power_down": [2.5]}
-        mock_create.assert_not_called()
-        mock_hass.services.async_call.assert_not_called()
-        assert coordinator._last_poll_producing is True
+        assert saved[CONF_OUTAGE_LEARNING] == [{"e_off": -3.1, "p_off": 40.8, "e_on": 0.6}]
+        assert CONF_OUTAGE_CALIBRATION_LEGACY not in saved
+        mock_hass.services.async_call.assert_not_called()  # no recovery notification
 
-    async def test_short_blip_is_not_calibrated(
+    async def test_alerted_night_is_still_learned(
         self,
         auto_coordinator: ABBFimerPVIVSNRestCoordinator,
         mock_vsn_client: MagicMock,
-        mock_hass: MagicMock,
     ) -> None:
-        coordinator = auto_coordinator
-        with patch.object(ABBFimerPVIVSNRestCoordinator, SUN_ELEVATION, return_value=-3.0):
-            mock_vsn_client.get_normalized_data.return_value = IDLE_DATA
-            await coordinator._async_update_data()
-            mock_vsn_client.get_normalized_data.side_effect = VSNConnectionError("down")
-            await _fail_once(coordinator)
-            mock_vsn_client.get_normalized_data.side_effect = None
-            await coordinator._async_update_data()
-        assert coordinator._expected_outage_active is False
-        assert coordinator._calibration_power_up == []
-        mock_hass.config_entries.async_update_entry.assert_not_called()
-
-    async def test_escalated_outage_is_not_calibrated(
-        self,
-        auto_coordinator: ABBFimerPVIVSNRestCoordinator,
-        mock_vsn_client: MagicMock,
-        mock_hass: MagicMock,
-    ) -> None:
-        """An outage that turned into a real alert must not feed the threshold."""
+        """Learning uses every night, including ones the starter rule reported."""
         coordinator = auto_coordinator
         with (
-            patch(CREATE_ISSUE),
+            patch(CREATE_ISSUE) as mock_create,
             patch("custom_components.abb_fimer_pvi_vsn_rest.coordinator.delete_connection_issue"),
             patch(
                 "custom_components.abb_fimer_pvi_vsn_rest.coordinator.create_recovery_notification"
             ) as mock_recovery,
             patch.object(ABBFimerPVIVSNRestCoordinator, SUN_ELEVATION) as mock_elev,
         ):
-            mock_elev.return_value = 2.0
-            mock_vsn_client.get_normalized_data.return_value = IDLE_DATA
-            await coordinator._async_update_data()
-            mock_elev.return_value = -10.0
+            # Plant dies at +1° with 80 W: the starter rule reports it
+            await self._last_contact(coordinator, mock_vsn_client, mock_elev, 1.0, 80.0)
             mock_vsn_client.get_normalized_data.side_effect = VSNConnectionError("down")
-            await _fail_once(coordinator)
-            coordinator._expected_outage_since -= OUTAGE_CALIBRATION_MIN_DURATION + 60
-            mock_elev.return_value = 30.0
             for _ in range(DEFAULT_FAILURES_THRESHOLD):
                 await _fail_once(coordinator)
-            assert coordinator._repair_issue_created is True
-            mock_vsn_client.get_normalized_data.side_effect = None
-            mock_vsn_client.get_normalized_data.return_value = PRODUCING_DATA
-            await coordinator._async_update_data()
+            mock_create.assert_called_once()
+            coordinator._outage_since -= OUTAGE_NIGHT_MIN_DURATION + 60
+            await self._last_contact(coordinator, mock_vsn_client, mock_elev, 1.5, 0.0)
             mock_recovery.assert_called_once()
-        assert coordinator._calibration_power_up == []
+        assert coordinator._learned_nights == [{"e_off": 1.0, "p_off": 80.0, "e_on": 1.5}]
+
+    @pytest.mark.parametrize(
+        ("duration_extra", "end_elevation"),
+        [
+            (-OUTAGE_NIGHT_MIN_DURATION + 120, 0.5),  # short blip
+            (60, OUTAGE_MAX_ELEVATION + 20),  # came back in full daylight: a real fault
+        ],
+    )
+    async def test_non_nights_are_not_learned(
+        self,
+        auto_coordinator: ABBFimerPVIVSNRestCoordinator,
+        mock_vsn_client: MagicMock,
+        mock_hass: MagicMock,
+        duration_extra: int,
+        end_elevation: float,
+    ) -> None:
+        coordinator = auto_coordinator
+        with (
+            patch(CREATE_ISSUE),
+            patch("custom_components.abb_fimer_pvi_vsn_rest.coordinator.delete_connection_issue"),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.coordinator.create_recovery_notification"
+            ),
+            patch.object(ABBFimerPVIVSNRestCoordinator, SUN_ELEVATION) as mock_elev,
+        ):
+            await self._last_contact(coordinator, mock_vsn_client, mock_elev, -3.0, 10.0)
+            mock_vsn_client.get_normalized_data.side_effect = VSNConnectionError("down")
+            await _fail_once(coordinator)
+            coordinator._outage_since -= OUTAGE_NIGHT_MIN_DURATION + duration_extra
+            await self._last_contact(coordinator, mock_vsn_client, mock_elev, end_elevation, 500.0)
+        assert coordinator._learned_nights == []
         mock_hass.config_entries.async_update_entry.assert_not_called()
 
-    def test_threshold_default_until_enough_samples(
+    def test_starter_thresholds_until_enough_nights(
         self, auto_coordinator: ABBFimerPVIVSNRestCoordinator
     ) -> None:
         coordinator = auto_coordinator
-        assert coordinator.daytime_elevation_threshold == OUTAGE_DEFAULT_DAYTIME_ELEVATION
-        coordinator._record_calibration(power_down=1.0, power_up=5.0)
-        assert coordinator.daytime_elevation_threshold == OUTAGE_DEFAULT_DAYTIME_ELEVATION
-        coordinator._record_calibration(power_down=2.0, power_up=7.0)
-        assert coordinator.daytime_elevation_threshold == 7.0 + OUTAGE_CALIBRATION_MARGIN
-        assert coordinator.outage_status["calibrated"] is True
-        assert coordinator.outage_status["calibration_samples"] == 4
+        starter = {
+            "source": "starter",
+            "entry_elevation": OUTAGE_STARTER_ENTRY_ELEVATION,
+            "entry_power": OUTAGE_STARTER_ENTRY_POWER,
+            "exit_elevation": OUTAGE_STARTER_EXIT_ELEVATION,
+        }
+        assert coordinator.outage_thresholds == starter
+        coordinator._learned_nights = _nights(OUTAGE_LEARNING_NIGHTS - 1)
+        assert coordinator.outage_thresholds == starter
 
-    def test_threshold_clamped_and_rolling(
+    def test_learned_thresholds(self, auto_coordinator: ABBFimerPVIVSNRestCoordinator) -> None:
+        coordinator = auto_coordinator
+        coordinator._learned_nights = [
+            *_nights(OUTAGE_LEARNING_NIGHTS - 1),
+            {"e_off": -1.1, "p_off": 40.8, "e_on": 1.6},
+        ]
+        thresholds = coordinator.outage_thresholds
+        assert thresholds["source"] == "learned"
+        assert thresholds["entry_elevation"] == pytest.approx(-1.1 + OUTAGE_ELEVATION_MARGIN)
+        assert thresholds["entry_power"] == pytest.approx(
+            40.8 * OUTAGE_POWER_FACTOR + OUTAGE_POWER_MARGIN, abs=0.1
+        )
+        assert thresholds["exit_elevation"] == pytest.approx(1.6 + OUTAGE_ELEVATION_MARGIN)
+
+    def test_outlier_night_is_ignored(
+        self, auto_coordinator: ABBFimerPVIVSNRestCoordinator
+    ) -> None:
+        """A night far above the median (e.g. a real dusk fault) does not widen the bounds."""
+        coordinator = auto_coordinator
+        coordinator._learned_nights = [
+            *_nights(OUTAGE_LEARNING_NIGHTS),
+            {"e_off": 8.0, "p_off": 250.0, "e_on": 0.5},
+        ]
+        thresholds = coordinator.outage_thresholds
+        assert thresholds["entry_elevation"] == pytest.approx(-3.5 + OUTAGE_ELEVATION_MARGIN)
+        assert thresholds["entry_power"] == pytest.approx(
+            30.0 * OUTAGE_POWER_FACTOR + OUTAGE_POWER_MARGIN
+        )
+
+    def test_learned_elevations_are_capped(
         self, auto_coordinator: ABBFimerPVIVSNRestCoordinator
     ) -> None:
         coordinator = auto_coordinator
-        for _ in range(OUTAGE_CALIBRATION_MAX_SAMPLES + 5):
-            coordinator._record_calibration(power_down=0.0, power_up=89.0)
-        assert len(coordinator._calibration_power_up) == OUTAGE_CALIBRATION_MAX_SAMPLES
-        assert coordinator.daytime_elevation_threshold == OUTAGE_MAX_DAYTIME_ELEVATION
+        coordinator._learned_nights = _nights(OUTAGE_LEARNING_NIGHTS, e_off=9.5, e_on=9.5)
+        thresholds = coordinator.outage_thresholds
+        assert thresholds["entry_elevation"] == OUTAGE_MAX_ELEVATION
+        assert thresholds["exit_elevation"] == OUTAGE_MAX_ELEVATION
 
-    def test_calibration_loaded_from_entry_data(
+    def test_learned_rule_used_after_learning(
+        self, auto_coordinator: ABBFimerPVIVSNRestCoordinator
+    ) -> None:
+        """With your plant's learned bounds a dusk dropout at +0.5° is expected."""
+        coordinator = auto_coordinator
+        coordinator._learned_nights = _nights(OUTAGE_LEARNING_NIGHTS, e_off=-1.0, p_off=40.0)
+        coordinator._last_success_elevation = 0.5
+        coordinator._last_poll_power = 55.0
+        assert coordinator._dropout_matches_night() is True
+        coordinator._last_poll_power = 75.0
+        assert coordinator._dropout_matches_night() is False
+
+    def test_rolling_window_and_learning_complete(
+        self, auto_coordinator: ABBFimerPVIVSNRestCoordinator, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        coordinator = auto_coordinator
+        with caplog.at_level("INFO"):
+            for i in range(OUTAGE_LEARNING_MAX_NIGHTS + 3):
+                coordinator._record_night(e_off=-3.0 - i / 100, p_off=20.0, e_on=0.0)
+        assert len(coordinator._learned_nights) == OUTAGE_LEARNING_MAX_NIGHTS
+        assert coordinator._learned_nights[0]["e_off"] == pytest.approx(-3.03)
+        assert caplog.text.count("Expected outage learning complete") == 1
+
+    def test_nights_loaded_from_entry_data(
         self,
         mock_hass: MagicMock,
         mock_vsn_client: MagicMock,
         mock_discovery_result: MockDiscoveryResult,
     ) -> None:
         entry = _outage_entry(OUTAGE_MODE_AUTO)
-        entry.data = {CONF_OUTAGE_CALIBRATION: {"power_up": [4.0, "bad", 6.0], "power_down": [1.5]}}
+        entry.data = {
+            CONF_OUTAGE_LEARNING: [
+                {"e_off": -3, "p_off": 20, "e_on": 0.5},
+                {"e_off": "bad", "p_off": 20, "e_on": 0.5},
+                {"e_off": True, "p_off": 20, "e_on": 0.5},
+                "garbage",
+            ]
+        }
         coordinator = _make_coordinator(mock_hass, mock_vsn_client, mock_discovery_result, entry)
-        assert coordinator._calibration_power_up == [4.0, 6.0]
-        assert coordinator._calibration_power_down == [1.5]
-        assert coordinator.daytime_elevation_threshold == 6.0 + OUTAGE_CALIBRATION_MARGIN
+        assert coordinator._learned_nights == [{"e_off": -3.0, "p_off": 20.0, "e_on": 0.5}]
+        assert ABBFimerPVIVSNRestCoordinator._load_nights({"not": "a list"}) == []
 
-    def test_outage_status_shape(self, auto_coordinator: ABBFimerPVIVSNRestCoordinator) -> None:
+    def test_outage_status_shape(
+        self, auto_coordinator: ABBFimerPVIVSNRestCoordinator, mock_hass: MagicMock
+    ) -> None:
+        mock_hass.config.latitude = 42.0
+        mock_hass.config.longitude = 12.5
+        mock_hass.config.elevation = 0
         status = auto_coordinator.outage_status
         assert status["mode"] == OUTAGE_MODE_AUTO
+        assert status["rule"] == "starter"
+        assert status["nights_learned"] == 0
+        assert status["nights_needed"] == OUTAGE_LEARNING_NIGHTS
         assert status["expected_outage_active"] is False
-        assert status["expected_outage_since"] is None
-        assert status["calibrated"] is False
-        assert status["daytime_elevation_threshold"] == OUTAGE_DEFAULT_DAYTIME_ELEVATION
+        assert status["outage_since"] is None
+        assert status["today_window"]["from"] is not None
+        assert status["today_window"]["until"] is not None
+
+    def test_today_window_not_computable(
+        self, auto_coordinator: ABBFimerPVIVSNRestCoordinator, mock_hass: MagicMock
+    ) -> None:
+        mock_hass.config.latitude = "north"
+        assert auto_coordinator.outage_status["today_window"] == {"from": None, "until": None}
+
+    def test_window_mode_status_has_no_sun_window(
+        self,
+        mock_hass: MagicMock,
+        mock_vsn_client: MagicMock,
+        mock_discovery_result: MockDiscoveryResult,
+    ) -> None:
+        coordinator = _make_coordinator(
+            mock_hass, mock_vsn_client, mock_discovery_result, _outage_entry(OUTAGE_MODE_WINDOW)
+        )
+        status = coordinator.outage_status
+        assert "today_window" not in status
+        assert status["mode"] == OUTAGE_MODE_WINDOW
 
     def test_sun_elevation_invalid_location(
         self, auto_coordinator: ABBFimerPVIVSNRestCoordinator, mock_hass: MagicMock

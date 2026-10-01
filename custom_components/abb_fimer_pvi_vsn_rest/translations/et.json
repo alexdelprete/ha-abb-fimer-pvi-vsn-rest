@@ -77,7 +77,7 @@
           "enable_startup_notification": "Teavita, kui seade pole Home Assistanti käivitumisel kättesaadav.",
           "failures_threshold": "Järjestikused tõrked enne teavitust. Vahemik: 1-10. Vaikimisi: 3.",
           "recovery_script": "Tõrke korral käivitatav skript (nt 'script.restart_router'). Jätke tühjaks, kui ei soovi.",
-          "outage_mode": "Kuidas käsitletakse ühenduse tõrkeid, kui jaam on eeldatavasti välja lülitatud. Automaatne tuvastus: katkestust, mis algab pärast inverteri tootmise lõppu madala päikese korral, ei teavitata; päikese kõrgus välja- ja sisselülitumisel õpitakse aja jooksul. Fikseeritud ajavahemik: allpool määratud ajavahemiku sees olevaid tõrkeid ei teavitata.",
+          "outage_mode": "Kuidas käsitletakse ühenduse tõrkeid, kui jaam on eeldatavasti välja lülitatud. Automaatne tuvastus: katkestust madala päikese ja väikese inverteri toodangu korral ei teavitata; esimestel öödel kasutatakse sisseehitatud reeglit, kuni integratsioon õpib, millal teie andmelogija välja ja sisse lülitub, seejärel kasutatakse õpitud väärtusi. Fikseeritud ajavahemik: allpool määratud ajavahemiku sees olevaid tõrkeid ei teavitata.",
           "outage_window_start": "Igapäevase ajavahemiku algus, mil ühenduse tõrkeid oodatakse (ainult fikseeritud ajavahemiku režiimis).",
           "outage_window_end": "Igapäevase ajavahemiku lõpp, mil ühenduse tõrkeid oodatakse (ainult fikseeritud ajavahemiku režiimis).",
           "prefix_inverter": "Custom inverter name. Jäta tühjaks vaikeväärtuse jaoks.",

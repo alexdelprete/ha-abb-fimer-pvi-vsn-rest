@@ -77,7 +77,7 @@
           "enable_startup_notification": "Ilmoita, kun laite ei ole tavoitettavissa Home Assistantin käynnistyessä.",
           "failures_threshold": "Peräkkäiset viat ennen ilmoitusta. Alue: 1-10. Oletus: 3.",
           "recovery_script": "Vian sattuessa suoritettava skripti (esim. 'script.restart_router'). Jätä tyhjäksi, jos et halua.",
-          "outage_mode": "Miten yhteysvirheitä käsitellään, kun laitoksen odotetaan olevan pois päältä. Automaattinen tunnistus: katkosta, joka alkaa invertterin tuotannon loputtua auringon ollessa matalalla, ei ilmoiteta; auringon korkeus sammumis- ja käynnistymishetkellä opitaan ajan myötä. Kiinteä aikaikkuna: alla määritetyn aikaikkunan sisällä tapahtuvia virheitä ei ilmoiteta.",
+          "outage_mode": "Miten yhteysvirheitä käsitellään, kun laitoksen odotetaan olevan pois päältä. Automaattinen tunnistus: katkosta, joka tapahtuu auringon ollessa matalalla ja invertterin tuottaessa vähän, ei ilmoiteta; ensimmäisinä öinä käytetään sisäänrakennettua sääntöä, kun integraatio oppii, milloin dataloggeri sammuu ja käynnistyy, minkä jälkeen käytetään opittuja arvoja. Kiinteä aikaikkuna: alla määritetyn aikaikkunan sisällä tapahtuvia virheitä ei ilmoiteta.",
           "outage_window_start": "Päivittäisen aikaikkunan alku, jolloin yhteysvirheitä odotetaan (vain kiinteän aikaikkunan tilassa).",
           "outage_window_end": "Päivittäisen aikaikkunan loppu, jolloin yhteysvirheitä odotetaan (vain kiinteän aikaikkunan tilassa).",
           "prefix_inverter": "Custom inverter name. Jätä tyhjäksi oletusarvolle.",

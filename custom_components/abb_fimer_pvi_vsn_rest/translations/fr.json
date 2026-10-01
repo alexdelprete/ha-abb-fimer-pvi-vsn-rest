@@ -77,7 +77,7 @@
           "enable_startup_notification": "Notifier lorsque l'appareil est injoignable au démarrage de Home Assistant.",
           "failures_threshold": "Échecs consécutifs avant notification. Plage : 1-10. Par défaut : 3.",
           "recovery_script": "Script à exécuter en cas de panne (ex. : 'script.restart_router'). Laisser vide pour aucun.",
-          "outage_mode": "Comment traiter les échecs de connexion lorsque l'installation est censée être éteinte. Détection automatique : une coupure qui commence après l'arrêt de la production de l'onduleur, soleil bas, n'est pas signalée ; la hauteur du soleil à l'extinction et au démarrage est apprise au fil du temps. Plage fixe : les échecs dans la plage ci-dessous ne sont pas signalés.",
+          "outage_mode": "Comment traiter les échecs de connexion lorsque l'installation est censée être éteinte. Détection automatique : une coupure avec le soleil bas et l'onduleur produisant peu n'est pas signalée ; une règle intégrée est utilisée les premières nuits pendant que l'intégration apprend quand votre enregistreur s'éteint et se rallume, puis les valeurs apprises prennent le relais. Plage fixe : les échecs dans la plage ci-dessous ne sont pas signalés.",
           "outage_window_start": "Début de la plage quotidienne pendant laquelle des échecs de connexion sont attendus (mode plage fixe uniquement).",
           "outage_window_end": "Fin de la plage quotidienne pendant laquelle des échecs de connexion sont attendus (mode plage fixe uniquement).",
           "prefix_inverter": "Custom inverter name. Laisser vide pour la valeur par défaut.",

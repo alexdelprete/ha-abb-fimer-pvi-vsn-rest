@@ -145,12 +145,17 @@ class TestAsyncSetupEntry:
             patch("custom_components.abb_fimer_pvi_vsn_rest.async_update_device_registry"),
             patch("custom_components.abb_fimer_pvi_vsn_rest.delete_partial_discovery_issue"),
             patch("custom_components.abb_fimer_pvi_vsn_rest.delete_unsupported_firmware_issue"),
+            patch(
+                "custom_components.abb_fimer_pvi_vsn_rest.delete_connection_issue"
+            ) as mock_delete_connection,
         ):
             result = await async_setup_entry(mock_hass, mock_config_entry)
 
         assert result is True
         assert mock_config_entry.runtime_data is not None
         mock_hass.config_entries.async_forward_entry_setups.assert_called_once()
+        # A connection repair left by a previous run is cleared once discovery works
+        mock_delete_connection.assert_called_once_with(mock_hass, mock_config_entry.entry_id)
 
     @pytest.mark.asyncio
     async def test_setup_entry_registers_keepalive_listener(
@@ -192,6 +197,7 @@ class TestAsyncSetupEntry:
             patch("custom_components.abb_fimer_pvi_vsn_rest.async_update_device_registry"),
             patch("custom_components.abb_fimer_pvi_vsn_rest.delete_partial_discovery_issue"),
             patch("custom_components.abb_fimer_pvi_vsn_rest.delete_unsupported_firmware_issue"),
+            patch("custom_components.abb_fimer_pvi_vsn_rest.delete_connection_issue"),
         ):
             result = await async_setup_entry(mock_hass, mock_config_entry)
 
@@ -270,6 +276,7 @@ class TestAsyncSetupEntry:
                 "custom_components.abb_fimer_pvi_vsn_rest.create_partial_discovery_issue",
             ) as mock_create_issue,
             patch("custom_components.abb_fimer_pvi_vsn_rest.delete_unsupported_firmware_issue"),
+            patch("custom_components.abb_fimer_pvi_vsn_rest.delete_connection_issue"),
         ):
             result = await async_setup_entry(mock_hass, mock_config_entry)
 
@@ -368,6 +375,7 @@ class TestAsyncSetupEntry:
             ),
             patch("custom_components.abb_fimer_pvi_vsn_rest.delete_partial_discovery_issue"),
             patch("custom_components.abb_fimer_pvi_vsn_rest.delete_unsupported_firmware_issue"),
+            patch("custom_components.abb_fimer_pvi_vsn_rest.delete_connection_issue"),
             pytest.raises(ConfigEntryNotReady, match="Failed to fetch data"),
         ):
             await async_setup_entry(mock_hass, mock_config_entry)
@@ -408,6 +416,7 @@ class TestAsyncSetupEntry:
             patch("custom_components.abb_fimer_pvi_vsn_rest.async_update_device_registry"),
             patch("custom_components.abb_fimer_pvi_vsn_rest.delete_partial_discovery_issue"),
             patch("custom_components.abb_fimer_pvi_vsn_rest.delete_unsupported_firmware_issue"),
+            patch("custom_components.abb_fimer_pvi_vsn_rest.delete_connection_issue"),
         ):
             result = await async_setup_entry(mock_hass, mock_config_entry)
 
@@ -447,6 +456,7 @@ class TestAsyncSetupEntry:
             patch("custom_components.abb_fimer_pvi_vsn_rest.async_update_device_registry"),
             patch("custom_components.abb_fimer_pvi_vsn_rest.delete_partial_discovery_issue"),
             patch("custom_components.abb_fimer_pvi_vsn_rest.delete_unsupported_firmware_issue"),
+            patch("custom_components.abb_fimer_pvi_vsn_rest.delete_connection_issue"),
         ):
             # First call - startup message should be logged
             await async_setup_entry(mock_hass, mock_config_entry)

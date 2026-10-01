@@ -510,36 +510,40 @@ newline** — scripted edits round-trip byte-identical with those settings.
 ### Expected Outage Handling (v1.5.14, issue #79)
 
 **Decision**: Make the coordinator distinguish an *expected* outage (inverter-powered datalogger
-going dark at night) from a real one, without ever needing to know the plant's exact power-off
-sun elevation.
+going dark at night) from a real one, using bounds learned from the plant itself.
 
 **Problem**: A VSN300 is powered by the inverter, so every evening polls fail, the threshold is
-reached and the `connection_failed` repair issue (severity ERROR) appears; every morning it clears
-and a recovery notification is posted. The only escape was disabling runtime notifications.
+reached and the `connection_failed` repair issue (severity ERROR) appears. beta.1 waited for a
+zero-power reading before the dropout, but measured data (16 nights, maintainer's PVI-10.0-OUTD)
+shows the inverter still feeds 0–41 W at the last poll and the logger dies at −2.9° to −3.9°
+(one outlier at +0.4°) — so beta.1 never suppressed anything.
 
 **Design** (`coordinator.py`, options in `config_flow.py`, constants `OUTAGE_*` in `const.py`):
 
 - `CONF_OUTAGE_MODE`: `off` (default, unchanged), `auto`, `window`.
-- **Auto**: `_outage_is_expected()` is evaluated on every failed poll. A *new* outage is expected
-  iff the last successful poll showed no inverter producing (`_plant_producing()`: any
-  `inverter*` device with `watts > 0`) **and** the current solar elevation is below
-  `daytime_elevation_threshold`. An outage already marked expected stays expected until the sun
-  clears the threshold. While expected, `_handle_failure()` keeps `_consecutive_failures` at 0
-  and returns (no issue/trigger/script), so counting starts only when the outage stops being
-  expected — a plant still dark in daylight alerts after the normal threshold.
-- **Learned threshold**: on the first successful poll after an expected outage that lasted at
-  least 4 h and never escalated, `_end_expected_outage()` records the elevation at the last
-  good poll before the outage (power-down) and the current one (power-up). Series are capped
-  at 14 samples each and persisted in `config_entry.data["outage_calibration"]`. Threshold =
-  `max(samples) + 2°`, clamped to 1–60°, or 10° until 3 samples exist. Exposed via
-  `coordinator.outage_status` in diagnostics.
+- **Classification happens once**, on the first failed poll (`_begin_outage()`), from the last
+  good poll: auto expects the outage iff sun elevation < `entry_elevation` AND summed inverter
+  `watts` < `entry_power` (`_dropout_matches_night()`; unknown power counts as not producing,
+  unknown last elevation falls back to the current one). While expected, `_handle_failure()`
+  keeps `_consecutive_failures` at 0. `_outage_is_expected()` ends it for good once the current
+  elevation is ≥ `exit_elevation` (or unknown) — counting then starts normally.
+- **Learning from every night**, alerted or not (`_end_outage()`): an outage ≥ 4 h whose last
+  good poll and first good poll after it were both below 10° is a night
+  `{e_off, p_off, e_on}`; 14 kept in `config_entry.data["outage_learning"]` (the beta.1
+  `outage_calibration` key is dropped on first write).
+- **`outage_thresholds`**: starter rule (0° / 60 W / exit 10°) until 5 nights exist; then
+  `max(e_off)+2°`, `max(p_off)×1.5+10 W`, `max(e_on)+2°` over nights not more than 5° above
+  the median (outlier filter), elevations capped at 10°. Back-test and real-coordinator replay
+  on the 16 recorded nights: 0 alerts, 0 false morning escalations.
+- **Diagnostics**: `coordinator.outage_status` (rule, nights, bounds, `today_window` via
+  `astral.sun.time_at_elevation`).
 - **Sun position**: `helpers.sun.get_astral_observer()` + `astral.sun.elevation()`; no `sun.sun`
   entity dependency. `get_astral_location()` is deprecated (removed HA 2027.7) — do not use it.
-  If elevation cannot be computed (location unset) auto mode never suppresses.
 - **Window**: `_in_outage_window()` on local time; crosses midnight when start > end; equal
   times are rejected by the options flow (`outage_window_invalid`).
-- No recovery notification is posted after an expected outage (the repair issue was never
-  created, so `_handle_recovery()` does not run).
+- **Stale repair**: `connection_failed` is a persistent issue but the coordinator tracks it only
+  in memory, so a restart/reload during an outage stranded it. `async_setup_entry()` now deletes
+  it after successful discovery.
 
 **Translations**: options labels/descriptions, `options.error` and the `selector.outage_mode`
 labels live in `en.json` and the dictionaries; `generate_translations.py` copies and translates

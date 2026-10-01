@@ -77,7 +77,7 @@
           "enable_startup_notification": "Avisera när enheten är oåtkomlig när Home Assistant startar.",
           "failures_threshold": "Antal fel i följd före avisering. Intervall: 1-10. Standard: 3.",
           "recovery_script": "Skript som körs vid fel (t.ex. 'script.restart_router'). Lämna tomt för inget.",
-          "outage_mode": "Hur anslutningsfel hanteras när anläggningen förväntas vara avstängd. Automatisk: ett avbrott som börjar efter att växelriktaren slutat producera, med låg sol, rapporteras inte; solhöjden vid av- och påslag lärs in över tid. Fast tidsfönster: fel inom fönstret nedan rapporteras inte.",
+          "outage_mode": "Hur anslutningsfel hanteras när anläggningen förväntas vara avstängd. Automatisk: ett avbrott med låg sol och låg produktion från växelriktaren rapporteras inte; de första nätterna används en inbyggd regel medan integrationen lär sig när dataloggern stängs av och slås på, därefter används de inlärda värdena. Fast tidsfönster: fel inom fönstret nedan rapporteras inte.",
           "outage_window_start": "Start för det dagliga tidsfönstret då anslutningsfel förväntas (endast i läget fast tidsfönster).",
           "outage_window_end": "Slut för det dagliga tidsfönstret då anslutningsfel förväntas (endast i läget fast tidsfönster).",
           "prefix_inverter": "Custom inverter name. Lämna tomt för standardvärde.",

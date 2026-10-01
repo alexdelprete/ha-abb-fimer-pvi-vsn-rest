@@ -141,6 +141,11 @@ async def async_setup_entry(
         # Clear startup failure tracking on success
         _clear_startup_failure(hass, config_entry.entry_id)
 
+        # The device answered, so any connection repair still open is stale. The
+        # coordinator that raised it tracks it only in memory, so after a restart
+        # or reload nothing else would ever delete it (persistent issue).
+        delete_connection_issue(hass, config_entry.entry_id)
+
         # Clear any unsupported-firmware issue (e.g. after a firmware upgrade)
         delete_unsupported_firmware_issue(hass, config_entry.entry_id)
 

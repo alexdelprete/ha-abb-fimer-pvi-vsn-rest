@@ -77,7 +77,7 @@
           "enable_startup_notification": "Notificar cuando el dispositivo no esté accesible al iniciar Home Assistant.",
           "failures_threshold": "Fallos consecutivos antes de notificar. Rango: 1-10. Predeterminado: 3.",
           "recovery_script": "Script a ejecutar en caso de fallo (p. ej., 'script.restart_router'). Déjelo vacío para ninguno.",
-          "outage_mode": "Cómo se tratan los fallos de conexión cuando se espera que la planta esté apagada. Detección automática: un corte que comienza después de que el inversor deje de producir, con el sol bajo, no se notifica; la elevación solar al apagarse y encenderse se aprende con el tiempo. Ventana fija: los fallos dentro de la ventana indicada abajo no se notifican.",
+          "outage_mode": "Cómo se tratan los fallos de conexión cuando se espera que la planta esté apagada. Detección automática: un corte con el sol bajo y el inversor produciendo poco no se notifica; durante las primeras noches se usa una regla integrada mientras la integración aprende cuándo se apaga y se enciende su datalogger, y después se usan los valores aprendidos. Ventana fija: los fallos dentro de la ventana indicada abajo no se notifican.",
           "outage_window_start": "Inicio de la ventana diaria en la que se esperan fallos de conexión (solo en modo de ventana fija).",
           "outage_window_end": "Fin de la ventana diaria en la que se esperan fallos de conexión (solo en modo de ventana fija).",
           "prefix_inverter": "Custom inverter name. Dejar vacío para valor predeterminado.",

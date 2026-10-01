@@ -9,6 +9,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - (nothing yet — collects the 1.5.14 betas)
 
+## [1.5.14-beta.2] - 2026-10-01
+
+### Changed
+
+- **Expected outage auto-detect now learns the plant's night pattern** (Reported in #79) —
+  beta.1 only treated a dropout as expected after a zero-power reading, but an inverter
+  powering a VSN300 keeps feeding tens of watts until the logger dies, so the nightly
+  "Cannot connect" repair still appeared. The dropout is now judged at the last good poll:
+  sun below the switch-off elevation AND plant power below the switch-off power. Every
+  overnight outage is recorded; for the first 5 nights a starter rule applies (sun below
+  0°, power below 60 W, start-up by 10°), afterwards the bounds are learned from the last
+  14 nights (highest switch-off elevation + 2°, highest switch-off power × 1.5 + 10 W,
+  highest start-up elevation + 2°). Diagnostics show the rule, the nights and today's
+  window in clock time. Back-tested on 16 recorded nights: no alert, no false morning alert.
+
+### Fixed
+
+- **"Cannot connect" repair stuck after a restart during an outage** — the repair is
+  persistent but its owner was tracked only in memory, so after a Home Assistant restart
+  or reload while the logger was dark nothing ever removed it. It is now cleared as soon
+  as setup reaches the datalogger again.
+
 ## [1.5.14-beta.1] - 2026-09-27
 
 ### Added

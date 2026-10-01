@@ -77,7 +77,7 @@
           "enable_startup_notification": "Varsle når enheten er utilgjengelig ved oppstart av Home Assistant.",
           "failures_threshold": "Påfølgende feil før varsling. Område: 1-10. Standard: 3.",
           "recovery_script": "Skript som kjøres ved feil (f.eks. 'script.restart_router'). La stå tomt for ingen.",
-          "outage_mode": "Hvordan tilkoblingsfeil håndteres når anlegget forventes å være av. Automatisk: et avbrudd som starter etter at inverteren har sluttet å produsere, med lav sol, rapporteres ikke; solhøyden ved av- og påslag læres over tid. Fast tidsvindu: feil innenfor vinduet nedenfor rapporteres ikke.",
+          "outage_mode": "Hvordan tilkoblingsfeil håndteres når anlegget forventes å være av. Automatisk: et avbrudd med lav sol og lav produksjon fra inverteren rapporteres ikke; de første nettene brukes en innebygd regel mens integrasjonen lærer når dataloggeren slår seg av og på, deretter brukes de lærte verdiene. Fast tidsvindu: feil innenfor vinduet nedenfor rapporteres ikke.",
           "outage_window_start": "Start på det daglige tidsvinduet der tilkoblingsfeil forventes (kun i modus for fast tidsvindu).",
           "outage_window_end": "Slutt på det daglige tidsvinduet der tilkoblingsfeil forventes (kun i modus for fast tidsvindu).",
           "prefix_inverter": "Custom inverter name. La stå tom for standardverdi.",
