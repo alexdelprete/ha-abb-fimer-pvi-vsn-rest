@@ -1561,10 +1561,9 @@ From config_entry:
 
 ## Dependencies
 
-From `manifest.json`:
-
-- Home Assistant core
-- `aiohttp`: Async HTTP client
+`manifest.json` has no `requirements`: the REST client uses the `aiohttp` that ships with
+Home Assistant. Do not list it (or any other Home Assistant core dependency) in the manifest;
+since 2026-10-01 hassfest fails Validate for that.
 
 No external libraries for Modbus or SunSpec - we implement what we need.
 
