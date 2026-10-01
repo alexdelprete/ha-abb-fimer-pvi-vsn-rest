@@ -30,6 +30,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   persistent but its owner was tracked only in memory, so after a Home Assistant restart
   or reload while the logger was dark nothing ever removed it. It is now cleared as soon
   as setup reaches the datalogger again.
+- **hassfest validation failure** — `aiohttp` is a dependency of Home Assistant itself and
+  hassfest now rejects it in a custom integration's manifest (rule added 2026-10-01). The
+  requirement is removed; the integration keeps using Home Assistant's own aiohttp.
 
 ## [1.5.14-beta.1] - 2026-09-27
 
