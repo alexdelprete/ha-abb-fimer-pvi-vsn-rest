@@ -51,8 +51,6 @@
           "failures_threshold": "Viat ennen ilmoitusta",
           "recovery_script": "Palautusskripti (valinnainen)",
           "outage_mode": "Odotettujen katkosten käsittely",
-          "outage_window_start": "Odotetun katkoksen aikaikkunan alku",
-          "outage_window_end": "Odotetun katkoksen aikaikkunan loppu",
           "prefix_inverter": "Invertteri laitteen nimi",
           "prefix_inverter_1": "Invertteri 1 laitteen nimi",
           "prefix_inverter_2": "Invertteri 2 laitteen nimi",
@@ -77,9 +75,7 @@
           "enable_startup_notification": "Ilmoita, kun laite ei ole tavoitettavissa Home Assistantin käynnistyessä.",
           "failures_threshold": "Peräkkäiset viat ennen ilmoitusta. Alue: 1-10. Oletus: 3.",
           "recovery_script": "Vian sattuessa suoritettava skripti (esim. 'script.restart_router'). Jätä tyhjäksi, jos et halua.",
-          "outage_mode": "Miten yhteysvirheitä käsitellään, kun laitoksen odotetaan olevan pois päältä. Automaattinen tunnistus: katkosta, joka tapahtuu auringon ollessa matalalla ja invertterin tuottaessa vähän, ei ilmoiteta; ensimmäisinä öinä käytetään sisäänrakennettua sääntöä, kun integraatio oppii, milloin dataloggeri sammuu ja käynnistyy, minkä jälkeen käytetään opittuja arvoja. Kiinteä aikaikkuna: alla määritetyn aikaikkunan sisällä tapahtuvia virheitä ei ilmoiteta.",
-          "outage_window_start": "Päivittäisen aikaikkunan alku, jolloin yhteysvirheitä odotetaan (vain kiinteän aikaikkunan tilassa).",
-          "outage_window_end": "Päivittäisen aikaikkunan loppu, jolloin yhteysvirheitä odotetaan (vain kiinteän aikaikkunan tilassa).",
+          "outage_mode": "Miten yhteysvirheitä käsitellään, kun laitoksen odotetaan olevan pois päältä. Automaattinen tunnistus: katkosta, joka tapahtuu auringon ollessa matalalla ja invertterin tuottaessa vähän, ei ilmoiteta; ensimmäisinä öinä käytetään sisäänrakennettua sääntöä, kun integraatio oppii, milloin dataloggeri sammuu ja käynnistyy, minkä jälkeen käytetään opittuja arvoja. Kiinteä aikaikkuna: seuraavassa vaiheessa määritetyn päivittäisen aikaikkunan sisällä tapahtuvia virheitä ei ilmoiteta.",
           "prefix_inverter": "Custom inverter name. Jätä tyhjäksi oletusarvolle.",
           "prefix_inverter_1": "Sets name for device with S/N: {inverter_1_sn}. Jätä tyhjäksi oletusarvolle.",
           "prefix_inverter_2": "Sets name for device with S/N: {inverter_2_sn}. Jätä tyhjäksi oletusarvolle.",
@@ -97,6 +93,18 @@
           "prefix_battery_3": "Sets name for device with S/N: {battery_3_sn}. Jätä tyhjäksi oletusarvolle.",
           "prefix_battery_4": "Sets name for device with S/N: {battery_4_sn}. Jätä tyhjäksi oletusarvolle.",
           "regenerate_entity_ids": ""
+        }
+      },
+      "outage_window": {
+        "title": "Odotetun katkoksen aikaikkuna",
+        "description": "Tämän päivittäisen aikaikkunan sisällä tapahtuvia yhteysvirheitä pidetään odotettuina: ei korjausilmoitusta, laitteen laukaisinta eikä palautusskriptiä. Aikaikkuna voi ylittää keskiyön, esimerkiksi 21:00–07:00.",
+        "data": {
+          "outage_window_start": "Odotetun katkoksen aikaikkunan alku",
+          "outage_window_end": "Odotetun katkoksen aikaikkunan loppu"
+        },
+        "data_description": {
+          "outage_window_start": "Päivittäisen aikaikkunan alku, jolloin yhteysvirheitä odotetaan.",
+          "outage_window_end": "Päivittäisen aikaikkunan loppu, jolloin yhteysvirheitä odotetaan."
         }
       }
     },

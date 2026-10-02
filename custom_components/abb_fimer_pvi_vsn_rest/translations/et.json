@@ -51,8 +51,6 @@
           "failures_threshold": "Tõrgete arv enne teavitust",
           "recovery_script": "Taasteskript (valikuline)",
           "outage_mode": "Eeldatava katkestuse käsitlemine",
-          "outage_window_start": "Eeldatava katkestuse ajavahemiku algus",
-          "outage_window_end": "Eeldatava katkestuse ajavahemiku lõpp",
           "prefix_inverter": "Inverter seadme nimi",
           "prefix_inverter_1": "Inverter 1 seadme nimi",
           "prefix_inverter_2": "Inverter 2 seadme nimi",
@@ -77,9 +75,7 @@
           "enable_startup_notification": "Teavita, kui seade pole Home Assistanti käivitumisel kättesaadav.",
           "failures_threshold": "Järjestikused tõrked enne teavitust. Vahemik: 1-10. Vaikimisi: 3.",
           "recovery_script": "Tõrke korral käivitatav skript (nt 'script.restart_router'). Jätke tühjaks, kui ei soovi.",
-          "outage_mode": "Kuidas käsitletakse ühenduse tõrkeid, kui jaam on eeldatavasti välja lülitatud. Automaatne tuvastus: katkestust madala päikese ja väikese inverteri toodangu korral ei teavitata; esimestel öödel kasutatakse sisseehitatud reeglit, kuni integratsioon õpib, millal teie andmelogija välja ja sisse lülitub, seejärel kasutatakse õpitud väärtusi. Fikseeritud ajavahemik: allpool määratud ajavahemiku sees olevaid tõrkeid ei teavitata.",
-          "outage_window_start": "Igapäevase ajavahemiku algus, mil ühenduse tõrkeid oodatakse (ainult fikseeritud ajavahemiku režiimis).",
-          "outage_window_end": "Igapäevase ajavahemiku lõpp, mil ühenduse tõrkeid oodatakse (ainult fikseeritud ajavahemiku režiimis).",
+          "outage_mode": "Kuidas käsitletakse ühenduse tõrkeid, kui jaam on eeldatavasti välja lülitatud. Automaatne tuvastus: katkestust madala päikese ja väikese inverteri toodangu korral ei teavitata; esimestel öödel kasutatakse sisseehitatud reeglit, kuni integratsioon õpib, millal teie andmelogija välja ja sisse lülitub, seejärel kasutatakse õpitud väärtusi. Fikseeritud ajavahemik: järgmises etapis määratud igapäevase ajavahemiku sees olevaid tõrkeid ei teavitata.",
           "prefix_inverter": "Custom inverter name. Jäta tühjaks vaikeväärtuse jaoks.",
           "prefix_inverter_1": "Sets name for device with S/N: {inverter_1_sn}. Jäta tühjaks vaikeväärtuse jaoks.",
           "prefix_inverter_2": "Sets name for device with S/N: {inverter_2_sn}. Jäta tühjaks vaikeväärtuse jaoks.",
@@ -97,6 +93,18 @@
           "prefix_battery_3": "Sets name for device with S/N: {battery_3_sn}. Jäta tühjaks vaikeväärtuse jaoks.",
           "prefix_battery_4": "Sets name for device with S/N: {battery_4_sn}. Jäta tühjaks vaikeväärtuse jaoks.",
           "regenerate_entity_ids": ""
+        }
+      },
+      "outage_window": {
+        "title": "Eeldatava katkestuse ajavahemik",
+        "description": "Selle igapäevase ajavahemiku sees olevaid ühenduse tõrkeid käsitletakse eeldatavatena: parandusteadet, seadme päästikut ega taastamisskripti ei käivitata. Ajavahemik võib ulatuda üle kesköö, näiteks 21:00 kuni 07:00.",
+        "data": {
+          "outage_window_start": "Eeldatava katkestuse ajavahemiku algus",
+          "outage_window_end": "Eeldatava katkestuse ajavahemiku lõpp"
+        },
+        "data_description": {
+          "outage_window_start": "Igapäevase ajavahemiku algus, mil ühenduse tõrkeid oodatakse.",
+          "outage_window_end": "Igapäevase ajavahemiku lõpp, mil ühenduse tõrkeid oodatakse."
         }
       }
     },

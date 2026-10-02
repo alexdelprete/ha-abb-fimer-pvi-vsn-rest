@@ -527,10 +527,15 @@ shows the inverter still feeds 0–41 W at the last poll and the logger dies at 
   unknown last elevation falls back to the current one). While expected, `_handle_failure()`
   keeps `_consecutive_failures` at 0. `_outage_is_expected()` ends it for good once the current
   elevation is ≥ `exit_elevation` (or unknown) — counting then starts normally.
-- **Learning from every night**, alerted or not (`_end_outage()`): an outage ≥ 4 h whose last
-  good poll and first good poll after it were both below 10° is a night
+- **Learning from every night**, alerted or not (`_end_outage()`): an outage of 4–20 h whose
+  last good poll and first good poll after it were both below 10° is a night
   `{e_off, p_off, e_on}`; 14 kept in `config_entry.data["outage_learning"]` (the beta.1
   `outage_calibration` key is dropped on first write).
+- **Restarts don't lose nights** (beta.3): in auto mode `_begin_outage()` stores
+  `{since, e_off, p_off}` in `config_entry.data["outage_pending"]` via `_save_outage_state()`;
+  the coordinator constructor restores it, so the first successful poll after a restart/reload
+  (normally the morning setup) still records the night. `_end_outage()` clears the record in
+  any mode; a record older than 20 h is dropped without learning.
 - **`outage_thresholds`**: starter rule (0° / 60 W / exit 10°) until 5 nights exist; then
   `max(e_off)+2°`, `max(p_off)×1.5+10 W`, `max(e_on)+2°` over nights not more than 5° above
   the median (outlier filter), elevations capped at 10°. Back-test and real-coordinator replay
@@ -539,15 +544,17 @@ shows the inverter still feeds 0–41 W at the last poll and the logger dies at 
   `astral.sun.time_at_elevation`).
 - **Sun position**: `helpers.sun.get_astral_observer()` + `astral.sun.elevation()`; no `sun.sun`
   entity dependency. `get_astral_location()` is deprecated (removed HA 2027.7) — do not use it.
-- **Window**: `_in_outage_window()` on local time; crosses midnight when start > end; equal
-  times are rejected by the options flow (`outage_window_invalid`).
+- **Window**: `_in_outage_window()` on local time; crosses midnight when start > end. The times
+  are asked in the separate options step `outage_window`, shown only when the mode is `window`
+  (`async_step_init` → `async_step_outage_window` → `_async_finish_options`); equal times are
+  rejected there (`outage_window_invalid`). Other modes keep previously saved window times.
 - **Stale repair**: `connection_failed` is a persistent issue but the coordinator tracks it only
   in memory, so a restart/reload during an outage stranded it. `async_setup_entry()` now deletes
   it after successful discovery.
 
 **Translations**: options labels/descriptions, `options.error` and the `selector.outage_mode`
 labels live in `en.json` and the dictionaries; `generate_translations.py` copies and translates
-`options` (incl. `error`) and `selector` for the 9 other languages.
+`options` (all steps, incl. `error`) and `selector` for the 9 other languages.
 
 ### Meter Identifier Namespacing (v1.5.12, issue #74)
 

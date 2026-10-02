@@ -51,8 +51,6 @@
           "failures_threshold": "Feil før varsling",
           "recovery_script": "Gjenopprettingsskript (valgfritt)",
           "outage_mode": "Håndtering av forventede avbrudd",
-          "outage_window_start": "Start på forventet avbruddsvindu",
-          "outage_window_end": "Slutt på forventet avbruddsvindu",
           "prefix_inverter": "Vekselretter enhetsnavn",
           "prefix_inverter_1": "Vekselretter 1 enhetsnavn",
           "prefix_inverter_2": "Vekselretter 2 enhetsnavn",
@@ -77,9 +75,7 @@
           "enable_startup_notification": "Varsle når enheten er utilgjengelig ved oppstart av Home Assistant.",
           "failures_threshold": "Påfølgende feil før varsling. Område: 1-10. Standard: 3.",
           "recovery_script": "Skript som kjøres ved feil (f.eks. 'script.restart_router'). La stå tomt for ingen.",
-          "outage_mode": "Hvordan tilkoblingsfeil håndteres når anlegget forventes å være av. Automatisk: et avbrudd med lav sol og lav produksjon fra inverteren rapporteres ikke; de første nettene brukes en innebygd regel mens integrasjonen lærer når dataloggeren slår seg av og på, deretter brukes de lærte verdiene. Fast tidsvindu: feil innenfor vinduet nedenfor rapporteres ikke.",
-          "outage_window_start": "Start på det daglige tidsvinduet der tilkoblingsfeil forventes (kun i modus for fast tidsvindu).",
-          "outage_window_end": "Slutt på det daglige tidsvinduet der tilkoblingsfeil forventes (kun i modus for fast tidsvindu).",
+          "outage_mode": "Hvordan tilkoblingsfeil håndteres når anlegget forventes å være av. Automatisk: et avbrudd med lav sol og lav produksjon fra inverteren rapporteres ikke; de første nettene brukes en innebygd regel mens integrasjonen lærer når dataloggeren slår seg av og på, deretter brukes de lærte verdiene. Fast tidsvindu: feil innenfor et daglig tidsvindu, som angis i neste trinn, rapporteres ikke.",
           "prefix_inverter": "Custom inverter name. La stå tom for standardverdi.",
           "prefix_inverter_1": "Sets name for device with S/N: {inverter_1_sn}. La stå tom for standardverdi.",
           "prefix_inverter_2": "Sets name for device with S/N: {inverter_2_sn}. La stå tom for standardverdi.",
@@ -97,6 +93,18 @@
           "prefix_battery_3": "Sets name for device with S/N: {battery_3_sn}. La stå tom for standardverdi.",
           "prefix_battery_4": "Sets name for device with S/N: {battery_4_sn}. La stå tom for standardverdi.",
           "regenerate_entity_ids": ""
+        }
+      },
+      "outage_window": {
+        "title": "Vindu for forventet avbrudd",
+        "description": "Tilkoblingsfeil innenfor dette daglige vinduet regnes som forventet: ingen reparasjonsmelding, enhetsutløser eller gjenopprettingsskript. Vinduet kan gå over midnatt, for eksempel 21:00 til 07:00.",
+        "data": {
+          "outage_window_start": "Start på forventet avbruddsvindu",
+          "outage_window_end": "Slutt på forventet avbruddsvindu"
+        },
+        "data_description": {
+          "outage_window_start": "Start på det daglige tidsvinduet der tilkoblingsfeil forventes.",
+          "outage_window_end": "Slutt på det daglige tidsvinduet der tilkoblingsfeil forventes."
         }
       }
     },

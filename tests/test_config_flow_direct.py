@@ -1668,84 +1668,130 @@ class TestOptionsFlowRegenerateEntityIds:
 
 
 class TestOptionsFlowExpectedOutage:
-    """Options flow fields and validation for expected outage handling (issue #79)."""
+    """Options flow for expected outage handling (issue #79): window step is conditional."""
 
     def _flow(self, options: dict | None = None):
         mock_entry = MagicMock()
-        mock_entry.options = options or {"scan_interval": 60}
+        mock_entry.options = options if options is not None else {"scan_interval": 60}
         mock_entry.runtime_data = None
         flow = ABBFimerPVIVSNRestOptionsFlow()
         flow.hass = MagicMock()
         return flow, mock_entry
 
-    @pytest.mark.asyncio
-    async def test_form_contains_outage_fields(self) -> None:
-        flow, mock_entry = self._flow()
-        with patch.object(
+    @staticmethod
+    def _entry_patch(mock_entry: MagicMock):
+        return patch.object(
             ABBFimerPVIVSNRestOptionsFlow,
             "config_entry",
             new_callable=lambda: property(lambda self: mock_entry),
-        ):
+        )
+
+    @pytest.mark.asyncio
+    async def test_init_form_has_mode_but_no_window_fields(self) -> None:
+        flow, mock_entry = self._flow()
+        with self._entry_patch(mock_entry):
             result = await flow.async_step_init(user_input=None)
         assert result["type"] == "form"
-        assert result["errors"] is None
+        assert result["step_id"] == "init"
         keys = {str(key) for key in result["data_schema"].schema}
-        assert {"outage_mode", "outage_window_start", "outage_window_end"} <= keys
+        assert "outage_mode" in keys
+        assert "outage_window_start" not in keys
+        assert "outage_window_end" not in keys
 
     @pytest.mark.asyncio
-    async def test_window_mode_rejects_equal_times(self) -> None:
-        flow, mock_entry = self._flow()
-        with patch.object(
-            ABBFimerPVIVSNRestOptionsFlow,
-            "config_entry",
-            new_callable=lambda: property(lambda self: mock_entry),
-        ):
+    async def test_window_mode_shows_window_step_with_saved_times(self) -> None:
+        flow, mock_entry = self._flow(
+            {
+                "scan_interval": 60,
+                "outage_window_start": "20:30:00",
+                "outage_window_end": "06:45:00",
+            }
+        )
+        with self._entry_patch(mock_entry):
             result = await flow.async_step_init(
-                user_input={
-                    "scan_interval": 60,
-                    "outage_mode": "window",
-                    "outage_window_start": "08:00:00",
-                    "outage_window_end": "08:00:00",
-                }
+                user_input={"scan_interval": 60, "outage_mode": "window"}
             )
         assert result["type"] == "form"
-        assert result["errors"] == {"outage_window_end": "outage_window_invalid"}
+        assert result["step_id"] == "outage_window"
+        defaults = {str(key): key.default() for key in result["data_schema"].schema}
+        assert defaults == {"outage_window_start": "20:30:00", "outage_window_end": "06:45:00"}
 
     @pytest.mark.asyncio
-    async def test_window_mode_accepts_distinct_times(self) -> None:
+    async def test_window_step_uses_defaults_when_never_saved(self) -> None:
         flow, mock_entry = self._flow()
-        with patch.object(
-            ABBFimerPVIVSNRestOptionsFlow,
-            "config_entry",
-            new_callable=lambda: property(lambda self: mock_entry),
-        ):
+        with self._entry_patch(mock_entry):
             result = await flow.async_step_init(
+                user_input={"scan_interval": 60, "outage_mode": "window"}
+            )
+        defaults = {str(key): key.default() for key in result["data_schema"].schema}
+        assert defaults == {"outage_window_start": "21:00:00", "outage_window_end": "07:00:00"}
+
+    @pytest.mark.asyncio
+    async def test_window_step_rejects_equal_times(self) -> None:
+        flow, mock_entry = self._flow()
+        with self._entry_patch(mock_entry):
+            await flow.async_step_init(user_input={"scan_interval": 60, "outage_mode": "window"})
+            result = await flow.async_step_outage_window(
+                user_input={"outage_window_start": "08:00:00", "outage_window_end": "08:00:00"}
+            )
+        assert result["type"] == "form"
+        assert result["step_id"] == "outage_window"
+        assert result["errors"] == {"outage_window_end": "outage_window_invalid"}
+        # The rejected input is kept in the re-shown form
+        defaults = {str(key): key.default() for key in result["data_schema"].schema}
+        assert defaults["outage_window_start"] == "08:00:00"
+
+    @pytest.mark.asyncio
+    async def test_window_step_saves_all_options(self) -> None:
+        flow, mock_entry = self._flow()
+        with (
+            self._entry_patch(mock_entry),
+            patch.object(flow, "_regenerate_entity_ids", new_callable=AsyncMock) as mock_regen,
+        ):
+            await flow.async_step_init(
                 user_input={
-                    "scan_interval": 60,
+                    "scan_interval": 120,
                     "outage_mode": "window",
-                    "outage_window_start": "21:00:00",
-                    "outage_window_end": "07:00:00",
+                    CONF_REGENERATE_ENTITY_IDS: True,
                 }
             )
+            mock_regen.assert_not_called()  # only once the whole form is confirmed
+            result = await flow.async_step_outage_window(
+                user_input={"outage_window_start": "21:00:00", "outage_window_end": "07:00:00"}
+            )
         assert result["type"] == "create_entry"
-        assert result["data"]["outage_mode"] == "window"
-        assert result["data"]["outage_window_start"] == "21:00:00"
+        assert result["data"] == {
+            "scan_interval": 120,
+            "outage_mode": "window",
+            "outage_window_start": "21:00:00",
+            "outage_window_end": "07:00:00",
+        }
+        mock_regen.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_auto_mode_ignores_window_times(self) -> None:
-        flow, mock_entry = self._flow()
-        with patch.object(
-            ABBFimerPVIVSNRestOptionsFlow,
-            "config_entry",
-            new_callable=lambda: property(lambda self: mock_entry),
-        ):
+    async def test_other_modes_skip_window_step_and_keep_saved_times(self) -> None:
+        flow, mock_entry = self._flow(
+            {
+                "scan_interval": 60,
+                "outage_window_start": "20:30:00",
+                "outage_window_end": "06:45:00",
+            }
+        )
+        with self._entry_patch(mock_entry):
             result = await flow.async_step_init(
-                user_input={
-                    "scan_interval": 60,
-                    "outage_mode": "auto",
-                    "outage_window_start": "08:00:00",
-                    "outage_window_end": "08:00:00",
-                }
+                user_input={"scan_interval": 60, "outage_mode": "auto"}
             )
         assert result["type"] == "create_entry"
         assert result["data"]["outage_mode"] == "auto"
+        assert result["data"]["outage_window_start"] == "20:30:00"
+        assert result["data"]["outage_window_end"] == "06:45:00"
+
+    @pytest.mark.asyncio
+    async def test_other_modes_do_not_invent_window_times(self) -> None:
+        flow, mock_entry = self._flow()
+        with self._entry_patch(mock_entry):
+            result = await flow.async_step_init(
+                user_input={"scan_interval": 60, "outage_mode": "off"}
+            )
+        assert result["type"] == "create_entry"
+        assert "outage_window_start" not in result["data"]

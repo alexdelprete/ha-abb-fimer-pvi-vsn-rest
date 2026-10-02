@@ -51,8 +51,6 @@
           "failures_threshold": "Falhas antes da notificação",
           "recovery_script": "Script de recuperação (opcional)",
           "outage_mode": "Gestão de interrupções esperadas",
-          "outage_window_start": "Início da janela de interrupção esperada",
-          "outage_window_end": "Fim da janela de interrupção esperada",
           "prefix_inverter": "Nome do dispositivo inversor",
           "prefix_inverter_1": "Nome do dispositivo inversor 1",
           "prefix_inverter_2": "Nome do dispositivo inversor 2",
@@ -77,9 +75,7 @@
           "enable_startup_notification": "Notificar quando o dispositivo estiver inacessível no arranque do Home Assistant.",
           "failures_threshold": "Falhas consecutivas antes da notificação. Intervalo: 1-10. Predefinição: 3.",
           "recovery_script": "Script a executar em caso de falha (ex.: 'script.restart_router'). Deixe vazio para nenhum.",
-          "outage_mode": "Como tratar falhas de ligação quando se espera que a instalação esteja desligada. Deteção automática: uma interrupção com o sol baixo e o inversor a produzir pouco não é comunicada; nas primeiras noites é usada uma regra integrada enquanto a integração aprende quando o seu datalogger se desliga e liga, e depois são usados os valores aprendidos. Janela fixa: as falhas dentro da janela indicada abaixo não são comunicadas.",
-          "outage_window_start": "Início da janela diária em que se esperam falhas de ligação (apenas no modo de janela fixa).",
-          "outage_window_end": "Fim da janela diária em que se esperam falhas de ligação (apenas no modo de janela fixa).",
+          "outage_mode": "Como tratar falhas de ligação quando se espera que a instalação esteja desligada. Deteção automática: uma interrupção com o sol baixo e o inversor a produzir pouco não é comunicada; nas primeiras noites é usada uma regra integrada enquanto a integração aprende quando o seu datalogger se desliga e liga, e depois são usados os valores aprendidos. Janela fixa: as falhas dentro de uma janela horária diária, definida no passo seguinte, não são comunicadas.",
           "prefix_inverter": "Custom inverter name. Deixe vazio para o valor padrão.",
           "prefix_inverter_1": "Sets name for device with S/N: {inverter_1_sn}. Deixe vazio para o valor padrão.",
           "prefix_inverter_2": "Sets name for device with S/N: {inverter_2_sn}. Deixe vazio para o valor padrão.",
@@ -97,6 +93,18 @@
           "prefix_battery_3": "Sets name for device with S/N: {battery_3_sn}. Deixe vazio para o valor padrão.",
           "prefix_battery_4": "Sets name for device with S/N: {battery_4_sn}. Deixe vazio para o valor padrão.",
           "regenerate_entity_ids": ""
+        }
+      },
+      "outage_window": {
+        "title": "Janela de interrupção esperada",
+        "description": "As falhas de ligação dentro desta janela diária são consideradas esperadas: sem aviso de reparação, acionador de dispositivo nem script de recuperação. A janela pode passar a meia-noite, por exemplo das 21:00 às 07:00.",
+        "data": {
+          "outage_window_start": "Início da janela de interrupção esperada",
+          "outage_window_end": "Fim da janela de interrupção esperada"
+        },
+        "data_description": {
+          "outage_window_start": "Início da janela diária em que se esperam falhas de ligação.",
+          "outage_window_end": "Fim da janela diária em que se esperam falhas de ligação."
         }
       }
     },

@@ -386,29 +386,18 @@ class ABBFimerPVIVSNRestConfigFlow(ConfigFlow, domain=DOMAIN):
 class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
     """Handle options flow for ABB FIMER PVI VSN REST with auto-reload."""
 
+    # Options collected by async_step_init while the outage window step is shown
+    _pending_options: dict[str, Any] | None = None
+
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Manage the options."""
-        errors: dict[str, str] = {}
         if user_input is not None:
-            # A fixed outage window needs two different times
-            if user_input.get(CONF_OUTAGE_MODE) == OUTAGE_MODE_WINDOW and user_input.get(
-                CONF_OUTAGE_WINDOW_START
-            ) == user_input.get(CONF_OUTAGE_WINDOW_END):
-                errors[CONF_OUTAGE_WINDOW_END] = "outage_window_invalid"
-
-            if not errors:
-                # Check if entity ID regeneration was requested (one-time action)
-                regenerate = user_input.pop(CONF_REGENERATE_ENTITY_IDS, False)
-
-                if regenerate:
-                    await self._regenerate_entity_ids(user_input)
-
-                _LOGGER.debug(
-                    "Options updated: scan_interval=%s, outage_mode=%s",
-                    user_input.get(CONF_SCAN_INTERVAL),
-                    user_input.get(CONF_OUTAGE_MODE),
-                )
-                return self.async_create_entry(data=user_input)
+            # The window times only exist for the fixed window mode, so they are
+            # asked in a second step that appears only when that mode is chosen.
+            if user_input.get(CONF_OUTAGE_MODE) == OUTAGE_MODE_WINDOW:
+                self._pending_options = dict(user_input)
+                return await self.async_step_outage_window()
+            return await self._async_finish_options(dict(user_input))
 
         # Access discovered devices from coordinator (if available)
         discovered_devices = []
@@ -496,7 +485,7 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
         )
 
         # Expected outage handling (issue #79): off / auto-detect / fixed window.
-        # The window times are always shown; they only apply in window mode.
+        # The window times are asked in async_step_outage_window, only for window mode.
         schema_dict[
             vol.Required(
                 CONF_OUTAGE_MODE,
@@ -509,18 +498,6 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
                 translation_key="outage_mode",
             )
         )
-        schema_dict[
-            vol.Optional(
-                CONF_OUTAGE_WINDOW_START,
-                default=current_options.get(CONF_OUTAGE_WINDOW_START, DEFAULT_OUTAGE_WINDOW_START),
-            )
-        ] = TimeSelector()
-        schema_dict[
-            vol.Optional(
-                CONF_OUTAGE_WINDOW_END,
-                default=current_options.get(CONF_OUTAGE_WINDOW_END, DEFAULT_OUTAGE_WINDOW_END),
-            )
-        ] = TimeSelector()
 
         # Add per-device prefix fields
         # Single device of a type → base key (e.g., "prefix_battery") for backward compat
@@ -575,9 +552,60 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
         return self.async_show_form(
             step_id="init",
             data_schema=vol.Schema(schema_dict),
-            errors=errors or None,
             description_placeholders=description_placeholders or None,
         )
+
+    async def async_step_outage_window(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Ask the daily window times (shown only for the fixed window mode)."""
+        errors: dict[str, str] = {}
+        current_options = self.config_entry.options
+        if user_input is not None:
+            if user_input.get(CONF_OUTAGE_WINDOW_START) == user_input.get(CONF_OUTAGE_WINDOW_END):
+                errors[CONF_OUTAGE_WINDOW_END] = "outage_window_invalid"
+            else:
+                return await self._async_finish_options(
+                    {**(self._pending_options or {}), **user_input}
+                )
+
+        values = user_input or current_options
+        schema = vol.Schema(
+            {
+                vol.Required(
+                    CONF_OUTAGE_WINDOW_START,
+                    default=values.get(CONF_OUTAGE_WINDOW_START, DEFAULT_OUTAGE_WINDOW_START),
+                ): TimeSelector(),
+                vol.Required(
+                    CONF_OUTAGE_WINDOW_END,
+                    default=values.get(CONF_OUTAGE_WINDOW_END, DEFAULT_OUTAGE_WINDOW_END),
+                ): TimeSelector(),
+            }
+        )
+        return self.async_show_form(
+            step_id="outage_window", data_schema=schema, errors=errors or None
+        )
+
+    async def _async_finish_options(self, data: dict[str, Any]) -> ConfigFlowResult:
+        """Save the options (shared end of the init and outage window steps)."""
+        # Check if entity ID regeneration was requested (one-time action)
+        regenerate = data.pop(CONF_REGENERATE_ENTITY_IDS, False)
+        if regenerate:
+            await self._regenerate_entity_ids(data)
+
+        # Keep previously saved window times when another mode is chosen, so
+        # switching back to the fixed window mode restores them.
+        for key in (CONF_OUTAGE_WINDOW_START, CONF_OUTAGE_WINDOW_END):
+            if key not in data and key in self.config_entry.options:
+                data[key] = self.config_entry.options[key]
+
+        self._pending_options = None
+        _LOGGER.debug(
+            "Options updated: scan_interval=%s, outage_mode=%s",
+            data.get(CONF_SCAN_INTERVAL),
+            data.get(CONF_OUTAGE_MODE),
+        )
+        return self.async_create_entry(data=data)
 
     async def _regenerate_entity_ids(self, new_options: dict[str, Any]) -> None:
         """Regenerate entity IDs based on new prefix settings.

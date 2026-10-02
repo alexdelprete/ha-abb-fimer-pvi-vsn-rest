@@ -51,8 +51,6 @@
           "failures_threshold": "Failures before notification",
           "recovery_script": "Recovery script (optional)",
           "outage_mode": "Expected outage handling",
-          "outage_window_start": "Expected outage window start",
-          "outage_window_end": "Expected outage window end",
           "prefix_inverter": "Inverter device name",
           "prefix_inverter_1": "Inverter 1 device name",
           "prefix_inverter_2": "Inverter 2 device name",
@@ -77,9 +75,7 @@
           "enable_startup_notification": "Notify when device is unreachable at Home Assistant startup.",
           "failures_threshold": "Consecutive failures before notification. Range: 1-10. Default: 3.",
           "recovery_script": "Script to run on failure (e.g., 'script.restart_router'). Leave empty for none.",
-          "outage_mode": "How connection failures are treated when the plant is expected to be off. Auto-detect: a dropout with the sun low and the inverter producing little is not reported; a built-in rule is used for the first nights while the integration learns when your logger switches off and on, then the learned values take over. Fixed window: failures inside the window below are not reported.",
-          "outage_window_start": "Start of the daily window in which connection failures are expected (fixed window mode only).",
-          "outage_window_end": "End of the daily window in which connection failures are expected (fixed window mode only).",
+          "outage_mode": "How connection failures are treated when the plant is expected to be off. Auto-detect: a dropout with the sun low and the inverter producing little is not reported; a built-in rule is used for the first nights while the integration learns when your logger switches off and on, then the learned values take over. Fixed window: failures inside a daily time window, set in the next step, are not reported.",
           "prefix_inverter": "Custom inverter name. Leave empty for default.",
           "prefix_inverter_1": "Sets name for device with S/N: {inverter_1_sn}. Leave empty for default.",
           "prefix_inverter_2": "Sets name for device with S/N: {inverter_2_sn}. Leave empty for default.",
@@ -97,6 +93,18 @@
           "prefix_battery_3": "Sets name for device with S/N: {battery_3_sn}. Leave empty for default.",
           "prefix_battery_4": "Sets name for device with S/N: {battery_4_sn}. Leave empty for default.",
           "regenerate_entity_ids": ""
+        }
+      },
+      "outage_window": {
+        "title": "Expected outage window",
+        "description": "Connection failures inside this daily window are treated as expected: no repair issue, device trigger or recovery script. The window may cross midnight, for example 21:00 to 07:00.",
+        "data": {
+          "outage_window_start": "Expected outage window start",
+          "outage_window_end": "Expected outage window end"
+        },
+        "data_description": {
+          "outage_window_start": "Start of the daily window in which connection failures are expected.",
+          "outage_window_end": "End of the daily window in which connection failures are expected."
         }
       }
     },

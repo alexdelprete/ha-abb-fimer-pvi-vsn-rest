@@ -66,27 +66,19 @@ def translate_options_section(options_data: dict, translations_dict: dict[str, s
     Returns count of translated strings.
     """
     count = 0
-    init_step = options_data.get("step", {}).get("init", {})
+    # Every options step (init, outage_window, ...)
+    for step in options_data.get("step", {}).values():
+        # Translate title and description
+        for field in ("title", "description"):
+            if field in step:
+                step[field] = translate(step[field], translations_dict)
+                count += 1
 
-    # Translate title
-    if "title" in init_step:
-        init_step["title"] = translate(init_step["title"], translations_dict)
-        count += 1
-
-    # Translate description
-    if "description" in init_step:
-        init_step["description"] = translate(init_step["description"], translations_dict)
-        count += 1
-
-    # Translate data labels
-    for key, value in init_step.get("data", {}).items():
-        init_step["data"][key] = translate(value, translations_dict)
-        count += 1
-
-    # Translate data descriptions
-    for key, value in init_step.get("data_description", {}).items():
-        init_step["data_description"][key] = translate(value, translations_dict)
-        count += 1
+        # Translate data labels and data descriptions
+        for section in ("data", "data_description"):
+            for key, value in step.get(section, {}).items():
+                step[section][key] = translate(value, translations_dict)
+                count += 1
 
     # Translate form errors (options.error)
     for key, value in options_data.get("error", {}).items():

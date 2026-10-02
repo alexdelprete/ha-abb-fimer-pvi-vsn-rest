@@ -20,6 +20,7 @@ from custom_components.abb_fimer_pvi_vsn_rest.const import (
     CONF_OUTAGE_CALIBRATION_LEGACY,
     CONF_OUTAGE_LEARNING,
     CONF_OUTAGE_MODE,
+    CONF_OUTAGE_PENDING,
     CONF_OUTAGE_WINDOW_END,
     CONF_OUTAGE_WINDOW_START,
     CONF_RECOVERY_SCRIPT,
@@ -35,6 +36,7 @@ from custom_components.abb_fimer_pvi_vsn_rest.const import (
     OUTAGE_MODE_AUTO,
     OUTAGE_MODE_OFF,
     OUTAGE_MODE_WINDOW,
+    OUTAGE_NIGHT_MAX_DURATION,
     OUTAGE_NIGHT_MIN_DURATION,
     OUTAGE_POWER_FACTOR,
     OUTAGE_POWER_MARGIN,
@@ -2070,7 +2072,8 @@ class TestOutageAutoMode:
             coordinator._outage_since -= OUTAGE_NIGHT_MIN_DURATION + duration_extra
             await self._last_contact(coordinator, mock_vsn_client, mock_elev, end_elevation, 500.0)
         assert coordinator._learned_nights == []
-        mock_hass.config_entries.async_update_entry.assert_not_called()
+        for call in mock_hass.config_entries.async_update_entry.call_args_list:
+            assert call.kwargs["data"][CONF_OUTAGE_LEARNING] == []
 
     def test_starter_thresholds_until_enough_nights(
         self, auto_coordinator: ABBFimerPVIVSNRestCoordinator
@@ -2219,3 +2222,139 @@ class TestOutageAutoMode:
         elevation = auto_coordinator._sun_elevation()
         assert elevation is not None
         assert -90.0 <= elevation <= 90.0
+
+
+class TestOutagePersistence:
+    """The outage in progress survives a restart/reload (stored in config_entry.data)."""
+
+    async def test_auto_outage_start_is_saved(
+        self,
+        mock_hass: MagicMock,
+        mock_vsn_client: MagicMock,
+        mock_discovery_result: MockDiscoveryResult,
+    ) -> None:
+        coordinator = _make_coordinator(
+            mock_hass, mock_vsn_client, mock_discovery_result, _outage_entry(OUTAGE_MODE_AUTO)
+        )
+        with (
+            patch(CREATE_ISSUE),
+            patch.object(ABBFimerPVIVSNRestCoordinator, SUN_ELEVATION, return_value=-3.2),
+        ):
+            mock_vsn_client.get_normalized_data.return_value = _power_data(12.34)
+            await coordinator._async_update_data()
+            mock_vsn_client.get_normalized_data.side_effect = VSNConnectionError("down")
+            await _fail_once(coordinator)
+            await _fail_once(coordinator)  # later failures do not rewrite it
+
+        mock_hass.config_entries.async_update_entry.assert_called_once()
+        saved = mock_hass.config_entries.async_update_entry.call_args.kwargs["data"]
+        assert saved[CONF_OUTAGE_PENDING] == {
+            "since": coordinator._outage_since,
+            "e_off": -3.2,
+            "p_off": 12.3,
+        }
+
+    @pytest.mark.parametrize("mode", [OUTAGE_MODE_OFF, OUTAGE_MODE_WINDOW])
+    async def test_other_modes_do_not_save(
+        self,
+        mock_hass: MagicMock,
+        mock_vsn_client: MagicMock,
+        mock_discovery_result: MockDiscoveryResult,
+        mode: str,
+    ) -> None:
+        coordinator = _make_coordinator(
+            mock_hass, mock_vsn_client, mock_discovery_result, _outage_entry(mode)
+        )
+        with patch(CREATE_ISSUE):
+            mock_vsn_client.get_normalized_data.side_effect = VSNConnectionError("down")
+            await _fail_once(coordinator)
+        mock_hass.config_entries.async_update_entry.assert_not_called()
+
+    async def test_restored_outage_is_learned_after_restart(
+        self,
+        mock_hass: MagicMock,
+        mock_vsn_client: MagicMock,
+        mock_discovery_result: MockDiscoveryResult,
+    ) -> None:
+        """HA restarted overnight: the morning's first poll still records the night."""
+        entry = _outage_entry(OUTAGE_MODE_AUTO)
+        entry.data = {
+            CONF_OUTAGE_PENDING: {
+                "since": time.time() - OUTAGE_NIGHT_MIN_DURATION - 3600,
+                "e_off": -3.1,
+                "p_off": 40.8,
+            }
+        }
+        coordinator = _make_coordinator(mock_hass, mock_vsn_client, mock_discovery_result, entry)
+        assert coordinator._outage_since is not None
+        assert coordinator._outage_start_elevation == -3.1
+
+        with patch.object(ABBFimerPVIVSNRestCoordinator, SUN_ELEVATION, return_value=0.6):
+            mock_vsn_client.get_normalized_data.return_value = _power_data(0)
+            await coordinator._async_update_data()
+
+        assert coordinator._learned_nights == [{"e_off": -3.1, "p_off": 40.8, "e_on": 0.6}]
+        assert coordinator._outage_since is None
+        saved = mock_hass.config_entries.async_update_entry.call_args.kwargs["data"]
+        assert saved[CONF_OUTAGE_LEARNING] == [{"e_off": -3.1, "p_off": 40.8, "e_on": 0.6}]
+        assert CONF_OUTAGE_PENDING not in saved
+
+    async def test_stale_pending_outage_is_cleared_not_learned(
+        self,
+        mock_hass: MagicMock,
+        mock_vsn_client: MagicMock,
+        mock_discovery_result: MockDiscoveryResult,
+    ) -> None:
+        """A record older than one night (e.g. integration disabled for days) is dropped."""
+        entry = _outage_entry(OUTAGE_MODE_AUTO)
+        entry.data = {
+            CONF_OUTAGE_PENDING: {
+                "since": time.time() - OUTAGE_NIGHT_MAX_DURATION - 3600,
+                "e_off": -3.1,
+                "p_off": None,
+            }
+        }
+        coordinator = _make_coordinator(mock_hass, mock_vsn_client, mock_discovery_result, entry)
+        assert coordinator._outage_start_power is None
+        with patch.object(ABBFimerPVIVSNRestCoordinator, SUN_ELEVATION, return_value=0.6):
+            mock_vsn_client.get_normalized_data.return_value = _power_data(0)
+            await coordinator._async_update_data()
+        assert coordinator._learned_nights == []
+        saved = mock_hass.config_entries.async_update_entry.call_args.kwargs["data"]
+        assert CONF_OUTAGE_PENDING not in saved
+
+    async def test_leftover_pending_cleared_in_off_mode(
+        self,
+        mock_hass: MagicMock,
+        mock_vsn_client: MagicMock,
+        mock_discovery_result: MockDiscoveryResult,
+    ) -> None:
+        """Switching auto off with an outage stored: the record is removed, nothing learned."""
+        entry = _outage_entry(OUTAGE_MODE_OFF)
+        entry.data = {CONF_OUTAGE_PENDING: {"since": time.time() - 6 * 3600, "e_off": -3.0}}
+        coordinator = _make_coordinator(mock_hass, mock_vsn_client, mock_discovery_result, entry)
+        mock_vsn_client.get_normalized_data.return_value = _power_data(0)
+        await coordinator._async_update_data()
+        assert coordinator._learned_nights == []
+        saved = mock_hass.config_entries.async_update_entry.call_args.kwargs["data"]
+        assert CONF_OUTAGE_PENDING not in saved
+
+    @pytest.mark.parametrize(
+        "raw",
+        [
+            None,
+            "garbage",
+            {"since": "x", "e_off": -3.0},
+            {"since": True, "e_off": -3.0},
+            {"since": 1.0},
+            {"since": 1.0, "e_off": -3.0, "p_off": "high"},
+            {"since": 1.0, "e_off": -3.0, "p_off": False},
+        ],
+    )
+    def test_invalid_pending_is_ignored(self, raw: object) -> None:
+        assert ABBFimerPVIVSNRestCoordinator._load_pending(raw) is None
+
+    def test_valid_pending_is_loaded(self) -> None:
+        assert ABBFimerPVIVSNRestCoordinator._load_pending(
+            {"since": 10, "e_off": -3, "p_off": 5}
+        ) == {"since": 10.0, "e_off": -3.0, "p_off": 5.0}

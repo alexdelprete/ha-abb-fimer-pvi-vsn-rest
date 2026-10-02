@@ -51,8 +51,6 @@
           "failures_threshold": "Fallos antes de notificar",
           "recovery_script": "Script de recuperación (opcional)",
           "outage_mode": "Gestión de cortes esperados",
-          "outage_window_start": "Inicio de la ventana de corte esperado",
-          "outage_window_end": "Fin de la ventana de corte esperado",
           "prefix_inverter": "Nombre del dispositivo inversor",
           "prefix_inverter_1": "Nombre del dispositivo inversor 1",
           "prefix_inverter_2": "Nombre del dispositivo inversor 2",
@@ -77,9 +75,7 @@
           "enable_startup_notification": "Notificar cuando el dispositivo no esté accesible al iniciar Home Assistant.",
           "failures_threshold": "Fallos consecutivos antes de notificar. Rango: 1-10. Predeterminado: 3.",
           "recovery_script": "Script a ejecutar en caso de fallo (p. ej., 'script.restart_router'). Déjelo vacío para ninguno.",
-          "outage_mode": "Cómo se tratan los fallos de conexión cuando se espera que la planta esté apagada. Detección automática: un corte con el sol bajo y el inversor produciendo poco no se notifica; durante las primeras noches se usa una regla integrada mientras la integración aprende cuándo se apaga y se enciende su datalogger, y después se usan los valores aprendidos. Ventana fija: los fallos dentro de la ventana indicada abajo no se notifican.",
-          "outage_window_start": "Inicio de la ventana diaria en la que se esperan fallos de conexión (solo en modo de ventana fija).",
-          "outage_window_end": "Fin de la ventana diaria en la que se esperan fallos de conexión (solo en modo de ventana fija).",
+          "outage_mode": "Cómo se tratan los fallos de conexión cuando se espera que la planta esté apagada. Detección automática: un corte con el sol bajo y el inversor produciendo poco no se notifica; durante las primeras noches se usa una regla integrada mientras la integración aprende cuándo se apaga y se enciende su datalogger, y después se usan los valores aprendidos. Ventana fija: los fallos dentro de una ventana horaria diaria, configurada en el siguiente paso, no se notifican.",
           "prefix_inverter": "Custom inverter name. Dejar vacío para valor predeterminado.",
           "prefix_inverter_1": "Sets name for device with S/N: {inverter_1_sn}. Dejar vacío para valor predeterminado.",
           "prefix_inverter_2": "Sets name for device with S/N: {inverter_2_sn}. Dejar vacío para valor predeterminado.",
@@ -97,6 +93,18 @@
           "prefix_battery_3": "Sets name for device with S/N: {battery_3_sn}. Dejar vacío para valor predeterminado.",
           "prefix_battery_4": "Sets name for device with S/N: {battery_4_sn}. Dejar vacío para valor predeterminado.",
           "regenerate_entity_ids": ""
+        }
+      },
+      "outage_window": {
+        "title": "Ventana de corte esperado",
+        "description": "Los fallos de conexión dentro de esta ventana diaria se consideran esperados: sin aviso de reparación, disparador de dispositivo ni script de recuperación. La ventana puede cruzar la medianoche, por ejemplo de 21:00 a 07:00.",
+        "data": {
+          "outage_window_start": "Inicio de la ventana de corte esperado",
+          "outage_window_end": "Fin de la ventana de corte esperado"
+        },
+        "data_description": {
+          "outage_window_start": "Inicio de la ventana diaria en la que se esperan fallos de conexión.",
+          "outage_window_end": "Fin de la ventana diaria en la que se esperan fallos de conexión."
         }
       }
     },

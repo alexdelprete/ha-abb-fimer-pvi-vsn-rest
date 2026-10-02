@@ -51,8 +51,6 @@
           "failures_threshold": "Échecs avant notification",
           "recovery_script": "Script de récupération (facultatif)",
           "outage_mode": "Gestion des coupures attendues",
-          "outage_window_start": "Début de la plage de coupure attendue",
-          "outage_window_end": "Fin de la plage de coupure attendue",
           "prefix_inverter": "Nom de l'appareil onduleur",
           "prefix_inverter_1": "Nom de l'appareil onduleur 1",
           "prefix_inverter_2": "Nom de l'appareil onduleur 2",
@@ -77,9 +75,7 @@
           "enable_startup_notification": "Notifier lorsque l'appareil est injoignable au démarrage de Home Assistant.",
           "failures_threshold": "Échecs consécutifs avant notification. Plage : 1-10. Par défaut : 3.",
           "recovery_script": "Script à exécuter en cas de panne (ex. : 'script.restart_router'). Laisser vide pour aucun.",
-          "outage_mode": "Comment traiter les échecs de connexion lorsque l'installation est censée être éteinte. Détection automatique : une coupure avec le soleil bas et l'onduleur produisant peu n'est pas signalée ; une règle intégrée est utilisée les premières nuits pendant que l'intégration apprend quand votre enregistreur s'éteint et se rallume, puis les valeurs apprises prennent le relais. Plage fixe : les échecs dans la plage ci-dessous ne sont pas signalés.",
-          "outage_window_start": "Début de la plage quotidienne pendant laquelle des échecs de connexion sont attendus (mode plage fixe uniquement).",
-          "outage_window_end": "Fin de la plage quotidienne pendant laquelle des échecs de connexion sont attendus (mode plage fixe uniquement).",
+          "outage_mode": "Comment traiter les échecs de connexion lorsque l'installation est censée être éteinte. Détection automatique : une coupure avec le soleil bas et l'onduleur produisant peu n'est pas signalée ; une règle intégrée est utilisée les premières nuits pendant que l'intégration apprend quand votre enregistreur s'éteint et se rallume, puis les valeurs apprises prennent le relais. Plage fixe : les échecs dans une plage horaire quotidienne, définie à l'étape suivante, ne sont pas signalés.",
           "prefix_inverter": "Custom inverter name. Laisser vide pour la valeur par défaut.",
           "prefix_inverter_1": "Sets name for device with S/N: {inverter_1_sn}. Laisser vide pour la valeur par défaut.",
           "prefix_inverter_2": "Sets name for device with S/N: {inverter_2_sn}. Laisser vide pour la valeur par défaut.",
@@ -97,6 +93,18 @@
           "prefix_battery_3": "Sets name for device with S/N: {battery_3_sn}. Laisser vide pour la valeur par défaut.",
           "prefix_battery_4": "Sets name for device with S/N: {battery_4_sn}. Laisser vide pour la valeur par défaut.",
           "regenerate_entity_ids": ""
+        }
+      },
+      "outage_window": {
+        "title": "Plage de coupure attendue",
+        "description": "Les échecs de connexion dans cette plage quotidienne sont considérés comme attendus : pas de problème de réparation, de déclencheur d'appareil ni de script de récupération. La plage peut passer minuit, par exemple de 21:00 à 07:00.",
+        "data": {
+          "outage_window_start": "Début de la plage de coupure attendue",
+          "outage_window_end": "Fin de la plage de coupure attendue"
+        },
+        "data_description": {
+          "outage_window_start": "Début de la plage quotidienne pendant laquelle des échecs de connexion sont attendus.",
+          "outage_window_end": "Fin de la plage quotidienne pendant laquelle des échecs de connexion sont attendus."
         }
       }
     },

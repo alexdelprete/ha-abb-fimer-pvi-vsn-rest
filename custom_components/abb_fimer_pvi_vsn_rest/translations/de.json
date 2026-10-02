@@ -51,8 +51,6 @@
           "failures_threshold": "Fehler bis zur Benachrichtigung",
           "recovery_script": "Wiederherstellungsskript (optional)",
           "outage_mode": "Behandlung erwarteter Ausfälle",
-          "outage_window_start": "Beginn des erwarteten Ausfallzeitfensters",
-          "outage_window_end": "Ende des erwarteten Ausfallzeitfensters",
           "prefix_inverter": "Wechselrichter Gerätename",
           "prefix_inverter_1": "Wechselrichter 1 Gerätename",
           "prefix_inverter_2": "Wechselrichter 2 Gerätename",
@@ -77,9 +75,7 @@
           "enable_startup_notification": "Benachrichtigen, wenn das Gerät beim Start von Home Assistant nicht erreichbar ist.",
           "failures_threshold": "Aufeinanderfolgende Fehler bis zur Benachrichtigung. Bereich: 1-10. Standard: 3.",
           "recovery_script": "Skript, das bei einem Fehler ausgeführt wird (z. B. 'script.restart_router'). Leer lassen für keines.",
-          "outage_mode": "Wie Verbindungsfehler behandelt werden, wenn die Anlage voraussichtlich aus ist. Automatisch: ein Ausfall bei tiefstehender Sonne und geringer Wechselrichterleistung wird nicht gemeldet; in den ersten Nächten gilt eine eingebaute Regel, während die Integration lernt, wann sich Ihr Datenlogger aus- und einschaltet, danach werden die gelernten Werte verwendet. Festes Zeitfenster: Fehler innerhalb des unten angegebenen Zeitfensters werden nicht gemeldet.",
-          "outage_window_start": "Beginn des täglichen Zeitfensters, in dem Verbindungsfehler erwartet werden (nur im Modus „Festes Zeitfenster“).",
-          "outage_window_end": "Ende des täglichen Zeitfensters, in dem Verbindungsfehler erwartet werden (nur im Modus „Festes Zeitfenster“).",
+          "outage_mode": "Wie Verbindungsfehler behandelt werden, wenn die Anlage voraussichtlich aus ist. Automatisch: ein Ausfall bei tiefstehender Sonne und geringer Wechselrichterleistung wird nicht gemeldet; in den ersten Nächten gilt eine eingebaute Regel, während die Integration lernt, wann sich Ihr Datenlogger aus- und einschaltet, danach werden die gelernten Werte verwendet. Festes Zeitfenster: Fehler innerhalb eines täglichen Zeitfensters, das im nächsten Schritt festgelegt wird, werden nicht gemeldet.",
           "prefix_inverter": "Custom inverter name. Leer lassen für Standard.",
           "prefix_inverter_1": "Sets name for device with S/N: {inverter_1_sn}. Leer lassen für Standard.",
           "prefix_inverter_2": "Sets name for device with S/N: {inverter_2_sn}. Leer lassen für Standard.",
@@ -97,6 +93,18 @@
           "prefix_battery_3": "Sets name for device with S/N: {battery_3_sn}. Leer lassen für Standard.",
           "prefix_battery_4": "Sets name for device with S/N: {battery_4_sn}. Leer lassen für Standard.",
           "regenerate_entity_ids": ""
+        }
+      },
+      "outage_window": {
+        "title": "Zeitfenster für erwartete Ausfälle",
+        "description": "Verbindungsfehler innerhalb dieses täglichen Zeitfensters gelten als erwartet: kein Reparaturhinweis, kein Geräteauslöser und kein Wiederherstellungsskript. Das Zeitfenster darf über Mitternacht gehen, zum Beispiel 21:00 bis 07:00.",
+        "data": {
+          "outage_window_start": "Beginn des erwarteten Ausfallzeitfensters",
+          "outage_window_end": "Ende des erwarteten Ausfallzeitfensters"
+        },
+        "data_description": {
+          "outage_window_start": "Beginn des täglichen Zeitfensters, in dem Verbindungsfehler erwartet werden.",
+          "outage_window_end": "Ende des täglichen Zeitfensters, in dem Verbindungsfehler erwartet werden."
         }
       }
     },

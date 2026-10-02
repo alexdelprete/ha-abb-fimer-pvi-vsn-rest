@@ -9,6 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - (nothing yet — collects the 1.5.14 betas)
 
+## [1.5.14-beta.3] - 2026-10-02
+
+### Changed
+
+- **Window times only for the fixed window mode** — the expected outage window start/end are
+  asked in a second options step that appears only when `Fixed time window` is chosen;
+  Auto-detect and Off no longer show them. Previously saved times are kept when switching
+  modes. `generate_translations.py` now translates every options step.
+
+### Fixed
+
+- **Nights interrupted by a Home Assistant restart were not learned** — the outage in
+  progress lived only in memory, so a restart while the logger was dark (common with
+  overnight updates) skipped that night and slowed down learning. The outage start is now
+  stored with the config entry and picked up again when the logger returns; a record older
+  than 20 hours is discarded.
+
 ## [1.5.14-beta.2] - 2026-10-01
 
 ### Changed

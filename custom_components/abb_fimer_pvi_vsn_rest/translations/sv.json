@@ -51,8 +51,6 @@
           "failures_threshold": "Fel före avisering",
           "recovery_script": "Återställningsskript (valfritt)",
           "outage_mode": "Hantering av förväntade avbrott",
-          "outage_window_start": "Start för förväntat avbrottsfönster",
-          "outage_window_end": "Slut för förväntat avbrottsfönster",
           "prefix_inverter": "Växelriktare enhetsnamn",
           "prefix_inverter_1": "Växelriktare 1 enhetsnamn",
           "prefix_inverter_2": "Växelriktare 2 enhetsnamn",
@@ -77,9 +75,7 @@
           "enable_startup_notification": "Avisera när enheten är oåtkomlig när Home Assistant startar.",
           "failures_threshold": "Antal fel i följd före avisering. Intervall: 1-10. Standard: 3.",
           "recovery_script": "Skript som körs vid fel (t.ex. 'script.restart_router'). Lämna tomt för inget.",
-          "outage_mode": "Hur anslutningsfel hanteras när anläggningen förväntas vara avstängd. Automatisk: ett avbrott med låg sol och låg produktion från växelriktaren rapporteras inte; de första nätterna används en inbyggd regel medan integrationen lär sig när dataloggern stängs av och slås på, därefter används de inlärda värdena. Fast tidsfönster: fel inom fönstret nedan rapporteras inte.",
-          "outage_window_start": "Start för det dagliga tidsfönstret då anslutningsfel förväntas (endast i läget fast tidsfönster).",
-          "outage_window_end": "Slut för det dagliga tidsfönstret då anslutningsfel förväntas (endast i läget fast tidsfönster).",
+          "outage_mode": "Hur anslutningsfel hanteras när anläggningen förväntas vara avstängd. Automatisk: ett avbrott med låg sol och låg produktion från växelriktaren rapporteras inte; de första nätterna används en inbyggd regel medan integrationen lär sig när dataloggern stängs av och slås på, därefter används de inlärda värdena. Fast tidsfönster: fel inom ett dagligt tidsfönster, som anges i nästa steg, rapporteras inte.",
           "prefix_inverter": "Custom inverter name. Lämna tomt för standardvärde.",
           "prefix_inverter_1": "Sets name for device with S/N: {inverter_1_sn}. Lämna tomt för standardvärde.",
           "prefix_inverter_2": "Sets name for device with S/N: {inverter_2_sn}. Lämna tomt för standardvärde.",
@@ -97,6 +93,18 @@
           "prefix_battery_3": "Sets name for device with S/N: {battery_3_sn}. Lämna tomt för standardvärde.",
           "prefix_battery_4": "Sets name for device with S/N: {battery_4_sn}. Lämna tomt för standardvärde.",
           "regenerate_entity_ids": ""
+        }
+      },
+      "outage_window": {
+        "title": "Fönster för förväntat avbrott",
+        "description": "Anslutningsfel inom detta dagliga fönster räknas som förväntade: inget reparationsärende, ingen enhetsutlösare och inget återställningsskript. Fönstret kan passera midnatt, till exempel 21:00 till 07:00.",
+        "data": {
+          "outage_window_start": "Start för förväntat avbrottsfönster",
+          "outage_window_end": "Slut för förväntat avbrottsfönster"
+        },
+        "data_description": {
+          "outage_window_start": "Start för det dagliga tidsfönstret då anslutningsfel förväntas.",
+          "outage_window_end": "Slut för det dagliga tidsfönstret då anslutningsfel förväntas."
         }
       }
     },

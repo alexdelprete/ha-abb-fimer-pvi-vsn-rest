@@ -126,7 +126,7 @@ described below:
 | **Failures before notification** | 3 (1-10) | Consecutive failures before creating a notification |
 | **Recovery script** | (none) | Script to execute when failures threshold is reached (e.g., `script.restart_router`) |
 | **Expected outage handling** | Off | `Off`, `Auto-detect` or `Fixed time window` (see below) |
-| **Expected outage window** | 21:00–07:00 | Daily start/end used by `Fixed time window` mode (may cross midnight) |
+| **Expected outage window** | 21:00–07:00 | Asked in a second step, only when `Fixed time window` is chosen |
 
 **Runtime vs Startup Notifications:**
 
@@ -153,10 +153,13 @@ The **Expected outage handling** option prevents that:
     starter rule applies: sun below 0° and power below 60 W, start-up by 10°. From then on the
     learned bounds are used: highest learned switch-off elevation + 2°, highest learned switch-off
     power × 1.5 + 10 W, highest learned start-up elevation + 2°. The last 14 nights are kept, so
-    the bounds follow the seasons; nights far off the usual pattern are ignored.
+    the bounds follow the seasons; nights far off the usual pattern are ignored. A Home Assistant
+    restart during the night does not lose the night: the outage start is stored with the
+    integration's settings and picked up again when the logger comes back.
   - The integration diagnostics show the current rule, the learned nights and today's resulting
     window in clock time under `coordinator.expected_outage`. Requires the Home Assistant location.
-- **Fixed time window**: failures between the start and end times are expected. Choose this if you
+- **Fixed time window**: failures between the start and end times are expected. The times are asked
+  in a second step after you pick this mode, and the window may cross midnight. Choose this if you
   prefer a deterministic window or your logger is powered independently of the sun.
 
 A datalogger with its own power supply (VSN700, battery systems) stays reachable overnight, so a

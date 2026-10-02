@@ -39,6 +39,7 @@ from .const import (
     CONF_OUTAGE_CALIBRATION_LEGACY,
     CONF_OUTAGE_LEARNING,
     CONF_OUTAGE_MODE,
+    CONF_OUTAGE_PENDING,
     CONF_OUTAGE_WINDOW_END,
     CONF_OUTAGE_WINDOW_START,
     CONF_RECOVERY_SCRIPT,
@@ -57,6 +58,7 @@ from .const import (
     OUTAGE_MODE_AUTO,
     OUTAGE_MODE_OFF,
     OUTAGE_MODE_WINDOW,
+    OUTAGE_NIGHT_MAX_DURATION,
     OUTAGE_NIGHT_MIN_DURATION,
     OUTAGE_OUTLIER_ELEVATION,
     OUTAGE_POWER_FACTOR,
@@ -183,6 +185,13 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 CONF_OUTAGE_WINDOW_END, DEFAULT_OUTAGE_WINDOW_END
             )
             self._learned_nights = self._load_nights(config_entry.data.get(CONF_OUTAGE_LEARNING))
+            # An outage that began before a restart/reload resumes here, so the
+            # first successful poll can still learn the night from it.
+            pending = self._load_pending(config_entry.data.get(CONF_OUTAGE_PENDING))
+            if pending is not None:
+                self._outage_since = pending["since"]
+                self._outage_start_elevation = pending["e_off"]
+                self._outage_start_power = pending["p_off"]
         else:
             self._enable_repair_notification = DEFAULT_ENABLE_REPAIR_NOTIFICATION
             self._failures_threshold = DEFAULT_FAILURES_THRESHOLD
@@ -491,6 +500,47 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 )
         return nights[-OUTAGE_LEARNING_MAX_NIGHTS:]
 
+    @staticmethod
+    def _load_pending(raw: Any) -> dict[str, Any] | None:
+        """Validate a persisted outage-in-progress record from config_entry.data."""
+        if not isinstance(raw, dict):
+            return None
+        since, e_off, p_off = raw.get("since"), raw.get("e_off"), raw.get("p_off")
+        if not all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in (since, e_off)):
+            return None
+        if p_off is not None and (not isinstance(p_off, (int, float)) or isinstance(p_off, bool)):
+            return None
+        return {
+            "since": float(since),
+            "e_off": float(e_off),
+            "p_off": None if p_off is None else float(p_off),
+        }
+
+    def _save_outage_state(self) -> None:
+        """Persist learned nights and the outage in progress (if any)."""
+        if not self._config_entry:
+            return
+        data = {
+            key: value
+            for key, value in self._config_entry.data.items()
+            if key not in (CONF_OUTAGE_CALIBRATION_LEGACY, CONF_OUTAGE_PENDING)
+        }
+        data[CONF_OUTAGE_LEARNING] = list(self._learned_nights)
+        if (
+            self._outage_mode == OUTAGE_MODE_AUTO
+            and self._outage_since is not None
+            and self._outage_start_elevation is not None
+        ):
+            data[CONF_OUTAGE_PENDING] = {
+                "since": self._outage_since,
+                "e_off": round(self._outage_start_elevation, 2),
+                "p_off": None
+                if self._outage_start_power is None
+                else round(self._outage_start_power, 1),
+            }
+        if data != dict(self._config_entry.data):
+            self.hass.config_entries.async_update_entry(self._config_entry, data=data)
+
     def _usable_nights(self) -> list[dict[str, float]]:
         """Return the learned nights minus outliers (far above the median elevations)."""
         if not self._learned_nights:
@@ -567,6 +617,7 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._outage_start_power = self._last_poll_power
         if self._outage_mode == OUTAGE_MODE_AUTO:
             self._expected_outage_active = self._dropout_matches_night()
+            self._save_outage_state()  # survive a restart during the night
         elif self._outage_mode == OUTAGE_MODE_WINDOW:
             self._expected_outage_active = self._in_outage_window(dt_util.now().time())
         else:
@@ -619,7 +670,7 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         recorded = False
         if (
             self._outage_mode == OUTAGE_MODE_AUTO
-            and duration >= OUTAGE_NIGHT_MIN_DURATION
+            and OUTAGE_NIGHT_MIN_DURATION <= duration <= OUTAGE_NIGHT_MAX_DURATION
             and start_elevation is not None
             and elevation is not None
             and start_elevation < OUTAGE_MAX_ELEVATION
@@ -656,9 +707,11 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._outage_start_elevation = None
         self._outage_start_power = None
         self._expected_outage_active = False
+        if recorded or (self._config_entry and CONF_OUTAGE_PENDING in self._config_entry.data):
+            self._save_outage_state()
 
     def _record_night(self, e_off: float, p_off: float, e_on: float) -> None:
-        """Store one learned night and persist the rolling window."""
+        """Store one learned night in the rolling window."""
         was_learning = len(self._learned_nights) < OUTAGE_LEARNING_NIGHTS
         night = {"e_off": round(e_off, 2), "p_off": round(p_off, 1), "e_on": round(e_on, 2)}
         self._learned_nights = [*self._learned_nights, night][-OUTAGE_LEARNING_MAX_NIGHTS:]
@@ -668,14 +721,7 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 len(self._learned_nights),
                 self.outage_thresholds,
             )
-        if self._config_entry:
-            data = {
-                key: value
-                for key, value in self._config_entry.data.items()
-                if key != CONF_OUTAGE_CALIBRATION_LEGACY
-            }
-            data[CONF_OUTAGE_LEARNING] = list(self._learned_nights)
-            self.hass.config_entries.async_update_entry(self._config_entry, data=data)
+        # Persisted by the caller (_end_outage) together with the cleared outage
 
     def _expected_window(self) -> dict[str, str | None]:
         """Today's auto-mode window in local clock time, for diagnostics."""
