@@ -107,9 +107,12 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             missing_devices: Set of known device IDs not found during discovery
 
         """
+        # Pass the config entry explicitly: relying on the ContextVar that HA sets
+        # during setup is deprecated (report_usage in DataUpdateCoordinator.__init__).
         super().__init__(
             hass,
             _LOGGER,
+            config_entry=config_entry,
             name=DOMAIN,
             update_interval=update_interval,
         )

@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.5.14] - Unreleased
 
-- (nothing yet — collects the 1.5.14 betas)
+- (collects the 1.5.14 betas)
+
+### Changed
+
+- **Coordinator passes its config entry explicitly** — `DataUpdateCoordinator` was created
+  without `config_entry`, relying on the context variable Home Assistant sets during setup,
+  which HA deprecates (silent for custom integrations). No behaviour change.
 
 ## [1.5.14-beta.3] - 2026-10-02
 
