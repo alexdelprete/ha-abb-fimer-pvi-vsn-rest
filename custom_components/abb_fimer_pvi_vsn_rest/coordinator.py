@@ -274,7 +274,7 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                         )
                         self._reload_scheduled = True
                         self.hass.async_create_task(
-                            self.hass.config_entries.async_reload(self._entry_id)
+                            self.hass.config_entries.async_reload(self._config_entry.entry_id)
                         )
 
                 # Check 3: Detect devices that report data but got no entities.
@@ -952,8 +952,10 @@ class ABBFimerPVIVSNRestCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
     def _handle_full_recovery(self) -> None:
         """Handle full recovery when all missing devices are found."""
-        if self._entry_id:
-            delete_partial_discovery_issue(self.hass, self._entry_id)
+        if self._entry_id is None:
+            _LOGGER.debug("All known devices recovered, but no entry id: skipping reload")
+            return
+        delete_partial_discovery_issue(self.hass, self._entry_id)
         _LOGGER.info("All known devices recovered, scheduling reload")
         self._reload_scheduled = True
         self.hass.async_create_task(self.hass.config_entries.async_reload(self._entry_id))

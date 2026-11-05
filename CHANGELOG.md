@@ -15,6 +15,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   without `config_entry`, relying on the context variable Home Assistant sets during setup,
   which HA deprecates (silent for custom integrations). No behaviour change.
 
+### Fixed
+
+- **Type check on reload scheduling**: `ty` with homeassistant-stubs 2026.10 rejects passing
+  an optional entry id to `async_reload`. The unknown-devices reload now uses the config
+  entry's own id, and the full-recovery reload is skipped when no entry id is set. No
+  behaviour change in normal operation.
+
 ## [1.5.14-beta.3] - 2026-10-02
 
 ### Changed
