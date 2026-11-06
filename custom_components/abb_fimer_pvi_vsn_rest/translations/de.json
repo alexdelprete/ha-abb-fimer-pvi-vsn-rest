@@ -35,7 +35,6 @@
     },
     "abort": {
       "already_configured": "Dieses Gerät ist bereits konfiguriert",
-      "reconfigure_successful": "Neukonfiguration erfolgreich! Die Integration wird jetzt neu geladen.",
       "reconfigure_failed": "Neukonfiguration fehlgeschlagen. Bitte erneut versuchen oder die Integration entfernen und neu hinzufügen."
     }
   },

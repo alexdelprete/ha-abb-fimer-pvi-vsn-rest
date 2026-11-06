@@ -35,7 +35,6 @@
     },
     "abort": {
       "already_configured": "See seade on juba seadistatud",
-      "reconfigure_successful": "Uuesti seadistamine õnnestus! Sidumine laaditakse nüüd uuesti.",
       "reconfigure_failed": "Uuesti seadistamine ebaõnnestus. Proovige uuesti või eemaldage sidumine ja lisage uuesti."
     }
   },

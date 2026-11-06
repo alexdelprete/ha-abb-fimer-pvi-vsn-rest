@@ -67,8 +67,12 @@ class RuntimeData:
 
 async def async_setup_entry(
     hass: HomeAssistant, config_entry: ABBFimerPVIVSNRestConfigEntry
-) -> bool:
-    """Set up ABB FIMER PVI VSN REST from a config entry."""
+) -> None:
+    """Set up ABB FIMER PVI VSN REST from a config entry.
+
+    Returns None; failure is signalled by raising a ConfigEntry* exception, as
+    Home Assistant 2026.11 expects.
+    """
     # Log startup message only once per HA session
     if not hass.data.get(STARTUP_LOGGED_KEY):
         _LOGGER.info(STARTUP_MESSAGE)
@@ -248,8 +252,6 @@ async def async_setup_entry(
         coordinator.vsn_model or "VSN device",
     )
 
-    return True
-
 
 @callback
 def async_update_device_registry(
@@ -317,21 +319,19 @@ def async_update_device_registry(
 
 async def async_unload_entry(
     hass: HomeAssistant, config_entry: ABBFimerPVIVSNRestConfigEntry
-) -> bool:
-    """Unload a config entry."""
+) -> None:
+    """Unload a config entry.
+
+    async_unload_platforms_or_raise raises a translated ConfigEntryError when a
+    platform fails to unload, so the coordinator is only shut down after a
+    successful unload.
+    """
     _LOGGER.debug("Unloading config entry")
 
-    # Unload platforms - only cleanup if successful
-    # ref.: https://developers.home-assistant.io/blog/2025/02/19/new-config-entry-states/
-    if unload_ok := await hass.config_entries.async_unload_platforms(config_entry, PLATFORMS):
-        # Shutdown coordinator and cleanup
-        coordinator = config_entry.runtime_data.coordinator
-        await coordinator.async_shutdown()
-        _LOGGER.info("Successfully unloaded %s integration", DOMAIN)
-    else:
-        _LOGGER.debug("Platform unload failed, skipping cleanup")
-
-    return unload_ok
+    await hass.config_entries.async_unload_platforms_or_raise(config_entry, PLATFORMS)
+    coordinator = config_entry.runtime_data.coordinator
+    await coordinator.async_shutdown()
+    _LOGGER.info("Successfully unloaded %s integration", DOMAIN)
 
 
 async def async_remove_config_entry_device(

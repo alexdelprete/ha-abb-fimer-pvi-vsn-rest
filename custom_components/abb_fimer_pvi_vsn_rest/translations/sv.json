@@ -35,7 +35,6 @@
     },
     "abort": {
       "already_configured": "Denna enhet är redan konfigurerad",
-      "reconfigure_successful": "Omkonfigurering lyckades! Integrationen laddas nu om.",
       "reconfigure_failed": "Omkonfigureringen misslyckades. Försök igen eller ta bort och lägg till integrationen igen."
     }
   },

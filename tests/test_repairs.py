@@ -72,6 +72,7 @@ class TestCreateConnectionIssue:
         assert call_kwargs["is_fixable"] is False
         assert call_kwargs["is_persistent"] is True
         assert call_kwargs["translation_key"] == ISSUE_CONNECTION_FAILED
+        assert call_kwargs["config_entry_id"] == "entry_123"
         assert call_kwargs["translation_placeholders"]["device_name"] == "Test Inverter"
         assert call_kwargs["translation_placeholders"]["host"] == "192.168.1.100"
 
@@ -203,6 +204,7 @@ class TestPartialDiscoveryIssue:
         assert call_kwargs["is_fixable"] is False
         assert call_kwargs["is_persistent"] is True
         assert call_kwargs["translation_key"] == ISSUE_PARTIAL_DISCOVERY
+        assert call_kwargs["config_entry_id"] == "entry_123"
         assert call_kwargs["translation_placeholders"]["device_name"] == "VSN300 (111033-3N16-1421)"
         assert "077909-3G82-3112" in call_kwargs["translation_placeholders"]["missing_devices"]
 
@@ -246,6 +248,7 @@ class TestDataloggerSilentIssue:
         assert call_kwargs["is_fixable"] is False
         assert call_kwargs["is_persistent"] is True
         assert call_kwargs["translation_key"] == ISSUE_DATALOGGER_SILENT
+        assert call_kwargs["config_entry_id"] == "entry_123"
         assert call_kwargs["translation_placeholders"]["device_name"] == "VSN300 (111033-3N16-1421)"
         assert call_kwargs["translation_placeholders"]["host"] == "192.168.1.100"
 
@@ -291,6 +294,7 @@ class TestUnsupportedFirmwareIssue:
         assert call_kwargs["is_fixable"] is False
         assert call_kwargs["is_persistent"] is True
         assert call_kwargs["translation_key"] == ISSUE_UNSUPPORTED_FIRMWARE
+        assert call_kwargs["config_entry_id"] == "entry_123"
         assert call_kwargs["translation_placeholders"]["host"] == "192.168.1.100"
         assert call_kwargs["translation_placeholders"]["firmware_version"] == "2.0.0"
 

@@ -1,8 +1,10 @@
 # Home Assistant Integration Quality Scale
-# https://developers.home-assistant.io/docs/core/integration-quality-scale/
+# https://contributors.home-assistant.io/docs/core/integration-quality-scale/
 #
-# This is a HACS custom integration, not a core integration.
-# We track these rules for quality improvement purposes.
+# This is a custom integration (Marketplace), not a core integration: hassfest
+# does not validate this file for it. We track the rules for quality purposes.
+# Once every rule of a tier is done or exempt, declare it in manifest.json
+# ("quality_scale"); no tier is declared yet because Bronze is not complete.
 
 rules:
   # ============================================================================
@@ -27,7 +29,7 @@ rules:
   config-flow: done # UI setup via config_flow.py
 
   # Rule: Full test coverage for the config flow
-  config-flow-test-coverage: todo # tests/test_config_flow.py to be created
+  config-flow-test-coverage: todo # config_flow.py at 93% branch coverage (2026-11-06); needs 100%
 
   # Rule: Dependency transparency
   dependency-transparency: done # aiohttp is OSI-licensed, on PyPI

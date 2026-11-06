@@ -3000,3 +3000,15 @@ def test_state_mapped_points_not_numeric_in_mapping() -> None:
 
     # Sanity: both VSN300 and VSN700 state names are present and were checked.
     assert checked >= 8
+
+
+def test_vsn_sensor_renamed_in_place() -> None:
+    """VSNSensor opts in to in-place entity id changes (HA 2026.11).
+
+    It overrides async_added_to_hass, so without async_entity_id_changed core
+    would remove and re-add it on every rename.
+    """
+    from homeassistant.helpers import entity as entity_helper  # noqa: PLC0415
+
+    assert "async_entity_id_changed" in VSNSensor.__dict__
+    assert entity_helper._entity_class_requires_readd(VSNSensor) is False

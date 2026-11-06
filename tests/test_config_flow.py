@@ -38,7 +38,7 @@ def integration_setup_fixture():
     """Mock integration entry setup to avoid loading the full integration."""
     with patch(
         "custom_components.abb_fimer_pvi_vsn_rest.async_setup_entry",
-        return_value=True,
+        return_value=None,
     ):
         yield
 
@@ -306,7 +306,7 @@ async def test_options_flow(
 def _build_options_form_schema(options: dict, discovered_devices: list):
     """Build the options-flow schema as the real flow would, for a given state.
 
-    Returns the voluptuous schema from the rendered form so tests can feed it
+    Returns the probatio schema from the rendered form so tests can feed it
     synthetic submissions and exercise the same validation HA runs before
     calling async_step_init with the validated result.
     """
@@ -328,7 +328,7 @@ async def test_options_flow_schema_allows_clearing_recovery_script(
     because an empty submission omits the key and the default refilled it.
     The fix uses description={"suggested_value": ...}.
 
-    This exercises the actual voluptuous schema, which is where the bug lived
+    This exercises the actual form schema, which is where the bug lived
     — direct async_step_init(user_input) calls bypass the form validation that
     resurrects the default.
     """

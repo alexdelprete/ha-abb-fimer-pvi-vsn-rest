@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any
 
 from homeassistant.components.sensor import RestoreSensor, SensorDeviceClass, SensorStateClass
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
@@ -604,6 +604,19 @@ class VSNSensor(CoordinatorEntity[ABBFimerPVIVSNRestCoordinator], RestoreSensor)
                 restored_raw,
                 self._point_name,
             )
+
+    @callback
+    def async_entity_id_changed(self, old_entity_id: str) -> None:
+        """Opt in to in-place entity id changes (Home Assistant 2026.11).
+
+        Without this hook the sensor's own async_added_to_hass makes core remove
+        and re-add it on every rename (including the options flow's entity id
+        regeneration); with it the entity is updated in place, and the fallback
+        ends in 2027.11. Nothing here is keyed on the entity id: the stale-value
+        guard looks the state up by self.entity_id on every update and core moves
+        the restore data to the new id, so only the base classes need to run.
+        """
+        super().async_entity_id_changed(old_entity_id)
 
     def _format_uptime_seconds(self, seconds: float) -> str:
         """Format uptime seconds to friendly human-readable string.
