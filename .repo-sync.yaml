@@ -21,7 +21,7 @@ vars:
   python_import_name: ""
 
   # -- HA/HACS --
-  ha_min_version: "2026.8.0"
+  ha_min_version: "2026.11.0"
   hide_default_branch: false
   ignore_brands: false
 
