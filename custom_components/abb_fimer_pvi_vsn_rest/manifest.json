@@ -1,6 +1,7 @@
 {
   "domain": "abb_fimer_pvi_vsn_rest",
   "name": "ABB/FIMER PVI VSN REST",
+  "categories": ["energy.solar_batteries"],
   "codeowners": ["@alexdelprete"],
   "config_flow": true,
   "documentation": "https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest",
