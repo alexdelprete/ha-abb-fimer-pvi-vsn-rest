@@ -6,7 +6,7 @@ from collections import defaultdict
 import logging
 from typing import Any
 
-import voluptuous as vol
+import probatio
 
 from homeassistant import config_entries
 from homeassistant.config_entries import (
@@ -299,11 +299,11 @@ class ABBFimerPVIVSNRestConfigFlow(ConfigFlow, domain=DOMAIN):
         # Show form
         return self.async_show_form(
             step_id="user",
-            data_schema=vol.Schema(
+            data_schema=probatio.Schema(
                 {
-                    vol.Required(CONF_HOST): str,
-                    vol.Optional(CONF_USERNAME, default=DEFAULT_USERNAME): str,
-                    vol.Optional(CONF_PASSWORD, default=""): str,
+                    probatio.Required(CONF_HOST): str,
+                    probatio.Optional(CONF_USERNAME, default=DEFAULT_USERNAME): str,
+                    probatio.Optional(CONF_PASSWORD, default=""): str,
                 }
             ),
             errors=errors,
@@ -366,14 +366,16 @@ class ABBFimerPVIVSNRestConfigFlow(ConfigFlow, domain=DOMAIN):
         # Show form with current values
         return self.async_show_form(
             step_id="reconfigure",
-            data_schema=vol.Schema(
+            data_schema=probatio.Schema(
                 {
-                    vol.Required(CONF_HOST, default=reconfigure_entry.data.get(CONF_HOST)): str,
-                    vol.Optional(
+                    probatio.Required(
+                        CONF_HOST, default=reconfigure_entry.data.get(CONF_HOST)
+                    ): str,
+                    probatio.Optional(
                         CONF_USERNAME,
                         default=reconfigure_entry.data.get(CONF_USERNAME, DEFAULT_USERNAME),
                     ): str,
-                    vol.Optional(CONF_PASSWORD, default=""): str,
+                    probatio.Optional(CONF_PASSWORD, default=""): str,
                 }
             ),
             errors=errors,
@@ -417,8 +419,8 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
         current_options = self.config_entry.options
 
         # Build schema dynamically based on discovered device types
-        schema_dict: dict[vol.Marker, Any] = {
-            vol.Required(
+        schema_dict: dict[probatio.Marker, Any] = {
+            probatio.Required(
                 CONF_SCAN_INTERVAL,
                 default=current_options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL),
             ): NumberSelector(
@@ -433,7 +435,7 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
 
         # Repair notification options
         schema_dict[
-            vol.Optional(
+            probatio.Optional(
                 CONF_ENABLE_REPAIR_NOTIFICATION,
                 default=current_options.get(
                     CONF_ENABLE_REPAIR_NOTIFICATION, DEFAULT_ENABLE_REPAIR_NOTIFICATION
@@ -442,7 +444,7 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
         ] = bool
 
         schema_dict[
-            vol.Optional(
+            probatio.Optional(
                 CONF_ENABLE_STARTUP_NOTIFICATION,
                 default=current_options.get(
                     CONF_ENABLE_STARTUP_NOTIFICATION, DEFAULT_ENABLE_STARTUP_NOTIFICATION
@@ -451,7 +453,7 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
         ] = bool
 
         schema_dict[
-            vol.Required(
+            probatio.Required(
                 CONF_FAILURES_THRESHOLD,
                 default=current_options.get(CONF_FAILURES_THRESHOLD, DEFAULT_FAILURES_THRESHOLD),
             )
@@ -469,7 +471,7 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
         # empty submission arrives with the key absent and voluptuous resurrects
         # the saved value, making the field impossible to clear via the UI.
         schema_dict[
-            vol.Optional(
+            probatio.Optional(
                 CONF_RECOVERY_SCRIPT,
                 description={
                     "suggested_value": current_options.get(
@@ -487,7 +489,7 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
         # Expected outage handling (issue #79): off / auto-detect / fixed window.
         # The window times are asked in async_step_outage_window, only for window mode.
         schema_dict[
-            vol.Required(
+            probatio.Required(
                 CONF_OUTAGE_MODE,
                 default=current_options.get(CONF_OUTAGE_MODE, DEFAULT_OUTAGE_MODE),
             )
@@ -517,7 +519,7 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
             if len(devices) == 1:
                 # Single device: use base key (backward compatible)
                 schema_dict[
-                    vol.Optional(
+                    probatio.Optional(
                         base_key,
                         description={"suggested_value": current_options.get(base_key, "")},
                     )
@@ -527,7 +529,7 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
                 for i, device in enumerate(devices, start=1):
                     key = f"{base_key}_{i}"
                     schema_dict[
-                        vol.Optional(
+                        probatio.Optional(
                             key,
                             description={"suggested_value": current_options.get(key, "")},
                         )
@@ -543,7 +545,7 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
         # Show regenerate checkbox if any devices exist
         if has_any_device:
             schema_dict[
-                vol.Optional(
+                probatio.Optional(
                     CONF_REGENERATE_ENTITY_IDS,
                     default=False,
                 )
@@ -551,7 +553,7 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
 
         return self.async_show_form(
             step_id="init",
-            data_schema=vol.Schema(schema_dict),
+            data_schema=probatio.Schema(schema_dict),
             description_placeholders=description_placeholders or None,
         )
 
@@ -570,13 +572,13 @@ class ABBFimerPVIVSNRestOptionsFlow(OptionsFlowWithReload):
                 )
 
         values = user_input or current_options
-        schema = vol.Schema(
+        schema = probatio.Schema(
             {
-                vol.Required(
+                probatio.Required(
                     CONF_OUTAGE_WINDOW_START,
                     default=values.get(CONF_OUTAGE_WINDOW_START, DEFAULT_OUTAGE_WINDOW_START),
                 ): TimeSelector(),
-                vol.Required(
+                probatio.Required(
                     CONF_OUTAGE_WINDOW_END,
                     default=values.get(CONF_OUTAGE_WINDOW_END, DEFAULT_OUTAGE_WINDOW_END),
                 ): TimeSelector(),
