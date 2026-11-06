@@ -10,7 +10,7 @@ from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-from pytest_homeassistant_custom_component.common import MockConfigEntry
+from pytest_homeassistant.common import MockConfigEntry
 
 from custom_components.abb_fimer_pvi_vsn_rest.const import (
     CONF_ENABLE_REPAIR_NOTIFICATION,
@@ -29,9 +29,6 @@ from custom_components.abb_fimer_pvi_vsn_rest.const import (
 from custom_components.abb_fimer_pvi_vsn_rest.coordinator import ABBFimerPVIVSNRestCoordinator
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import CoreState, HomeAssistant
-
-# Register pytest-homeassistant-custom-component plugin
-pytest_plugins = ["pytest_homeassistant_custom_component"]
 
 # Test configuration values
 TEST_HOST = "192.168.1.100"
@@ -322,7 +319,7 @@ def mock_hass() -> MagicMock:
     component logic directly without needing the real HA event bus/services.
 
     Note: For integration tests, use the built-in `hass` fixture from
-    pytest_homeassistant_custom_component instead.
+    pytest_homeassistant instead.
     """
     mock = MagicMock(spec=HomeAssistant)
     mock.config_entries = MagicMock()
