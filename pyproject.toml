@@ -23,7 +23,7 @@ dev = [
     "urllib3>=2.6.3",
     "colorlog>=6.10.0",
     "homeassistant>=2026.8.0",
-    "homeassistant-stubs",
+    "homeassistant-stubs==2026.9.3",
     "mdformat",
     "mdformat-gfm",
     "pre-commit",
@@ -39,7 +39,7 @@ dev = [
 
 [dependency-groups]
 lint = [
-    "homeassistant-stubs",
+    "homeassistant-stubs==2026.9.3",
     "mdformat",
     "mdformat-gfm",
     "pre-commit",
