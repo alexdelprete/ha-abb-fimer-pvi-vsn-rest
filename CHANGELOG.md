@@ -14,6 +14,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Coordinator passes its config entry explicitly** — `DataUpdateCoordinator` was created
   without `config_entry`, relying on the context variable Home Assistant sets during setup,
   which HA deprecates (silent for custom integrations). No behaviour change.
+- **Minimum supported Home Assistant version raised to 2026.11.0.** The integration now uses APIs
+  introduced in Home Assistant 2026.11; the Marketplace will not offer this update to older cores.
+- **Repair issues are linked to the integration entry.** The connection, partial-discovery,
+  datalogger-silent and unsupported-firmware issues now appear on the integration's page and are
+  removed together with the entry.
+- **Sensors are renamed in place.** Changing a sensor's entity ID, including the entity ID
+  regeneration in the integration options, now updates the entity in place instead of removing and
+  re-adding it (Home Assistant 2026.11).
+- **Marketplace category.** The manifest declares the `energy.solar_batteries` category.
+- **Validation engine.** Configuration and options forms use probatio, Home Assistant's validation
+  engine, instead of voluptuous. No user-visible change.
+- **Development tooling.** Tests run on `pytest-homeassistant` 2026.11.0, the test package published
+  by Home Assistant core, replacing `pytest-homeassistant-custom-component`; `homeassistant-stubs`
+  is no longer used.
 
 ### Fixed
 
@@ -21,6 +35,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   an optional entry id to `async_reload`. The unknown-devices reload now uses the config
   entry's own id, and the full-recovery reload is skipped when no entry id is set. No
   behaviour change in normal operation.
+
+### Removed
+
+- **Local translation of the "Reconfiguration successful" message.** Home Assistant translates it
+  centrally since 2026.10.
 
 ## [1.5.14-beta.3] - 2026-10-02
 
