@@ -151,7 +151,7 @@ class TestAsyncSetupEntry:
         ):
             result = await async_setup_entry(mock_hass, mock_config_entry)
 
-        assert result is True
+        assert result is None
         assert mock_config_entry.runtime_data is not None
         mock_hass.config_entries.async_forward_entry_setups.assert_called_once()
         # A connection repair left by a previous run is cleared once discovery works
@@ -201,7 +201,7 @@ class TestAsyncSetupEntry:
         ):
             result = await async_setup_entry(mock_hass, mock_config_entry)
 
-        assert result is True
+        assert result is None
         mock_coordinator.async_add_listener.assert_called_once()
         # The listener's unsubscribe callback must be released on unload
         mock_config_entry.async_on_unload.assert_any_call(
@@ -280,7 +280,7 @@ class TestAsyncSetupEntry:
         ):
             result = await async_setup_entry(mock_hass, mock_config_entry)
 
-        assert result is True
+        assert result is None
         mock_create_issue.assert_called_once()
 
     @pytest.mark.asyncio
@@ -420,7 +420,7 @@ class TestAsyncSetupEntry:
         ):
             result = await async_setup_entry(mock_hass, mock_config_entry)
 
-        assert result is True
+        assert result is None
 
     @pytest.mark.asyncio
     async def test_setup_entry_logs_startup_once(
@@ -474,7 +474,7 @@ class TestAsyncUnloadEntry:
         """Create mock Home Assistant instance."""
         hass = MagicMock(spec=HomeAssistant)
         hass.config_entries = MagicMock()
-        hass.config_entries.async_unload_platforms = AsyncMock(return_value=True)
+        hass.config_entries.async_unload_platforms_or_raise = AsyncMock(return_value=None)
         return hass
 
     @pytest.fixture
@@ -501,9 +501,8 @@ class TestAsyncUnloadEntry:
         mock_config_entry: MagicMock,
     ) -> None:
         """Test successful unload entry."""
-        result = await async_unload_entry(mock_hass, mock_config_entry)
+        assert await async_unload_entry(mock_hass, mock_config_entry) is None
 
-        assert result is True
         mock_config_entry.runtime_data.coordinator.async_shutdown.assert_called_once()
 
     @pytest.mark.asyncio
@@ -512,12 +511,14 @@ class TestAsyncUnloadEntry:
         mock_hass: MagicMock,
         mock_config_entry: MagicMock,
     ) -> None:
-        """Test unload entry when platform unload fails."""
-        mock_hass.config_entries.async_unload_platforms = AsyncMock(return_value=False)
+        """Test a failed platform unload raises and skips the coordinator shutdown."""
+        mock_hass.config_entries.async_unload_platforms_or_raise = AsyncMock(
+            side_effect=ConfigEntryError("unload failed")
+        )
 
-        result = await async_unload_entry(mock_hass, mock_config_entry)
+        with pytest.raises(ConfigEntryError):
+            await async_unload_entry(mock_hass, mock_config_entry)
 
-        assert result is False
         # Shutdown should not be called if unload fails
         mock_config_entry.runtime_data.coordinator.async_shutdown.assert_not_called()
 
