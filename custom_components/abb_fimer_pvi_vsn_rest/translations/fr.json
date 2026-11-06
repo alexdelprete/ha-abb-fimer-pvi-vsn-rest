@@ -35,7 +35,6 @@
     },
     "abort": {
       "already_configured": "Cet appareil est déjà configuré",
-      "reconfigure_successful": "Reconfiguration réussie ! L'intégration va maintenant se recharger.",
       "reconfigure_failed": "Échec de la reconfiguration. Réessayez ou supprimez puis ajoutez à nouveau l'intégration."
     }
   },

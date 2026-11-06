@@ -35,7 +35,6 @@
     },
     "abort": {
       "already_configured": "Este dispositivo ya está configurado",
-      "reconfigure_successful": "¡Reconfiguración correcta! La integración se recargará ahora.",
       "reconfigure_failed": "La reconfiguración falló. Inténtelo de nuevo o elimine y vuelva a añadir la integración."
     }
   },

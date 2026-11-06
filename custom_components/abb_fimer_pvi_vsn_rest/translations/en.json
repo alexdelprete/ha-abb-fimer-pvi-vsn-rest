@@ -35,7 +35,6 @@
     },
     "abort": {
       "already_configured": "This device is already configured",
-      "reconfigure_successful": "Reconfiguration successful! The integration will now reload.",
       "reconfigure_failed": "Reconfiguration failed. Please try again or remove and re-add the integration."
     }
   },

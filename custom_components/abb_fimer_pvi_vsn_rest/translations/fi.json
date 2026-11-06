@@ -35,7 +35,6 @@
     },
     "abort": {
       "already_configured": "Tämä laite on jo määritetty",
-      "reconfigure_successful": "Uudelleenmääritys onnistui! Integraatio ladataan nyt uudelleen.",
       "reconfigure_failed": "Uudelleenmääritys epäonnistui. Yritä uudelleen tai poista integraatio ja lisää se uudelleen."
     }
   },
