@@ -1,5 +1,11 @@
 """Repair issues for ABB/FIMER PVI VSN REST integration.
 
+Every issue is linked to its config entry (Home Assistant 2026.11): it is shown
+on the entry's page and deleted together with the entry. Each issue is still
+created and deleted where its condition is decided (setup, discovery, poll,
+datalogger silence), since those are different events; the deletes go by id, so
+issues created by older releases without the entry link are cleaned up too.
+
 https://github.com/alexdelprete/ha-abb-fimer-pvi-vsn-rest
 """
 
@@ -46,6 +52,7 @@ def create_connection_issue(
         hass,
         DOMAIN,
         f"{ISSUE_CONNECTION_FAILED}_{entry_id}",
+        config_entry_id=entry_id,
         is_fixable=False,
         is_persistent=True,
         severity=ir.IssueSeverity.ERROR,
@@ -160,6 +167,7 @@ def create_partial_discovery_issue(
         hass,
         DOMAIN,
         f"{ISSUE_PARTIAL_DISCOVERY}_{entry_id}",
+        config_entry_id=entry_id,
         is_fixable=False,
         is_persistent=True,
         severity=ir.IssueSeverity.WARNING,
@@ -213,6 +221,7 @@ def create_datalogger_silent_issue(
         hass,
         DOMAIN,
         f"{ISSUE_DATALOGGER_SILENT}_{entry_id}",
+        config_entry_id=entry_id,
         is_fixable=False,
         is_persistent=True,
         severity=ir.IssueSeverity.WARNING,
@@ -259,6 +268,7 @@ def create_unsupported_firmware_issue(
         hass,
         DOMAIN,
         f"{ISSUE_UNSUPPORTED_FIRMWARE}_{entry_id}",
+        config_entry_id=entry_id,
         is_fixable=False,
         is_persistent=True,
         severity=ir.IssueSeverity.ERROR,
