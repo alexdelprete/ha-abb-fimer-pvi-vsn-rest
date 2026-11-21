@@ -5,9 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.5.14] - Unreleased
+## [1.5.14] - 2026-11-21
 
-- (collects the 1.5.14 betas)
+All changes since v1.5.13: the v1.5.14-beta.1 to beta.3 entries below, plus the following.
 
 ### Changed
 
@@ -35,6 +35,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   an optional entry id to `async_reload`. The unknown-devices reload now uses the config
   entry's own id, and the full-recovery reload is skipped when no entry id is set. No
   behaviour change in normal operation.
+- **Energy sensors 1000x too small after a setup on a zero reading** (Reported in #90, thanks
+  @truonganvna): the energy unit was reported as `Wh` when the reading was 0 or empty, and as
+  `kWh` otherwise. A sensor fixes its unit when it is created, so an energy counter created
+  while at 0 (typically VSN700 "Energy AC - Produced (Since Restart)" right after the logger
+  restarts at dawn) kept `Wh` while its values were in kWh, and Home Assistant divided them by
+  1000 again. Energy sensors now always report `kWh`.
 
 ### Removed
 
