@@ -382,13 +382,17 @@ class VSNDataNormalizer:
                 # v1.1.8 FIX: Previous logic checked mapping.units == "Wh", which missed sensors
                 # that had mapping.units == "kWh", resulting in Wh values displayed as kWh (wrong by 1000x)
                 # v1.1.10 FIX: Use local variable for unit instead of modifying mapping object
+                # Issue #90: the unit must not depend on the value. The sensor entity reads
+                # its unit once, at creation; if that happened on a 0 or None reading (e.g.
+                # E0_runtime right after the logger restarts at dawn) it got the mapping's
+                # "Wh" while every later value was in kWh, so HA divided them by 1000 again.
                 unit_to_use = mapping.units  # Default to mapping unit
 
-                if mapping.device_class == "energy" and point_value is not None:
+                if mapping.device_class == "energy":
+                    unit_to_use = "kWh"  # Always kWh, whatever the value
                     if isinstance(point_value, (int, float)) and point_value != 0:
                         original_value = point_value
                         point_value = point_value / 1000  # Wh → kWh
-                        unit_to_use = "kWh"  # Always kWh after conversion
                         _LOGGER.debug(
                             "Converted energy sensor %s from Wh to kWh: %s Wh → %s kWh",
                             point_name,

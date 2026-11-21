@@ -660,6 +660,56 @@ class TestNormalizeAdditional:
         device = result["devices"]["077909-3G82-3112"]
         assert device["points"]["watthours"]["value"] is None
 
+    @pytest.mark.parametrize(
+        ("raw_value", "expected_value"),
+        [(0, 0), (None, None), (1500, 1.5)],
+    )
+    def test_normalize_energy_unit_is_kwh_regardless_of_value(
+        self, raw_value: float | None, expected_value: float | None
+    ) -> None:
+        """Energy unit is always kWh, even for 0/None readings with a Wh mapping (issue #90).
+
+        The sensor entity freezes its unit at creation. A runtime counter such as
+        VSN700 E0_runtime reads 0 right after the logger restarts; reporting "Wh" for
+        that reading made HA divide every later kWh value by 1000 again.
+        """
+        mapping = PointMapping(
+            vsn700_name="E0_runtime",
+            vsn300_name="N/A",
+            sunspec_name="E0_runtime",
+            ha_entity_name="e0_since_restart",
+            in_livedata=True,
+            in_feeds=True,
+            label="E0 Since Restart",
+            description="Inverter AC energy produced - Since Restart",
+            ha_display_name="Energy AC - Produced (Since Restart)",
+            models=["VSN700-only"],
+            category="Energy Counter",
+            units="Wh",
+            state_class="total_increasing",
+            device_class="energy",
+            entity_category=None,
+            available_in_modbus="No",
+            icon="",
+            suggested_display_precision=0,
+        )
+        mock_loader = MagicMock()
+        mock_loader.get_by_vsn700.return_value = mapping
+        normalizer = VSNDataNormalizer("VSN700", mapping_loader=mock_loader)
+        normalizer._loaded = True
+
+        raw_data = {
+            "123668-3P81-3821": {
+                "points": [{"name": "E0_runtime", "value": raw_value}],
+            }
+        }
+
+        result = normalizer.normalize(raw_data)
+
+        point = result["devices"]["123668-3P81-3821"]["points"]["e0_since_restart"]
+        assert point["units"] == "kWh"
+        assert point["value"] == expected_value
+
     def test_normalize_preserves_device_type(self) -> None:
         """Test normalize preserves device_type from raw data."""
         mock_mapping = PointMapping(
