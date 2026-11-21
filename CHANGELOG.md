@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.15] - Unreleased
+
+- (nothing yet)
+
 ## [1.5.14] - 2026-11-21
 
 All changes since v1.5.13: the v1.5.14-beta.1 to beta.3 entries below, plus the following.
